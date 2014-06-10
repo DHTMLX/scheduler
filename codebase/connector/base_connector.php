@@ -290,6 +290,7 @@ class Connector {
 
 	public static $filter_var="dhx_filter";
 	public static $sort_var="dhx_sort";
+	public static $kids_var="dhx_kids";
 
 	public $model=false;
 
@@ -312,7 +313,8 @@ class Connector {
 	protected $filters;
 	protected $sorts;
 	protected $mix;
-	
+	protected $order = false;
+
 	/*! constructor
 		
 		Here initilization of all Masters occurs, execution timer initialized
@@ -599,16 +601,20 @@ class Connector {
 				$this->request->set_sort($this->resolve_parameter($k),$v);
 			}
 				
-		if (isset($_GET[Connector::$sort_var]))
+		if (isset($_GET[Connector::$filter_var]))
 			foreach($_GET[Connector::$filter_var] as $k => $v){
 				$k = $this->safe_field_name($k);
-				$this->request->set_filter($this->resolve_parameter($k),$v);
+				if ($v !== "")
+					$this->request->set_filter($this->resolve_parameter($k),$v);
 			}
 			
+		$this->check_csrf();
+	}
+
+	protected function check_csrf(){
 		$key = ConnectorSecurity::checkCSRF($this->editing);
 		if ($key !== "")
 			$this->add_top_attribute(ConnectorSecurity::$security_var, $key);
-		
 	}
 
 	/*! convert incoming request name to the actual DB name
@@ -704,7 +710,23 @@ class Connector {
 	*/
 	public function dynamic_loading($count){
 		$this->dload=$count;
-	}	
+	}
+
+	/*! enable or disable data reordering
+		
+		@param name 
+			name of field, which will be used for order storing, optional
+			by default 'sortorder' field will be used
+	*/
+	public function enable_order($name = true){
+		if ($name === true)
+			$name = "sortorder";
+
+		$this->sort($name);
+		$this->access->allow("order");
+		$this->request->set_order($name);
+		$this->order = $name;
+	}
 		
 	/*! enable logging
 		

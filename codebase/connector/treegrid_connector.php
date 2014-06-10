@@ -90,7 +90,7 @@ class TreeGridConnector extends GridConnector{
 	/*! renders self as  xml, starting part
 	*/	
 	protected function xml_start(){
-		return "<rows parent='".$this->request->get_relation()."'>";
+		return "<rows parent='".$this->xmlentities( $this->request->get_relation() )."'>";
 	}	
 }
 

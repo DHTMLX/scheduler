@@ -1,7 +1,12 @@
 /*
-This software is allowed to use under GPL or you need to obtain Commercial or Enterise License
-to use it in non-GPL project. Please contact sales@dhtmlx.com for details
+dhtmlxScheduler v.4.1.0 Stardard
+
+This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
+
+(c) Dinamenta, UAB.
 */
-(function(){function d(a){var b={},c;for(c in a)c.indexOf("_")!==0&&(b[c]=a[c]);return b}function f(){clearTimeout(e);e=setTimeout(function(){scheduler.updateView()},1)}var e;scheduler.backbone=function(){events.bind("reset",function(){scheduler.clearAll();scheduler.parse(events.toJSON(),"json")});events.bind("change",function(a,b){if(b.changes&&b.changes.id){var c=a.previous("id");scheduler.changeEventId(c,a.id)}var d=a.id;scheduler._init_event(scheduler._events[d]=a.toJSON());f()});events.bind("remove",
-function(a){scheduler._events[a.id]&&scheduler.deleteEvent(a.id)});events.bind("add",function(a){if(!scheduler._events[a.id]){var b=a.toJSON();scheduler._init_event(b);scheduler.addEvent(b)}});scheduler.attachEvent("onEventCreated",function(a){var b=new events.model(scheduler.getEvent(a));scheduler._events[a]=b.toJSON();return!0});scheduler.attachEvent("onEventAdded",function(a){events.get(a)||events.add(new events.model(d(scheduler.getEvent(a))));return!0});scheduler.attachEvent("onEventChanged",
-function(a){var b=events.get(a),c=d(scheduler.getEvent(a));b.set(c);return!0});scheduler.attachEvent("onEventDeleted",function(a){events.get(a)&&events.remove(a);return!0})}})();
+!function(){function e(e){var t={};for(var s in e)0!==s.indexOf("_")&&(t[s]=e[s]);return i.use_id||delete t.id,t}function t(){clearTimeout(n),n=setTimeout(function(){scheduler.updateView()},1)}function s(e){e._loading=!0,e._not_render=!0,e.callEvent("onXLS",[])}function r(e){e._not_render=!1,e._render_wait&&e.render_view_data(),e._loading=!1,e.callEvent("onXLE",[])}function a(e){return i.use_id?e.id:e.cid}var n,i={use_id:!1};scheduler.backbone=function(n,d){function l(){o.length&&(scheduler.parse(o,"json"),o=[])
+}d&&(i=d),n.bind("change",function(e){var s=a(e),r=scheduler._events[s]=e.toJSON();r.id=s,scheduler._init_event(r),t()}),n.bind("remove",function(e){var t=a(e);scheduler._events[t]&&scheduler.deleteEvent(t)});var o=[];n.bind("add",function(e){var t=a(e);if(!scheduler._events[t]){var s=e.toJSON();s.id=t,scheduler._init_event(s),o.push(s),1==o.length&&setTimeout(l,1)}}),n.bind("request",function(e){e instanceof Backbone.Collection&&s(scheduler)}),n.bind("sync",function(e){e instanceof Backbone.Collection&&r(scheduler)
+}),n.bind("error",function(e){e instanceof Backbone.Collection&&r(scheduler)}),scheduler.attachEvent("onEventCreated",function(e){var t=new n.model(scheduler.getEvent(e));return scheduler._events[e]=t.toJSON(),scheduler._events[e].id=e,!0}),scheduler.attachEvent("onEventAdded",function(t){if(!n.get(t)){var s=e(scheduler.getEvent(t)),r=new n.model(s),i=a(r);i!=t&&this.changeEventId(t,i),n.add(r),n.trigger("scheduler:add",r)}return!0}),scheduler.attachEvent("onEventChanged",function(t){var s=n.get(t),r=e(scheduler.getEvent(t));
+return s.set(r),n.trigger("scheduler:change",s),!0}),scheduler.attachEvent("onEventDeleted",function(e){var t=n.get(e);return t&&(n.trigger("scheduler:remove",t),n.remove(e)),!0})}}();
+//# sourceMappingURL=../sources/ext/dhtmlxscheduler_mvc.js.map

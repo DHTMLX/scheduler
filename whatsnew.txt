@@ -1,3 +1,13 @@
+4.1.0
+	New 'Flat' skin
+	Highlight event position on the time scale during D'n'D
+	Support for multisection events in Units and Timeline views
+	Ability to resize events in Month view
+	Ability to D'n'D between schedulers, and drag event outside the scheduler (PRO version only)
+	New PDF/PNG online export service
+	Updated configuration of a Grid view
+	Updated touch support, fixed multiple issues with Windows touch devices
+
 4.0.1
 	Minor regression, which was introduced in 4.0, are fixed
 

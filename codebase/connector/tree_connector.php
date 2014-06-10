@@ -198,7 +198,8 @@ class TreeConnector extends Connector{
 	/*! renders self as  xml, ending part
 	*/
 	public function xml_end(){
-		return "</tree>";
+        $this->fill_collections();
+        return $this->extra_output."</tree>";
 	}
 }
 

@@ -160,12 +160,15 @@ class DataProcessor{
 				
 			$mode = $this->status_to_mode($action->get_status());
 			if (!$this->connector->access->check($mode)){
-				LogMaster::log("Access control: {$operation} operation blocked");
+				LogMaster::log("Access control: {$mode} operation blocked");
 				$action->error();
 			} else {
 				$check = $this->connector->event->trigger("beforeProcessing",$action);
 				if (!$action->is_ready())
 					$this->check_exts($action,$mode);
+				if ($mode == "insert" && $action->get_status() != "error" && $action->get_status() != "invalid")
+					$this->connector->sql->new_record_order($action, $this->request);
+
 				$check = $this->connector->event->trigger("afterProcessing",$action);
 			}
 		
@@ -178,13 +181,14 @@ class DataProcessor{
 		
 		if ($this->connector->sql->is_record_transaction()){
 			if ($action->get_status()=="error" || $action->get_status()=="invalid")
-				$this->connector->sql->rollback_transaction();		
+				$this->connector->sql->rollback_transaction();
 			else
-				$this->connector->sql->commit_transaction();		
+				$this->connector->sql->commit_transaction();
 		}
-				
+
 		return $action;
 	}
+
 	/*! check if some event intercepts processing, send data to DataWrapper in other case
 
 		@param action 
@@ -484,11 +488,23 @@ class DataAction{
 	function to_xml(){
 		$str="<action type='{$this->status}' sid='{$this->id}' tid='{$this->nid}' ";
 		foreach ($this->attrs as $k => $v) {
-			$str.=$k."='".$v."' ";
+			$str.=$k."='".$this->xmlentities($v)."' ";
 		}
 		$str.=">{$this->output}</action>";	
 		return $str;
 	}
+
+	/*! replace xml unsafe characters
+		
+		@param string 
+			string to be escaped
+		@return 
+			escaped string
+	*/
+	public function xmlentities($string) { 
+   		return str_replace( array( '&', '"', "'", '<', '>', '’' ), array( '&amp;' , '&quot;', '&apos;' , '&lt;' , '&gt;', '&apos;' ), $string);
+	}
+
 	/*! convert self to string ( for logs )
 		
 		@return 

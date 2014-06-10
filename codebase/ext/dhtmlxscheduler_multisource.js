@@ -1,5 +1,9 @@
 /*
-This software is allowed to use under GPL or you need to obtain Commercial or Enterise License
-to use it in non-GPL project. Please contact sales@dhtmlx.com for details
+dhtmlxScheduler v.4.1.0 Stardard
+
+This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
+
+(c) Dinamenta, UAB.
 */
-(function(){function e(a){var b=function(){};b.prototype=a;return b}var d=scheduler._load;scheduler._load=function(a,b){a=a||this._load_url;if(typeof a=="object")for(var f=e(this._loaded),c=0;c<a.length;c++)this._loaded=new f,d.call(this,a[c],b);else d.apply(this,arguments)}})();
+!function(){function e(e){var t=function(){};return t.prototype=e,t}var t=scheduler._load;scheduler._load=function(s,r){if(s=s||this._load_url,"object"==typeof s)for(var a=e(this._loaded),i=0;i<s.length;i++)this._loaded=new a,t.call(this,s[i],r);else t.apply(this,arguments)}}();
+//# sourceMappingURL=../sources/ext/dhtmlxscheduler_multisource.js.map

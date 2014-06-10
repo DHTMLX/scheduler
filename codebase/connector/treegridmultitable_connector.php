@@ -27,7 +27,7 @@ class TreeGridMultitableConnector extends TreeGridConnector{
 
 	public function xml_start(){
 		if (isset($_GET['id'])) {
-			return "<rows parent='".$this->render->level_id($_GET['id'], $this->get_level() - 1)."'>";
+			return "<rows parent='".$this->xmlentities($this->render->level_id($_GET['id'], $this->get_level() - 1))."'>";
 		} else {
 			return "<rows parent='0'>";
 		}

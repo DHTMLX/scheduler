@@ -14,6 +14,7 @@ class DataRequestConfig{
 	private $start;	//!< start of requested data
 	private $count;	//!< length of requested data
 
+	private $order = false;
     private $user;
     private $version;
 	
@@ -83,6 +84,12 @@ class DataRequestConfig{
 	}
 
 
+    public function get_order(){
+        return $this->order;
+    }
+    public function set_order($order){
+        $this->order = $order;
+    }
     public function get_user(){
         return $this->user;
     }
@@ -642,6 +649,73 @@ abstract class DBDataWrapper extends DataWrapper{
 		return $str;
 	}
 
+	public function new_record_order($action, $source){
+		$order = $source->get_order();
+		if ($order){
+			$table = $source->get_source();
+			$id    = $this->config->id["db_name"];
+			$idvalue = $action->get_new_id();
+
+			$max = $this->queryOne("SELECT MAX($order) as dhx_maxvalue FROM $table");
+			$dhx_maxvalue = $max["dhx_maxvalue"] + 1;
+
+			$this->query("UPDATE $table SET $order = $dhx_maxvalue WHERE $id = $idvalue");
+		}
+	}
+	
+	public function order($data, $source){
+		//id of moved item
+		$id1 = $this->escape($data->get_value("id"));
+		//id of target item
+		$target = $data->get_value("target");
+		if (strpos($target, "next:") !== false){
+			$dropnext = true;
+			$id2 = str_replace("next:", "", $target);
+		} else {
+			$id2 = $target;
+		}
+		$id2 = $this->escape($id2);
+		
+
+		//for tree like components we need to limit out queries to the affected branch only
+		$relation_select = $relation_update = $relation_sql_out = $relation_sql = "";
+		if ($this->config->relation_id["name"]){
+			$relation = $data->get_value($this->config->relation_id["name"]);
+			if ($relation !== false && $relation !== ""){
+				$relation_sql = " ".$this->config->relation_id["db_name"]." = '".$this->escape($relation)."' AND ";
+				$relation_select = $this->config->relation_id["db_name"]." as dhx_parent, ";
+				$relation_update = " ".$this->config->relation_id["db_name"]." = '".$this->escape($relation)."', ";
+			}
+		}
+
+		
+		$name = $source->get_order();
+		$table = $source->get_source();
+		$idkey = $this->config->id["db_name"];
+
+		$source = $this->queryOne("select $relation_select $name as dhx_index from $table where $idkey = '$id1'");
+		$source_index = $source["dhx_index"] ? $source["dhx_index"] : 0;
+		if ($relation_sql)
+			$relation_sql_out = " ".$this->config->relation_id["db_name"]." = '".$this->escape($source["dhx_parent"])."' AND ";
+		
+		$this->query("update $table set $name = $name - 1 where $relation_sql_out $name >= $source_index");
+
+		if ($id2 !== ""){
+			$target = $this->queryOne("select $name as dhx_index from $table where $idkey = '$id2'");
+			$target_index = $target["dhx_index"];
+			if (!$target_index)
+				$target_index = 0;
+			if ($dropnext)
+				$target_index += 1;
+			$this->query("update $table set $name = $name + 1 where $relation_sql $name >= $target_index");
+		} else {
+			$target = $this->queryOne("select max($name) as dhx_index from $table");
+			$target_index = ($target["dhx_index"] ? $target["dhx_index"] : 0)+1;
+		}
+
+		$this->query("update $table set $relation_update $name = $target_index where $idkey = '$id1'");
+	}
+
 	public function insert($data,$source){
 		$sql=$this->insert_query($data,$source);
 		$this->query($sql);
@@ -726,8 +800,14 @@ abstract class DBDataWrapper extends DataWrapper{
 					else
 						array_push($sql,$this->escape_name($rules[$i]["name"])." ".$rules[$i]["operation"]." '".$this->escape($rules[$i]["value"])."'");
 				}
-		if ($relation!==false)
-			array_push($sql,$this->escape_name($this->config->relation_id["db_name"])." = '".$this->escape($relation)."'");
+
+		if ($relation !== false && $relation !== ""){
+			$relsql = $this->escape_name($this->config->relation_id["db_name"])." = '".$this->escape($relation)."'";
+			if ($relation == "0")
+				$relsql = "( ".$relsql." OR ".$this->escape_name($this->config->relation_id["db_name"])." IS NULL )";
+
+			array_push($sql,$relsql);
+		}
 		return implode(" AND ",$sql);
 	}	
 	/*! convert sorting rules to sql string

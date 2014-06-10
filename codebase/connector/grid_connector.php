@@ -87,7 +87,7 @@ class GridDataItem extends DataItem{
 	public function to_xml_start(){
 		if ($this->skip) return "";
 		
-		$str="<row id='".$this->get_id()."'";
+		$str="<row id='".$this->xmlentities($this->get_id())."'";
 		foreach ($this->row_attrs as $k=>$v)
 			$str.=" ".$k."='".$v."'";
 		$str.=">";

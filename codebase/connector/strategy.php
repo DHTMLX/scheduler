@@ -46,7 +46,7 @@ class RenderStrategy {
 	protected function simple_mix($mix, $data) {
 		// get mix details
 		for ($i = 0; $i < count($mix); $i++)
-			$data[$mix[$i]["name"]] = is_string($mix[$i]["value"]) ? $mix[$i]["value"] : "";
+			$data[$mix[$i]["name"]] = is_object($mix[$i]["value"]) ? "" : $mix[$i]["value"];
 		return $data;
 	}
 
@@ -130,7 +130,9 @@ class JSONRenderStrategy extends RenderStrategy {
 			if ($data->get_id()===false)
 				$data->set_id($conn->uuid());
 			$conn->event->trigger("beforeRender",$data);
-			$output[]=$data->to_xml();
+            $item = $data->to_xml();
+            if ($item !== false)
+                $output[]=$item;
 			$index++;
 		}
 		$this->unmix($config, $mix);
@@ -153,6 +155,7 @@ class TreeRenderStrategy extends RenderStrategy {
 		$output="";
 		$index=0;
 		$conn = $this->conn;
+        $config_copy = new DataConfig($config);
 		$this->mix($config, $mix);
 		while ($data=$conn->sql->get_next($res)){
 			$data = $this->simple_mix($mix, $data);
@@ -166,8 +169,9 @@ class TreeRenderStrategy extends RenderStrategy {
 			$output.=$data->to_xml_start();
 			if ($data->has_kids()===-1 || ( $data->has_kids()==true && !$dload)){
 				$sub_request = new DataRequestConfig($conn->get_request());
+                //$sub_request->set_fieldset(implode(",",$config_copy->db_names_list($conn->sql)));
 				$sub_request->set_relation($data->get_id());
-				$output.=$this->render_set($conn->sql->select($sub_request), $name, $dload, $sep, $config);
+				$output.=$this->render_set($conn->sql->select($sub_request), $name, $dload, $sep, $config_copy, $mix);
 			}
 			$output.=$data->to_xml_end();
 			$index++;
@@ -205,6 +209,7 @@ class JSONTreeRenderStrategy extends TreeRenderStrategy {
 		$output=array();
 		$index=0;
 		$conn = $this->conn;
+        $config_copy = new DataConfig($config);
 		$this->mix($config, $mix);
 		while ($data=$conn->sql->get_next($res)){
 			$data = $this->complex_mix($mix, $data);
@@ -218,12 +223,15 @@ class JSONTreeRenderStrategy extends TreeRenderStrategy {
 			$record = $data->to_xml_start();
 			if ($data->has_kids()===-1 || ( $data->has_kids()==true && !$dload)){
 				$sub_request = new DataRequestConfig($conn->get_request());
+                //$sub_request->set_fieldset(implode(",",$config_copy->db_names_list($conn->sql)));
 				$sub_request->set_relation($data->get_id());
-				$temp = $this->render_set($conn->sql->select($sub_request), $name, $dload, $sep, $config, $mix);
+                //$sub_request->set_filters(array());
+				$temp = $this->render_set($conn->sql->select($sub_request), $name, $dload, $sep, $config_copy, $mix);
 				if (sizeof($temp))
 					$record["data"] = $temp;
 			}
-			$output[] = $record;
+            if ($record !== false)
+			    $output[] = $record;
 			$index++;
 		}
 		$this->unmix($config, $mix);

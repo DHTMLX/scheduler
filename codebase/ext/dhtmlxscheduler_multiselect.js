@@ -1,7 +1,11 @@
 /*
-This software is allowed to use under GPL or you need to obtain Commercial or Enterise License
-to use it in non-GPL project. Please contact sales@dhtmlx.com for details
+dhtmlxScheduler v.4.1.0 Stardard
+
+This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
+
+(c) Dinamenta, UAB.
 */
-scheduler.form_blocks.multiselect={render:function(d){for(var a="<div class='dhx_multi_select_"+d.name+"' style='overflow: auto; height: "+d.height+"px; position: relative;' >",b=0;b<d.options.length;b++)a+="<label><input type='checkbox' value='"+d.options[b].key+"'/>"+d.options[b].label+"</label>",convertStringToBoolean(d.vertical)&&(a+="<br/>");a+="</div>";return a},set_value:function(d,a,b,c){function h(b){for(var c=d.getElementsByTagName("input"),a=0;a<c.length;a++)c[a].checked=!!b[c[a].value]}
-for(var f=d.getElementsByTagName("input"),e=0;e<f.length;e++)f[e].checked=!1;f=[];if(b[c.map_to]){for(var i=b[c.map_to].split(","),e=0;e<i.length;e++)f[i[e]]=!0;h(f)}else if(!scheduler._new_event&&c.script_url){var g=document.createElement("div");g.className="dhx_loading";g.style.cssText="position: absolute; top: 40%; left: 40%;";d.appendChild(g);dhtmlxAjax.get(c.script_url+"?dhx_crosslink_"+c.map_to+"="+b.id+"&uid="+scheduler.uid(),function(b){for(var a=b.doXPath("//data/item"),e=[],f=0;f<a.length;f++)e[a[f].getAttribute(c.map_to)]=
-!0;h(e);d.removeChild(g)})}},get_value:function(d){for(var a=[],b=d.getElementsByTagName("input"),c=0;c<b.length;c++)b[c].checked&&a.push(b[c].value);return a.join(",")},focus:function(){}};
+scheduler.form_blocks.multiselect={render:function(e){for(var t="<div class='dhx_multi_select_"+e.name+"' style='overflow: auto; height: "+e.height+"px; position: relative;' >",s=0;s<e.options.length;s++)t+="<label><input type='checkbox' value='"+e.options[s].key+"'/>"+e.options[s].label+"</label>",convertStringToBoolean(e.vertical)&&(t+="<br/>");return t+="</div>"},set_value:function(e,t,s,r){function a(t){for(var s=e.getElementsByTagName("input"),r=0;r<s.length;r++)s[r].checked=!!t[s[r].value]}for(var i=e.getElementsByTagName("input"),n=0;n<i.length;n++)i[n].checked=!1;
+var d=[];if(s[r.map_to]){for(var l=(s[r.map_to]+"").split(","),n=0;n<l.length;n++)d[l[n]]=!0;a(d)}else{if(scheduler._new_event||!r.script_url)return;var o=document.createElement("div");o.className="dhx_loading",o.style.cssText="position: absolute; top: 40%; left: 40%;",e.appendChild(o),dhtmlxAjax.get(r.script_url+"?dhx_crosslink_"+r.map_to+"="+s.id+"&uid="+scheduler.uid(),function(t){for(var s=t.doXPath("//data/item"),i=[],n=0;n<s.length;n++)i[s[n].getAttribute(r.map_to)]=!0;a(i),e.removeChild(o)
+})}},get_value:function(e){for(var t=[],s=e.getElementsByTagName("input"),r=0;r<s.length;r++)s[r].checked&&t.push(s[r].value);return t.join(",")},focus:function(){}};
+//# sourceMappingURL=../sources/ext/dhtmlxscheduler_multiselect.js.map
