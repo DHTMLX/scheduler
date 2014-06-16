@@ -1993,7 +1993,6 @@ scheduler.init=function(id,date,mode){
 
 	if(this._obj){
 		this.unset_actions();
-		this._obj.innerHTML = "";
 	}
 
 	this._obj=(typeof id == "string")?document.getElementById(id):id;
@@ -2893,7 +2892,7 @@ scheduler._reset_scale=function(){
 	data_area.innerHTML = "";
 
 	var str = ((c.readonly || (!c.drag_resize)) ? " dhx_resize_denied" : "") + ((c.readonly || (!c.drag_move)) ? " dhx_move_denied" : "");
-	if (str) data_area.className = "dhx_cal_data" + str;
+	data_area.className = "dhx_cal_data" + str;
 
 	this._scales = {};
 	this._cols = [];	//store for data section
