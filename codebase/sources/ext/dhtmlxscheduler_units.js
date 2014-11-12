@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.1.0 Stardard
+dhtmlxScheduler v.4.2.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -115,7 +115,7 @@ scheduler.scrollUnit=function(step){
 	var pr = scheduler._props[this._mode];
 	if (pr){
 		pr.position=Math.min(Math.max(0,pr.position+step),pr.options.length-pr.size);
-		this.update_view();		
+		this.setCurrentView();
 	}
 };
 (function(){
@@ -212,10 +212,15 @@ scheduler.scrollUnit=function(step){
 		var pr = scheduler._props[this._mode];
 		if (pr){
 			fix_und(pr,ev);
-			return pr.order[ev[pr.map_to]]-pr.position;	
+			return this._get_section_sday(ev[pr.map_to]);
 		}
 		return r.call(this,ev);
 	};
+	scheduler._get_section_sday = function(section){
+		var pr = scheduler._props[this._mode];
+		return pr.order[section]-pr.position;
+	};
+
 	var l = scheduler.locate_holder_day;
 	scheduler.locate_holder_day=function(a,b,ev){
 		var pr = scheduler._props[this._mode];

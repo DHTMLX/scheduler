@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.1.0 Stardard
+dhtmlxScheduler v.4.2.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -8,11 +8,87 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 scheduler.config.occurrence_timestamp_in_utc = false;
 scheduler.config.recurring_workdays = [1,2,3,4,5];
 scheduler.form_blocks["recurring"] = {
+	_get_node : function(node){
+		if (typeof node == "string")
+			node = document.getElementById(node);
+		if (node.style.display == 'none')
+			node.style.display = "";
+		return node;
+	},
+	_outer_html: function(node){
+		return node.outerHTML || getOuterHTML(node);
+
+		//probably not needed, FF v10- only
+		function getOuterHTML(n){
+			var div = document.createElement('div'), h;
+			div.appendChild( n.cloneNode(true) );
+			h = div.innerHTML;
+			div = null;
+			return h;
+		}
+	},
 	render:function(sns) {
+		if(sns.form){
+			var rec = scheduler.form_blocks["recurring"];
+			var form = rec._get_node(sns.form);
+			return rec._outer_html(form);
+		}
+
 		return scheduler.__recurring_template;
+
 	},
 	_ds: {},
+	_get_form_node: function(els, name, value){
+		var col = els[name];
+		if(!col) return null;
+		if(col.nodeName) return col;
+
+		if(col.length){
+			for(var i=0; i < col.length; i++){
+				if(col[i].value == value)
+					return col[i];
+			}
+		}
+	},
+	_get_node_value: function(els, name, multiselect){
+		var col = els[name];
+		if(!col) return "";
+		if(col.length){
+			if(multiselect){
+				var res = [];
+				for (var i = 0; i < col.length; i++)
+					if (col[i].checked) res.push(col[i].value);
+
+				return res;
+			}else{
+				for (var i = 0; i < col.length; i++)
+					if (col[i].checked) return col[i].value;
+			}
+		}
+
+		if(col.value)
+			return !multiselect ? col.value : [col.value];
+	},
+
+	_set_node_value: function(els, name, value){
+		var col = els[name];
+		if(!col) return;
+
+		if(col.name == name){
+			col.value = value;
+		}else if(col.length){
+			var hash_value = typeof value == "object";
+			for (var i = 0; i < col.length; i++)
+				if (hash_value || col[i].value == value){
+					col[i].checked = hash_value ? !!value[col[i].value] : !!value;
+				}
+		}
+	},
+
 	_init_set_value:function(node, value, ev) {
+		var block = scheduler.form_blocks["recurring"];
+		var get_value = block._get_node_value;
+		var set_value = block._set_node_value;
 		scheduler.form_blocks["recurring"]._ds = {start:ev.start_date, end:ev._end_date};
 
 		var str_date_format = scheduler.date.str_to_date(scheduler.config.repeat_date);
@@ -26,17 +102,24 @@ scheduler.form_blocks["recurring"] = {
 		var date_str = scheduler.date.date_to_str(scheduler.config.repeat_date);
 
 		var top = node.getElementsByTagName("FORM")[0];
-		var els = [];
+		var els = {};
 
 		function register_els(inps) {
 			for (var i = 0; i < inps.length; i++) {
 				var inp = inps[i];
-				if (inp.type == "checkbox" || inp.type == "radio") {
-					if (!els[inp.name])
-						els[inp.name] = [];
-					els[inp.name].push(inp);
-				} else
-					els[inp.name] = inp;
+
+				if(inp.name){
+					if(!els[inp.name]){
+						els[inp.name] = inp;
+					}else if(els[inp.name].nodeType){
+						var node = els[inp.name];
+						els[inp.name] = [node, inp];
+
+					}else{
+						els[inp.name].push(inp);
+					}
+
+				}
 			}
 		}
 
@@ -47,17 +130,11 @@ scheduler.form_blocks["recurring"] = {
 			var formatter = scheduler.date.date_to_str(scheduler.config.repeat_date);
 			scheduler.config.repeat_date_of_end = formatter(scheduler.date.add(scheduler._currentDate(), 30, "day"));
 		}
-		els["date_of_end"].value = scheduler.config.repeat_date_of_end;
+		set_value(els, "date_of_end", scheduler.config.repeat_date_of_end);
 
 		var $ = function(a) {
-			return document.getElementById(a);
+			return document.getElementById(a) || { style:{} };//return fake object if node not found
 		};
-
-		function get_radio_value(name) {
-			var col = els[name];
-			for (var i = 0; i < col.length; i++)
-				if (col[i].checked) return col[i].value;
-		}
 
 		function change_current_view() {
 			$("dhx_repeat_day").style.display = "none";
@@ -65,41 +142,117 @@ scheduler.form_blocks["recurring"] = {
 			$("dhx_repeat_month").style.display = "none";
 			$("dhx_repeat_year").style.display = "none";
 			$("dhx_repeat_" + this.value).style.display = "block";
+			scheduler.setLightboxSize();
 		}
 
 		function get_repeat_code(dates) {
-			var code = [get_radio_value("repeat")];
+			var code = [get_value(els, "repeat")];
 			get_rcode[code[0]](code, dates);
 
 			while (code.length < 5) code.push("");
 			var repeat = "";
-			if (els["end"][0].checked) {
+
+			var end = get_end_rule(els);
+
+			if (end == "no") {
 				dates.end = new Date(9999, 1, 1);
 				repeat = "no";
 			}
-			else if (els["end"][2].checked) {
-				dates.end = str_date(els["date_of_end"].value);
+			else if (end == "date_of_end") {
+				dates.end = str_date(get_value(els, "date_of_end"));
 			}
 			else {
 				scheduler.transpose_type(code.join("_"));
-				repeat = Math.max(1, els["occurences_count"].value);
-				var transp = ((code[0] == "week" && code[4] && code[4].toString().indexOf(scheduler.config.start_on_monday ? 1 : 0) == -1) ? 1 : 0);
+				repeat = Math.max(1, get_value(els, "occurences_count"));
+
+				var transp = 0;
+
+				//var transp = ((code[0] == "week" && code[4] && code[4].toString().indexOf(scheduler.config.start_on_monday ? 1 : 0) == -1) ? 1 : 0);
+
+				// which is equal to following code, seems to produce extra instance, not clear why needed
+
+				/*if(code[0] == "week"){
+					var days = code[4] || "";
+					if(scheduler.config.start_on_monday){
+						if(days.indexOf(1) == -1)
+						transp = 1;
+					}else{
+						if(days.indexOf(0) == -1)
+						transp = 1;
+					}
+				}*/
+
 				dates.end = scheduler.date.add(new Date(dates.start), repeat + transp, code.join("_"));
 			}
 
 			return code.join("_") + "#" + repeat;
 		}
+		function get_end_rule(els){
+			var end = els["end"];
+			if(end.length){
+				for(var i =0; i < end.length; i++){
+					if(end[i].checked){
+						if(end[i].value && end[i].value != "on"){//seems to be default value:var input = document.createElement("input"); input.type = "radio"; input.value
+							return end[i].value;
+						}else{
+							if(!i){
+								return "no";
+							}else if(i == 2){
+								return "date_of_end";
+							}else{
+								return "occurences_count";
+							}
+						}
+					}
+				}
+			}else{
+				if(end.value)
+					return end.value;
+			}
+			return "no";
+		}
+		function set_end_rule(els, value){
+			var end = els["end"];
+
+			if(end.length){
+				var has_values = !!end[0].value;
+				if(has_values){
+					for(var i =0; i < end.length; i++){
+						if(end[i].value == value)
+							end[i].checked = true;
+					}
+				}else{
+					var ind = 0;
+					switch(value){
+						case "no":
+							ind = 0;
+							break;
+						case "date_of_end":
+							ind = 2;
+							break;
+						default:
+							ind = 1;
+							break;
+					}
+					end[ind].checked = true;
+				}
+			}else{
+				end.value = value;
+			}
+		}
+
 
 		scheduler.form_blocks["recurring"]._get_repeat_code = get_repeat_code;
 		var get_rcode = {
 			month:function(code, dates) {
-				if (get_radio_value("month_type") == "d") {
-					code.push(Math.max(1, els["month_count"].value));
-					dates.start.setDate(els["month_day"].value);
+				var get_value = scheduler.form_blocks["recurring"]._get_node_value;
+				if (get_value(els, "month_type") == "d") {
+					code.push(Math.max(1, get_value(els, "month_count")));
+					dates.start.setDate(get_value(els, "month_day"));
 				} else {
-					code.push(Math.max(1, els["month_count2"].value));
-					code.push(els["month_day2"].value);
-					code.push(Math.max(1, els["month_week2"].value));
+					code.push(Math.max(1, get_value(els, "month_count2")));
+					code.push( get_value(els, "month_day2"));
+					code.push(Math.max(1, get_value(els, "month_week2")));
 					if (!scheduler.config.repeat_precise){
 						dates.start.setDate(1);
 					}
@@ -107,19 +260,21 @@ scheduler.form_blocks["recurring"] = {
 				dates._start = true;
 			},
 			week:function(code, dates) {
-				code.push(Math.max(1, els["week_count"].value));
+				var get_value = scheduler.form_blocks["recurring"]._get_node_value;
+
+				code.push(Math.max(1, get_value(els, "week_count")));
 				code.push("");
 				code.push("");
 				var t = [];
-				var col = els["week_day"];
+
+				var col = get_value(els, "week_day", true);
+				//var col = els["week_day"];
 				var day = dates.start.getDay();
 				var start_exists = false;
 
 				for (var i = 0; i < col.length; i++){
-					if (col[i].checked) {
-						t.push(col[i].value);
-						start_exists = start_exists || col[i].value == day;
-					}
+					t.push(col[i]);
+					start_exists = start_exists || col[i] == day;
 				}
 				if (!t.length){
 					t.push(day);
@@ -139,8 +294,10 @@ scheduler.form_blocks["recurring"] = {
 				code.push(t.join(","));
 			},
 			day:function(code) {
-				if (get_radio_value("day_type") == "d") {
-					code.push(Math.max(1, els["day_count"].value));
+				var get_value = scheduler.form_blocks["recurring"]._get_node_value;
+
+				if (get_value(els, "day_type") == "d") {
+					code.push(Math.max(1, get_value(els, "day_count")));
 				}
 				else {
 					code.push("week");
@@ -152,98 +309,128 @@ scheduler.form_blocks["recurring"] = {
 				}
 			},
 			year:function(code, dates) {
-				if (get_radio_value("year_type") == "d") {
+				var get_value = scheduler.form_blocks["recurring"]._get_node_value;
+
+				if (get_value(els, "year_type") == "d") {
 					code.push("1");
 					dates.start.setMonth(0);
-					dates.start.setDate(els["year_day"].value);
-					dates.start.setMonth(els["year_month"].value);
+					dates.start.setDate(get_value(els, "year_day"));
+					dates.start.setMonth(get_value(els, "year_month"));
 
 				} else {
 					code.push("1");
-					code.push(els["year_day2"].value);
-					code.push(els["year_week2"].value);
+					code.push(get_value(els, "year_day2"));
+					code.push(get_value(els, "year_week2"));
 					dates.start.setDate(1);
-					dates.start.setMonth(els["year_month2"].value);
+					dates.start.setMonth(get_value(els, "year_month2"));
 				}
 				dates._start = true;
 			}
 		};
 		var set_rcode = {
 			week:function(code, dates) {
-				els["week_count"].value = code[1];
-				var col = els["week_day"];
+				var set_value = scheduler.form_blocks["recurring"]._set_node_value;
+				set_value(els, "week_count", code[1]);
+
 				var t = code[4].split(",");
 				var d = {};
 				for (var i = 0; i < t.length; i++) d[t[i]] = true;
-				for (var i = 0; i < col.length; i++)
-					col[i].checked = (!!d[col[i].value]);
+
+				set_value(els, "week_day", d);
+
+				//for (var i = 0; i < col.length; i++)
+				//	col[i].checked = (!!d[col[i].value]);
 			},
 			month:function(code, dates) {
+				var set_value = scheduler.form_blocks["recurring"]._set_node_value;
+
 				if (code[2] === "") {
-					els["month_type"][0].checked = true;
-					els["month_count"].value = code[1];
-					els["month_day"].value = dates.start.getDate();
+					set_value(els, "month_type", "d");
+					set_value(els, "month_count", code[1]);
+					set_value(els, "month_day", dates.start.getDate());
 				} else {
-					els["month_type"][1].checked = true;
-					els["month_count2"].value = code[1];
-					els["month_week2"].value = code[3];
-					els["month_day2"].value = code[2];
+					set_value(els, "month_type", "w");
+					set_value(els, "month_count2", code[1]);
+					set_value(els, "month_week2",  code[3]);
+					set_value(els, "month_day2", code[2]);
 				}
 			},
 			day:function(code, dates) {
-				els["day_type"][0].checked = true;
-				els["day_count"].value = code[1];
+				var set_value = scheduler.form_blocks["recurring"]._set_node_value;
+				set_value(els, "day_type", "d");
+				set_value(els, "day_count", code[1]);
 			},
 			year:function(code, dates) {
+				var set_value = scheduler.form_blocks["recurring"]._set_node_value;
+
 				if (code[2] === "") {
-					els["year_type"][0].checked = true;
-					els["year_day"].value = dates.start.getDate();
-					els["year_month"].value = dates.start.getMonth();
+					set_value(els, "year_type", "d");
+					set_value(els, "year_day", dates.start.getDate());
+					set_value(els, "year_month", dates.start.getMonth());
+
 				} else {
-					els["year_type"][1].checked = true;
-					els["year_week2"].value = code[3];
-					els["year_day2"].value = code[2];
-					els["year_month2"].value = dates.start.getMonth();
+					set_value(els, "year_type", "w");
+					set_value(els, "year_week2", code[3]);
+					set_value(els, "year_day2", code[2]);
+					set_value(els, "year_month2", dates.start.getMonth());
 				}
 			}
 		};
 
 		function set_repeat_code(code, dates) {
+			var set_value = scheduler.form_blocks["recurring"]._set_node_value;
 			var data = code.split("#");
 			code = data[0].split("_");
 			set_rcode[code[0]](code, dates);
-			var e = els["repeat"][({day:0, week:1, month:2, year:3})[code[0]]];
+
+
 			switch (data[1]) {
 				case "no":
-					els["end"][0].checked = true;
+					set_end_rule(els, "no");
 					break;
 				case "":
-					els["end"][2].checked = true;
+					set_end_rule(els, "date_of_end");
 
 					var end_date = dates.end;
 					if (scheduler.config.include_end_by){
 						end_date = scheduler.date.add(end_date, -1, 'day');
 					}
+					set_value(els, "date_of_end", date_str(end_date));
 
-					els["date_of_end"].value = date_str(end_date);
 					break;
 				default:
-					els["end"][1].checked = true;
-					els["occurences_count"].value = data[1];
+					set_end_rule(els, "occurences_count");
+					set_value(els, "occurences_count", data[1]);
+
 					break;
 			}
 
-			e.checked = true;
-			e.onclick();
-		}
+			set_value(els, "repeat", code[0]);
+			//e.checked = true;
 
+			var node = scheduler.form_blocks["recurring"]._get_form_node(els, "repeat", code[0]);
+			if(node.nodeName == "SELECT" && node.onchange){
+				node.onchange();
+			}else if(node.onclick){
+				node.onclick();
+			}
+		}
+		function activate(els, mode){
+
+		}
 		scheduler.form_blocks["recurring"]._set_repeat_code = set_repeat_code;
 
 		for (var i = 0; i < top.elements.length; i++) {
 			var el = top.elements[i];
 			switch (el.name) {
 				case "repeat":
-					el.onclick = change_current_view;
+					if(el.nodeName == "SELECT"){
+						el.onchange = change_current_view;
+					}else{
+						el.onclick = change_current_view;
+					}
+
+
 					break;
 			}
 		}
@@ -288,21 +475,54 @@ scheduler.form_blocks["recurring"] = {
 		}
 		return ev.rec_type;
 	},
-	focus:function(node) {
+	_get_button: function(){
+		var node = scheduler.formSection("recurring").header;
+		return node.firstChild.firstChild;
 	},
-	button_click:function(index, el, section, cont) {
+	_get_form: function(){
+		return scheduler.formSection("recurring").node;
+	},
+	open:function(){
+		var block = scheduler.form_blocks.recurring;
+
+		var cont = block._get_form();
+		if(!cont.open)
+			block._toggle_block();
+	},
+	close: function(){
+		var block = scheduler.form_blocks.recurring;
+
+		var cont = block._get_form();
+
+		if(cont.open)
+			block._toggle_block();
+	},
+	_toggle_block: function(){
+		var block = scheduler.form_blocks.recurring;
+
+		var cont = block._get_form(),
+			el = block._get_button();
 		if (!cont.open && !cont.blocked) {
-			cont.style.height = "115px";
-			el.style.backgroundPosition = "-5px 0px";
-			el.nextSibling.innerHTML = scheduler.locale.labels.button_recurring_open;
+			cont.style.height = "auto";//reset to default value
+			if(el){
+				el.style.backgroundPosition = "-5px 0px";
+				el.nextSibling.innerHTML = scheduler.locale.labels.button_recurring_open;
+			}
 		} else {
 			cont.style.height = "0px";
-			el.style.backgroundPosition = "-5px 20px";
-			el.nextSibling.innerHTML = scheduler.locale.labels.button_recurring;
+			if(el){
+				el.style.backgroundPosition = "-5px 20px";
+				el.nextSibling.innerHTML = scheduler.locale.labels.button_recurring;
+			}
 		}
 		cont.open = !cont.open;
 
 		scheduler.setLightboxSize();
+	},
+	focus:function(node) {
+	},
+	button_click:function(index, el, section, cont) {
+		scheduler.form_blocks.recurring._toggle_block();
 	}
 };
 

@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.1.0 Stardard
+dhtmlxScheduler v.4.2.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -89,6 +89,7 @@ dhtmlXTooltip.show = function(event, text) { //browser event, text to display
 
 	tooltip_div_style.visibility = "visible";
 	this.tooltip.onmouseleave = function(e){
+		e = e || window.event;
 		/*
 		 A rare but reported scenario, when tooltip appears at the edge of the scheduler (e.g. left part inside cal, right part - outside).
 		 User moves mouse from the scheduler into the tooltip, and then from the tooltip to the page outside the calendar.

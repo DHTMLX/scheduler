@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.1.0 Stardard
+dhtmlxScheduler v.4.2.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -86,6 +86,12 @@ scheduler.renderCalendar = function(obj, _prev, is_refresh) {
 	cal.conf = obj;
 	if (obj.sync && !is_refresh)
 		this._synced_minicalendars.push(cal);
+
+	if(!cal.conf._on_xle_handler){
+		cal.conf._on_xle_handler = scheduler.attachEvent("onXLE", function refreshOnLoad(){
+			scheduler.updateCalendar(cal, cal.conf.date);
+		});
+	}
 
 	return cal;
 };
@@ -272,6 +278,9 @@ scheduler.destroyCalendar = function(cal, force) {
 		cal.parentNode.removeChild(cal);
 	if (this._def_count)
 		this._def_count.style.top = "-1000px";
+
+	if(cal.conf && cal.conf._on_xle_handler)
+		scheduler.detachEvent(cal.conf._on_xle_handler);
 };
 scheduler.isCalendarVisible = function() {
 	if (this._def_count && parseInt(this._def_count.style.top, 10) > 0)

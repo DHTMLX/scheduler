@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.1.0 Stardard
+dhtmlxScheduler v.4.2.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -7,6 +7,7 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 */
 scheduler.config.icons_select = ["icon_details", "icon_delete"];
 scheduler.config.details_on_create = true;
+scheduler.config.show_quick_info = true;
 scheduler.xy.menu_width = 0;
 
 scheduler.attachEvent("onClick", function(id){
@@ -34,7 +35,7 @@ scheduler.templates.quick_info_date = function(start, end, ev){
 };
 
 scheduler.showQuickInfo = function(id){
-	if (id == this._quick_info_box_id) return;
+	if (id == this._quick_info_box_id || !this.config.show_quick_info) return;
 	this.hideQuickInfo(true);
 
 	var pos = this._get_event_counter_part(id);
@@ -53,13 +54,14 @@ scheduler.hideQuickInfo = function(forced){
 	this._quick_info_box_id = 0;
 
 	if (qi && qi.parentNode){
+		var width = qi._offsetWidth;
 		if (scheduler.config.quick_info_detached)
 			return qi.parentNode.removeChild(qi);
 
 		if (qi.style.right == "auto")
-			qi.style.left = "-350px";
+			qi.style.left = -width + "px";
 		else
-			qi.style.right = "-350px";
+			qi.style.right = -width + "px";
 
 		if (forced)
 			qi.parentNode.removeChild(qi);
@@ -72,33 +74,31 @@ dhtmlxEvent(window, "keydown", function(e){
 
 scheduler._show_quick_info = function(pos){
 	var qi = scheduler._quick_info_box;
+	scheduler._obj.appendChild(qi);
+	var width = qi.offsetWidth;
+	var height = qi.offsetHeight;
 
 	if (scheduler.config.quick_info_detached){
-		scheduler._obj.appendChild(qi);
-		var width = qi.offsetWidth;
-		var height = qi.offsetHeight;
-
 		qi.style.left = pos.left - pos.dx*(width - pos.width) + "px";
 		qi.style.top = pos.top - (pos.dy?height:-pos.height) + "px";
 	} else {
 		qi.style.top = this.xy.scale_height+this.xy.nav_height + 20 + "px";
 		if (pos.dx == 1){
 			qi.style.right = "auto";
-			qi.style.left = "-300px";
+			qi.style.left = -width + "px";
 			
 			setTimeout(function(){
 				qi.style.left = "-10px";
 			},1);
 		} else {
 			qi.style.left = "auto";
-			qi.style.right = "-300px";
+			qi.style.right = -width + "px";
 			
 			setTimeout(function(){
 				qi.style.right = "-10px";
 			},1);
 		}
-		qi.className = qi.className.replace("dhx_qi_left","").replace("dhx_qi_left","")+" dhx_qi_"+(pos==1?"left":"right");
-		scheduler._obj.appendChild(qi);
+		qi.className = qi.className.replace("dhx_qi_left","").replace("dhx_qi_right","")+" dhx_qi_"+(pos==1?"left":"right");
 	}
 };
 scheduler.attachEvent("onTemplatesReady", function(){

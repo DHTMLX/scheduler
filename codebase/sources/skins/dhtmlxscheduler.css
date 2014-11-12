@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.1.0 Stardard
+dhtmlxScheduler v.4.2.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -218,11 +218,6 @@ div.dhx_modal_cover {
 .dhx_cal_event.dhx_cal_select_menu .dhx_body {
   border-width: 0 1px 1px 1px;
   padding: 5px;
-}
-.dhx_cal_event.dhx_cal_select_menu {
-  -webkit-box-shadow: 0 0 1px #FFF;
-  -moz-box-shadow: 0 0 1px #FFF;
-  box-shadow: 0 0 1px #FFF;
 }
 .dhx_resize_denied,
 .dhx_resize_denied .dhx_event_resize {
@@ -1196,12 +1191,23 @@ div.icon_delete {
 .dhx_cal_navline div,
 .dhx_cal_header,
 .dhx_cal_header div,
+.dhx_cal_data,
 .dhx_cal_data div,
-.dhx_cal_light,
-.dhx_cal_light div {
+.dhx_cal_data table *,
+.dhx_multi_day,
+.dhx_multi_day div,
+.dhx_tooltip_line div,
+.dhx_cal_quick_info,
+.dhx_cal_quick_info div {
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
+}
+.dhx_cal_event div {
+  line-height: normal;
+}
+.dhx_cal_data table {
+  border-collapse: separate;
 }
 .dhx_cal_light .dhx_cal_radio label {
   margin-bottom: 0;
@@ -1462,7 +1468,6 @@ div.icon_delete {
 .dhx_form_repeat {
   overflow: hidden;
   /*height:115px;*/
-  height: 0px;
   background-color: #FFF4B5;
   /*border: 1px solid #DCC43E;*/
 }
@@ -1470,31 +1475,35 @@ div.icon_delete {
   background-color: transparent;
 }
 .dhx_repeat_center,
-.dhx_repeat_left {
+.dhx_repeat_left,
+.dhx_repeat_divider,
+.dhx_repeat_right {
   height: 115px;
-  padding: 10px 0 10px 10px;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.dhx_repeat_center,
+.dhx_repeat_left {
+  padding: 10px 0 0px 10px;
   float: left;
 }
 .dhx_repeat_left {
-  width: 95px;
+  width: 105px;
 }
 .dhx_repeat_center {
-  width: 335px;
-  margin-top: 12px;
+  width: 345px;
+  padding-top: 22px;
 }
 .dhx_repeat_divider {
   float: left;
-  height: 115px;
   border-left: 1px dotted #DCC43E;
   /*background-color: #DCC43E;*/
   width: 1px;
 }
 .dhx_repeat_right {
   float: right;
-  height: 115px;
-  width: 160px;
-  padding: 10px 3px 10px 10px;
-  margin-top: 7px;
+  width: 173px;
+  padding: 17px 3px 0px 10px;
 }
 input.dhx_repeat_text {
   height: 16px;
@@ -1558,18 +1567,6 @@ input.dhx_repeat_checkbox {
 .dhx_cal_light_rec.dhx_cal_light_wide .dhx_cal_larea {
   width: 808px;
 }
-/* bootstrap CSS fix */
-.dhx_cal_navline div,
-.dhx_cal_header,
-.dhx_cal_header div,
-.dhx_cal_data div {
-  -webkit-box-sizing: content-box;
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
-}
-.dhx_cal_event div {
-  line-height: normal;
-}
 /* event start */
 .dhx_cal_event .dhx_title {
   border-width: 1px 1px 0 1px;
@@ -1598,6 +1595,11 @@ input.dhx_repeat_checkbox {
 .dhx_cal_event .dhx_header,
 .dhx_cal_event.dhx_cal_select_menu .dhx_footer {
   display: none;
+}
+.dhx_cal_event.dhx_cal_select_menu {
+  -webkit-box-shadow: 0 0 1px #FFF;
+  -moz-box-shadow: 0 0 1px #FFF;
+  box-shadow: 0 0 1px #FFF;
 }
 .dhx_cal_event .dhx_footer {
   height: 5px;

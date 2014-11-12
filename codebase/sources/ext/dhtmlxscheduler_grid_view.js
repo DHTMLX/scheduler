@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.1.0 Stardard
+dhtmlxScheduler v.4.2.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -117,20 +117,6 @@ scheduler.createGridView=function(obj){
 			return true;
 		});
 
-		scheduler.attachEvent("onSchedulerResize", function() {
-			if (this._mode == name) {
-				this[name + '_view'](true);
-				// timeout used to run code after all onSchedulerResize handlers are finished
-				window.setTimeout(function(){
-					// we need to call event manually because handler return false, and blocks default logic
-					scheduler.callEvent("onAfterSchedulerResize", []);
-				},1);
-				return false;
-			}
-			return true;
-		});
-
-
 		var old = scheduler.render_data;
 		scheduler.render_data=function(evs){
 			if (this._mode == name)
@@ -155,6 +141,11 @@ scheduler.createGridView=function(obj){
 
 
 	scheduler[name+'_view']=function(mode){
+		scheduler._grid._sort_marker = null;
+		delete scheduler._gridView;
+		scheduler._rendered=[];
+		scheduler[objName]._selected_divs = [];
+
 		if (mode){
 			var min = null,
 				max = null;
@@ -181,10 +172,6 @@ scheduler.createGridView=function(obj){
 			//grid tab activated
 			scheduler._gridView = objName;
 		} else {
-			scheduler._grid._sort_marker = null;
-			delete scheduler._gridView;
-			scheduler._rendered=[];
-			scheduler[objName]._selected_divs = [];
 			//grid tab de-activated
 		}
 	};

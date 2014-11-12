@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.1.0 Stardard
+dhtmlxScheduler v.4.2.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -47,11 +47,22 @@ scheduler._temp_limit_scope = function(){
 		return scheduler.deleteMarkedTimespan(options);
 	};
 	scheduler.attachEvent("onBeforeViewChange",function(om,od,nm,nd){
+
+		function isBlocked(date, mode){
+			var limit_start = scheduler.config.limit_start,
+				limit_end = scheduler.config.limit_end,
+				date_end =  scheduler.date.add(date,1,mode);
+
+			return (date.valueOf() > limit_end.valueOf() || date_end <= limit_start.valueOf());
+		}
+
 		if (scheduler.config.limit_view){
 			nd = nd||od; nm = nm||om;		
-			if (nd.valueOf()>scheduler.config.limit_end.valueOf() || this.date.add(nd,1,nm)<=scheduler.config.limit_start.valueOf()){
+			if (isBlocked(nd, nm) && !(od.valueOf() == nd.valueOf())){
 				setTimeout(function(){
-					scheduler.setCurrentView((od || scheduler.config.limit_start), nm);
+					var resetDate = !isBlocked(od, nm) ? od : scheduler.config.limit_start;
+
+					scheduler.setCurrentView(!isBlocked(resetDate, nm) ? resetDate : null, nm);
 				},1);
 				return false;
 			}
@@ -613,7 +624,7 @@ scheduler._temp_limit_scope = function(){
 
 			if (this._props && this._props[this._mode] && options.sections && options.sections[this._mode]) {
 				var view = this._props[this._mode];
-				index = view.order[options.sections[this._mode]];
+				index = this._get_section_sday(options.sections[this._mode]);
 				if (view.size && (index > view.position+view.size)) {
 					index = 0;
 				}

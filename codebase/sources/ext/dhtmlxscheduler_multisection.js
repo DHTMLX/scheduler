@@ -1,11 +1,12 @@
 /*
-dhtmlxScheduler v.4.1.0 Stardard
+dhtmlxScheduler v.4.2.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
 */
 scheduler.config.multisection = true;
+scheduler.config.multisection_shift_all = true;
 scheduler.config.section_delemiter = ",";
 scheduler.attachEvent("onSchedulerReady", function(){
 
@@ -123,9 +124,17 @@ scheduler.attachEvent("onSchedulerReady", function(){
 	scheduler.get_visible_events = function(only_timed) {
 		this._clear_copied_events();
 		var evs = vis_evs.apply(this,arguments);
-		var pr = this._get_multisection_view();
+
 		if (this._get_multisection_view()){
 			evs = this._split_events(evs);
+
+			for(var i=0; i <evs.length; i++){
+				if(!this.is_visible_events(evs[i])){
+					evs.splice(i, 1);
+					i--;
+				}
+			}
+
 			this._register_copies_array(evs);
 		}
 
@@ -160,7 +169,8 @@ scheduler.attachEvent("onSchedulerReady", function(){
 	scheduler._update_sections = function(action, def_handler){
 		var view = action.view,
 			event = action.event,
-			pos = action.pos;
+			pos = action.pos,
+			drag_single = true;
 		//view - timeline or units view object. both stores displayed sections in 'view.order' hash
 		// pos - mouse position, calculated in _mouse_coords method
 		// event - scheduler event
@@ -178,17 +188,42 @@ scheduler.attachEvent("onSchedulerReady", function(){
 					var sections = this._get_event_sections(event);
 					var new_sections = [];
 					var shifted = true;
-					for(var i=0; i<sections.length; i++){
-						var new_section = scheduler._shift_sections(view, sections[i], shift);
-						if(new_section !== null){
-							new_sections[i] = new_section;
-						}else{
-							new_sections = sections;
-							shifted = false;
-							break;
-
+					if(scheduler.config.multisection_shift_all){
+						for(var i=0; i<sections.length; i++){
+							var new_section = scheduler._shift_sections(view, sections[i], shift);
+							if(new_section !== null){
+								new_sections[i] = new_section;
+							}else{
+								new_sections = sections;
+								shifted = false;
+								break;
+							}
+						}
+					}else{
+						for(var i=0; i<sections.length; i++){
+							// if section is occupied return
+							if(sections[i] == pos.section){
+								new_sections = sections;
+								shifted = false;
+								break;
+							}
+							
+							// find and shift only one section
+							if(sections[i] == scheduler._drag_event._orig_section){
+								var new_section = scheduler._shift_sections(view, sections[i], shift);
+								if(new_section !== null){
+									new_sections[i] = new_section;
+								}else{
+									new_sections = sections;
+									shifted = false;
+									break;
+								}
+							}else{
+								new_sections[i] = sections[i];
+							}
 						}
 					}
+					
 					if(shifted)
 						scheduler._drag_event._orig_section = pos.section;
 					

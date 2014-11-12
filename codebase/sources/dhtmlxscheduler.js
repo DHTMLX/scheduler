@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.1.0 Stardard
+dhtmlxScheduler v.4.2.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -207,7 +207,10 @@ dtmlXMLLoaderObject.prototype.loadXML=function(filePath, postMode, postVars, rpc
 
     if (this.async)
         this.xmlDoc.onreadystatechange=new this.waitLoadFunction(this);
-    this.xmlDoc.open(postMode ? "POST" : "GET", filePath, this.async);
+    if (typeof postMode == "string")
+        this.xmlDoc.open(postMode, filePath, this.async);
+    else
+        this.xmlDoc.open(postMode ? "POST" : "GET", filePath, this.async);
 
     if (rpc){
         this.xmlDoc.setRequestHeader("User-Agent", "dhtmlxRPC v0.1 ("+navigator.userAgent+")");
@@ -1275,6 +1278,10 @@ dataProcessor.prototype={
 	setTransactionMode:function(mode,total){
         this._tMode=mode;
 		this._tSend=total;
+		if (mode == "REST"){
+			this._tSend = false;
+			this._endnm = true;
+		}
     },
     escape:function(data){
     	if (this._utf)
@@ -1456,8 +1463,10 @@ dataProcessor.prototype={
     		return data;
     	var stack = [];
     	for (var key in data)
-    		if (data.hasOwnProperty(key))
+    		if (data.hasOwnProperty(key)){
+    			if ((key == "id" || key == this.action_param) && this._tMode == "REST") continue;
     			stack.push(this.escape((pref||"")+key)+"="+this.escape(data[key]));
+    		}
 		return stack.join("&");
     },
     _sendData:function(a1,rowId){
@@ -1466,14 +1475,33 @@ dataProcessor.prototype={
 		
     	if (rowId)
 			this._in_progress[rowId]=(new Date()).valueOf();
-		var a2=new dtmlXMLLoaderObject(this.afterUpdate,this,true);
+		var a2=new dtmlXMLLoaderObject(function(that,b,c,d,xml){
+			var ids = [];
+			if (rowId)
+				ids.push(rowId);
+			else if (a1)
+				for (var key in a1)
+					ids.push(key);
+
+			return that.afterUpdate(that,xml,ids);
+		},this,true);
 		
 		var a3 = this.serverProcessor+(this._user?(getUrlSymbol(this.serverProcessor)+["dhx_user="+this._user,"dhx_version="+this.obj.getUserData(0,"version")].join("&")):"");
 
-		if (this._tMode!="POST")
+		if (this._tMode=="GET")
         	a2.loadXML(a3+((a3.indexOf("?")!=-1)?"&":"?")+this.serialize(a1,rowId));
-		else
+		else if (this._tMode == "POST")
         	a2.loadXML(a3,true,this.serialize(a1,rowId));
+        else if (this._tMode == "REST"){
+        	var state = this.getState(rowId);
+        	var url = a3.replace(/(\&|\?)editing\=true/,"");
+        	if (state == "inserted")
+        		a2.loadXML(url+rowId,"POST",this.serialize(a1,rowId));
+        	else if (state == "deleted")
+        		a2.loadXML(url+rowId,"DELETE","");
+        	else
+        		a2.loadXML(url+rowId,"PUT",this.serialize(a1,rowId));
+        }
 
 		this._waitMode++;
     },
@@ -1509,7 +1537,7 @@ dataProcessor.prototype={
 		for(var i=0;i<this.updatedRows.length;i++){
 			var id=this.updatedRows[i];
 			if (this._in_progress[id] || this.is_invalid(id)) continue;
-			if (!this.callEvent("onBeforeUpdate",[id,this.getState(id)])) continue;	
+			if (!this.callEvent("onBeforeUpdate",[id,this.getState(id), this._getRowData(id)])) continue;
 			out[id]=this._getRowData(id,id+this.post_delim);
 			has_one = true;
 			this._in_progress[id]=(new Date()).valueOf();
@@ -1525,7 +1553,7 @@ dataProcessor.prototype={
 	*	@type: public
 	*/
 	setVerificator:function(ind,verifFunction){
-		this.mandatoryFields[ind] = verifFunction||(function(value){return (value !== "");});
+		this.mandatoryFields[ind] = verifFunction||(function(value){return (value!=="");});
 	},
 	/**
 	* 	@desc: remove column from list of those which should be verified
@@ -1623,10 +1651,33 @@ dataProcessor.prototype={
 	*	@param: xml - XMLLoader object with response XML
 	*	@type: private
 	*/
-	afterUpdate:function(that,b,c,d,xml){
+	afterUpdate:function(that,xml,id){
+		//try to use json first
+		if (window.JSON){
+			try{
+				var tag = JSON.parse(xml.xmlDoc.responseText);
+				var action = tag.action || this.getState(id) || "updated";
+				var sid = tag.sid || id[0];
+				var tid = tag.tid || id[0];
+				that.afterUpdateCallback(sid, tid, action, tag);
+				that.finalizeUpdate();
+				return;
+			} catch(e){
+			}
+		}
+		//xml response
 		xml.getXMLTopNode("data"); //fix incorrect content type in IE
-		if (!xml.xmlDoc.responseXML) return;
+
+		if (!xml.xmlDoc.responseXML){
+			if(this.obj && this.obj.callEvent){
+				this.obj.callEvent("onSaveError", [id, xml.xmlDoc]);
+			}
+			return this.cleanUpdate(id);
+		}
+
 		var atag=xml.doXPath("//data/action");
+		if (!atag.length) return this.cleanUpdate(id);
+
 		for (var i=0; i<atag.length; i++){
         	var btag=atag[i];
 			var action = btag.getAttribute("type");
@@ -1636,6 +1687,11 @@ dataProcessor.prototype={
 			that.afterUpdateCallback(sid,tid,action,btag);
 		}
 		that.finalizeUpdate();
+	},
+	cleanUpdate:function(id){
+		if (id)
+			for (var i = 0; i < id.length; i++)
+				delete this._in_progress[id[i]];
 	},
 	finalizeUpdate:function(){
 		if (this._waitMode) this._waitMode--;
@@ -1674,7 +1730,7 @@ dataProcessor.prototype={
 
 
 
-	/*! starts autoupdate mode
+	/* starts autoupdate mode
 		@param interval
 			time interval for sending update requests
 	*/
@@ -1700,7 +1756,7 @@ dataProcessor.prototype={
 	},
 
 
-	/*! process updating request answer
+	/* process updating request answer
 		if status == collision version is depricated
 		set flag for autoupdating immidiatly
 	*/
@@ -1714,11 +1770,11 @@ dataProcessor.prototype={
 	},
 
 
-	/*! callback function for onFillSync event
+	/* callback function for onFillSync event
 		call update function if it's need
 	*/
 	fullSync: function() {
-		if (this._need_update === true) {
+		if (this._need_update) {
 			this._need_update = false;
 			this.loadUpdate();
 		}
@@ -1726,7 +1782,7 @@ dataProcessor.prototype={
 	},
 
 
-	/*! sends query to the server and call callback function
+	/* sends query to the server and call callback function
 	*/
 	getUpdates: function(url,callback){
 		if (this._update_busy) 
@@ -1742,7 +1798,7 @@ dataProcessor.prototype={
 	},
 
 
-	/*! returns xml node value
+	/* returns xml node value
 		@param node
 			xml node
 	*/
@@ -1752,7 +1808,7 @@ dataProcessor.prototype={
 	},
 
 
-	/*! returns values array of xml nodes array
+	/* returns values array of xml nodes array
 		@param arr
 			array of xml nodes
 	*/
@@ -1765,7 +1821,7 @@ dataProcessor.prototype={
 	},
 
 
-	/*! loads updates and processes them
+	/* loads updates and processes them
 	*/
 	loadUpdate: function(){
 		var self = this;
@@ -1806,141 +1862,32 @@ dataProcessor.prototype={
 	}
 
 };
-/*
-	dhx_sort[index]=direction
-	dhx_filter[index]=mask
-*/
-if (window.dhtmlXGridObject){
-	dhtmlXGridObject.prototype._init_point_connector=dhtmlXGridObject.prototype._init_point;
-	dhtmlXGridObject.prototype._init_point=function(){
-		var clear_url=function(url){
-			url=url.replace(/(\?|\&)connector[^\f]*/g,"");
-			return url+(url.indexOf("?")!=-1?"&":"?")+"connector=true"+(this.hdr.rows.length > 0 ? "&dhx_no_header=1":"");
-		};
-		var combine_urls=function(url){
-			return clear_url.call(this,url)+(this._connector_sorting||"")+(this._connector_filter||"");
-		};
-		var sorting_url=function(url,ind,dir){
-			this._connector_sorting="&dhx_sort["+ind+"]="+dir;
-			return combine_urls.call(this,url);
-		};
-		var filtering_url=function(url,inds,vals){
-			for (var i=0; i<inds.length; i++)
-				inds[i]="dhx_filter["+inds[i]+"]="+encodeURIComponent(vals[i]);
-			this._connector_filter="&"+inds.join("&");
-			return combine_urls.call(this,url);
-		};
-		this.attachEvent("onCollectValues",function(ind){
-			if (this._con_f_used[ind]){
-				if (typeof(this._con_f_used[ind]) == "object")
-					return this._con_f_used[ind];
-				else
-					return false;
-			}
-			return true;
-		});	
-		this.attachEvent("onDynXLS",function(){
-				this.xmlFileUrl=combine_urls.call(this,this.xmlFileUrl);
-				return true;
-		});				
-		this.attachEvent("onBeforeSorting",function(ind,type,dir){
-			if (type=="connector"){
-				var self=this;
-				this.clearAndLoad(sorting_url.call(this,this.xmlFileUrl,ind,dir),function(){
-					self.setSortImgState(true,ind,dir);
-				});
-				return false;
-			}
-			return true;
-		});
-		this.attachEvent("onFilterStart",function(a,b){
-			if (this._con_f_used.length){
-				this.clearAndLoad(filtering_url.call(this,this.xmlFileUrl,a,b));
-				return false;
-			}
-			return true;
-		});
-		this.attachEvent("onXLE",function(a,b,c,xml){
-			if (!xml) return;
-		});
-		
-		if (this._init_point_connector) this._init_point_connector();
-	};
-	dhtmlXGridObject.prototype._con_f_used=[];
-	dhtmlXGridObject.prototype._in_header_connector_text_filter=function(t,i){
-		if (!this._con_f_used[i])
-			this._con_f_used[i]=1;
-		return this._in_header_text_filter(t,i);
-	};
-	dhtmlXGridObject.prototype._in_header_connector_select_filter=function(t,i){
-		if (!this._con_f_used[i])
-			this._con_f_used[i]=2;
-		return this._in_header_select_filter(t,i);
-	};
-	dhtmlXGridObject.prototype.load_connector=dhtmlXGridObject.prototype.load;
-	dhtmlXGridObject.prototype.load=function(url, call, type){
-		var data = [].concat(arguments);
-		if (!this._colls_loaded && this.cellType){
-			var ar=[];
-			for (var i=0; i < this.cellType.length; i++)
-				if (this.cellType[i].indexOf("co") === 0 || this._con_f_used[i]==2) ar.push(i);
-			if (ar.length)
-				data[0] += (data[0].indexOf("?")!=-1?"&":"?")+"connector=true&dhx_colls="+ar.join(",");
-		}
-		return this.load_connector.apply(this, data);
-	};
-	dhtmlXGridObject.prototype._parseHead_connector=dhtmlXGridObject.prototype._parseHead;
-	dhtmlXGridObject.prototype._parseHead=function(url, call, type){
-		this._parseHead_connector.apply(this,arguments);
-		if (!this._colls_loaded){
-			var cols = this.xmlLoader.doXPath("./coll_options", arguments[0]);
-			for (var i=0; i < cols.length; i++){
-				var f = cols[i].getAttribute("for");
-				var v = [];
-				var combo=null;
-				if (this.cellType[f] == "combo")
-					combo = this.getColumnCombo(f);
-				if (this.cellType[f].indexOf("co") === 0)
-					combo=this.getCombo(f);
-					
-				var os = this.xmlLoader.doXPath("./item",cols[i]);
-				for (var j=0; j<os.length; j++){
-					var val=os[j].getAttribute("value");
-					
-					if (combo){
-						var lab=os[j].getAttribute("label")||val;
-						
-						if (combo.addOption)
-							combo.addOption([[val, lab]]);
-						else
-							combo.put(val,lab);
-							
-						v[v.length]=lab;
-					} else
-						v[v.length]=val;
-				}
-				if (this._con_f_used[f*1])
-					this._con_f_used[f*1]=v;
-			}
-			this._colls_loaded=true;
-		}
-	};
-}
 
-if (window.dataProcessor){
+//(c)dhtmlx ltd. www.dhtmlx.com
+if (window.dataProcessor && !dataProcessor.prototype.init_original){
 	dataProcessor.prototype.init_original=dataProcessor.prototype.init;
 	dataProcessor.prototype.init=function(obj){
 		this.init_original(obj);
 		obj._dataprocessor=this;
-		
+
 		this.setTransactionMode("POST",true);
 		this.serverProcessor+=(this.serverProcessor.indexOf("?")!=-1?"&":"?")+"editing=true";
 	};
 }
-dhtmlxError.catchError("LoadXML",function(a,b,c){
-    if (c[0].status) {
-        window.alert(c[0].responseText);
-    }
+
+dhtmlxError.catchError("LoadXML", function(a, b, c){
+	var message = c[0].responseText;
+
+	switch (scheduler.config.ajax_error){
+		case "alert":
+			window.alert(message);
+			break;
+		case "console":
+			window.console.log(message);
+			break;
+		default:
+			break;
+	}
 });
 
 
@@ -2125,6 +2072,7 @@ scheduler.set_actions=function(){
 };
 scheduler.select=function(id){
 	if (this._select_id==id) return;
+	scheduler._close_not_saved();
 	this.editStop(false);
 	this.unselect();
 	this._select_id = id;
@@ -2525,6 +2473,7 @@ scheduler._on_mouse_move=function(e){
 
 			// fix event dates when resized to bottom of the column (day/week views)
 			if(!this._table_view &&
+				!scheduler.config.all_timed &&
 				(pos.x != this._get_event_sday({start_date: new Date(end), end_date:new Date(end)}) || new Date(end).getHours() >= this.config.last_hour)){
 				var duration = end - new_start;
 				var day = this._min_date.valueOf()+(pos.x*24*60)*60000;
@@ -2650,6 +2599,10 @@ scheduler._on_mouse_up=function(e){
 	if (this._drag_mode && this._drag_id){
 		this._els["dhx_cal_data"][0].style.cursor="default";
 		//drop
+
+		var drag_id = this._drag_id;
+		var mode = this._drag_mode;
+
 		var ev=this.getEvent(this._drag_id);
 		if (this._drag_event._dhx_changed || !this._drag_event.start_date || ev.start_date.valueOf()!=this._drag_event.start_date.valueOf() || ev.end_date.valueOf()!=this._drag_event.end_date.valueOf()){
 			var is_new=(this._drag_mode=="new-size");
@@ -2663,8 +2616,7 @@ scheduler._on_mouse_up=function(e){
 					this.updateEvent(ev.id);
 				}
 			} else {
-				var drag_id = this._drag_id;
-				var mode = this._drag_mode;
+
 				this._drag_id = this._drag_mode = null;
 				if (is_new && this.config.edit_on_create){
 					this.unselect();
@@ -2683,7 +2635,7 @@ scheduler._on_mouse_up=function(e){
 			}
 		}
 		if (this._drag_pos) this.render_view_data(); //redraw even if there is no real changes - necessary for correct positioning item after drag
-		scheduler.callEvent("onDragEnd", [this._drag_id, this._drag_mode, e]);
+		scheduler.callEvent("onDragEnd", [drag_id, mode, e]);
 	}
 	this._drag_id = null;
 	this._drag_mode=null;
@@ -2829,10 +2781,10 @@ scheduler._calc_scale_sizes = function(width, from, to){
 		}
 		summ-=this._cols[i];
 		this._colsS[i]=(this._cols[i-1]||0)+(this._colsS[i-1]||(this._table_view?0:this.xy.scale_width+2));
-		this._colsS['col_length'] = count;
 	}
+	this._colsS['col_length'] = count;
 
-	this._colsS[count]=this._cols[count-1]+this._colsS[count-1];
+	this._colsS[count] = (this._cols[count-1]+this._colsS[count-1]) || 0;
 };
 scheduler._set_scale_col_size = function(div, width, left){
 	var c = this.config;
@@ -2932,7 +2884,7 @@ scheduler._reset_scale=function(){
 			var c1 = document.createElement("DIV");
 			c1.className = dhx_multi_day;
 			c1.style.visibility="hidden";
-			this.set_xy(c1, this._colsS[this._colsS.col_length]+this.xy.scroll_width, 0, 0, top); // 2 extra borders, dhx_header has -1 bottom margin
+			this.set_xy(c1, Math.max(this._colsS[this._colsS.col_length]+this.xy.scroll_width - 2, 0), 0, 0, top); // 2 extra borders, dhx_header has -1 bottom margin
 			data_area.parentNode.insertBefore(c1,data_area);
 			
 			var c2 = c1.cloneNode(true);
@@ -3352,8 +3304,16 @@ scheduler.date={
 				break;
 			case "month": ndate.setMonth(ndate.getMonth()+inc); break;
 			case "year": ndate.setYear(ndate.getFullYear()+inc); break;
-			case "hour": ndate.setHours(ndate.getHours()+inc); break;
-			case "minute": ndate.setMinutes(ndate.getMinutes()+inc); break;
+			case "hour":
+				/*
+				 setHour(getHour() + inc) and setMinutes gives weird result when is applied on a Daylight Saving time switch
+				 setTime seems working as expected
+				*/
+				ndate.setTime(ndate.getTime() + inc * 60 * 60 * 1000);
+				break;
+			case "minute":
+				ndate.setTime(ndate.getTime() + inc * 60 * 1000);
+				break;
 			default:
 				return scheduler.date["add_"+mode](date,inc,mode);
 		}
@@ -3586,7 +3546,10 @@ scheduler.config={
 		]
 	},
 	highlight_displayed_event: true,
-	left_border: false
+	left_border: false,
+
+	ajax_error: "alert",//"ignore"|"console"
+	delay_render: 0
 };
 scheduler.templates={};
 scheduler.init_templates=function(){
@@ -3663,6 +3626,13 @@ scheduler._events = {};
 scheduler.clearAll = function() {
 	this._events = {};
 	this._loaded = {};
+
+	this._edit_id = null;
+	this._select_id = null;
+	this._drag_id = null;
+	this._drag_mode = null;
+	this._drag_pos = null;
+
 	this.clear_view();
 	this.callEvent("onClearAll", []);
 };
@@ -4025,13 +3995,16 @@ scheduler._pre_render_events = function(evs, hold) {
 					multi_day_icon.style.visibility = (h[0] == -1 ? "hidden" : "visible");
 					multi_day_icon.className = h[0] ? "dhx_multi_day_icon" : "dhx_multi_day_icon_small";
 					this._dy_shift = (h[0] + 1) * hb;
+					if(this.config.multi_day_height_limit){
+						this._dy_shift = Math.min(this.config.multi_day_height_limit, this._dy_shift);
+					}
 					h[0] = 0;
 
 					if (used_multi_day_height != full_multi_day_height) {
 						data.style.top = (parseInt(data.style.top) + 2) + "px";
 
 						multi_day_section.style.overflowY = "auto";
-						multi_day_section.style.width = (parseInt(multi_day_section.style.width) - 2) + "px";
+					//	multi_day_section.style.width = (parseInt(this._els["dhx_cal_navline"][0].style.width)) + "px";
 
 						multi_day_icon.style.position = "fixed";
 						multi_day_icon.style.top = "";
@@ -4327,10 +4300,15 @@ scheduler.updateEvent = function(id) {
 	this.clear_event(id);
 
 	if (ev && this.is_visible_events(ev) && this.filter_event(id, ev) && (this._table_view || this.config.multi_day || ev._timed)) {
-		if (this.config.update_render)
+		if (this.config.update_render){
 			this.render_view_data(); 
-		else
-			this.render_view_data([ev], true);
+		}else{
+			if(this.getState().mode == "month" && !this.getState().drag_id && !this.isOneDayEvent(ev)){
+				this.render_view_data();
+			}else{
+				this.render_view_data([ev], true);
+			}
+		}
 	}
 };
 scheduler.clear_event = function(id) {
@@ -4789,12 +4767,25 @@ scheduler._load = function(url, from) {
 };
 scheduler.on_load = function(loader) {
 	var evs;
+	var error = false;
 	if (this._process && this._process != "xml") {
-		evs = this[this._process].parse(loader.xmlDoc.responseText);
+		try{
+			evs = this[this._process].parse(loader.xmlDoc.responseText);
+		}catch (e){
+			error = true;
+		}
 	} else {
 		evs = this._magic_parser(loader);
+		if(!evs){
+			error = true;
+		}
 	}
 
+	if(error){
+		this.callEvent("onLoadError", [loader.xmlDoc]);
+		evs = [];
+	}
+	
 	scheduler._process_loading(evs);
 
 	this.callEvent("onXLE", []);
@@ -4909,7 +4900,7 @@ scheduler._magic_parser = function(loader) {
 	}
 
 	xml = loader.getXMLTopNode("data");
-	if (xml.tagName != "data") return [];//not an xml
+	if (xml.tagName != "data") return null;//not an xml
 	var skey = xml.getAttribute("dhx_security");
 	if (skey)
 		dhtmlx.security_key = skey;
@@ -5643,6 +5634,12 @@ scheduler.getLightbox=function(){ //scheduler.config.wide_form=true;
 	}
 	return this._lightbox;
 };
+
+scheduler.attachEvent("onEventIdChange", function(old_id, new_id){
+	if(this._lightbox_id == old_id)
+		this._lightbox_id = new_id;
+});
+
 scheduler._lightbox_template="<div class='dhx_cal_ltitle'><span class='dhx_mark'>&nbsp;</span><span class='dhx_time'></span><span class='dhx_title'></span></div><div class='dhx_cal_larea'></div>";
 
 scheduler._init_touch_events = function(){
@@ -6145,3 +6142,59 @@ if (window.jQuery){
 })(jQuery);
 
 }
+(function(){
+
+	var setCurrentView = scheduler.setCurrentView,
+		updateView = scheduler.updateView;
+	var update_view_timer = null,
+		curr_view_timer = null;
+
+	var lazy_setCurrentView = function(date, mode){
+		var self = this;
+		window.clearTimeout(curr_view_timer);
+		window.clearTimeout(update_view_timer);
+
+		updateFlags(this, date, mode);
+
+		curr_view_timer = setTimeout(function(){
+
+			if (!self.callEvent("onBeforeViewChange", [self._mode, self._date, mode || self._mode, date || self._date])) return;
+			updateView.call(self, date, mode);
+			self.callEvent("onViewChange", [self._mode, self._date]);
+
+			window.clearTimeout(update_view_timer);
+			curr_view_timer = 0;
+		}, scheduler.config.delay_render);
+	};
+	var lazy_updateView = function(date, mode){
+		var self = this,
+			ars = arguments;
+
+		updateFlags(this, date, mode);
+
+		window.clearTimeout(update_view_timer);
+		update_view_timer = setTimeout(function(){
+			if(curr_view_timer)
+				return;
+
+			updateView.apply(self, ars);
+		}, scheduler.config.delay_render);
+	};
+	function updateFlags(scheduler, date, mode){
+		if(date)
+			scheduler._date = date;
+		if(mode)
+			scheduler._mode = mode;
+
+	}
+	scheduler.attachEvent("onSchedulerReady", function(){
+		if(scheduler.config.delay_render){
+			scheduler.setCurrentView = lazy_setCurrentView;
+			scheduler.updateView = lazy_updateView;
+		}else{
+			scheduler.setCurrentView = setCurrentView;
+			scheduler.updateView = updateView;
+		}
+	});
+
+})();

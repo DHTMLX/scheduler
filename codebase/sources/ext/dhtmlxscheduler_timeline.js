@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.1.0 Stardard
+dhtmlxScheduler v.4.2.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -136,8 +136,13 @@ scheduler.createTimelineView=function(obj){
 	scheduler.callEvent("onOptionsLoad",[obj]);
 
 	//init custom wrappers
-	scheduler[obj.name+"_view"]=function(){
-		scheduler._renderMatrix.apply(obj, arguments);
+	scheduler[obj.name+"_view"]=function(enable){
+		if(enable){
+			scheduler._table_view = true;
+			//_renderMatrix will be called by render_data immediately after
+		}else{
+			scheduler._renderMatrix.apply(obj, arguments);
+		}
 	};
 
 	//enable drag for non-cell modes
@@ -586,7 +591,8 @@ function y_scale(d) {
 	this._step = step;
 	this._summ = summ;
 
-	var heights = scheduler._colsS.heights=[]; 
+	var heights = scheduler._colsS.heights=[];
+	var render_stats = [];
 
 	this._events_height = {};
 	this._section_height = {};
@@ -606,13 +612,18 @@ function y_scale(d) {
 			this._section_height[this.y_unit[i].key] = stats.height;
 		}
 
+
+		if(!stats.td_className){
+			stats.td_className = "dhx_matrix_scell"+((scheduler.templates[this.name+"_scaley_class"](this.y_unit[i].key, this.y_unit[i].label, this.y_unit[i]))?" "+scheduler.templates[this.name+"_scaley_class"](this.y_unit[i].key, this.y_unit[i].label, this.y_unit[i]):'');
+		}
+		if(!stats.td_content){
+			stats.td_content = scheduler.templates[this.name+'_scale_label'](this.y_unit[i].key, this.y_unit[i].label, this.y_unit[i]);
+		}
 		scheduler._merge(stats, {
 			//section 1
 			tr_className: "",
 			style_height: "height:"+stats.height+"px;",
 			style_width: "width:"+(this.dx-1)+"px;",
-			td_className: "dhx_matrix_scell"+((scheduler.templates[this.name+"_scaley_class"](this.y_unit[i].key, this.y_unit[i].label, this.y_unit[i]))?" "+scheduler.templates[this.name+"_scaley_class"](this.y_unit[i].key, this.y_unit[i].label, this.y_unit[i]):''),
-			td_content: scheduler.templates[this.name+'_scale_label'](this.y_unit[i].key, this.y_unit[i].label, this.y_unit[i]),
 			//section 2
 			summ_width: "width:"+summ+"px;",
 			//section 3
@@ -658,9 +669,11 @@ function y_scale(d) {
 			html+="</div></td>";
 		}
 		html+="</tr>";
+		render_stats.push(stats);
 	}
 	html += "</table>";
 	this._matrix = evs;
+
 	//d.scrollTop = 0; //fix flickering in FF;  disabled as it was impossible to create dnd event if scroll was used (window jumped to the top)
 	d.innerHTML = html;
 
@@ -671,10 +684,15 @@ function y_scale(d) {
 			scheduler._rendered.push(divs[i]);
 
 	this._scales = {};
-	for (var i=0; i < d.firstChild.rows.length; i++) {
-		heights.push(d.firstChild.rows[i].offsetHeight);
-		var unit_key = this.y_unit[i].key;
-		var scale = this._scales[unit_key] = (scheduler._isRender('cell')) ? d.firstChild.rows[i] : d.firstChild.rows[i].childNodes[1].getElementsByTagName('div')[0];
+	var rows = d.firstChild.rows;
+	var unit = null;
+	for (var i= 0, len = render_stats.length; i < len; i++) {
+		unit = this.y_unit[i];
+		heights.push(render_stats[i].height);
+
+		//heights.push(rows[i].offsetHeight);
+		var unit_key = unit.key;
+		var scale = this._scales[unit_key] = (scheduler._isRender('cell')) ? rows[i] : rows[i].childNodes[1].getElementsByTagName('div')[0];
 		scheduler.callEvent("onScaleAdd", [scale, unit_key]);
 	}
 }
@@ -1037,6 +1055,13 @@ scheduler.attachEvent("onBeforeDrag", function (event_id, mode, native_event_obj
 scheduler.attachEvent("onEventChanged", function(id, ev) {
 	ev._timed = this.isOneDayEvent(ev);
 });
+
+
+scheduler._is_column_visible = function(date){
+	var mode = scheduler.matrix[scheduler._mode];
+	var start_ind = scheduler._get_date_index(mode, date);
+	return !scheduler._ignores[start_ind];
+};
 var old_render_marked_timespan = scheduler._render_marked_timespan;
 scheduler._render_marked_timespan = function(options, area, unit_id, min_date, max_date) {
 	if (!scheduler.config.display_marked_timespans)
@@ -1076,6 +1101,15 @@ scheduler._render_marked_timespan = function(options, area, unit_id, min_date, m
 
 		var min_date = min_date ? new Date(min_date) : scheduler._min_date;
 		var max_date = max_date ? new Date(max_date) : scheduler._max_date;
+
+		if(min_date.valueOf() < scheduler._min_date.valueOf())
+			min_date = new Date(scheduler._min_date);
+		if(max_date.valueOf() > scheduler._max_date.valueOf())
+			max_date = new Date(scheduler._max_date);
+
+		if(!scheduler._is_column_visible(min_date))
+			return;
+
 		var dates = [];
 
 		if (options.days > 6) {

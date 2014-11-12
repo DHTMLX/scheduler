@@ -1,4 +1,4 @@
-dhtmlxScheduler v.4.1.0
+dhtmlxScheduler v.4.2.0
 =====================
 
 dhtmlxScheduler is a JavaScript event calendar that allows you to add a Google-like scheduler to your web app or website. Intuitive drag-and-drop interface allows the end users to quickly manage events and appointments in different views: Day, Week, Month, Year, Agenda, Timeline, etc. Very lightweight, highly customizable, and fast, dhtmlxScheduler provides a quick way to add an Ajax-based event calendar on a web page.

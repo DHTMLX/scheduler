@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.1.0 Stardard
+dhtmlxScheduler v.4.2.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -22,14 +22,14 @@ scheduler.form_blocks["multiselect"]={
 			_children[i].checked = false; //unchecking all inputs on the form
 		}
 		
-		function _mark_inputs(ids) { // ids = [ 0: undefined, 1: undefined, 2: true ... ]
+		function _mark_inputs(ids) { // ids = [ 0: undefined, 1: undefined, 2: true, 'custom_name': false ... ]
 			var _children = node.getElementsByTagName('input');
 			for(var i=0;i<_children.length; i++) {
 				_children[i].checked = !! ids[_children[i].value];
 			}			
 		}
 
-		var _ids = [];
+		var _ids = {};
 		if (ev[config.map_to]) {
 			var results = (ev[config.map_to] + "").split(',');
 			for (var i = 0; i < results.length; i++) {
@@ -45,7 +45,7 @@ scheduler.form_blocks["multiselect"]={
 			node.appendChild(divLoading);
 			dhtmlxAjax.get(config.script_url + '?dhx_crosslink_' + config.map_to + '=' + ev.id + '&uid=' + scheduler.uid(), function(loader) {
 				var _result = loader.doXPath("//data/item");
-				var _ids = [];
+				var _ids = {};
 				for (var i = 0; i < _result.length; i++) {
 					_ids[_result[i].getAttribute(config.map_to)] = true;
 				}

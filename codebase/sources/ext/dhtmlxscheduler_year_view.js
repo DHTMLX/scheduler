@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.1.0 Stardard
+dhtmlxScheduler v.4.2.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -308,7 +308,7 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 
 	};
 	scheduler._get_year_day_indexes = function(targetCell){
-		var month = scheduler._locate_year_month_table(targetCell);
+		var month = scheduler._get_year_el_node(targetCell, this._locate_year_month_table);
 		if(!month)
 			return null;
 
@@ -329,7 +329,7 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 			return null;
 	};
 	scheduler._get_year_month_date = function (node){
-		var node = scheduler._locate_year_month_root(node);
+		var node = scheduler._get_year_el_node(node, scheduler._locate_year_month_root);
 		if(!node)
 			return null;
 

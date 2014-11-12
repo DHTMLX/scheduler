@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.1.0 Stardard
+dhtmlxScheduler v.4.2.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -33,15 +33,12 @@ scheduler._make_pasted_event = function(ev){
 	copy.end_date = new Date(copy.start_date.valueOf() + event_duration);
 
 	if(section){
-		var state = scheduler.getState().mode,
-			property = null;
-
-		if(scheduler.matrix[state]){
-			property = scheduler.matrix[state].y_property;
-		}else if(scheduler._props[state]){
-			property = scheduler._props[state].property;
-		}
-		copy[property] = section;
+		var property = scheduler._get_section_property();
+		
+		if(scheduler.config.multisection)
+			copy[property] = ev[property]; // save initial set of resources for multisection view
+		else
+			copy[property] = section;
 	}
 	return copy;
 };
