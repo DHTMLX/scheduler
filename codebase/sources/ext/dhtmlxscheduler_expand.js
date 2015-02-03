@@ -1,11 +1,13 @@
 /*
-dhtmlxScheduler v.4.2.0 Stardard
+dhtmlxScheduler v.4.3.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
 */
 scheduler.expand = function() {
+	if(!scheduler.callEvent("onBeforeExpand", []))
+		return;
 	var t = scheduler._obj;
 	do {
 		t._position = t.style.position || "";
@@ -27,8 +29,11 @@ scheduler.expand = function() {
 	document.body._overflow = document.body.style.overflow || "";
 	document.body.style.overflow = "hidden";
 	scheduler._maximize();
+	scheduler.callEvent("onExpand", []);
 };
 scheduler.collapse = function() {
+	if(!scheduler.callEvent("onBeforeCollapse", []))
+		return;
 	var t = scheduler._obj;
 	do {
 		t.style.position = t._position;
@@ -38,6 +43,7 @@ scheduler.collapse = function() {
 	t.style.height = t._height;
 	document.body.style.overflow = document.body._overflow;
 	scheduler._maximize();
+	scheduler.callEvent("onCollapse", []);
 };
 scheduler.attachEvent("onTemplatesReady", function() {
 	var t = document.createElement("DIV");

@@ -277,6 +277,8 @@ class JSONCommonDataItem extends DataItem{
 		for ($i=0; $i<sizeof($this->config->text); $i++){
 			$extra = $this->config->text[$i]["name"];
 			$data[$extra]=$this->data[$extra];
+			if (is_null($data[$extra]))
+			    $data[$extra] = "";
 		}
 
 		if ($this->userdata !== false)
@@ -366,6 +368,7 @@ class TreeCommonDataItem extends CommonDataItem{
 
 class TreeDataConnector extends DataConnector{
 	protected $parent_name = 'parent';
+	public $rootId = "0";
 
 	/*! constructor
 		
@@ -395,7 +398,7 @@ class TreeDataConnector extends DataConnector{
 		if (isset($_GET[$this->parent_name]))
 			$this->request->set_relation($_GET[$this->parent_name]);
 		else
-			$this->request->set_relation("0");
+            $this->request->set_relation($this->rootId);
 
 		$this->request->set_limit(0,0); //netralize default reaction on dyn. loading mode
 	}
@@ -403,7 +406,10 @@ class TreeDataConnector extends DataConnector{
 	/*! renders self as  xml, starting part
 	*/
 	protected function xml_start(){
-		$attributes = " parent='".$this->request->get_relation()."' ";
+		$attributes = " ";
+		if (!$this->rootId || $this->rootId != $this->request->get_relation())
+			$attributes = " parent='".$this->request->get_relation()."' ";
+
 		foreach($this->attributes as $k=>$v)
 			$attributes .= " ".$k."='".$v."'";
 
@@ -426,7 +432,9 @@ class JSONTreeDataConnector extends TreeDataConnector{
 		if ($this->simple) return $result;
 
 		$data = array();
-		$data["parent"] = $this->request->get_relation();
+		if (!$this->rootId || $this->rootId != $this->request->get_relation())
+			$data["parent"] = $this->request->get_relation();
+
 		$data["data"] = $result;
 
         $this->fill_collections();

@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.2.0 Stardard
+dhtmlxScheduler v.4.3.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -23,7 +23,14 @@ scheduler.form_blocks['combo']={
 			});
 			function resetCombo(){
 				if(node._combo && node._combo.DOMParent) {
-					node._combo.destructor();
+					var combo = node._combo;
+					if(combo.unload){
+						combo.unload();
+					}else if(combo.destructor){
+						combo.destructor();
+					}
+					// dhtmlxCombo 4.1.0 bug
+					combo.DOMParent = combo.DOMelem = null;
 				}
 			}
 		})();

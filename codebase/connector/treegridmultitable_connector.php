@@ -11,7 +11,6 @@ class TreeGridMultitableConnector extends TreeGridConnector{
 		$data_type="TreeGridMultitableDataProcessor";
 		if (!$render_type) $render_type="MultitableTreeRenderStrategy";
 		parent::__construct($res,$type,$item_type,$data_type,$render_type);
-		$this->render->set_separator("%23");
 	}
 
 	public function render(){

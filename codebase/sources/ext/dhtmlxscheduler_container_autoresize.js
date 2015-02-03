@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.2.0 Stardard
+dhtmlxScheduler v.4.3.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -12,8 +12,11 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 
 	var old_pre_render_event = scheduler._pre_render_events;
 
+	//need for temporary disabling without modifying public config
+	var active = true;
+
 	scheduler._pre_render_events = function(evs, hold) {
-		if (!scheduler.config.container_autoresize) {
+		if (!(scheduler.config.container_autoresize && active)) {
 			return old_pre_render_event.apply(this, arguments);
 		}
 
@@ -142,6 +145,9 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 	};
 
 	var conditionalUpdateContainerHeight = function() {
+		if(!(scheduler.config.container_autoresize && active))
+			return true;
+
 		var mode = scheduler.getState().mode;
 
 		updateContainterHeight();
@@ -161,4 +167,14 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 	scheduler.attachEvent("onAfterSchedulerResize", conditionalUpdateContainerHeight);
 	scheduler.attachEvent("onClearAll", conditionalUpdateContainerHeight);
 
+	//disable container autoresize when expanded
+	scheduler.attachEvent("onBeforeExpand", function(){
+		active = false;
+		return true;
+	});
+
+	scheduler.attachEvent("onBeforeCollapse", function(){
+		active = true;
+		return true;
+	});
 })();

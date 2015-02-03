@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.2.0 Stardard
+dhtmlxScheduler v.4.3.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -26,10 +26,16 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 	}
 	var first = true;
 	scheduler.attachEvent("onBeforeViewChange",function(om,od,m,d){
+		// if Url plugin is enabled - explicit url values should have more priority than cookies
+		if (first && scheduler._get_url_nav){
+			var url_nav = scheduler._get_url_nav();
+			if(url_nav.date || url_nav.mode || url_nav.event){
+				first = false;
+			}
+		}
+
 		if (first){
 			first = false;
-
-
 
 			var data=getCookie("scheduler_settings");
 			if (data){

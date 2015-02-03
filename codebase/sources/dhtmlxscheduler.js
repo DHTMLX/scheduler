@@ -1,11 +1,11 @@
 /*
-dhtmlxScheduler v.4.2.0 Stardard
+dhtmlxScheduler v.4.3.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
 */
-window.dhtmlXScheduler = window.scheduler = { version: "4.2.0" };
+window.dhtmlXScheduler = window.scheduler = { version: "4.3.0" };
 
 if (!window.dhtmlx) {
 	dhtmlx = function(obj){
@@ -834,12 +834,14 @@ function dhtmlXHeir(a, b){
     return a;
 }
 
-function dhtmlxEvent(el, event, handler){
-    if (el.addEventListener)
-        el.addEventListener(event, handler, false);
+if(typeof (window.dhtmlxEvent) == 'undefined'){
+    window.dhtmlxEvent = function dhtmlxEvent(el, event, handler){
+        if (el.addEventListener)
+            el.addEventListener(event, handler, false);
 
-    else if (el.attachEvent)
-        el.attachEvent("on"+event, handler);
+        else if (el.attachEvent)
+            el.attachEvent("on"+event, handler);
+    };
 }
 
 //============= XSL Extension ===================================
@@ -2129,7 +2131,9 @@ scheduler._click={
 				scheduler._click.buttons[mask.split(" ")[1].replace("icon_","")](id);
 		} else{
 			scheduler._close_not_saved();
-			scheduler.unselect();
+			if (new Date().valueOf()-(scheduler._new_event||0) > 500){
+				scheduler.unselect();
+			}
 		}
 	},
 	dhx_cal_prev_button:function(){
@@ -2350,16 +2354,30 @@ scheduler._close_not_saved=function(){
 scheduler._correct_shift=function(start, back){
 	return start-=((new Date(scheduler._min_date)).getTimezoneOffset()-(new Date(start)).getTimezoneOffset())*60000*(back?-1:1);	
 };
+
+scheduler._is_pos_changed = function(old_pos, new_pos){
+	function diff(old_val, new_val, acc){
+		return !!(Math.abs(old_val - new_val) > acc);
+	}
+
+	var delay = 100,
+		d_pos = 5;
+
+	// start drag only if passed some time since mouse down, or if mouse position changed sufficiently
+	return !!(!this._drag_pos.start || (+new Date() - this._drag_pos.start > delay) || diff(old_pos.x, new_pos.x, d_pos) || diff(old_pos.y, new_pos.y, d_pos));
+};
+
 scheduler._on_mouse_move=function(e){
 	if (this._drag_mode){
 		var pos=this._mouse_coords(e);
-		if (!this._drag_pos || pos.force_redraw || this._drag_pos.x!=pos.x || this._drag_pos.y!=pos.y ){
+		if (pos.force_redraw || this._is_pos_changed(this._drag_pos, pos)){
 			var start, end;
 			if (this._edit_id!=this._drag_id)
 				this._close_not_saved();
 				
 			this._drag_pos=pos;
-			
+			this._drag_pos.has_moved = true;
+
 			if (this._drag_mode=="create"){
 				this._close_not_saved();
 				this.unselect(this._select_id);
@@ -2474,7 +2492,7 @@ scheduler._on_mouse_move=function(e){
 			// fix event dates when resized to bottom of the column (day/week views)
 			if(!this._table_view &&
 				!scheduler.config.all_timed &&
-				(pos.x != this._get_event_sday({start_date: new Date(end), end_date:new Date(end)}) || new Date(end).getHours() >= this.config.last_hour)){
+				((!scheduler._get_section_view() && pos.x != this._get_event_sday({start_date: new Date(end), end_date:new Date(end)})) || new Date(end).getHours() >= this.config.last_hour)){
 				var duration = end - new_start;
 				var day = this._min_date.valueOf()+(pos.x*24*60)*60000;
 				end = scheduler.date.date_part(new Date(day));
@@ -2568,6 +2586,8 @@ scheduler._on_mouse_down=function(e,src) {
 		else {
 			this._drag_id= id;
 			this._drag_event = scheduler._lame_clone(this.getEvent(this._drag_id) || {});
+			this._drag_pos = this._mouse_coords(e);
+			this._drag_pos.start = +new Date();
 		}
 	}
 	this._drag_start=null;
@@ -2634,7 +2654,7 @@ scheduler._on_mouse_up=function(e){
 				}
 			}
 		}
-		if (this._drag_pos) this.render_view_data(); //redraw even if there is no real changes - necessary for correct positioning item after drag
+		if (this._drag_pos && (this._drag_pos.has_moved || this._drag_pos === true)) this.render_view_data(); //redraw even if there is no real changes - necessary for correct positioning item after drag
 		scheduler.callEvent("onDragEnd", [drag_id, mode, e]);
 	}
 	this._drag_id = null;
@@ -2720,7 +2740,8 @@ scheduler.setCurrentView = function(date, mode) {
 	this.updateView(date, mode);
 	this.callEvent("onViewChange", [this._mode, this._date]);
 };
-scheduler._render_x_header = function(i,left,d,h){
+scheduler._render_x_header = function(i,left,d,h, offset_top){
+	offset_top = offset_top || 0;
 	//header scale	
 	var head=document.createElement("DIV");
 	head.className = "dhx_scale_bar";
@@ -2736,7 +2757,7 @@ scheduler._render_x_header = function(i,left,d,h){
 		head.className += " dhx_scale_bar_border";
 		left = left+1;
 	}
-	this.set_xy(head, width, this.xy.scale_height-2, left, 0);//-1 for border
+	this.set_xy(head, width, this.xy.scale_height-2, left, offset_top);//-1 for border
 	head.innerHTML=this.templates[this._mode+"_scale_date"](d,this._mode); //TODO - move in separate method
 	h.appendChild(head);
 };
@@ -2827,6 +2848,7 @@ scheduler._render_scales = function(header, data_area){
 
 		left+=this._cols[i];
 		d=this.date.add(d,1,"day");
+		d = this.date.day_start(d);
 	}
 };
 
@@ -2945,6 +2967,8 @@ scheduler._process_ignores = function(sd, n, mode, step, preserve){
 					n++;
 			}
 			ign_date = scheduler.date.add(ign_date, step, mode);
+			if(scheduler.date[mode + '_start'])
+				ign_date = scheduler.date[mode + '_start'](ign_date);
 		}
 	}
 };
@@ -3255,11 +3279,13 @@ scheduler.date={
 			t[s[i]]=i;
 	},
 	date_part:function(date){
+		var old = new Date(date);
 		date.setHours(0);
 		date.setMinutes(0);
 		date.setSeconds(0);
 		date.setMilliseconds(0);
-		if (date.getHours() !== 0)
+		if (date.getHours() && //shift to yesterday on dst
+			(date.getDate() < old.getDate() || date.getMonth() < old.getMonth() || date.getFullYear() < old.getFullYear()) )
 			date.setTime(date.getTime() + 60 * 60 * 1000 * (24 - date.getHours()));
 		return date;
 	},
@@ -3289,8 +3315,9 @@ scheduler.date={
 		var ndate = new Date(date.valueOf());
 
 		ndate.setDate(ndate.getDate() + inc);
-		if (!date.getHours() && ndate.getHours()) //shift to yesterday
-		   ndate.setTime(ndate.getTime() + 60 * 60 * 1000 * (24 - ndate.getHours()));
+		if ((!date.getHours() && ndate.getHours()) &&//shift to yesterday on dst
+			(ndate.getDate() < date.getDate() || ndate.getMonth() < date.getMonth() || ndate.getFullYear() < date.getFullYear()) )
+			ndate.setTime(ndate.getTime() + 60 * 60 * 1000 * (24 - ndate.getHours()));
 		   return ndate;
 	},
 	add:function(date,inc,mode){
@@ -3740,9 +3767,10 @@ scheduler.is_visible_events = function(ev) {
 	var in_visible_range = (ev.start_date < this._max_date && this._min_date < ev.end_date);
 
 	if(in_visible_range){
+
 		//end dates are not between last/first hours
-		var end_dates_visible = (ev.end_date.getHours() >= this.config.first_hour && ev.end_date.getHours() < this.config.last_hour) ||
-							(ev.start_date.getHours() >= this.config.first_hour && ev.start_date.getHours() < this.config.last_hour);
+		var end_dates_visible = (this._table_view || ((ev.end_date.getHours() >= this.config.first_hour && ev.end_date.getHours() < this.config.last_hour) ||
+							(ev.start_date.getHours() >= this.config.first_hour && ev.start_date.getHours() < this.config.last_hour))) ;
 
 		if(end_dates_visible){
 			return true;
@@ -3911,6 +3939,17 @@ scheduler.render_data = function(evs, hold) {
 		}else
 			this.render_event(evs[i]);
 };
+
+scheduler._get_first_visible_cell = function(cells) {
+	for (var i = 0; i < cells.length; i++) {
+		if ((cells[i].className || "").indexOf("dhx_scale_ignore") == -1) {
+			return cells[i];
+		}
+	}
+	// if no visible cell found, return cells[0] to be more tolerant, since it's the original logic
+	return cells[0];
+};
+
 scheduler._pre_render_events = function(evs, hold) {
 	var hb = this.xy.bar_height;
 	var h_old = this._colsS.heights;
@@ -3930,10 +3969,11 @@ scheduler._pre_render_events = function(evs, hold) {
 			if (evl.rows) {
 				for (var i = 0; i < evl.rows.length; i++) {
 					h[i]++;
+					var cells = evl.rows[i].cells;
 					var cellHeight = this._colsS.height - this.xy.month_head_height;
 					if ((h[i]) * hb > cellHeight) { // 22 - height of cell's header
 						//we have overflow, update heights
-						var cells = evl.rows[i].cells;
+
 						var cHeight = cellHeight;
 						if(this.config.max_month_events*1 !== this.config.max_month_events || h[i] <= this.config.max_month_events){
 							cHeight = h[i] * hb;
@@ -3944,9 +3984,10 @@ scheduler._pre_render_events = function(evs, hold) {
 						for (var j = 0; j < cells.length; j++) {
 							cells[j].childNodes[1].style.height = cHeight + "px";
 						}
-						h[i] = (h[i - 1] || 0) + cells[0].offsetHeight;
+					//	h[i] = (h[i - 1] || 0) + cells[0].offsetHeight;
 					}
-					h[i] = (h[i - 1] || 0) + evl.rows[i].cells[0].offsetHeight;
+
+					h[i] = (h[i - 1] || 0) + scheduler._get_first_visible_cell(cells).offsetHeight;
 				}
 				h.unshift(0);
 				if (evl.parentNode.offsetHeight < evl.parentNode.scrollHeight && !scheduler._colsS.scroll_fix && scheduler.xy.scroll_width) {
@@ -5249,6 +5290,9 @@ scheduler.form_blocks={
 
 						if (+end_date == +start_date || (+end_date >= +start_date && (ev.end_date.getHours() !== 0 || ev.end_date.getMinutes() !== 0)))
 							end_date = scheduler.date.add(end_date, 1, "day");
+					}else{
+						start_date = null;
+						end_date = null;
 					}
 
 					s[map[0]].disabled=input.checked;
@@ -5303,6 +5347,15 @@ scheduler.form_blocks={
 
 			ev.start_date=new Date(s[map[3]].value,s[map[2]].value,s[map[1]].value,0,s[map[0]].value);
 			ev.end_date=new Date(s[map[3]+4].value,s[map[2]+4].value,s[map[1]+4].value,0,s[map[0]+4].value);
+
+			if(!(s[map[3]].value && s[map[3]+4].value)){
+				// use the previous date if start/end years are empty (outside lightbox range)
+				var original = this.getEvent(this._lightbox_id);
+				if(original){
+					ev.start_date = original.start_date;
+					ev.end_date = original.end_date;
+				}
+			}
 
 			if (ev.end_date<=ev.start_date) 
 				ev.end_date=scheduler.date.add(ev.start_date,scheduler.config.time_step,"minute");
@@ -5701,13 +5754,46 @@ scheduler._touch_events = function(names, accessor, ignore){
 		}
 	}
 
+	function doMouseMove(e){
+		var dnd = scheduler.getState().drag_mode,
+			timeline = scheduler.matrix ? scheduler.matrix[scheduler._mode] : false;
+
+		var original_render = scheduler.render_view_data;
+		if(dnd == 'create' && timeline){
+			//suppress full redraw of timeline on creating event
+			scheduler.render_view_data = function() {
+				var id = scheduler.getState().drag_id;
+				var ev = scheduler.getEvent(id);
+				var property = timeline.y_property;
+
+				var evs = scheduler.getEvents(ev.start_date, ev.end_date);
+				for(var i = 0; i < evs.length; i++){
+					if(evs[i][property] != ev[property]){
+						evs.splice(i, 1);
+						i--;
+					}
+				}
+				ev._sorder = evs.length - 1;
+				ev._count = evs.length;
+
+				this.render_data([ev], scheduler.getState().mode);
+
+			};
+		}
+
+		scheduler._on_mouse_move(e);
+
+		if(dnd == 'create' && timeline){
+			scheduler.render_view_data = original_render;
+		}
+	}
 	attachTouchEvent(document.body, names[0], function(e){
 		if (ignore(e)) return;
 
 		if (drag_mode){
-			scheduler._on_mouse_move(accessor(e));
+			doMouseMove(accessor(e));
 			scheduler._update_global_tip();
-			if (e.preventDefault)	
+			if (e.preventDefault)
 				e.preventDefault();
 			e.cancelBubble = true;
 			return false;
@@ -6004,6 +6090,17 @@ scheduler._skin_init = function(){
 	this._configure(scheduler.config, scheduler._skin_settings, set);
 	this._configure(scheduler.xy, scheduler._skin_xy, set);
 
+	if (scheduler.skin === "flat"){
+		scheduler.xy.scale_height = 35;
+		scheduler.templates.hour_scale = function(date){
+			var min = date.getMinutes();
+			min = min < 10 ? "0"+min : min;
+			var html = "<span class='dhx_scale_h'>"+ date.getHours() +"</span>"+
+				"<span class='dhx_scale_m'>&nbsp;"+ min +"</span>";
+			return html;
+		};
+	}
+
 	//classic skin need not any further customization
 	if (set) return;
 	
@@ -6082,16 +6179,6 @@ scheduler._skin_init = function(){
 			}
 		}
 
-		if (scheduler.skin && scheduler.skin === "flat"){
-			scheduler.xy.scale_height = 35;
-			scheduler.templates.hour_scale = function(date){
-				var min = date.getMinutes();
-				min = min < 10 ? "0"+min : min;
-				var html = "<span class='dhx_scale_h'>"+ date.getHours() +"</span>"+
-							"<span class='dhx_scale_m'>&nbsp;"+ min +"</span>";
-				return html;
-			};
-		}
 	});
 	scheduler._skin_init = function(){};
 };

@@ -94,13 +94,20 @@ class GridDataItem extends DataItem{
 		for ($i=0; $i < sizeof($this->config->text); $i++){ 
 			$str.="<cell";
 			$name=$this->config->text[$i]["name"];
+			$xmlcontent = false;
 			if (isset($this->cell_attrs[$name])){
 				$cattrs=$this->cell_attrs[$name];
-				foreach ($cattrs as $k => $v)
+				foreach ($cattrs as $k => $v){
 					$str.=" ".$k."='".$this->xmlentities($v)."'";
+					if ($k == "xmlcontent")
+						$xmlcontent = true;
+				}
 			}
 			$value = isset($this->data[$name]) ? $this->data[$name] : '';
-			$str.="><![CDATA[".$value."]]></cell>";
+			if (!$xmlcontent)
+				$str.="><![CDATA[".$value."]]></cell>";
+			else
+				$str.=">".$value."</cell>";
 		}
 		if ($this->userdata !== false)
 			foreach ($this->userdata as $key => $value)

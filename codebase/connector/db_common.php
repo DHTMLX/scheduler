@@ -523,7 +523,7 @@ abstract class DataWrapper{
 		@param config 
 			DataConfig instance
 	*/
-	public function __construct($connection,$config){
+	public function __construct($connection = false,$config = false){
 		$this->config=$config;
 		$this->connection=$connection;
 	}

@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.2.0 Stardard
+dhtmlxScheduler v.4.3.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -37,7 +37,7 @@ scheduler.locale = {
 		button_edit_occurrence: "Modificare una copia",
 
 		/*agenda view extension*/
-		agenda_tab: "Giorno",
+		agenda_tab: "Agenda",
 		date: "Data",
 		description: "Descrizione",
 
@@ -45,7 +45,7 @@ scheduler.locale = {
 		year_tab: "Anni",
 
 		/*week agenda view extension*/
-		week_agenda_tab: "Giorno",
+		week_agenda_tab: "Agenda",
 
 		/*grid view extension*/
 		grid_tab: "Griglia",

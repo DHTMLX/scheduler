@@ -1,4 +1,15 @@
-﻿4.2.0
+4.3.0
+	"Days" mode for Timeline view was added
+	Ability to present units for multiple days in the Units view
+	Add ability to link events using URL extension
+	Several new API events and settings
+	Fixes for DST issues
+	Fixed bug with creating new events on touch devices in Timeline
+
+	Week Agenda, Grid View, Timeline view, Units View, Multisection events are available in Commercial and Enterprise editions only
+
+
+4.2.0
 	Ability to customize the layout of recurring form
 	Updated dhtmlxDataProcessor - REST mode and support of JSON response format
 	Updated D'n'D of the multisection events

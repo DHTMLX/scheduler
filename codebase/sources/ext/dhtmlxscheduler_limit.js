@@ -1,5 +1,5 @@
 /*
-dhtmlxScheduler v.4.2.0 Stardard
+dhtmlxScheduler v.4.3.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -336,11 +336,17 @@ scheduler._temp_limit_scope = function(){
 		};
 		if (!this._table_view) {
 			if (this._props && this._props[this._mode]) { // units view
+
+				var view = this._props[this._mode];
+				var units_l = view.options.length;
+				var start_index = day_index*units_l;
+				var end_index = (day_index+1)*units_l;
+
 				var day_divs = this._els["dhx_cal_data"][0].childNodes;
 				var r_divs = [];
 
-				for (var i=0; i<day_divs.length-1; i++) {
-					var t_day = day_index+i; // as each unit is actually considered +1 day
+				for (var i=start_index; i<end_index; i++) {
+					var t_day = i; // as each unit is actually considered +1 day
 					options.days = t_day;
 					var t_div = scheduler._render_marked_timespan(options, null, t_day)[0];
 					r_divs.push(t_div);
@@ -624,9 +630,17 @@ scheduler._temp_limit_scope = function(){
 
 			if (this._props && this._props[this._mode] && options.sections && options.sections[this._mode]) {
 				var view = this._props[this._mode];
-				index = this._get_section_sday(options.sections[this._mode]);
-				if (view.size && (index > view.position+view.size)) {
-					index = 0;
+				index = view.order[options.sections[this._mode]];
+
+				var inner_index = view.order[options.sections[this._mode]];
+				if(!(view.days > 1)){
+					index = inner_index;
+					if (view.size && (index > view.position+view.size)) {
+						index = 0;
+					}
+				}else{
+					var units_l =view.options.length;
+					index = index*units_l + inner_index;
 				}
 			}
 			area = area ? area : scheduler.locate_holder(index);
@@ -867,6 +881,16 @@ scheduler._temp_limit_scope = function(){
 				}
 			}
 		}
+
+		for (var i in scheduler._marked_timespans.timeline) {
+			for (var j in scheduler._marked_timespans.timeline[i]) {
+				for (var k in scheduler._marked_timespans.timeline[i][j]) {
+					if (k === type) {
+						delete scheduler._marked_timespans.timeline[i][j][k];
+					}
+				}
+			}
+		}
 	};
 	scheduler.deleteMarkedTimespan = function(configuration) {
 		// delete everything
@@ -913,7 +937,7 @@ scheduler._temp_limit_scope = function(){
 		}
 	};
 	scheduler._get_types_to_render = function(common, specific) {
-		var types_to_render = (common) ? scheduler._lame_copy({},common) : {};
+		var types_to_render = (common) ? common : {};
 		for (var type in specific||{} ) {
 			if (specific.hasOwnProperty(type)) {
 				types_to_render[type] = specific[type];
@@ -945,7 +969,16 @@ scheduler._temp_limit_scope = function(){
 			var units = view.options;
 			var index = scheduler._get_unit_index(view, day);
 			var unit = units[index]; // key, label
-			day = scheduler.date.date_part(new Date(this._date)); // for units view actually only 1 day is displayed yet the day variable will change, need to use this._date for all calls
+
+			if(!(view.days > 1)){
+				day = scheduler.date.date_part(new Date(this._date)); // for units view actually only 1 day is displayed yet the day variable will change, need to use this._date for all calls
+			}else{
+				var dx = 24*60*60*1000;
+				var day_ind = Math.floor((day - scheduler._min_date)/dx);
+
+				day = scheduler.date.add(scheduler._min_date, Math.floor(day_ind/units.length), "day"); // to the "same" day for all sections
+				day = scheduler.date.date_part(day);
+			}
 			day_index = day.getDay();
 			day_value = day.valueOf();
 
@@ -964,7 +997,7 @@ scheduler._temp_limit_scope = function(){
 			scheduler._render_marked_timespan(r_configs[i], area, day);
 		}
 	});
-	
+
 	scheduler.dblclick_dhx_marked_timespan = function(e,src){
 		if (!scheduler.config.dblclick_create){
 			scheduler.callEvent("onScaleDblClick",[scheduler.getActionData(e).date,src,e]);
