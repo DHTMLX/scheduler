@@ -1,5 +1,6 @@
 /*
-dhtmlxScheduler v.4.3.0 Stardard
+@license
+dhtmlxScheduler v.4.3.1 
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -31,7 +32,9 @@ scheduler.form_blocks["recurring"] = {
 		if(sns.form){
 			var rec = scheduler.form_blocks["recurring"];
 			var form = rec._get_node(sns.form);
-			return rec._outer_html(form);
+			var html = rec._outer_html(form);
+			form.style.display = 'none';
+			return html;
 		}
 
 		return scheduler.__recurring_template;
@@ -215,7 +218,7 @@ scheduler.form_blocks["recurring"] = {
 			var end = els["end"];
 
 			if(end.length){
-				var has_values = !!end[0].value;
+				var has_values = !!end[0].value && end[0].value != "on";
 				if(has_values){
 					for(var i =0; i < end.length; i++){
 						if(end[i].value == value)

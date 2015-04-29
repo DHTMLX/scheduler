@@ -1,11 +1,12 @@
 /*
-dhtmlxScheduler v.4.3.0 Stardard
+@license
+dhtmlxScheduler v.4.3.1 
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
 */
-window.dhtmlXScheduler = window.scheduler = { version: "4.3.0" };
+window.dhtmlXScheduler = window.scheduler = { version: "4.3.1" };
 
 if (!window.dhtmlx) {
 	dhtmlx = function(obj){
@@ -2349,6 +2350,9 @@ scheduler._close_not_saved=function(){
 		var c=scheduler.locale.labels.confirm_closing;
 
 		scheduler._dhtmlx_confirm(c, scheduler.locale.labels.title_confirm_closing, function() { scheduler.editStop(scheduler.config.positive_closing); });
+		if(c){
+			this._drag_id = this._drag_pos = this._drag_mode = null;
+		}
 	}
 };
 scheduler._correct_shift=function(start, back){
@@ -2360,6 +2364,9 @@ scheduler._is_pos_changed = function(old_pos, new_pos){
 		return !!(Math.abs(old_val - new_val) > acc);
 	}
 
+	if(!(old_pos && this._drag_pos)){
+		return true;
+	}
 	var delay = 100,
 		d_pos = 5;
 
@@ -2374,7 +2381,10 @@ scheduler._on_mouse_move=function(e){
 			var start, end;
 			if (this._edit_id!=this._drag_id)
 				this._close_not_saved();
-				
+
+			if(!this._drag_mode)
+				return;
+
 			this._drag_pos=pos;
 			this._drag_pos.has_moved = true;
 
@@ -2585,6 +2595,12 @@ scheduler._on_mouse_down=function(e,src) {
 			this._drag_mode=this._drag_id=0;
 		else {
 			this._drag_id= id;
+
+			if (this._edit_id!=this._drag_id || (this._edit_id && this._drag_mode == "create"))
+				this._close_not_saved();
+			if(!this._drag_mode)
+				return;
+
 			this._drag_event = scheduler._lame_clone(this.getEvent(this._drag_id) || {});
 			this._drag_pos = this._mouse_coords(e);
 			this._drag_pos.start = +new Date();
@@ -2623,8 +2639,10 @@ scheduler._on_mouse_up=function(e){
 		var drag_id = this._drag_id;
 		var mode = this._drag_mode;
 
+		var moved = !this._drag_pos || this._drag_pos.has_moved;
+
 		var ev=this.getEvent(this._drag_id);
-		if (this._drag_event._dhx_changed || !this._drag_event.start_date || ev.start_date.valueOf()!=this._drag_event.start_date.valueOf() || ev.end_date.valueOf()!=this._drag_event.end_date.valueOf()){
+		if (moved && (this._drag_event._dhx_changed || !this._drag_event.start_date || ev.start_date.valueOf()!=this._drag_event.start_date.valueOf() || ev.end_date.valueOf()!=this._drag_event.end_date.valueOf())){
 			var is_new=(this._drag_mode=="new-size");
 			if (!this.callEvent("onBeforeEventChanged",[ev, e, is_new, this._drag_event])){
 				if (is_new) 
@@ -3315,7 +3333,7 @@ scheduler.date={
 		var ndate = new Date(date.valueOf());
 
 		ndate.setDate(ndate.getDate() + inc);
-		if ((!date.getHours() && ndate.getHours()) &&//shift to yesterday on dst
+		if (inc >= 0 && (!date.getHours() && ndate.getHours()) &&//shift to yesterday on dst
 			(ndate.getDate() < date.getDate() || ndate.getMonth() < date.getMonth() || ndate.getFullYear() < date.getFullYear()) )
 			ndate.setTime(ndate.getTime() + 60 * 60 * 1000 * (24 - ndate.getHours()));
 		   return ndate;
@@ -5017,10 +5035,6 @@ scheduler.attachEvent("onXLE", function() {
 		}
 });
 
-/*
-This software is allowed to use under GPL or you need to obtain Commercial or Enterise License
-to use it in not GPL project. Please contact sales@dhtmlx.com for details
-*/
 scheduler.ical={
 	parse:function(str){
 		var data = str.match(RegExp(this.c_start+"[^\f]*"+this.c_end,""));
@@ -5741,12 +5755,21 @@ scheduler._touch_events = function(names, accessor, ignore){
 		});
 	}
 
-	function check_direction_swipe(s_ev, e_ev, step){
+	function check_direction_swipe(s_ev, e_ev, step, max_dy){
 		if (!s_ev || !e_ev) return;
+
+		var t = s_ev.target;
+		while(t && t != scheduler._obj){
+			t = t.parentNode;
+		}
+		if(t != scheduler._obj){
+			//swipe outside scheduler
+			return;
+		}
 
 		var dy = Math.abs(s_ev.pageY - e_ev.pageY);
 		var dx = Math.abs(s_ev.pageX - e_ev.pageX);
-		if (dx>step && (!dy || (dx/dy > 3))){
+		if (dy < max_dy && dx>step && (!dy || (dx/dy > 3))){
 			if (s_ev.pageX > e_ev.pageX)
 				scheduler._click.dhx_cal_next_button();
 			else
@@ -5799,9 +5822,9 @@ scheduler._touch_events = function(names, accessor, ignore){
 			return false;
 		}
 
-		if (tracker && a_webkit){
-			check_direction_swipe(tracker, accessor(e), 0);
-		}
+		//if (tracker && a_webkit){
+		//	check_direction_swipe(tracker, accessor(e), 0);
+		//}
 
 		tracker = accessor(e);
 		//ignore common and scrolling moves
@@ -5867,10 +5890,26 @@ scheduler._touch_events = function(names, accessor, ignore){
 		
 		if (scroll_mode || drag_mode || !scheduler.config.touch_drag)
 			return;
+
+		var actTask = scheduler._locate_event(document.activeElement);
+		var fakeTask = scheduler._locate_event(fake_event.target);
+		var sourceTask = source? scheduler._locate_event(source.target) : null;
+
+		if(actTask && fakeTask && actTask == fakeTask && actTask != sourceTask)
+		{
+			if(e.preventDefault) {
+				e.preventDefault();
+			}
+			e.cancelBubble = true;
+			scheduler._ignore_next_click = false;
+			scheduler._click.dhx_cal_data(fake_event);
+			source = fake_event;
+			return false;
+		}
 		
 		//there is no target
 		timer = setTimeout(function(){
-			
+
 			drag_mode = true;
 			var target = source.target;
 			if (target && target.className && target.className.indexOf("dhx_body") != -1)
@@ -5878,16 +5917,16 @@ scheduler._touch_events = function(names, accessor, ignore){
 
 			scheduler._on_mouse_down(source, target);
 			if (scheduler._drag_mode && scheduler._drag_mode != "create"){
-				var pos = -1;
+				//var pos = -1;
 				scheduler.for_rendered(scheduler._drag_id, function(node, i) {
-					pos = node.getBoundingClientRect().top;
+				//	pos = node.getBoundingClientRect().top;
 					node.style.display='none';
 					scheduler._rendered.splice(i, 1);
 				});
-				if (pos>=0){
+				/*if (pos>=0){
 					var step = scheduler.config.time_step;
 					scheduler._move_pos_shift = step* Math.round((fake_event.pageY - pos)*60/(scheduler.config.hour_size_px*step));
-				}
+				}*/
 			}
 
 			if (scheduler.config.touch_tip)
@@ -5915,7 +5954,7 @@ scheduler._touch_events = function(names, accessor, ignore){
 		if (ignore(e)) return;
 
 		if (!drag_mode)
-			check_direction_swipe(source, tracker, 200);
+			check_direction_swipe(source, tracker, 200, 100);
 		
 		if (drag_mode)
 			scheduler._ignore_next_click = true;

@@ -1,5 +1,6 @@
 /*
-dhtmlxScheduler v.4.3.0 Stardard
+@license
+dhtmlxScheduler v.4.3.1 
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -338,7 +339,7 @@ scheduler._temp_limit_scope = function(){
 			if (this._props && this._props[this._mode]) { // units view
 
 				var view = this._props[this._mode];
-				var units_l = view.options.length;
+				var units_l = view.size || view.options.length;
 				var start_index = day_index*units_l;
 				var end_index = (day_index+1)*units_l;
 
@@ -639,7 +640,7 @@ scheduler._temp_limit_scope = function(){
 						index = 0;
 					}
 				}else{
-					var units_l =view.options.length;
+					var units_l = view.size || view.options.length;
 					index = index*units_l + inner_index;
 				}
 			}
@@ -673,16 +674,45 @@ scheduler._temp_limit_scope = function(){
 	};
 	// just marks timespan, will be cleaned after refresh
 	scheduler.markTimespan = function(configuration) {
-		var configs = scheduler._prepare_timespan_options(configuration);
-		if (!configs.length)
-			return;
 		var divs = [];
-		for (var i=0; i<configs.length; i++) {
-			var config = configs[i];
-			var blocks = scheduler._render_marked_timespan(config, null, null);
-			if(blocks.length)
-				divs.push.apply(divs, blocks);
+
+		var rebuild_els = false;
+		if(!this._els["dhx_cal_data"]){
+			scheduler.get_elements();
+			rebuild_els = true;
 		}
+		var data = this._els["dhx_cal_data"][0];
+
+		// backup regular marked timespans
+		var timespans_ids = scheduler._marked_timespans_ids,
+			timespan_types = scheduler._marked_timespans_types,
+			timespans = scheduler._marked_timespans;
+
+		scheduler.deleteMarkedTimespan();
+
+		//add block to configs
+		scheduler.addMarkedTimespan(configuration);
+
+		//manually trigger rendering of configs for each column
+		var date = new Date(scheduler._min_date);
+		for(var i = 0, len = data.childNodes.length; i < len; i++){
+			var area = data.childNodes[i];
+			if(area.firstChild && (area.firstChild.className || "").indexOf("dhx_scale_hour") > -1){
+				continue;
+			}
+
+			divs.push.apply(divs, scheduler._on_scale_add_marker(area, date));
+			date = scheduler.date.add(date, 1, "day");
+		}
+
+		if(rebuild_els)
+			scheduler._els = [];
+
+		// restore timespan config
+		scheduler._marked_timespans_ids = timespans_ids;
+		scheduler._marked_timespans_types = timespan_types;
+		scheduler._marked_timespans = timespans;
+
 		return divs;
 	};
 	scheduler.unmarkTimespan = function(divs) {
@@ -954,7 +984,8 @@ scheduler._temp_limit_scope = function(){
 		}
 		return configs;
 	};
-	scheduler.attachEvent("onScaleAdd", function(area, day) {
+
+	scheduler._on_scale_add_marker = function(area, day){
 		if (scheduler._table_view && scheduler._mode != "month")
 			return;
 
@@ -963,7 +994,7 @@ scheduler._temp_limit_scope = function(){
 		var mode = this._mode;
 		var timespans = scheduler._marked_timespans;
 		var r_configs = [];
-
+		var divs = [];
 		if (this._props && this._props[mode]) { // we are in the units view and need to draw it's sections as well
 			var view = this._props[mode]; // units view object
 			var units = view.options;
@@ -994,9 +1025,11 @@ scheduler._temp_limit_scope = function(){
 		r_configs.push.apply(r_configs, scheduler._get_configs_to_render(day_types));
 
 		for (var i=0; i<r_configs.length; i++) {
-			scheduler._render_marked_timespan(r_configs[i], area, day);
+			divs.push.apply(divs, (scheduler._render_marked_timespan(r_configs[i], area, day)));
 		}
-	});
+		return divs;
+	};
+	scheduler.attachEvent("onScaleAdd", scheduler._on_scale_add_marker);
 
 	scheduler.dblclick_dhx_marked_timespan = function(e,src){
 		if (!scheduler.config.dblclick_create){

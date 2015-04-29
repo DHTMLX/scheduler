@@ -1,5 +1,6 @@
 /*
-dhtmlxScheduler v.4.3.0 Stardard
+@license
+dhtmlxScheduler v.4.3.1 
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -107,8 +108,14 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 						height = 0;
 					break;
 				case "dhx_cal_data":
-					height = Math.max(checked_div.offsetHeight - 1, checked_div.scrollHeight);
 					var mode = scheduler.getState().mode;
+
+					if(checked_div.childNodes[1] && mode != "month") {
+						height = checked_div.childNodes[1].offsetHeight;
+					}
+					else {
+						height = Math.max(checked_div.offsetHeight - 1, checked_div.scrollHeight);
+					}
 					if (mode == "month") {
 						if (scheduler.config.month_day_min_height && !is_repaint) {
 							var rows_length = checked_div.getElementsByTagName("tr").length;
