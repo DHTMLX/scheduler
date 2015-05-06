@@ -3001,14 +3001,14 @@ scheduler._render_month_scale = function(div, dd/*month start*/, sd/*view start*
 	this.date.date_part(sd);
 
 	var rows=Math.ceil(Math.round((ed.valueOf()-sd.valueOf()) / (60*60*24*1000) ) / 7);
-	var tdcss=[];
+	var tdwidths=[];
 
 	for (var i=0; i<=7; i++) {
 		var cell_width = ((this._cols[i]||0)-1);
 		if (i === 0 && this.config.left_border) {
 			cell_width = cell_width - 1;
 		}
-		tdcss[i]=" style='width:"+cell_width+"px;";
+		tdwidths[i] = cell_width + "px;";
 	}
 
 	function getCellHeight(row){
@@ -3022,13 +3022,19 @@ scheduler._render_month_scale = function(div, dd/*month start*/, sd/*view start*
 
 	var cellheight = 0;
 
-	var html="<table cellpadding='0' cellspacing='0'>";
+	var table = document.createElement("TABLE");
+	table.setAttribute("cellpadding", "0");
+	table.setAttribute("cellspacing", "0");
+	
 	var rendered_dates = [];
 	for (var i=0; i<rows; i++){
-		html+="<tr>";
+		var row = document.createElement("TR");
+		table.appendChild(row);
+		
 		var row_height = Math.max(getCellHeight(i) - scheduler.xy.month_head_height, 0);
 		for (var j=0; j<7; j++) {
-			html+="<td";
+			var cell = document.createElement("TD");
+			row.appendChild(cell);
 
 			var cls = "";
 			if (sd<dd)
@@ -3042,7 +3048,8 @@ scheduler._render_month_scale = function(div, dd/*month start*/, sd/*view start*
 				cls += " dhx_scale_ignore";
 			}
 
-			html+=" class='"+cls+" "+this.templates.month_date_class(sd,cd)+"' >";
+			cell.className = cls + " " + this.templates.month_date_class(sd, cd);
+			
 			var body_class = "dhx_month_body";
 			var head_class = "dhx_month_head";
 			if (j === 0 && this.config.left_border) {
@@ -3050,10 +3057,19 @@ scheduler._render_month_scale = function(div, dd/*month start*/, sd/*view start*
 				head_class += " dhx_month_head_border";
 			}
 			if (!this._ignores_detected || !this._ignores[j]){
-				html+="<div class='"+head_class+"'>"+this.templates.month_day(sd)+"</div>";
-				html+="<div class='"+body_class+"' "+tdcss[j] + ";height:"+row_height + "px;'></div></td>";
+				var div1 = document.createElement("DIV");
+				div1.className = head_class;
+				div1.innerHTML = this.templates.month_day(sd);
+				cell.appendChild(div1);
+
+				var div2 = document.createElement("DIV");
+				div2.className = body_class;
+				div2.height = row_height + "px";
+				div2.width = tdwidths[j];
+				cell.appendChild(div2);
 			} else {
-				html+="<div></div><div></div>";
+				cell.appendChild(document.createElement("DIV"));
+				cell.appendChild(document.createElement("DIV"));
 			}
 			rendered_dates.push(sd);
 			var bf1 = sd.getDate();
@@ -3061,17 +3077,16 @@ scheduler._render_month_scale = function(div, dd/*month start*/, sd/*view start*
 			if (sd.getDate() - bf1 > 1)
 				sd = new Date(sd.getFullYear(), sd.getMonth(), bf1 + 1, 12, 0);
 		}
-		html+="</tr>";
 
 		scheduler._colsS.heights[i] = cellheight;
 		cellheight += getCellHeight(i);
 	}
-	html+="</table>";
 
 	this._min_date = view_start;
 	this._max_date = sd;
 
-	div.innerHTML=html;
+	div.innerHTML = "";
+	div.appendChild(table);
 
 	this._scales = {};
 	var divs = div.getElementsByTagName('div');
