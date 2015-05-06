@@ -204,7 +204,7 @@ scheduler._render_calendar = function(obj, sd, conf, previous) {
 	year.className = "dhx_year_body";
 	d.appendChild(year);
 	
-	if (week_template != null) {
+	if (week_template != null && week_template.children != null) {
 		for (var i = 0; i < week_template.children.length; i++) {
 			weekDiv.appendChild(week_template.children[i].cloneNode(true));
 		}
