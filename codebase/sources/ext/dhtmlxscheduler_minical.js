@@ -193,8 +193,23 @@ scheduler._render_calendar = function(obj, sd, conf, previous) {
 		d.className = "dhx_cal_container dhx_mini_calendar";
 	}
 	d.setAttribute("date", this.templates.xml_format(sd));
-	d.innerHTML = "<div class='dhx_year_month'></div><div class='dhx_year_week'>" + week_template.innerHTML + "</div><div class='dhx_year_body'></div>";
-
+	d.innerHTML = "";
+	var monthDiv = document.createElement("DIV");
+	monthDiv.className = "dhx_year_month";
+	d.appendChild(monthDiv);
+	var weekDiv = document.createElement("DIV");
+	weekDiv.className = "dhx_year_week";
+	d.appendChild(weekDiv);
+	var year = document.createElement("DIV");
+	year.className = "dhx_year_body";
+	d.appendChild(year);
+	
+	if (week_template != null) {
+		for (var i = 0; i < week_template.children.length; i++) {
+			weekDiv.appendChild(week_template.children[i].cloneNode(true));
+		}
+	}
+	
 	d.childNodes[0].innerHTML = this.templates.calendar_month(sd);
 	if (conf.navigation) {
 		var move_minicalendar_date = function(calendar, diff) {
