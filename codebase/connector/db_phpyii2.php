@@ -3,19 +3,31 @@
 	@author dhtmlx.com
 	@license GPL, see license.txt
 */
-
 require_once("db_common.php");
 
 class PHPYii2DBDataWrapper extends ArrayDBDataWrapper{
 	public function select($sql){
-		if (is_array($this->connection))	//result of findAll
+		if (is_array($this->connection)) {    //result of findAll
 			$res = $this->connection;
-		else
+		}
+		else {
 			/*
 			 * Yii2 specific
 			 */
-			$res = $this->connection->find()->all();
-
+			$filters = $sql->get_filters();
+			if ($filters) {
+				// (╯°□°）╯︵ ┻━┻
+				$query = $this->connection->find();
+				foreach ($filters as $filter) {
+					$query->andFilterWhere([$filter["operation"], $filter["name"], $filter["value"]]);
+				}
+				$res = $query->all();
+				// Please respect tables! ┬─┬ノ(ಠ_ಠノ)
+			}
+			else {
+				$res = $this->connection->find()->all();
+			}
+		}
 		$temp = array();
 		if (sizeof($res)){
 			foreach ($res as $obj)
@@ -23,7 +35,6 @@ class PHPYii2DBDataWrapper extends ArrayDBDataWrapper{
 		}
 		return new ArrayQueryWrapper($temp);
 	}
-
 	protected function getErrorMessage(){
 		$errors = $this->connection->invalidFields();
 		$text = array();
@@ -35,20 +46,24 @@ class PHPYii2DBDataWrapper extends ArrayDBDataWrapper{
 	public function insert($data,$source){
 		$name = get_class($this->connection);
 		$obj = new $name();
-
 		$this->fill_model_and_save($obj, $data);
 	}
 	public function delete($data,$source){
 		/*
 		 * Yii2 specific
 		 */
-		$obj = $this->connection->findOne($data->get_id());
-		if ($obj->delete()){
-			$data->success();
-			$data->set_new_id($obj->getPrimaryKey());
-		} else {
-			$data->set_response_attribute("details", $this->errors_to_string($obj->getErrors()));
-			$data->invalid();
+		if (is_array($data->get_id())) {
+			$this->connection->deleteAll($data->get_id());
+		}
+		else {
+			$obj = $this->connection->findOne($data->get_id());
+			if ($obj->delete()){
+				$data->success();
+				$data->set_new_id($obj->getPrimaryKey());
+			} else {
+				$data->set_response_attribute("details", $this->errors_to_string($obj->getErrors()));
+				$data->invalid();
+			}
 		}
 	}
 	public function update($data,$source){
@@ -57,11 +72,9 @@ class PHPYii2DBDataWrapper extends ArrayDBDataWrapper{
 		 */
 		$obj = $this->connection->findOne($data->get_id());
 		$this->fill_model_and_save($obj, $data);
-	}	
-
+	}
 	protected function fill_model_and_save($obj, $data){
 		$values = $data->get_data();
-
 		//map data to model object
 		for ($i=0; $i < sizeof($this->config->text); $i++){
 			$step=$this->config->text[$i];
@@ -69,7 +82,6 @@ class PHPYii2DBDataWrapper extends ArrayDBDataWrapper{
 		}
 		if ($relation = $this->config->relation_id["db_name"])
 			$obj->setAttribute($relation, $data->get_value($relation));
-
 		//save model
 		if ($obj->save()){
 			$data->success();
@@ -79,7 +91,6 @@ class PHPYii2DBDataWrapper extends ArrayDBDataWrapper{
 			$data->invalid();
 		}
 	}
-
 	protected function errors_to_string($errors){
 		$text = array();
 		foreach($errors as $value)
@@ -96,5 +107,4 @@ class PHPYii2DBDataWrapper extends ArrayDBDataWrapper{
 		throw new Exception("Not implemented");
 	}
 }
-
 ?>

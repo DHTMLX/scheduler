@@ -41,7 +41,7 @@ class DelayedConnector extends Connector{
 	}
 }
 	
-class CrossOptionsConnector extends Connector{
+class CrossOptionsConnector extends Connector {
 	public $options, $link;
 	private $master_name, $link_name, $master_value;
 	
@@ -69,9 +69,10 @@ class CrossOptionsConnector extends Connector{
 			$conn->event->attach("beforeRender", array($this, "getOptions"));
 			$conn->event->attach("beforeRenderSet", array($this, "prepareConfig"));
 		}
-		
-		
-		$conn->event->attach("afterProcessing", array($this, "afterProcessing"));
+
+		// (╯°□°）╯︵ ┻━┻
+		$conn->event->attach("afterProcessing", array($this, "afterProcessing")); // TODO: ??!?!?!
+		$conn->event->attach("beforeProcessing", array($this, "beforeProcessing")); // TODO: ??!?!?!
 	}
 	public function prepareConfig($conn, $res, $config){
 		$config->add_field($this->link_name);
@@ -94,6 +95,8 @@ class CrossOptionsConnector extends Connector{
 		} else
 			$filters->add($this->master_name, $this->master_value, "=");
 	}
+
+	// TODO: We need to understand the behavior of this shit
 	public function afterProcessing($action){
 		$status = $action->get_status();
 		
@@ -105,15 +108,10 @@ class CrossOptionsConnector extends Connector{
 			$master_key = $action->get_new_id();
 			
 		switch ($status){
-			case "deleted":
-				$this->link->delete($master_key);
-				break;
 			case "updated":
 				//cross link options not loaded yet, so we can skip update
 				if (!array_key_exists($this->link_name, $action->get_data()))
 					break;
-				//else, delete old options and continue in insert section to add new values
-				$this->link->delete($master_key);
 			case "inserted":
 				for ($i=0; $i < sizeof($link_key); $i++)
 					if ($link_key[$i]!="")
@@ -124,6 +122,31 @@ class CrossOptionsConnector extends Connector{
 				break;
 		}
 	}
+
+	public function beforeProcessing($action){
+		$status = $action->get_status();
+
+		$master_key = $action->get_id();//value($this->master_name);
+		$link_key = $action->get_value($this->link_name);
+		$link_key = explode(',', $link_key);
+
+		if ($status == "inserted")
+			$master_key = $action->get_new_id();
+
+		switch ($status) {
+			case "deleted":
+				$this->link->delete([$this->master_name => $master_key]);
+				break;
+			case "updated":
+				//cross link options not loaded yet, so we can skip update
+				if (!array_key_exists($this->link_name, $action->get_data()))
+					break;
+				//else, delete old options and continue in insert section to add new values
+				$this->link->delete([$this->master_name => $master_key]);
+				break;
+		}
+	}
+
 }
 
 
