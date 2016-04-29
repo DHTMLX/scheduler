@@ -15,7 +15,8 @@
     "month",
     "day",
     "week",
-    "year"
+    "year",
+    "browser"
   ],
   "author": "DHTMLX",
   "license": "GPL-2.0",
