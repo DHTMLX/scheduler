@@ -1,0 +1,26 @@
+{
+  "name": "dhtmlx-scheduler",
+  "version": "4.3.1",
+  "description": "JavaScript event calendar. Allows to manage events and appointments in different views",
+  "main": "codebase/dhtmlxscheduler.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DHTMLX/scheduler.git"
+  },
+  "keywords": [
+    "calendar",
+    "scheduler",
+    "dhtmlx",
+    "agenda",
+    "month",
+    "day",
+    "week",
+    "year"
+  ],
+  "author": "DHTMLX",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/DHTMLX/scheduler/issues"
+  },
+  "homepage": "https://github.com/DHTMLX/scheduler#readme"
+}
