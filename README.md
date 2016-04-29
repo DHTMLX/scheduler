@@ -20,7 +20,7 @@ Useful links
 -------------
 
 - Online  documentation
-	http://docs.dhtmlx.com/doku.php?id=dhtmlxscheduler:toc
+	http://docs.dhtmlx.com/scheduler/index.html
 - Support forum
 	http://forum.dhtmlx.com/viewforum.php?f=6
 - Skin builder
@@ -32,8 +32,6 @@ Other editions
 
 - MVC.Net edition
 	http://scheduler-net.com
-- Java edition (JSP, Struts, Spring, Grails)
-	http://javaplanner.com
 - Windows8 edition
 	http://dhtmlx.com/download/regular/dhtmlxScheduler_windows.zip
 - Scheduler for mobile devices
