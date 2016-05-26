@@ -5730,7 +5730,7 @@ scheduler._init_touch_events = function(){
 		} else
 			this._touch_events(["touchmove", "touchstart", "touchend"], function(ev){
 				if (ev.touches && ev.touches.length > 1) return null;
-				if (ev.touches[0])
+				if (ev.touches && ev.touches[0])
 					return { target:ev.target, pageX:ev.touches[0].pageX, pageY:ev.touches[0].pageY };
 				else 
 					return ev;
