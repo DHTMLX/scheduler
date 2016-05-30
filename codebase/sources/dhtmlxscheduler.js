@@ -2428,6 +2428,9 @@ scheduler._on_mouse_move=function(e){
 			} 
 
 			var ev=this.getEvent(this._drag_id);
+			if (!ev) {
+				return;
+			}
 			var obj;
 
 			if (this._drag_mode=="move"){
@@ -5505,7 +5508,10 @@ scheduler.startLightbox = function(id, box){
 	this.showCover(box);
 };
 scheduler.endLightbox = function(mode, box){
-	this._edit_stop_event(scheduler.getEvent(this._lightbox_id),mode);
+	var ev = scheduler.getEvent(this._lightbox_id);
+	if (ev) {
+		this._edit_stop_event(ev,mode);
+	}
 	if (mode)
 		scheduler.render_view_data();
 	this.hideCover(box);
