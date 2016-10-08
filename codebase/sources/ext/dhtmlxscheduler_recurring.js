@@ -889,6 +889,8 @@ scheduler.repeat_date = function(ev, stack, non_render, from, to) {
 	to = to || this._max_date;
 
 	var td = new Date(ev.start_date.valueOf());
+	var sh = td.getHours();
+	var eh = new Date(td.valueOf() + ev.event_length * 1000).getHours();
 
 	if (!ev.rec_pattern && ev.rec_type)
 		ev.rec_pattern = ev.rec_type.split("#")[0];
@@ -898,30 +900,33 @@ scheduler.repeat_date = function(ev, stack, non_render, from, to) {
 	while (td < ev.start_date || scheduler._fix_daylight_saving_date(td,from,ev,td,new Date(td.valueOf() + ev.event_length * 1000)).valueOf() <= from.valueOf() || td.valueOf() + ev.event_length * 1000 <= from.valueOf())
 		td = this.date.add(td, 1, ev.rec_pattern);
 	while (td < to && td < ev.end_date) {
+		td.setHours(sh);
 		var timestamp = (scheduler.config.occurrence_timestamp_in_utc) ? Date.UTC(td.getFullYear(), td.getMonth(), td.getDate(), td.getHours(), td.getMinutes(), td.getSeconds()) : td.valueOf();
 		var ch = this._get_rec_marker(timestamp, ev.id);
 		if (!ch) { // unmodified element of series
 			var ted = new Date(td.valueOf() + ev.event_length * 1000);
-			var copy = this._copy_event(ev);
-			//copy._timed = ev._timed;
-			copy.text = ev.text;
-			copy.start_date = td;
-			copy.event_pid = ev.id;
-			copy.id = ev.id + "#" + Math.ceil(timestamp / 1000);
-			copy.end_date = ted;
-
-			copy.end_date = scheduler._fix_daylight_saving_date(copy.start_date, copy.end_date, ev, td, copy.end_date);
-
-			copy._timed = this.isOneDayEvent(copy);
-
-			if (!copy._timed && !this._table_view && !this.config.multi_day) return;
-			stack.push(copy);
-
-			if (!non_render) {
-				this._events[copy.id] = copy;
-				this._rec_temp.push(copy);
+			ted.setHours(eh);
+			if (td < ted) {
+				var copy = this._copy_event(ev);
+				//copy._timed = ev._timed;
+				copy.text = ev.text;
+				copy.start_date = td;
+				copy.event_pid = ev.id;
+				copy.id = ev.id + "#" + Math.ceil(timestamp / 1000);
+				copy.end_date = ted;
+	
+				copy.end_date = scheduler._fix_daylight_saving_date(copy.start_date, copy.end_date, ev, td, copy.end_date);
+	
+				copy._timed = this.isOneDayEvent(copy);
+	
+				if (!copy._timed && !this._table_view && !this.config.multi_day) return;
+				stack.push(copy);
+	
+				if (!non_render) {
+					this._events[copy.id] = copy;
+					this._rec_temp.push(copy);
+				}
 			}
-
 		} else
 		if (non_render) stack.push(ch);
 
