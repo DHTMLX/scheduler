@@ -453,15 +453,13 @@ scheduler.form_blocks["recurring"] = {
 		if (!scheduler._lightbox._rec_init_done)
 			rf._init_set_value(node, value, ev);
 		node.open = !ev.rec_type;
-		if (this._is_modified_occurence(ev))
-			node.blocked = true;
-		else node.blocked = false;
+		node.blocked = this._is_modified_occurence(ev);
 
 		var ds = rf._ds;
 		ds.start = ev.start_date;
 		ds.end = ev._end_date;
 
-		rf.button_click(0, node.previousSibling.firstChild.firstChild, node, node);
+		rf._toggle_block();
 		if (value)
 			rf._set_repeat_code(value, ds);
 	},
@@ -534,7 +532,10 @@ scheduler.form_blocks["recurring"] = {
 	focus:function(node) {
 	},
 	button_click:function(index, el, section, cont) {
-		scheduler.form_blocks.recurring._toggle_block();
+		var block = scheduler.form_blocks.recurring;
+		var cont = block._get_form();
+		if (!cont.blocked)
+			scheduler.form_blocks.recurring._toggle_block();
 	}
 };
 
