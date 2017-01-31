@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.3.1 
+dhtmlxScheduler v.4.4.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -71,6 +71,11 @@ scheduler.form_blocks["recurring"] = {
 
 		if(col.value)
 			return !multiselect ? col.value : [col.value];
+	},
+
+	_get_node_numeric_value: function(els, name){
+		var value = scheduler.form_blocks["recurring"]._get_node_value(els, name);
+		return ((value * 1) || 0);
 	},
 
 	_set_node_value: function(els, name, value){
@@ -249,13 +254,15 @@ scheduler.form_blocks["recurring"] = {
 		var get_rcode = {
 			month:function(code, dates) {
 				var get_value = scheduler.form_blocks["recurring"]._get_node_value;
+				var get_numeric_value = scheduler.form_blocks["recurring"]._get_node_numeric_value;
+
 				if (get_value(els, "month_type") == "d") {
-					code.push(Math.max(1, get_value(els, "month_count")));
+					code.push(Math.max(1, get_numeric_value(els, "month_count")));
 					dates.start.setDate(get_value(els, "month_day"));
 				} else {
-					code.push(Math.max(1, get_value(els, "month_count2")));
+					code.push(Math.max(1, get_numeric_value(els, "month_count2")));
 					code.push( get_value(els, "month_day2"));
-					code.push(Math.max(1, get_value(els, "month_week2")));
+					code.push(Math.max(1, get_numeric_value(els, "month_week2")));
 					if (!scheduler.config.repeat_precise){
 						dates.start.setDate(1);
 					}
@@ -264,8 +271,9 @@ scheduler.form_blocks["recurring"] = {
 			},
 			week:function(code, dates) {
 				var get_value = scheduler.form_blocks["recurring"]._get_node_value;
+				var get_numeric_value = scheduler.form_blocks["recurring"]._get_node_numeric_value;
 
-				code.push(Math.max(1, get_value(els, "week_count")));
+				code.push(Math.max(1, get_numeric_value(els, "week_count")));
 				code.push("");
 				code.push("");
 				var t = [];
@@ -298,9 +306,10 @@ scheduler.form_blocks["recurring"] = {
 			},
 			day:function(code) {
 				var get_value = scheduler.form_blocks["recurring"]._get_node_value;
+				var get_numeric_value = scheduler.form_blocks["recurring"]._get_node_numeric_value;
 
 				if (get_value(els, "day_type") == "d") {
-					code.push(Math.max(1, get_value(els, "day_count")));
+					code.push(Math.max(1, get_numeric_value(els, "day_count")));
 				}
 				else {
 					code.push("week");
@@ -566,11 +575,16 @@ scheduler._rec_temp = [];
 scheduler.attachEvent("onEventIdChange", function(id, new_id) {
 	if (this._ignore_call) return;
 	this._ignore_call = true;
-
+	
 	if(scheduler._rec_markers[id]){
 		//important for for correct work of scheduler.getEvents(from, to) and collision detection
 		scheduler._rec_markers[new_id] = scheduler._rec_markers[id];
 		delete scheduler._rec_markers[id];
+	}
+
+	if(scheduler._rec_markers_pull[id]){
+		scheduler._rec_markers_pull[new_id] = scheduler._rec_markers_pull[id];
+		delete scheduler._rec_markers_pull[id];
 	}
 
 	for (var i = 0; i < this._rec_temp.length; i++) {
@@ -579,6 +593,22 @@ scheduler.attachEvent("onEventIdChange", function(id, new_id) {
 			tev.event_pid = new_id;
 			this.changeEventId(tev.id, new_id + "#" + tev.id.split("#")[1]);
 		}
+	}
+
+	for(var i in this._rec_markers){
+		var tev = this._rec_markers[i];
+		if(tev.event_pid == id){
+			tev.event_pid = new_id;
+			tev._pid_changed = true;
+		}
+	}
+
+	var el = scheduler._rec_markers[new_id];
+	if(el && el._pid_changed) {
+		delete el._pid_changed;
+		setTimeout(function() {
+			scheduler.callEvent("onEventChanged", [new_id, scheduler.getEvent(new_id)]);
+		}, 1);
 	}
 
 	delete this._ignore_call;
@@ -883,12 +913,14 @@ scheduler.transpose_type = function(type) {
 		}
 	}
 };
-scheduler.repeat_date = function(ev, stack, non_render, from, to) {
+scheduler.repeat_date = function(ev, stack, non_render, from, to, maxCount) {
 
 	from = from || this._min_date;
 	to = to || this._max_date;
-
+	var max = maxCount || -1;
 	var td = new Date(ev.start_date.valueOf());
+
+	var visibleCount = 0;
 
 	if (!ev.rec_pattern && ev.rec_type)
 		ev.rec_pattern = ev.rec_type.split("#")[0];
@@ -897,7 +929,7 @@ scheduler.repeat_date = function(ev, stack, non_render, from, to) {
 	scheduler.date["transpose_" + ev.rec_pattern](td, from);
 	while (td < ev.start_date || scheduler._fix_daylight_saving_date(td,from,ev,td,new Date(td.valueOf() + ev.event_length * 1000)).valueOf() <= from.valueOf() || td.valueOf() + ev.event_length * 1000 <= from.valueOf())
 		td = this.date.add(td, 1, ev.rec_pattern);
-	while (td < to && td < ev.end_date) {
+	while (td < to && td < ev.end_date && (max < 0 || visibleCount < max)) {
 		var timestamp = (scheduler.config.occurrence_timestamp_in_utc) ? Date.UTC(td.getFullYear(), td.getMonth(), td.getDate(), td.getHours(), td.getMinutes(), td.getSeconds()) : td.valueOf();
 		var ch = this._get_rec_marker(timestamp, ev.id);
 		if (!ch) { // unmodified element of series
@@ -922,8 +954,15 @@ scheduler.repeat_date = function(ev, stack, non_render, from, to) {
 				this._rec_temp.push(copy);
 			}
 
+			visibleCount++;
+
 		} else
-		if (non_render) stack.push(ch);
+		if (non_render){
+			if(ch.rec_type != "none"){
+				visibleCount++;
+			}
+			stack.push(ch);
+		}
 
 		td = this.date.add(td, 1, ev.rec_pattern);
 	}
@@ -944,13 +983,9 @@ scheduler._fix_daylight_saving_date = function(start_date, end_date, ev, counter
 };
 scheduler.getRecDates = function(id, max) {
 	var ev = typeof id == "object" ? id : scheduler.getEvent(id);
-	var count = 0;
-	var result = [];
+	var recurrings = [];
 	max = max || 100;
-
-	var td = new Date(ev.start_date.valueOf());
-	var from = new Date(td.valueOf());
-
+	
 	if (!ev.rec_type) {
 		return [
 			{ start_date: ev.start_date, end_date: ev.end_date }
@@ -959,34 +994,16 @@ scheduler.getRecDates = function(id, max) {
 	if (ev.rec_type == "none") {
 		return [];
 	}
-	this.transpose_type(ev.rec_pattern);
-	scheduler.date["transpose_" + ev.rec_pattern](td, from);
 
-	while (td < ev.start_date || (td.valueOf() + ev.event_length * 1000) <= from.valueOf())
-		td = this.date.add(td, 1, ev.rec_pattern);
-	while (td < ev.end_date) {
-		var ch = this._get_rec_marker(td.valueOf(), ev.id);
-		var res = true;
-		if (!ch) { // unmodified element of series
-			var sed = new Date(td);
-			var ted = new Date(td.valueOf() + ev.event_length * 1000);
+	scheduler.repeat_date(ev, recurrings, true, ev.start_date, ev.end_date, max);
 
-			ted = scheduler._fix_daylight_saving_date(sed, ted, ev, td, ted);
-
-			result.push({start_date:sed, end_date:ted});
-		} else if(ch.rec_type == "none") {
-			res = false;
-		} else {
-			result.push({ start_date: ch.start_date, end_date: ch.end_date });
-		}
-		
-		td = this.date.add(td, 1, ev.rec_pattern);
-		if (res) {
-			count++;
-			if (count == max)
-				break;
+	var result = [];
+	for(var i = 0; i < recurrings.length; i++){
+		if(recurrings[i].rec_type != "none"){
+			result.push({start_date: recurrings[i].start_date, end_date: recurrings[i].end_date});
 		}
 	}
+
 	return result;
 };
 scheduler.getEvents = function(from, to) {

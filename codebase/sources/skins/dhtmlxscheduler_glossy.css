@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.3.1 Stardard
+dhtmlxScheduler v.4.4.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -10,13 +10,13 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
   position: fixed;
   right: 5px;
   width: 250px;
-  z-index: 1000;
+  z-index: 11;
 }
 .dhtmlx-info {
   min-width: 120px;
   padding: 4px 4px 4px 20px;
   font-family: Tahoma;
-  z-index: 10000;
+  z-index: 14;
   overflow: hidden;
   margin: 5px;
   margin-bottom: 10px;
@@ -44,7 +44,7 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
   background: -moz-linear-gradient(top, #ffffff 1%, #d0d0d0 99%);
   box-shadow: 0px 0px 14px #888;
   font-family: Tahoma;
-  z-index: 20000;
+  z-index: 18;
   border-radius: 6px;
   border: 1px solid #ffffff;
 }
@@ -89,7 +89,7 @@ div.dhx_modal_cover {
   filter: alpha(opacity=20);
   opacity: 0.2;
   position: fixed;
-  z-index: 19999;
+  z-index: 17;
   left: 0px;
   top: 0px;
   width: 100%;
@@ -262,7 +262,7 @@ div.dhx_modal_cover {
 .dhx_cal_event.dhx_cal_editor {
   border: 1px solid #B7A543;
   border-top-style: dotted;
-  z-index: 999;
+  z-index: 10;
   position: absolute;
   overflow: hidden;
 }
@@ -332,7 +332,7 @@ div.icon_delete {
   right: 20px;
   background-color: rgba(255, 255, 255, 0.7);
   color: #000;
-  z-index: 10000;
+  z-index: 14;
   padding: 20px 30px;
   width: 190px;
 }
@@ -360,7 +360,7 @@ div.icon_delete {
   border: 1px solid #B7A64B;
   color: #887A2E;
   position: absolute;
-  z-index: 10001;
+  z-index: 15;
   width: 580px;
   height: 300px;
   box-shadow: 5px 5px 5px #888;
@@ -476,7 +476,7 @@ div.icon_delete {
   width: 100%;
   height: 100%;
   position: absolute;
-  z-index: 10000;
+  z-index: 14;
   top: 0px;
   left: 0px;
   background-color: black;
@@ -577,7 +577,7 @@ div.icon_delete {
 }
 .dhx_minical_popup {
   position: absolute;
-  z-index: 10100;
+  z-index: 16;
   width: 251px;
   height: 175px;
 }
@@ -595,7 +595,7 @@ div.icon_delete {
   height: 18px;
   cursor: pointer;
   background-position: 0px 18px;
-  z-index: 16;
+  z-index: 4;
 }
 .dhx_scheduler_agenda .dhx_cal_data {
   background-image: url(imgs/databg.png);
@@ -677,7 +677,7 @@ div.icon_delete {
   border: 1px solid #BBBBBB;
   background-image: url(imgs/databg.png);
   position: absolute;
-  z-index: 9998;
+  z-index: 12;
   width: 300px;
   height: auto;
   font-family: Tahoma;
@@ -901,8 +901,8 @@ div.icon_delete {
   color: #887A2E;
   cursor: default;
   padding: 10px;
-  position: absolute;
-  z-index: 500;
+  position: fixed;
+  z-index: 9;
   font-family: Tahoma;
   font-size: 8pt;
   opacity: 1;
@@ -935,7 +935,9 @@ div.icon_delete {
 .dhx_cal_light .combo {
   padding: 4px;
 }
-.dhx_cal_light_wide .dhx_combo_box {
+/* dhtmlxCombo v3.x */
+.dhx_cal_light_wide .dhx_combo_box,
+.dhx_cal_light_wide .combo > div {
   width: 608px !important;
   left: 10px;
 }
@@ -1117,7 +1119,7 @@ div.icon_delete {
   border: 2px solid #888;
   border-radius: 5px;
   position: absolute;
-  z-index: 300;
+  z-index: 8;
   background-color: #8e99ae;
   background-color: rgba(98, 107, 127, 0.5);
   padding-left: 7px;
@@ -1190,6 +1192,19 @@ div.icon_delete {
   border-top: 1px solid #B6B6B6;
   border-bottom: 1px solid #b6b6b6;
 }
+/* key nav */
+.dhx_focus_slot {
+  background: #FFE763;
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.3;
+}
+.dhx_cal_container *:focus {
+  outline-style: solid;
+  /*not visible focus outline in ie11*/
+  outline-style: auto;
+}
+/* key nav end*/
 /* bootstrap CSS fix start */
 .dhx_cal_navline div,
 .dhx_cal_header,
@@ -1201,10 +1216,24 @@ div.icon_delete {
 .dhx_multi_day div,
 .dhx_tooltip_line div,
 .dhx_cal_quick_info,
-.dhx_cal_quick_info div {
+.dhx_cal_quick_info div,
+.dhtmlx_modal_box * {
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
+}
+.dhx_cal_light .dhx_wrap_section,
+.dhx_cal_light .dhx_cal_lsection {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+.dhx_cal_data div.dhx_scale_hour,
+.dhx_cal_data table .dhx_matrix_cell,
+.dhx_cal_data table .dhx_matrix_scell {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 .dhx_cal_event div {
   line-height: normal;
@@ -1251,7 +1280,7 @@ div.icon_delete {
   width: 1px;
   overflow: hidden;
   height: 17px;
-  z-index: 20;
+  z-index: 5;
   top: 0px;
 }
 .dhx_cal_prev_button {
@@ -1394,7 +1423,7 @@ div.icon_delete {
 }
 .dhx_cal_drag {
   position: absolute;
-  z-index: 9999;
+  z-index: 13;
   background-color: #FFE763;
   border: 1px solid #B7A543;
   opacity: 0.5;
@@ -1405,7 +1434,7 @@ div.icon_delete {
   width: 128px;
   height: 15px;
   background-image: url(imgs/loading.gif);
-  z-index: 9999;
+  z-index: 13;
 }
 .dhx_multi_day_icon,
 .dhx_multi_day {
@@ -1813,7 +1842,9 @@ div.dhx_menu_icon {
 .dhx_cal_light_wide .dhx_cal_lsection.dhx_cal_checkbox {
   height: 20px;
 }
-.dhx_cal_light_wide .dhx_combo_box {
+/* dhtmlxCombo v3.x */
+.dhx_cal_light_wide .dhx_combo_box,
+.dhx_cal_light_wide .combo > div {
   width: 602px !important;
   left: 0px;
 }
@@ -1892,3 +1923,8 @@ div.dhx_menu_icon {
   background-image: url('imgs_glossy/export_ical.png');
 }
 /* export to PDF and iCal buttons end */
+/* expand */
+.dhx_expand_icon {
+  background-image: url(imgs_glossy/collapse_expand_icon.gif);
+}
+/* expand end */

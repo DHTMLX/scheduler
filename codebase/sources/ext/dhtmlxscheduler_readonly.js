@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.3.1 
+dhtmlxScheduler v.4.4.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -129,9 +129,9 @@ scheduler.attachEvent("onTemplatesReady", function() {
 			this.setLightboxSize();
 			n.onclick = function(e) {
 				var src = e ? e.target : event.srcElement;
-				if (!src.className) src = src.previousSibling;
+				if (!scheduler._getClassName(src)) src = src.previousSibling;
 				if (src && src.className)
-					switch (src.className) {
+					switch (scheduler._getClassName(src)) {
 						case "dhx_cancel_btn":
 							scheduler.callEvent("onEventCancel", [scheduler._lightbox_id]);
 							scheduler._edit_stop_event(scheduler.getEvent(scheduler._lightbox_id), false);
@@ -139,6 +139,33 @@ scheduler.attachEvent("onTemplatesReady", function() {
 							break;
 					}
 			};
+
+			n.onkeydown=function(e){
+				var event = e || window.event;
+				var target = e.target || e.srcElement;
+				var buttonTarget = target.querySelector("[dhx_button]");
+
+				if(!buttonTarget){
+					buttonTarget = target.parentNode.querySelector(".dhx_custom_button, .dhx_readonly");
+				}
+
+				switch((e||event).keyCode){
+					case 32:{//space
+						if ((e||event).shiftKey) return;
+						if(buttonTarget && buttonTarget.click){
+							buttonTarget.click();
+						}
+						break;
+					}
+					case scheduler.keys.edit_cancel:
+						scheduler.cancel_lightbox();
+						break;
+					default:
+						break;
+				}
+
+			};
+
 		}
 		return res;
 	};

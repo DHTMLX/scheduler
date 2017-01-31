@@ -8,6 +8,8 @@ require_once("tools.php");
 /*! manager of data request
 **/
 class DataRequestConfig{
+
+    private $action_mode = "";
 	private $filters;	//!< array of filtering rules
 	private $relation=false;	//!< ID or other element used for linking hierarchy
 	private $sort_by;	//!< sorting field 
@@ -52,6 +54,7 @@ class DataRequestConfig{
 		$this->relation		=$proto->get_relation();
         $this->user = $proto->user;
         $this->version = $proto->version;
+        $this->action_mode = $proto->action_mode;
 	}
 	
 	/*! convert self to string ( for logs )
@@ -68,6 +71,15 @@ class DataRequestConfig{
 		$str.="\nRelation:{$this->relation}";
 		return $str;
 	}
+
+    public function set_action_mode($action_mode) {
+        $this->action_mode = $action_mode;
+        return $this;
+    }
+
+    public function get_action_mode() {
+        return $this->action_mode;
+    }
 
 	/*! returns set of filtering rules
 		@return 
@@ -205,7 +217,6 @@ class DataRequestConfig{
 		if (is_string($value))
 			$value = trim($value);
 		$this->source = $value;
-		if (!$this->source) throw new Exception("Source of data can't be empty");
 	}
 	/*! sets data limits
 		

@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.3.1 
+dhtmlxScheduler v.4.4.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -18,6 +18,7 @@ dhtmlXTooltip.config = {
 
 dhtmlXTooltip.tooltip = document.createElement('div');
 dhtmlXTooltip.tooltip.className = dhtmlXTooltip.config.className;
+scheduler._waiAria.tooltipAttr(dhtmlXTooltip.tooltip);
 
 dhtmlXTooltip.show = function(event, text) { //browser event, text to display
 	if (scheduler.config.touch && !scheduler.config.touch_tooltip) return;
@@ -56,12 +57,12 @@ dhtmlXTooltip.show = function(event, text) { //browser event, text to display
 	var tooltip_width = this.tooltip.offsetWidth;
 	var tooltip_height = this.tooltip.offsetHeight;
 
-	if ((document.body.offsetWidth - actual_x - tooltip_width) < 0) { // tooltip is out of the right page bound
+	if ((document.documentElement.clientWidth - actual_x - tooltip_width) < 0) { // tooltip is out of the right page bound
 		if(tooltip_div_style.removeAttribute)
 			tooltip_div_style.removeAttribute("left");
 		else
 			tooltip_div_style.removeProperty("left");
-		tooltip_div_style.right = (document.body.offsetWidth - actual_x + 2 * (dhxTooltip.config.delta_x||0)) + "px";
+		tooltip_div_style.right = (document.documentElement.clientWidth - actual_x + 2 * (dhxTooltip.config.delta_x||0)) + "px";
 	} else {
 		if (actual_x < 0) {
 			// tooltips is out of the left page bound
@@ -72,12 +73,12 @@ dhtmlXTooltip.show = function(event, text) { //browser event, text to display
 		}
 	}
 
-	if ((document.body.offsetHeight - actual_y - tooltip_height) < 0) { // tooltip is below bottom of the page
+	if ((document.documentElement.clientHeight - actual_y - tooltip_height) < 0) { // tooltip is below bottom of the page
 		if(tooltip_div_style.removeAttribute)
 			tooltip_div_style.removeAttribute("top");
 		else
 			tooltip_div_style.removeProperty("top");
-		tooltip_div_style.bottom = (document.body.offsetHeight - actual_y - 2 * (dhxTooltip.config.delta_y||0)) + "px";
+		tooltip_div_style.bottom = (document.documentElement.clientHeight - actual_y - 2 * (dhxTooltip.config.delta_y||0)) + "px";
 	} else {
 		if (actual_y < 0) {
 			// tooltip is higher then top of the page
@@ -87,6 +88,8 @@ dhtmlXTooltip.show = function(event, text) { //browser event, text to display
 			tooltip_div_style.top = actual_y + "px";
 		}
 	}
+
+	scheduler._waiAria.tooltipVisibleAttr(this.tooltip);
 
 	tooltip_div_style.visibility = "visible";
 	this.tooltip.onmouseleave = function(e){
@@ -117,6 +120,8 @@ dhtmlXTooltip._clearTimeout = function(){
 
 dhtmlXTooltip.hide = function() {
 	if (this.tooltip.parentNode) {
+		scheduler._waiAria.tooltipHiddenAttr(this.tooltip);
+
 		var event_id = this.tooltip.event_id;
 		this.tooltip.event_id = null;
 		this.tooltip.onmouseleave = null;
@@ -136,9 +141,7 @@ dhtmlXTooltip.delay = function(method, object, params, delay) {
 
 dhtmlXTooltip.isTooltip = function(node) {
 	var res = false;
-	if (node.className.split(" ")[0] == "dhtmlXTooltip") {
-		//debugger;
-	}
+
 	while (node && !res) {
 		res = (node.className == this.tooltip.className);
 		node = node.parentNode;
@@ -148,14 +151,7 @@ dhtmlXTooltip.isTooltip = function(node) {
 
 dhtmlXTooltip.position = function(ev) {
 	ev = ev || window.event;
-	if (ev.pageX || ev.pageY) //FF, KHTML
-		return {x:ev.pageX, y:ev.pageY};
-	//IE
-	var d = ((window._isIE) && (document.compatMode != "BackCompat")) ? document.documentElement : document.body;
-	return {
-		x:ev.clientX + d.scrollLeft - d.clientLeft,
-		y:ev.clientY + d.scrollTop - d.clientTop
-	};
+	return {x: ev.clientX, y: ev.clientY};
 };
 
 scheduler.attachEvent("onMouseMove", function(event_id, e) { // (scheduler event_id, browser event)
@@ -216,10 +212,3 @@ scheduler.attachEvent("onEventDeleted", function() {
 	dhtmlXTooltip.hide();
 	return true;
 });
-
-/* Could be redifined */
-scheduler.templates.tooltip_date_format = scheduler.date.date_to_str("%Y-%m-%d %H:%i");
-
-scheduler.templates.tooltip_text = function(start, end, event) {
-	return "<b>Event:</b> " + event.text + "<br/><b>Start date:</b> " + scheduler.templates.tooltip_date_format(start) + "<br/><b>End date:</b> " + scheduler.templates.tooltip_date_format(end);
-};

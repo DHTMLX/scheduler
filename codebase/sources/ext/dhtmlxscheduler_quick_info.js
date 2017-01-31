@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.3.1 
+dhtmlxScheduler v.4.4.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -45,6 +45,8 @@ scheduler.showQuickInfo = function(id){
 		this._quick_info_box = this._init_quick_info(pos);
 		this._fill_quick_data(id);
 		this._show_quick_info(pos);
+
+		this.callEvent("onQuickInfo", [id]);
 	}
 };
 scheduler._hideQuickInfo = function(){
@@ -52,12 +54,15 @@ scheduler._hideQuickInfo = function(){
 };
 scheduler.hideQuickInfo = function(forced){
 	var qi = this._quick_info_box;
+	var eventId = this._quick_info_box_id;
 	this._quick_info_box_id = 0;
 
 	if (qi && qi.parentNode){
-		var width = qi._offsetWidth;
-		if (scheduler.config.quick_info_detached)
+		var width = qi.offsetWidth;
+		if (scheduler.config.quick_info_detached) {
+			this.callEvent("onAfterQuickInfo", [eventId]);
 			return qi.parentNode.removeChild(qi);
+		}
 
 		if (qi.style.right == "auto")
 			qi.style.left = -width + "px";
@@ -66,6 +71,8 @@ scheduler.hideQuickInfo = function(forced){
 
 		if (forced)
 			qi.parentNode.removeChild(qi);
+
+		this.callEvent("onAfterQuickInfo", [eventId]);
 	}
 };
 dhtmlxEvent(window, "keydown", function(e){
@@ -99,7 +106,7 @@ scheduler._show_quick_info = function(pos){
 				qi.style.right = "-10px";
 			},1);
 		}
-		qi.className = qi.className.replace("dhx_qi_left","").replace("dhx_qi_right","")+" dhx_qi_"+(pos==1?"left":"right");
+		qi.className = qi.className.replace(" dhx_qi_left","").replace(" dhx_qi_right","")+" dhx_qi_"+(pos.dx==1?"left":"right");
 	}
 };
 scheduler.attachEvent("onTemplatesReady", function(){
@@ -120,11 +127,15 @@ scheduler._init_quick_info = function(){
 		var sizes = scheduler.xy;
 
 		var qi = this._quick_info_box = document.createElement("div");
+
+		this._waiAria.quickInfoAttr(qi);
+
 		qi.className = "dhx_cal_quick_info";
 		if (scheduler.$testmode)
 			qi.className += " dhx_no_animate";
 	//title
-		var html = "<div class=\"dhx_cal_qi_title\" style=\"height:"+sizes.quick_info_title+"px\">" +
+		var ariaAttr = this._waiAria.quickInfoHeaderAttrString();
+		var html = "<div class=\"dhx_cal_qi_title\" style=\"height:"+sizes.quick_info_title+"px\" "+ariaAttr+">" +
 			"<div class=\"dhx_cal_qi_tcontent\"></div><div  class=\"dhx_cal_qi_tdate\"></div>" +
 			"</div>" +
 			"<div class=\"dhx_cal_qi_content\"></div>";
@@ -132,8 +143,10 @@ scheduler._init_quick_info = function(){
 	//buttons
 		html += "<div class=\"dhx_cal_qi_controls\" style=\"height:"+sizes.quick_info_buttons+"px\">";
 		var buttons = scheduler.config.icons_select;
-		for (var i = 0; i < buttons.length; i++)
-			html += "<div class=\"dhx_qi_big_icon "+buttons[i]+"\" title=\""+scheduler.locale.labels[buttons[i]]+"\"><div class='dhx_menu_icon " + buttons[i] + "'></div><div>"+scheduler.locale.labels[buttons[i]]+"</div></div>";
+		for (var i = 0; i < buttons.length; i++) {
+			var ariaAttr = this._waiAria.quickInfoButtonAttrString(this.locale.labels[buttons[i]]);
+			html += "<div "+ariaAttr+" class=\"dhx_qi_big_icon " + buttons[i] + "\" title=\"" + scheduler.locale.labels[buttons[i]] + "\"><div class='dhx_menu_icon " + buttons[i] + "'></div><div>" + scheduler.locale.labels[buttons[i]] + "</div></div>";
+		}
 		html += "</div>";
 
 		qi.innerHTML = html;
@@ -154,7 +167,7 @@ scheduler._qi_button_click = function(node){
 	var box = scheduler._quick_info_box;
 	if (!node || node == box) return;
 
-	var mask = node.className;
+	var mask = scheduler._getClassName(node);
 	if (mask.indexOf("_icon")!=-1){
 		var id = scheduler._quick_info_box_id;
 		scheduler._click.buttons[mask.split(" ")[1].replace("icon_","")](id);
@@ -189,10 +202,17 @@ scheduler._fill_quick_data  = function(id){
 	scheduler._quick_info_box_id = id;
 
 //title content
+
+	var header = {
+		content: scheduler.templates.quick_info_title(ev.start_date, ev.end_date, ev),
+		date: scheduler.templates.quick_info_date(ev.start_date, ev.end_date, ev)
+	};
 	var titleContent = qi.firstChild.firstChild;
-	titleContent.innerHTML = scheduler.templates.quick_info_title(ev.start_date, ev.end_date, ev);
+	titleContent.innerHTML = header.content;
 	var titleDate = titleContent.nextSibling;
-	titleDate.innerHTML = scheduler.templates.quick_info_date(ev.start_date, ev.end_date, ev);
+	titleDate.innerHTML = header.date;
+
+	scheduler._waiAria.quickInfoHeader(qi, [header.content, header.date].join(" "));
 
 //main content
 	var main = qi.firstChild.nextSibling;

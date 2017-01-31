@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.3.1 
+dhtmlxScheduler v.4.4.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -26,9 +26,9 @@ scheduler.attachEvent("onTemplatesReady",function(){
 	};
 	
 	var old_s=scheduler._reset_month_scale;
-	scheduler._reset_month_scale=function(a,b,c){
+	scheduler._reset_month_scale=function(a,b,c,d){
 		var dummy = {clientHeight:100};
-		old_s.apply(scheduler,[dummy,b,c]);
+		old_s.apply(scheduler,[dummy,b,c,d]);
 		a.innerHTML = dummy.innerHTML;
 	};
 	

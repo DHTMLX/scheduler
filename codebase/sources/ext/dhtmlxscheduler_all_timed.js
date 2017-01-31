@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.3.1 
+dhtmlxScheduler v.4.4.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -18,20 +18,18 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 	// regular copy causes problems with recurrings which have series event as a prototype
 	scheduler._safe_copy = function(event){
 		var proto = null,
-			copy = null;
+			copy = scheduler._copy_event(event);
 		if(event.event_pid){
 			proto = scheduler.getEvent(event.event_pid);
 		}
 
 		if (proto && proto.isPrototypeOf(event)) {
-			copy = scheduler._copy_event(event);
 			delete copy.event_length;
 			delete copy.event_pid;
 			delete copy.rec_pattern;
 			delete copy.rec_type;
-		} else {
-			copy = scheduler._lame_clone(event);
 		}
+
 		return copy;
 	};
 

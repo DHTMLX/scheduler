@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.3.1 
+dhtmlxScheduler v.4.4.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -214,14 +214,20 @@ scheduler.attachEvent("onSchedulerReady", function() {
 		});
 
 		//generate html for the view
-		var html = "<div class='dhx_map_area'>";
+		var ariaAttr = scheduler._waiAria.mapAttrString();
+
+		var html = "<div "+ariaAttr+" class='dhx_map_area'>";
 		for (var i = 0; i < events.length; i++) {
 			var ev = events[i];
 			var event_class = (ev.id == scheduler._selected_event_id) ? 'dhx_map_line highlight' : 'dhx_map_line';
 			var bg_color = (ev.color ? ("background:" + ev.color + ";") : "");
 			var color = (ev.textColor ? ("color:" + ev.textColor + ";") : "");
-			html += "<div class='" + event_class + "' event_id='" + ev.id + "' style='" + bg_color + "" + color + "" + (ev._text_style || "") + " width: " + (scheduler.xy.map_date_width + scheduler.xy.map_description_width + 2) + "px;'><div style='width: " + scheduler.xy.map_date_width + "px;' >" + scheduler.templates.map_time(ev.start_date, ev.end_date, ev) + "</div>";
-			html += "<div class='dhx_event_icon icon_details'>&nbsp</div>";
+
+			var ariaAttr = scheduler._waiAria.mapRowAttrString(ev);
+			var ariaButtonAttr = scheduler._waiAria.mapDetailsBtnString();
+
+			html += "<div "+ariaAttr+" class='" + event_class + "' event_id='" + ev.id + "' style='" + bg_color + "" + color + "" + (ev._text_style || "") + " width: " + (scheduler.xy.map_date_width + scheduler.xy.map_description_width + 2) + "px;'><div style='width: " + scheduler.xy.map_date_width + "px;' >" + scheduler.templates.map_time(ev.start_date, ev.end_date, ev) + "</div>";
+			html += "<div "+ariaButtonAttr+" class='dhx_event_icon icon_details'>&nbsp</div>";
 			html += "<div class='line_description' style='width:" + (scheduler.xy.map_description_width - 25) + "px;'>" + scheduler.templates.map_text(ev.start_date, ev.end_date, ev) + "</div></div>"; // -25 = icon size 20 and padding 5
 		}
 		html += "<div class='dhx_v_border' style='left: " + (scheduler.xy.map_date_width - 2) + "px;'></div><div class='dhx_v_border_description'></div></div>";

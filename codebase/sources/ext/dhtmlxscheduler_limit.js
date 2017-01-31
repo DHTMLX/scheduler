@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.3.1 
+dhtmlxScheduler v.4.4.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -337,16 +337,23 @@ scheduler._temp_limit_scope = function(){
 		};
 		if (!this._table_view) {
 			if (this._props && this._props[this._mode]) { // units view
+				var start_index,
+					end_index;
 
 				var view = this._props[this._mode];
 				var units_l = view.size || view.options.length;
-				var start_index = day_index*units_l;
-				var end_index = (day_index+1)*units_l;
+				if (view.days > 1) {
+					start_index = day_index;
+					end_index = day_index + units_l;
+				}
+				else {
+					start_index = 0;
+					end_index = start_index + units_l;
+				}
 
-				var day_divs = this._els["dhx_cal_data"][0].childNodes;
 				var r_divs = [];
 
-				for (var i=start_index; i<end_index; i++) {
+				for (var i = start_index; i < end_index; i++) {
 					var t_day = i; // as each unit is actually considered +1 day
 					options.days = t_day;
 					var t_div = scheduler._render_marked_timespan(options, null, t_day)[0];
@@ -441,7 +448,8 @@ scheduler._temp_limit_scope = function(){
 			return r_configs;
 		}
 
-		if ( !config || !((config.start_date && config.end_date && config.end_date > config.start_date) || (config.days !== undefined && config.zones)) )
+		if ( !config ||
+			!((config.start_date && config.end_date && config.end_date > config.start_date) || (config.days !== undefined && config.zones)) && !config.type )
 			return r_configs;  // incorrect config was provided
 
 		var min = 0;
@@ -672,16 +680,40 @@ scheduler._temp_limit_scope = function(){
 
 		return blocks;
 	};
+
+	scheduler._mark_timespans = function(){
+		var data = this._els["dhx_cal_data"][0];
+		var divs = [];
+		if (scheduler._table_view && scheduler._mode == "month"){
+			for (var day in this._scales) {
+				var date = new Date(+day);
+				divs.push.apply(divs, scheduler._on_scale_add_marker(this._scales[day],date));
+			}
+		}else {
+			//manually trigger rendering of configs for each column
+			var date = new Date(scheduler._min_date);
+			for (var i = 0, len = data.childNodes.length; i < len; i++) {
+				var area = data.childNodes[i];
+				if (area.firstChild && scheduler._getClassName(area.firstChild).indexOf("dhx_scale_hour") > -1) {
+					continue;
+				}
+
+				divs.push.apply(divs, scheduler._on_scale_add_marker(area, date));
+				date = scheduler.date.add(date, 1, "day");
+			}
+		}
+		return divs;
+	};
+
 	// just marks timespan, will be cleaned after refresh
 	scheduler.markTimespan = function(configuration) {
-		var divs = [];
 
 		var rebuild_els = false;
 		if(!this._els["dhx_cal_data"]){
 			scheduler.get_elements();
 			rebuild_els = true;
 		}
-		var data = this._els["dhx_cal_data"][0];
+
 
 		// backup regular marked timespans
 		var timespans_ids = scheduler._marked_timespans_ids,
@@ -693,17 +725,7 @@ scheduler._temp_limit_scope = function(){
 		//add block to configs
 		scheduler.addMarkedTimespan(configuration);
 
-		//manually trigger rendering of configs for each column
-		var date = new Date(scheduler._min_date);
-		for(var i = 0, len = data.childNodes.length; i < len; i++){
-			var area = data.childNodes[i];
-			if(area.firstChild && (area.firstChild.className || "").indexOf("dhx_scale_hour") > -1){
-				continue;
-			}
-
-			divs.push.apply(divs, scheduler._on_scale_add_marker(area, date));
-			date = scheduler.date.add(date, 1, "day");
-		}
+		var divs = scheduler._mark_timespans();
 
 		if(rebuild_els)
 			scheduler._els = [];
@@ -727,71 +749,79 @@ scheduler._temp_limit_scope = function(){
 		}
 	};
 
+
+	scheduler._addMarkerTimespanConfig = function(config){
+		var global = "global";
+		var timespans = scheduler._marked_timespans;
+		var id = config.id;
+
+		var ids = scheduler._marked_timespans_ids;
+		if (!ids[id])
+			ids[id] = [];
+
+
+		var day = config.days;
+
+		var sections = config.sections;
+		var type = config.type; // default or specified
+		config.id = id;
+
+		if (sections) {
+			for (var view_key in sections) {
+				if (sections.hasOwnProperty(view_key)) {
+					if (!timespans[view_key])
+						timespans[view_key] = {};
+					var unit_id = sections[view_key];
+					var timespans_view = timespans[view_key];
+					if (!timespans_view[unit_id])
+						timespans_view[unit_id] = {};
+					if (!timespans_view[unit_id][day])
+						timespans_view[unit_id][day] = {};
+					if (!timespans_view[unit_id][day][type]){
+						timespans_view[unit_id][day][type] = [];
+						if(!scheduler._marked_timespans_types)
+							scheduler._marked_timespans_types = {};
+						if(!scheduler._marked_timespans_types[type])
+							scheduler._marked_timespans_types[type] = true;
+					}
+					var day_configs = timespans_view[unit_id][day][type];
+					config._array = day_configs;
+					day_configs.push(config);
+					ids[id].push(config);
+				}
+			}
+		} else {
+			if (!timespans[global][day])
+				timespans[global][day] = {};
+			if (!timespans[global][day][type])
+				timespans[global][day][type] = [];
+
+			if(!scheduler._marked_timespans_types)
+				scheduler._marked_timespans_types = {};
+			if(!scheduler._marked_timespans_types[type])
+				scheduler._marked_timespans_types[type] = true;
+
+
+			var day_configs = timespans[global][day][type];
+			config._array = day_configs;
+			day_configs.push(config);
+			ids[id].push(config);
+		}
+
+	};
+
 	scheduler._marked_timespans_ids = {};
 	// adds marked timespan to collections, persistent
 	scheduler.addMarkedTimespan = function(configuration) {
 		var configs = scheduler._prepare_timespan_options(configuration);
-		var global = "global";
 
 		if (!configs.length)
 			return; // options are incorrect, nothing to mark
 
 		var id = configs[0].id;
-		var timespans = scheduler._marked_timespans;
-		var ids = scheduler._marked_timespans_ids;
-		if (!ids[id])
-			ids[id] = [];
 
 		for (var i=0; i<configs.length; i++) {
-			var config = configs[i];
-			var day = config.days;
-			var zones = config.zones;
-			var css = config.css;
-			var sections = config.sections;
-			var type = config.type; // default or specified
-			config.id = id;
-
-			if (sections) {
-				for (var view_key in sections) {
-					if (sections.hasOwnProperty(view_key)) {
-						if (!timespans[view_key])
-							timespans[view_key] = {};
-						var unit_id = sections[view_key];
-						var timespans_view = timespans[view_key];
-						if (!timespans_view[unit_id])
-							timespans_view[unit_id] = {};
-						if (!timespans_view[unit_id][day])
-							timespans_view[unit_id][day] = {};
-						if (!timespans_view[unit_id][day][type]){
-							timespans_view[unit_id][day][type] = [];
-							if(!scheduler._marked_timespans_types)
-								scheduler._marked_timespans_types = {};
-							if(!scheduler._marked_timespans_types[type])
-								scheduler._marked_timespans_types[type] = true;
-						}
-						var day_configs = timespans_view[unit_id][day][type];
-						config._array = day_configs;
-						day_configs.push(config);
-						ids[id].push(config);
-					}
-				}
-			} else {
-				if (!timespans[global][day])
-					timespans[global][day] = {};
-				if (!timespans[global][day][type])
-					timespans[global][day][type] = [];
-
-				if(!scheduler._marked_timespans_types)
-					scheduler._marked_timespans_types = {};
-				if(!scheduler._marked_timespans_types[type])
-					scheduler._marked_timespans_types[type] = true;
-
-
-				var day_configs = timespans[global][day][type];
-				config._array = day_configs;
-				day_configs.push(config);
-				ids[id].push(config);
-			}
+			scheduler._addMarkerTimespanConfig(configs[i]);
 		}
 		return id;
 	};
@@ -880,19 +910,40 @@ scheduler._temp_limit_scope = function(){
 		var sections = config.sections;
 		var day = config.days;
 		var type = config.type||default_timespan_type;
-		var day_timespans = []; // array of timespans to subtract our config
+		var viewspans;
 		if (sections) {
 			for (var view_key in sections) {
 				if (sections.hasOwnProperty(view_key) && timespans[view_key]) {
 					var unit_id = sections[view_key];
-					if (timespans[view_key][unit_id] && timespans[view_key][unit_id][day] && timespans[view_key][unit_id][day][type])
-						day_timespans = timespans[view_key][unit_id][day][type];
+					if (timespans[view_key][unit_id]){
+						viewspans = timespans[view_key][unit_id];
+					}
 				}
 			}
 		} else {
-			if (timespans.global[day] && timespans.global[day][type])
-				day_timespans = timespans.global[day][type];
+			viewspans = timespans.global;
 		}
+
+		if(viewspans) {
+			if (day !== undefined) {
+				if (viewspans[day] && viewspans[day][type]) {
+					scheduler._addMarkerTimespanConfig(config); // register config in order to be able to delete recurring timespan from a specific day
+					scheduler._delete_marked_timespans_list(viewspans[day][type], config);
+				}
+			}
+			else {
+				for (var d in viewspans) {
+					if (viewspans[d][type]) {
+						var dayConfig = scheduler._lame_clone(config);
+						config.days = d;
+						scheduler._addMarkerTimespanConfig(dayConfig); // register config in order to be able to delete recurring timespan from a specific day
+						scheduler._delete_marked_timespans_list(viewspans[d][type], config);
+					}
+				}
+			}
+		}
+	};
+	scheduler._delete_marked_timespans_list = function(day_timespans, config){
 		for (var i=0; i<day_timespans.length; i++) {
 			var d_t = day_timespans[i];
 			var zones = scheduler._subtract_timespan_zones(d_t.zones, config.zones);
@@ -911,16 +962,6 @@ scheduler._temp_limit_scope = function(){
 				}
 			}
 		}
-
-		for (var i in scheduler._marked_timespans.timeline) {
-			for (var j in scheduler._marked_timespans.timeline[i]) {
-				for (var k in scheduler._marked_timespans.timeline[i][j]) {
-					if (k === type) {
-						delete scheduler._marked_timespans.timeline[i][j][k];
-					}
-				}
-			}
-		}
 	};
 	scheduler.deleteMarkedTimespan = function(configuration) {
 		// delete everything
@@ -935,7 +976,7 @@ scheduler._temp_limit_scope = function(){
 		} else { // normal configuration was passed
 
 			if(!(configuration.start_date && configuration.end_date)){
-				if(!configuration.days)
+				if(configuration.days === undefined && !configuration.type)
 					configuration.days = "fullweek";
 				if(!configuration.zones)
 					configuration.zones = "fullday";
@@ -967,7 +1008,7 @@ scheduler._temp_limit_scope = function(){
 		}
 	};
 	scheduler._get_types_to_render = function(common, specific) {
-		var types_to_render = (common) ? common : {};
+		var types_to_render = (common) ? scheduler._lame_copy({},common) : {};
 		for (var type in specific||{} ) {
 			if (specific.hasOwnProperty(type)) {
 				types_to_render[type] = specific[type];
@@ -1005,7 +1046,7 @@ scheduler._temp_limit_scope = function(){
 				day = scheduler.date.date_part(new Date(this._date)); // for units view actually only 1 day is displayed yet the day variable will change, need to use this._date for all calls
 			}else{
 				var dx = 24*60*60*1000;
-				var day_ind = Math.floor((day - scheduler._min_date)/dx);
+				var day_ind = Math.round((day - scheduler._min_date)/dx);
 
 				day = scheduler.date.add(scheduler._min_date, Math.floor(day_ind/units.length), "day"); // to the "same" day for all sections
 				day = scheduler.date.date_part(day);
@@ -1029,13 +1070,16 @@ scheduler._temp_limit_scope = function(){
 		}
 		return divs;
 	};
-	scheduler.attachEvent("onScaleAdd", scheduler._on_scale_add_marker);
+	scheduler.attachEvent("onScaleAdd", function(){
+		scheduler._on_scale_add_marker.apply(scheduler, arguments);
+	});
 
 	scheduler.dblclick_dhx_marked_timespan = function(e,src){
-		if (!scheduler.config.dblclick_create){
-			scheduler.callEvent("onScaleDblClick",[scheduler.getActionData(e).date,src,e]);
+		scheduler.callEvent("onScaleDblClick",[scheduler.getActionData(e).date,src,e]);
+
+		if (scheduler.config.dblclick_create){
+			scheduler.addEventNow(scheduler.getActionData(e).date,null,e);
 		}
-		scheduler.addEventNow(scheduler.getActionData(e).date,null,e);
 	};
 
 };

@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.3.1 
+dhtmlxScheduler v.4.4.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -21,7 +21,7 @@ scheduler.locale = {
 		new_event: "Ny händelse",
 		icon_save: "Spara",
 		icon_cancel: "Ångra",
-		icon_details: "Detajer",
+		icon_details: "Detaljer",
 		icon_edit: "Ändra",
 		icon_delete: "Ta bort",
 		confirm_closing: "", //Dina förändingar kommer gå förlorade, är du säker?
@@ -53,11 +53,20 @@ scheduler.locale = {
 		grid_tab: "Galler",
 
 		/* touch tooltip*/
-		drag_to_create:"Drag to create",
-		drag_to_move:"Drag to move",
+		drag_to_create:"Dra för att skapa ny",
+		drag_to_move:"Dra för att flytta",
 
 		/* dhtmlx message default buttons */
 		message_ok:"OK",
-		message_cancel:"Cancel"
+		message_cancel:"Cancel",
+
+		/* wai aria labels for non-text controls */
+		next: "Next",
+		prev: "Previous",
+		year: "Year",
+		month: "Month",
+		day: "Day",
+		hour:"Hour",
+		minute: "Minute"
 	}
 };

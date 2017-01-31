@@ -1,3 +1,24 @@
+4.4.0
+	High contrast color themes
+	Full-featured keyboard navigation
+	WAI-ARIA support
+	Add initial support of Content Security Policy
+	Various bugfixes
+
+	Ability to enable markTimespan for the Month view
+	Ability to remove recurring marker from a specific date added
+	Ability to skip days in the Year view added
+	Delimiter option of the Multiselect control
+	Compatibility of external drag-n-drop with the latest dhtmlxSuite updated
+	Merge CSP-improvements request from public repo
+
+	Fix return value of addEventNow method
+	Fix dataprocessor state after scheduler.clearAll
+	JS errors in event handlers from SVG elements fixed
+	Various bugs with Tooltip extension fixed
+	Various issues with container_autosize extension fixed
+	Multiple minor fixes
+
 4.3.0
 	"Days" mode for Timeline view was added
 	Ability to present units for multiple days in the Units view

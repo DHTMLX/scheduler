@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.3.1 
+dhtmlxScheduler v.4.4.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -10,11 +10,15 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 
 	scheduler.config.container_autoresize = true;
 	scheduler.config.month_day_min_height = 90;
+	scheduler.config.min_grid_size = 25;
+	scheduler.config.min_map_size = 400;
 
 	var old_pre_render_event = scheduler._pre_render_events;
 
 	//need for temporary disabling without modifying public config
 	var active = true;
+	var total_height = 0;
+	var multiday_height = 0;
 
 	scheduler._pre_render_events = function(evs, hold) {
 		if (!(scheduler.config.container_autoresize && active)) {
@@ -69,7 +73,11 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 					if (evs.length || h[0] == -1) {
 						//shift days to have space for multiday events
 						var childs = evl.parentNode.childNodes;
-						var dh = ((h[0] + 1) * hb + 1) + "px"; // +1 so multiday events would have 2px from top and 2px from bottom by default
+						var dh = ((h[0] + 1) * hb + 1); // +1 so multiday events would have 2px from top and 2px from bottom by default
+						if(multiday_height != dh + 1) {
+							this._obj.style.height = (total_height - multiday_height + dh - 1) + "px";
+						}
+						dh += "px";
 						data.style.top = (this._els["dhx_cal_navline"][0].offsetHeight + this._els["dhx_cal_header"][0].offsetHeight + parseInt(dh, 10)) + 'px';
 						data.style.height = (this._obj.offsetHeight - parseInt(data.style.top, 10) - (this.xy.margin_top || 0)) + 'px';
 						var last = this._els["dhx_multi_day"][0];
@@ -91,7 +99,7 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 
 	var checked_divs = ["dhx_cal_navline", "dhx_cal_header", "dhx_multi_day", "dhx_cal_data"];
 	var updateContainterHeight = function(is_repaint) {
-		var total_height = 0;
+		total_height = 0;
 		for (var i = 0; i < checked_divs.length; i++) {
 
 			var className = checked_divs[i];
@@ -103,9 +111,8 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 					height = parseInt(checked_div.style.height, 10);
 					break;
 				case "dhx_multi_day":
-					height = (checked_div) ? checked_div.offsetHeight : 0;
-					if (height == 1)
-						height = 0;
+                    height = (checked_div) ? checked_div.offsetHeight - 1 : 0;
+                    multiday_height = height;
 					break;
 				case "dhx_cal_data":
 					var mode = scheduler.getState().mode;
@@ -125,6 +132,86 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 							checked_div.style.height = height + "px";
 						}
 					}
+					else if (mode == "year"){
+						height = 190 * scheduler.config.year_y;
+					}
+					else if(mode == "agenda"){
+						height = 0;
+						if(checked_div.childNodes && checked_div.childNodes.length){
+							for(var j = 0; j < checked_div.childNodes.length; j++){
+								height += checked_div.childNodes[j].offsetHeight;
+							}
+						}
+
+						if(height + 2 < scheduler.config.min_grid_size){
+							height = scheduler.config.min_grid_size;
+						}
+						else{
+							height += 2;
+						}
+					}
+					else if (mode == "week_agenda"){
+						var min_height = scheduler.xy.week_agenda_scale_height + scheduler.config.min_grid_size,
+							cur_height;
+
+						var column;
+						for(var k = 0; k < checked_div.childNodes.length; k++){
+							column = checked_div.childNodes[k];
+							for(var j = 0; j < column.childNodes.length; j++) {
+								var innerHeight = 0,
+									eventsContainer = column.childNodes[j].childNodes[1];
+
+								for(var g =0; g < eventsContainer.childNodes.length; g++){
+									innerHeight += eventsContainer.childNodes[g].offsetHeight;
+								}
+
+								cur_height = innerHeight + scheduler.xy.week_agenda_scale_height;
+								cur_height = (k == 1 && (j == 2 || j == 3)) ? cur_height * 2 : cur_height; // for last two cells;
+
+								if (cur_height > min_height) {
+									min_height = cur_height;
+								}
+							}
+						}
+
+						height = min_height * 3;
+					}
+					else if(mode == "map") {
+						height = 0;
+						var evs = checked_div.querySelectorAll(".dhx_map_line");
+
+						for (var j = 0; j < evs.length; j++) {
+							height += evs[j].offsetHeight;
+						}
+
+						if (height + 2 < scheduler.config.min_map_size) {
+							height = scheduler.config.min_map_size;
+						}
+						else {
+							height += 2;
+						}
+					}
+					else if(scheduler._gridView) {
+						height = 0;
+
+						if (checked_div.childNodes[1].childNodes[0].childNodes && checked_div.childNodes[1].childNodes[0].childNodes.length) {
+							var evs = checked_div.childNodes[1].childNodes[0].childNodes[0].childNodes;
+
+							for (var j = 0; j < evs.length; j++) {
+								height += evs[j].offsetHeight;
+							}
+
+							height += 2;
+
+							if(height < scheduler.config.min_grid_size){
+								height = scheduler.config.min_grid_size;
+							}
+						}
+						else{
+							height = scheduler.config.min_grid_size;
+						}
+					}
+
 					if (scheduler.matrix && scheduler.matrix[mode]) {
 						if (is_repaint) {
 							height += 2;
@@ -138,7 +225,7 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 							}
 						}
 					}
-					if (mode == "day" || mode == "week") {
+					if (mode == "day" || mode == "week" || (scheduler._props && scheduler._props[mode])) {
 						height += 2;
 					}
 					break;
@@ -158,7 +245,7 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 		var mode = scheduler.getState().mode;
 
 		updateContainterHeight();
-		if ( (scheduler.matrix && scheduler.matrix[mode]) || mode == "month" ) {
+		if ( (scheduler.matrix && scheduler.matrix[mode]) || mode == "month") {
 			window.setTimeout(function() {
 				updateContainterHeight(true);
 			}, 1);

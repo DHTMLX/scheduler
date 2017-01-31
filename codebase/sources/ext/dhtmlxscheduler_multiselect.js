@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.3.1 
+dhtmlxScheduler v.4.4.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -32,7 +32,7 @@ scheduler.form_blocks["multiselect"]={
 
 		var _ids = {};
 		if (ev[config.map_to]) {
-			var results = (ev[config.map_to] + "").split(',');
+			var results = (ev[config.map_to] + "").split(config.delimiter || scheduler.config.section_delimiter || ",");
 			for (var i = 0; i < results.length; i++) {
 				_ids[results[i]] = true;
 			}
@@ -62,7 +62,7 @@ scheduler.form_blocks["multiselect"]={
 			if(_children[i].checked)
 				_result.push(_children[i].value); 
 		}
-		return _result.join(','); 
+		return _result.join(config.delimiter || scheduler.config.section_delimiter || ",");
 	},
 	
 	focus:function(node){

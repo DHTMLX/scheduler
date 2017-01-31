@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.3.1 
+dhtmlxScheduler v.4.4.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -65,6 +65,7 @@ scheduler.renderCalendar = function(obj, _prev, is_refresh) {
 		var end = scheduler.date.add(start, 1, "month");
 		var evs = this.getEvents(start, end);
 		var filter = this["filter_" + this._mode];
+		var markedDates = {};
 		for (var i = 0; i < evs.length; i++) {
 			var ev = evs[i];
 			if (filter && !filter(ev.id, ev))
@@ -74,7 +75,10 @@ scheduler.renderCalendar = function(obj, _prev, is_refresh) {
 				d = start;
 			d = scheduler.date.date_part(new Date(d.valueOf()));
 			while (d < ev.end_date) {
-				this.markCalendar(cal, d, "dhx_year_event");
+				if(!markedDates[+d]) {
+					markedDates[+d] = true;
+					this.markCalendar(cal, d, "dhx_year_event");
+				}
 				d = this.date.add(d, 1, "day");
 				if (d.valueOf() >= end.valueOf())
 					break;
@@ -117,7 +121,7 @@ scheduler._locateCalendar = function(cal, date) {
 	if(+date > +cal._max_date || +date < +cal._min_date)
 		return null;
 
-	var table = cal.childNodes[2].childNodes[0];
+	var table = cal.querySelector(".dhx_year_body").childNodes[0];
 
 	var weekNum = 0;
 	var dat = new Date(cal._min_date);
@@ -187,15 +191,24 @@ scheduler._render_calendar = function(obj, sd, conf, previous) {
 	var week_template = this._week_template(obj.offsetWidth - 1 - this.config.minicalendar.padding );
 
 	var d;
-	if (previous)
-		d = previous; else {
+	if (previous){
+		d = previous;
+	} else {
 		d = document.createElement("DIV");
 		d.className = "dhx_cal_container dhx_mini_calendar";
 	}
 	d.setAttribute("date", this.templates.xml_format(sd));
-	d.innerHTML = "<div class='dhx_year_month'></div><div class='dhx_year_week'>" + week_template.innerHTML + "</div><div class='dhx_year_body'></div>";
+	d.innerHTML = "<div class='dhx_year_month'></div>" +
+		"<div class='dhx_year_grid'>" +
+			"<div class='dhx_year_week'>"+(week_template ? week_template.innerHTML : "")+"</div>" +
+			"<div class='dhx_year_body'></div>" +
+		"</div>";
 
-	d.childNodes[0].innerHTML = this.templates.calendar_month(sd);
+	var header = d.querySelector(".dhx_year_month");
+	var weekHeader = d.querySelector(".dhx_year_week");
+	var body = d.querySelector(".dhx_year_body");
+
+	header.innerHTML = this.templates.calendar_month(sd);
 	if (conf.navigation) {
 		var move_minicalendar_date = function(calendar, diff) {
 			var date = scheduler.date.add(calendar._date, diff, "month");
@@ -220,13 +233,17 @@ scheduler._render_calendar = function(obj, sd, conf, previous) {
 				}
 			};
 		};
+		var labels = [scheduler.locale.labels.prev, scheduler.locale.labels.next];
 		for (var j = 0; j < 2; j++) {
 			var arrow = document.createElement("DIV");
 			//var diff = diffs[j];
 			arrow.className = css_classnames[j];
+
+			scheduler._waiAria.headerButtonsAttributes(arrow, labels[j]);
+
 			arrow.style.cssText = css_texts[j];
 			arrow.innerHTML = this._mini_cal_arrows[j];
-			d.firstChild.appendChild(arrow);
+			header.appendChild(arrow);
 			arrow.onclick = handler(diffs[j]);
 		}
 	}
@@ -237,24 +254,31 @@ scheduler._render_calendar = function(obj, sd, conf, previous) {
 	var dd = d._min_date = this.date.week_start(sd);
 	d._max_date = this.date.add(d._min_date, 6, "week");
 
-	this._reset_month_scale(d.childNodes[2], sd, dd);
-
-	var r = d.childNodes[2].firstChild.rows;
-	for (var k = r.length; k < 6; k++) {
-		var last_row = r[r.length - 1];
-		r[0].parentNode.appendChild(last_row.cloneNode(true));
-		var last_day_number = parseInt(last_row.childNodes[last_row.childNodes.length - 1].childNodes[0].innerHTML);
-		last_day_number = (last_day_number < 10) ? last_day_number : 0; // previous week could end on 28-31, so we should start with 0
-		for (var ri = 0; ri < r[k].childNodes.length; ri++) {
-			r[k].childNodes[ri].className = "dhx_after";
-			r[k].childNodes[ri].childNodes[0].innerHTML = scheduler.date.to_fixed(++last_day_number);
-		}
-	}
+	this._reset_month_scale(body, sd, dd, 6);
 
 	if (!previous)
 		obj.appendChild(d);
 
-	d.childNodes[1].style.height = (d.childNodes[1].childNodes[0].offsetHeight - 1) + "px"; // dhx_year_week should have height property so that day dates would get correct position. dhx_year_week height = height of it's child (with the day name)
+	weekHeader.style.height = (weekHeader.childNodes[0].offsetHeight - 1) + "px"; // dhx_year_week should have height property so that day dates would get correct position. dhx_year_week height = height of it's child (with the day name)
+
+	var headerId = scheduler.uid();
+	scheduler._waiAria.minicalHeader(header, headerId);
+	scheduler._waiAria.minicalGrid(d.querySelector(".dhx_year_grid"), headerId);
+	scheduler._waiAria.minicalRow(weekHeader);
+
+	var dayHeaders = weekHeader.querySelectorAll(".dhx_scale_bar");
+	for(var i = 0; i < dayHeaders.length; i++){
+		scheduler._waiAria.minicalHeadCell(dayHeaders[i]);
+	}
+	var dayCells = body.querySelectorAll("td");
+	var firstDate = new Date(temp4);
+	for(var i = 0; i < dayCells.length; i++){
+
+		scheduler._waiAria.minicalDayCell(dayCells[i], new Date(firstDate));
+		firstDate = scheduler.date.add(firstDate, 1, "day");
+	}
+
+	scheduler._waiAria.minicalHeader(header, headerId);
 
 	/*restore*/
 	this._cols = temp;
@@ -301,7 +325,7 @@ scheduler.attachEvent("onTemplatesReady", function() {
 scheduler.templates.calendar_time = scheduler.date.date_to_str("%d-%m-%Y");
 
 scheduler.form_blocks.calendar_time = {
-	render: function() {
+	render: function(sns) {
 		var html = "<input class='dhx_readonly' type='text' readonly='true'>";
 
 		var cfg = scheduler.config;
@@ -314,10 +338,12 @@ scheduler.form_blocks.calendar_time = {
 		}
 		dt.setHours(first / 60);
 
+		sns._time_values = [];
 		html += " <select>";
 		for (var i = first; i < last; i += this.config.time_step * 1) { // `<` to exclude last "00:00" option
 			var time = this.templates.time_picker(dt);
 			html += "<option value='" + i + "'>" + time + "</option>";
+			sns._time_values.push(i);
 			dt = this.date.add(dt, this.config.time_step, "minute");
 		}
 		html += "</select>";
@@ -326,7 +352,7 @@ scheduler.form_blocks.calendar_time = {
 
 		return "<div style='height:30px;padding-top:0; font-size:inherit;' class='dhx_section_time'>" + html + "<span style='font-weight:normal; font-size:10pt;'> &nbsp;&ndash;&nbsp; </span>" + html + "</div>";
 	},
-	set_value: function(node, value, ev) {
+	set_value: function(node, value, ev, config) {
 
 		var inputs = node.getElementsByTagName("input");
 		var selects = node.getElementsByTagName("select");
@@ -418,8 +444,30 @@ scheduler.form_blocks.calendar_time = {
 		_attach_action(inputs[1], ev.end_date, 1);
 		_init_once = function() {};
 
-		selects[0].value = ev.start_date.getHours() * 60 + ev.start_date.getMinutes();
-		selects[1].value = ev.end_date.getHours() * 60 + ev.end_date.getMinutes();
+		function _round_minutes(date) {
+			var time_values = config._time_values;
+			var direct_value = date.getHours() * 60 + date.getMinutes();
+			var fixed_value = direct_value;
+			var value_found = false;
+
+			for (var k = 0; k < time_values.length; k++) {
+				var t_v = time_values[k];
+				if (t_v === direct_value) {
+					value_found = true;
+					break;
+				}
+				if (t_v < direct_value)
+					fixed_value = t_v;
+			}
+
+			if(!(value_found || fixed_value))
+				return -1;
+
+			return (value_found) ? direct_value : fixed_value;
+		}
+
+		selects[0].value = _round_minutes(ev.start_date);
+		selects[1].value = _round_minutes(ev.end_date);
 
 	},
 	get_value: function(node, ev) {

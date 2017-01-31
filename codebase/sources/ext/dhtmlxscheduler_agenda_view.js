@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.3.1 
+dhtmlxScheduler v.4.4.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -64,7 +64,15 @@ scheduler.attachEvent("onTemplatesReady",function() {
 	function set_full_view(mode){
 		if (mode){
 			var l = scheduler.locale.labels;
-			scheduler._els["dhx_cal_header"][0].innerHTML="<div class='dhx_agenda_line'><div>"+l.date+"</div><span style='padding-left:25px'>"+l.description+"</span></div>";
+
+			var rowAttr = scheduler._waiAria.agendaHeadAttrString();
+			var dateHeader = scheduler._waiAria.agendaHeadDateString(l.date);
+			var descriptionHeader = scheduler._waiAria.agendaHeadDescriptionString(l.description);
+
+			scheduler._els["dhx_cal_header"][0].innerHTML="<div "+rowAttr+" class='dhx_agenda_line'>" +
+				"<div "+dateHeader+">"+l.date+"</div>" +
+				"<span style='padding-left:25px' "+descriptionHeader+">"+l.description+"</span>" +
+				"</div>";
 			scheduler._table_view=true;
 			scheduler.set_sizes();
 		}
@@ -77,16 +85,22 @@ scheduler.attachEvent("onTemplatesReady",function() {
 		
 		var events = scheduler.get_visible_events();
 		events.sort(function(a,b){ return a.start_date>b.start_date?1:-1;});
-		
+
+		var tableAttr = scheduler._waiAria.agendaDataAttrString();
+		var agendaEventAttrString;
 		//generate html for the view
-		var html="<div class='dhx_agenda_area'>";
+		var html="<div class='dhx_agenda_area' "+tableAttr+">";
 		for (var i=0; i<events.length; i++){
 			var ev = events[i];
 			var bg_color = (ev.color?("background:"+ev.color+";"):"");
 			var color = (ev.textColor?("color:"+ev.textColor+";"):"");
 			var ev_class = scheduler.templates.event_class(ev.start_date, ev.end_date, ev);
-			html+="<div class='dhx_agenda_line"+(ev_class?' '+ev_class:'')+"' event_id='"+ev.id+"' style='"+color+""+bg_color+""+(ev._text_style||"")+"'><div class='dhx_agenda_event_time'>"+scheduler.templates.agenda_time(ev.start_date, ev.end_date,ev)+"</div>";
-			html+="<div class='dhx_event_icon icon_details'>&nbsp</div>";
+
+			agendaEventAttrString = scheduler._waiAria.agendaEventAttrString(ev);
+			var agendaDetailsButtonAttr = scheduler._waiAria.agendaDetailsBtnString();
+
+			html+="<div "+agendaEventAttrString+" class='dhx_agenda_line"+(ev_class?' '+ev_class:'')+"' event_id='"+ev.id+"' style='"+color+""+bg_color+""+(ev._text_style||"")+"'><div class='dhx_agenda_event_time'>"+scheduler.templates.agenda_time(ev.start_date, ev.end_date,ev)+"</div>";
+			html+="<div "+agendaDetailsButtonAttr+" class='dhx_event_icon icon_details'>&nbsp</div>";
 			html+="<span>"+scheduler.templates.agenda_text(ev.start_date, ev.end_date, ev)+"</span></div>";
 		}
 		html+="<div class='dhx_v_border'></div></div>";
@@ -112,12 +126,16 @@ scheduler.attachEvent("onTemplatesReady",function() {
 	scheduler.agenda_view=function(mode){
 		scheduler._min_date = scheduler.config.agenda_start||scheduler.date.agenda_start(scheduler._date);
 		scheduler._max_date = scheduler.config.agenda_end||scheduler.date.add_agenda(scheduler._min_date, 1);
-		scheduler._table_view = true;
+
 		set_full_view(mode);
 		if (mode){
+			scheduler._cols = null;
+			scheduler._colsS = null;
+			scheduler._table_view = true;
 			//agenda tab activated
 			fill_agenda_tab();
 		} else {
+			scheduler._table_view = false;
 			//agenda tab de-activated
 		}
 	};

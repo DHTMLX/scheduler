@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.3.1 
+dhtmlxScheduler v.4.4.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -27,7 +27,8 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 	scheduler.dblclick_dhx_month_head = function(e) {
 		if (is_year_mode()) {
 			var t = (e.target || e.srcElement);
-			if (t.parentNode.className.indexOf("dhx_before") != -1 || t.parentNode.className.indexOf("dhx_after") != -1) return false;
+			var className = scheduler._getClassName(t.parentNode);
+			if (className.indexOf("dhx_before") != -1 || className.indexOf("dhx_after") != -1) return false;
 			var start = this.templates.xml_date(t.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.getAttribute("date"));
 			start.setDate(parseInt(t.innerHTML, 10));
 			var end = this.date.add(start, 1, "day");
@@ -127,7 +128,7 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 		var src = e.target || e.srcElement;
 		if (src.tagName.toLowerCase() == 'a') // fix for active links extension (it adds links to the date in the cell)
 			src = src.parentNode;
-		if ((src.className || "").indexOf("dhx_year_event") != -1)
+		if (scheduler._getClassName(src).indexOf("dhx_year_event") != -1)
 			scheduler._showToolTip(from_attr(src.getAttribute("date")), getOffset(src), e, src);
 		else
 			scheduler._hideToolTip();
@@ -151,8 +152,7 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 		var t = this._els["dhx_cal_data"][0].childNodes[m];
 		var d = this.week_starts[m] + d.getDate() - 1;
 
-
-		return t.childNodes[2].firstChild.rows[Math.floor(d / 7)].cells[d % 7].firstChild;
+		return t.querySelector(".dhx_year_body").firstChild.rows[Math.floor(d / 7)].cells[d % 7].firstChild;
 	};
 
 	scheduler._year_marked_cells = {};
@@ -234,14 +234,26 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 		var left = 0;
 		var week_template = document.createElement("div");
 		var dummy_date = this.date.week_start(scheduler._currentDate());
+
+		this._process_ignores(dummy_date, 7, "day", 1);
+
+		var scales_count = 7 - (this._ignores_detected || 0);
+		var real_count = 0;
 		for (var i = 0; i < 7; i++) {
-			this._cols[i] = Math.floor(summ / (7 - i));
-			this._render_x_header(i, left, dummy_date, week_template);
+			if(!(this._ignores && this._ignores[i])) {
+				this._cols[i] = Math.floor(summ / (scales_count - real_count));
+				this._render_x_header(i, left, dummy_date, week_template);
+				summ -= this._cols[i];
+				left += this._cols[i];
+				real_count++;
+			}
 			dummy_date = this.date.add(dummy_date, 1, "day");
-			summ -= this._cols[i];
-			left += this._cols[i];
 		}
 		week_template.lastChild.className += " dhx_scale_bar_last";
+
+		for(var i = 0; i < week_template.childNodes.length; i++){
+			this._waiAria.yearHeadCell(week_template.childNodes[i]);
+		}
 
 		var sd = this.date[this._mode + "_start"](this.date.copy(this._date));
 		var ssd = sd;
@@ -251,24 +263,35 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 				d = document.createElement("DIV");
 				d.style.cssText = "position:absolute;";
 				d.setAttribute("date", this.templates.xml_format(sd));
-				d.innerHTML = "<div class='dhx_year_month'></div><div class='dhx_year_week'>" + week_template.innerHTML + "</div><div class='dhx_year_body'></div>";
-				d.childNodes[0].innerHTML = this.templates.year_month(sd);
+				d.innerHTML = "<div class='dhx_year_month'></div><div class='dhx_year_grid'><div class='dhx_year_week'>" + week_template.innerHTML + "</div><div class='dhx_year_body'></div></div>";
+
+				var header = d.querySelector(".dhx_year_month");
+				var grid = d.querySelector(".dhx_year_grid");
+				var weekHeader = d.querySelector(".dhx_year_week");
+				var body = d.querySelector(".dhx_year_body");
+
+				var headerId = scheduler.uid();
+				this._waiAria.yearHeader(header, headerId);
+				this._waiAria.yearGrid(grid, headerId);
+
+
+				header.innerHTML = this.templates.year_month(sd);
+
+
 
 				var dd = this.date.week_start(sd);
-				var ed = this._reset_month_scale(d.childNodes[2], sd, dd);
+				var ed = this._reset_month_scale(body, sd, dd, 6);
 
-				var r = d.childNodes[2].firstChild.rows;
-				for (var k=r.length; k<6; k++) {
-					r[0].parentNode.appendChild(r[0].cloneNode(true));
-					for (var ri= 0, len = r[k].childNodes.length; ri < len; ri++) {
-					   r[k].childNodes[ri].className = "dhx_after";
-					   r[k].childNodes[ri].firstChild.innerHTML = scheduler.templates.month_day(ed);
-					   ed = scheduler.date.add(ed,1,"day");
-					}
+				var days = body.querySelectorAll("td");
+				for(var day = 0; day < days.length; day++){
+					this._waiAria.yearDayCell(days[day]);
 				}
+
+
+
 				b.appendChild(d);
 
-				d.childNodes[1].style.height = d.childNodes[1].childNodes[0].offsetHeight + "px"; // dhx_year_week should have height property so that day dates would get correct position. dhx_year_week height = height of it's child (with the day name)
+				weekHeader.style.height = weekHeader.childNodes[0].offsetHeight + "px"; // dhx_year_week should have height property so that day dates would get correct position. dhx_year_week height = height of it's child (with the day name)
 				var dt = Math.round((dy - 190) / 2);
 				d.style.marginTop = dt + "px";
 				this.set_xy(d, dx - 10, dy - dt - 10, dx * j + 5, dy * i + 5 + scheduler.xy.year_top);
@@ -338,10 +361,10 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 		if(!date)
 			return null;
 
-		return scheduler.date.week_start(scheduler.templates.xml_date(date));
+		return scheduler.date.week_start(scheduler.date.month_start(from_attr(date)));
 	};
 	scheduler._locate_year_month_day = function(n){
-		return n.className && n.className.indexOf("dhx_year_event") != -1 && n.hasAttribute && n.hasAttribute("date");
+		return scheduler._getClassName(n).indexOf("dhx_year_event") != -1 && n.hasAttribute && n.hasAttribute("date");
 	};
 
 	var locateEvent = scheduler._locate_event;
@@ -352,7 +375,7 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 
 			if(!day || !day.hasAttribute("date")) return null;
 
-			var dat = scheduler.templates.xml_date(day.getAttribute("date"));
+			var dat = from_attr(day.getAttribute("date"));
 			var evs = scheduler.getEvents(dat, scheduler.date.add(dat, 1, "day"));
 			if(!evs.length) return null;
 
