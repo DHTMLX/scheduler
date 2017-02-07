@@ -514,22 +514,24 @@ scheduler.form_blocks["recurring"] = {
 
 		var cont = block._get_form(),
 			el = block._get_button();
-		if (!cont.open && !cont.blocked) {
-			cont.style.height = "auto";//reset to default value
-			if(el){
-				el.style.backgroundPosition = "-5px 0px";
-				el.nextSibling.innerHTML = scheduler.locale.labels.button_recurring_open;
+		if (!cont.blocked) {
+			if (!cont.open) {
+				cont.style.height = "auto";//reset to default value
+				if (el) {
+					el.style.backgroundPosition = "-5px 0px";
+					el.nextSibling.innerHTML = scheduler.locale.labels.button_recurring_open;
+				}
+			} else {
+				cont.style.height = "0px";
+				if(el){
+					el.style.backgroundPosition = "-5px 20px";
+					el.nextSibling.innerHTML = scheduler.locale.labels.button_recurring;
+				}
 			}
-		} else {
-			cont.style.height = "0px";
-			if(el){
-				el.style.backgroundPosition = "-5px 20px";
-				el.nextSibling.innerHTML = scheduler.locale.labels.button_recurring;
-			}
+			cont.open = !cont.open;
+	
+			scheduler.setLightboxSize();
 		}
-		cont.open = !cont.open;
-
-		scheduler.setLightboxSize();
 	},
 	focus:function(node) {
 	},
