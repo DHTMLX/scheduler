@@ -564,10 +564,12 @@ scheduler._rec_temp = [];
 
 		if (ev_id) {
 			var ev = scheduler.getEvent(ev_id);
-			if (this._is_modified_occurence(ev))
-				scheduler._add_rec_marker(ev, ev.event_length * 1000);
-			if (ev.rec_type)
-				ev.rec_pattern = ev.rec_type.split("#")[0];
+			if(ev) {
+				if (this._is_modified_occurence(ev))
+					scheduler._add_rec_marker(ev, ev.event_length * 1000);
+				if (ev.rec_type)
+					ev.rec_pattern = ev.rec_type.split("#")[0];
+			}
 		}
 		return ev_id;
 	};
@@ -740,7 +742,10 @@ scheduler._is_virtual_event = function(id){
 	return id.toString().indexOf("#") != -1;
 };
 scheduler._is_modified_occurence = function(ev){
-	return (ev.event_pid && ev.event_pid != "0");
+	if(ev) {
+		return (ev.event_pid && ev.event_pid != "0");
+	}
+	return false;
 };
 
 scheduler._validId = function(id) {
