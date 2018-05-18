@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -29,7 +29,7 @@ scheduler.renderCalendar = function(obj, _prev, is_refresh) {
 		if (typeof pos == "string")
 			pos = document.getElementById(pos);
 		if (pos && (typeof pos.left == "undefined")) {
-			var tpos = getOffset(pos);
+			var tpos = scheduler.$domHelpers.getOffset(pos);
 			pos = {
 				top: tpos.top + pos.offsetHeight,
 				left: tpos.left
@@ -98,11 +98,15 @@ scheduler.renderCalendar = function(obj, _prev, is_refresh) {
 		});
 	}
 
+	if(this.config.wai_aria_attributes && this.config.wai_aria_application_role){
+		cal.setAttribute("role", "application");
+	}
+
 	return cal;
 };
 scheduler._get_def_cont = function(pos) {
 	if (!this._def_count) {
-		this._def_count = document.createElement("DIV");
+		this._def_count = document.createElement("div");
 		this._def_count.className = "dhx_minical_popup";
 		this._def_count.onclick = function(e) { (e || event).cancelBubble = true; };
 		document.body.appendChild(this._def_count);
@@ -170,7 +174,7 @@ scheduler.updateCalendar = function(obj, sd) {
 	obj.conf.date = sd;
 	this.renderCalendar(obj.conf, obj, true);
 };
-scheduler._mini_cal_arrows = ["&nbsp", "&nbsp"];
+scheduler._mini_cal_arrows = ["&nbsp;", "&nbsp;"];
 scheduler._render_calendar = function(obj, sd, conf, previous) {
 	/*store*/
 	var ts = scheduler.templates;
@@ -194,7 +198,7 @@ scheduler._render_calendar = function(obj, sd, conf, previous) {
 	if (previous){
 		d = previous;
 	} else {
-		d = document.createElement("DIV");
+		d = document.createElement("div");
 		d.className = "dhx_cal_container dhx_mini_calendar";
 	}
 	d.setAttribute("date", this.templates.xml_format(sd));
@@ -235,7 +239,7 @@ scheduler._render_calendar = function(obj, sd, conf, previous) {
 		};
 		var labels = [scheduler.locale.labels.prev, scheduler.locale.labels.next];
 		for (var j = 0; j < 2; j++) {
-			var arrow = document.createElement("DIV");
+			var arrow = document.createElement("div");
 			//var diff = diffs[j];
 			arrow.className = css_classnames[j];
 
@@ -271,7 +275,7 @@ scheduler._render_calendar = function(obj, sd, conf, previous) {
 		scheduler._waiAria.minicalHeadCell(dayHeaders[i]);
 	}
 	var dayCells = body.querySelectorAll("td");
-	var firstDate = new Date(temp4);
+	var firstDate = new Date(dd);
 	for(var i = 0; i < dayCells.length; i++){
 
 		scheduler._waiAria.minicalDayCell(dayCells[i], new Date(firstDate));
@@ -339,7 +343,7 @@ scheduler.form_blocks.calendar_time = {
 		dt.setHours(first / 60);
 
 		sns._time_values = [];
-		html += " <select>";
+		html += " <select class='dhx_lightbox_time_select'>";
 		for (var i = first; i < last; i += this.config.time_step * 1) { // `<` to exclude last "00:00" option
 			var time = this.templates.time_picker(dt);
 			html += "<option value='" + i + "'>" + time + "</option>";
@@ -350,7 +354,7 @@ scheduler.form_blocks.calendar_time = {
 
 		var full_day = scheduler.config.full_day;
 
-		return "<div style='height:30px;padding-top:0; font-size:inherit;' class='dhx_section_time'>" + html + "<span style='font-weight:normal; font-size:10pt;'> &nbsp;&ndash;&nbsp; </span>" + html + "</div>";
+		return "<div style='height:30px;padding-top:0; font-size:inherit;' class='dhx_section_time dhx_lightbox_minical'>" + html + "<span style='font-weight:normal; font-size:10pt;'> &nbsp;&ndash;&nbsp; </span>" + html + "</div>";
 	},
 	set_value: function(node, value, ev, config) {
 

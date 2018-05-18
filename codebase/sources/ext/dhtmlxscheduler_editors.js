@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -70,9 +70,16 @@ scheduler.form_blocks['combo']={
 					combo.selectOption(0);
 					combo.disable(0);
 				} else {
-					dhtmlxAjax.get(config.script_path+"?id="+selected_id+"&uid="+scheduler.uid(), function(result){
-						var option = result.doXPath("//option")[0];
-						var label = option.childNodes[0].nodeValue;
+					scheduler.$ajax.get(config.script_path+"?id="+selected_id+"&uid="+scheduler.uid(), function(result){
+						var responseText = result.xmlDoc.responseText;
+						var label;
+						try{
+							var res = JSON.parse(responseText);
+							label = res.options[0].text;
+						}catch(e){
+							var option = scheduler.$ajax.xpath("//option", result.xmlDoc)[0];
+							label = option.childNodes[0].nodeValue;
+						}
 						config.cached_options[selected_id] = label;
 						combo.addOption(selected_id, label);
 						combo.disable(1);

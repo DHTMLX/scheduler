@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -26,7 +26,7 @@ scheduler.locale = {
 		icon_delete: "מחק",
 		confirm_closing: "", //Your changes will be lost, are your sure ?
 		confirm_deleting: "ארוע ימחק סופית.להמשיך?",
-		section_description: "הסבר",
+		section_description: "תיאור",
 		section_time: "תקופה",
 
 		confirm_recurring: "האם ברצונך לשנות כל סדרת ארועים מתמשכים?",
@@ -53,20 +53,20 @@ scheduler.locale = {
 
 		/* touch tooltip*/
 		drag_to_create:"Drag to create",
-		drag_to_move:"Drag to move",
+		drag_to_move:"גרור כדי להזיז",
 
 		/* dhtmlx message default buttons */
 		message_ok:"OK",
-		message_cancel:"Cancel",
+		message_cancel:"בטל",
 
 		/* wai aria labels for non-text controls */
-		next: "Next",
-		prev: "Previous",
-		year: "Year",
-		month: "Month",
-		day: "Day",
-		hour:"Hour",
-		minute: "Minute"
+		next: "הבא",
+		prev: "הקודם",
+		year: "שנה",
+		month: "חודש",
+		day: "יום",
+		hour:"שעה",
+		minute: "דקה"
 	}
 };
 

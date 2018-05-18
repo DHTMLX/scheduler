@@ -1,0 +1,27 @@
+{
+  "name": "dhtmlx-scheduler-skins",
+  "version": "5.0.0",
+  "description": "Less sources and a build tool for DHTMLXScheduler skins",
+  "scripts": {
+    "build": "lessc ./dhtmlxscheduler.less ../../dhtmlxscheduler.css && lessc ./dhtmlxscheduler_flat.less ../../dhtmlxscheduler_flat.css && lessc ./dhtmlxscheduler_material.less ../../dhtmlxscheduler_material.css && lessc ./dhtmlxscheduler_terrace.less ../../dhtmlxscheduler_terrace.css && lessc ./dhtmlxscheduler_contrast_white.less ../../dhtmlxscheduler_contrast_white.css && lessc ./dhtmlxscheduler_contrast_black.less ../../dhtmlxscheduler_contrast_black.css",
+    "watch": "npm-watch build"
+  },
+  "watch":{
+    "build": {
+      "patterns":["./"],
+      "extensions": "less"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DHTMLX/scheduler"
+  },
+  "author": "Dinamenta",
+  "license": "DHTMLX Enterprise License",
+  "homepage": "https://dhtmlx.com",
+  "dependencies": {
+    "less": "^3.0.4",
+    "npm-watch": "^0.3.0"
+  },
+  "devDependencies": {}
+}

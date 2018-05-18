@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -64,11 +64,12 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 	});
 
 
-	// As we are blocking first render above there could be a problem in case of dynamic loading ('from' won't be defined)
+	// As we are blocking first render above there could be a problem in case of dynamic loading and rendering of visible data in general ('from'/'to' won't be defined)
 	var old_load = scheduler._load;
 	scheduler._load = function() {
 		var args = arguments;
-		if (!scheduler._date && scheduler._load_mode) {
+
+		if (!scheduler._date) {
 			var that = this;
 			window.setTimeout(function() {
 				old_load.apply(that, args);

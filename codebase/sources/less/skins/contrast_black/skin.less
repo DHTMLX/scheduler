@@ -1,0 +1,688 @@
+/*                                              Table of Content
+
+
+
+        1. 
+
+        2. 
+
+        3. 
+
+        4. 
+
+
+
+*/
+
+
+
+/*============================================================================================
+                            0. Contrast Black Skin Design Default Styles
+==============================================================================================*/
+
+/* legacy vars */
+@mainColor: #1b4872;
+@eventBorderColor: #00b7ff;
+@selectColor: #42425e;
+
+@backColor: #000;
+@monthAltBg: #2e2e2e;
+
+@layoutFontColor: #E9E9E9;
+@foreColor: #FFF;
+@fontColor: @foreColor;
+@default-font-color: @fontColor;
+@nowDate: #423f0c;
+
+@layoutColor: @backColor;
+@fontFamily: "arial";
+@fontSize: 14px;
+@scaleFontSize: 16px;
+
+@borderColor: #8d8d8d;
+@lightBorderColor: #8d8d8d;
+
+@saveBtnColor: @mainColor;
+@saveBtnBorderColor: @eventBorderColor;
+@regularBtnColor: #E9E9E9;
+@deleteBtnColor: #ffc400;
+@buttonFontSize: 14px;
+
+/* end legacy vars */
+
+@default-font-family:               "Arial", san-serif;
+@secondary-font-family:             "Tahoma", san-serif;
+@default-font-size:                 14px; 
+@default-borderColor:               #8d8d8d;
+
+/*============================================================================================
+                            1. DHX Scheduler Container
+==============================================================================================*/
+
+@container-background:              rgb(0,0,0);
+@container-font-family:             @default-font-family;
+@container-font-size:               @default-font-size;
+
+/*============================================================================================
+                            2. Navigation Section
+==============================================================================================*/
+
+@navline-font-color:                      #2F3A48;
+@navline-btn-top-position:                  14px;
+
+
+    // ** Previous / Today / Next **
+
+        @nav-btn-background:                none;
+        @nav-btn-background-img:            url(imgs/buttons.png);
+        @nav-btn-border:                    2px solid #FFF;
+        @nav-btn-height:                    30px;
+        @nav-btn-width:                     46px;
+                    // *Prev Btn
+        @nav-prev-btn-position:             61px;
+        @nav-prev-btn-bg-img:               url(imgs_contrast_black/arrow_left.png);
+        @nav-prev-btn-bg-position:          center center;
+        @nav-prev-btn-border-radius:              5px 0 0 5px;
+                    // *Next Btn
+        @nav-next-btn-position:             14px;
+        @nav-next-btn-bg-img:               url(imgs_contrast_black/arrow_right.png);
+        @nav-next-btn-bg-position:          center center;
+        @nav-next-btn-border-radius:              0 5px 5px 0;
+                    // *Today Btn
+        @nav-today-btn-width:               80px;
+        @nav-today-btn-position:            123px;
+        @nav-today-btn-bg-img:              none;
+        @nav-today-btn-bg-position:         -62px 0px;
+        @nav-today-btn-text-decor:          none;
+        @nav-today-btn-font-color:          #ffffff;
+
+        @nav-today-btn-font-size:           inherit;
+        @nav-today-btn-font-weight:         bold;
+        @nav-today-btn-border-radius:       5px;
+
+    // ** Nav Tabs **
+        @nav-tab-width:                     60px;
+        @nav-tab-height:                    30px;
+
+        @nav-tab-background:                #000;
+        @nav-tab-text-align:                center;
+        @nav-tab-text-decor:                none;
+        @nav-tab-padding:                   0;
+        @nav-tab-border:                    2px solid #FFF;
+        @nav-tab-border-radius:                   0;
+        @nav-tab-font-color:                #FFF;
+        @nav-tab-font-weight:               bold;
+        @nav-tab-line-height:               30px; // All BTN line height
+        @nav-tab-cursor:                    pointer;
+        @nav-tab-first-border-radius:             5px 0 0 5px;
+        @nav-tab-last-border-radius:              0 5px 5px 0;
+        @nav-today-btn-border:              @nav-btn-border;
+
+
+
+
+        @nav-act-tab-text-decor:            none;
+        @nav-act-tab-font-weight:           bold;
+        @nav-act-tab-font-color:            #000;
+        @nav-act-tab-cursor:                default;
+        @nav-act-tab-border:                2px solid rgb(255, 255, 255);
+        @nav-act-tab-border-botom:          1;                      // Set 1 to show bottom border/ Works like true/false switch
+        @nav-act-tab-background:            #FFF;
+
+        @stand-alone-btn-border-radius:           5px ~'!important';
+
+
+    // ** Middle Calendar Date 
+
+        @nav-cal-date-position:             0;
+        @nav-cal-unit-date-position:        unset;
+        @nav-cal-date-font-weight:          normal;
+        @nav-cal-date-padding:              1px 0 0 0;
+        @nav-cal-date-font-size:            18px;
+        @nav-cal-date-font-color:           #FFF;
+        @nav-cal-date-text-align:           center;
+        @nav-cal-date-width:                100%;
+        @nav-cal-date-border:               0;
+        @nav-cal-date-index:                -1;
+
+
+
+
+/*============================================================================================
+                            1. DHX Scheduler Container
+==============================================================================================*/
+// Callumns Header$
+
+@col-header-background:             #FFFFFF;
+@col-header-left-pos:               10px;
+@col-header-top-pos:                23px;
+@col-header-border-top:             1px solid #8d8d8d;
+@col-header-border-right:           1px solid #8d8d8d;
+@col-header-index:                  2;
+@col-header-font-color:             #e9e9e9;
+@col-header-font-size:              16px;
+
+    // ** Scale Bar / column title cell
+
+        @col-header-cell-text-align:        center;
+        @col-header-cell-background:        #000;
+        @col-header-cell-padding:           2px 0 0 0;
+        @col-header-cell-border-left:       1px solid #8d8d8d;
+        @col-header-cell-font-weight:       bold;
+        @col-header-cell-font-size:         16px;
+        @col-header-cell-font-color:        #e9e9e9;
+        @col-header-cell-line-height:       16px;
+        @col-header-cell-line-height:       16px;
+
+    // ** Scale Bar / column title cell / UNIT MODE
+
+        @col-unit-header-cell-line-height:  33px; // makes text become in centre of Cell
+
+
+/*============================================================================================
+                            1. DHX Scheduler Container
+==============================================================================================*/
+// Multiday Section
+
+@multi-day-background:              #FFFFFF;
+@multi-day-border-right:            1px solid #8d8d8d;
+@multi-day-border-top:              1px solid #8d8d8d;
+
+@multi-day-icon-background:         #000;
+@multi-day-icon-bg-position:        center center;
+@multi-day-icon-bg-repeat:          no-repeat;
+
+@multi-day-icon-border-bottom:      1px solid #8d8d8d;
+@multi-day-icon-border-right:       1px solid #8d8d8d;
+
+
+@multi-day-large-icon-img:          url(imgs_dhx_terrace/clock_big.gif);
+@multi-day-small-icon-img:          url(imgs_dhx_terrace/clock_small.gif);
+
+
+
+// Multi_Day Event-line
+
+@event-line-background:             @mainColor;
+@event-line-border:                 1px solid @eventBorderColor;
+@event-line-border-radius:                2px;
+@event-line-font-family:            @default-font-family;
+@event-line-font-size:              @default-font-size;
+@event-line-line-height:            17px;
+@event-line-font-color:             #FFFFFF;
+@event-line-height:                  17px;
+@event-line-padiing:                0 0 0 10px;
+@event-line-topleft-border-radius:        9px;
+@event-line-topright-border-radius:       9px;
+@event-line-bottomleft-border-radius:     9px;
+@event-line-bottomright-border-radius:    9px;
+@event-line-resize-icon:            url(./imgs_dhx_terrace/resize_dots.png) repeat-y;
+
+
+
+/*============================================================================================
+                            1. DHX Scheduler Container
+==============================================================================================*/
+// Hour Scale 
+
+@scale-hour-background:             #000;
+@scale-hour-border-bottom:          1px solid #8d8d8d;
+@scale-hour-text-align:             center;
+@scale-hour-font-size:              11px; // Hours on left Scale
+@scale-minute-font-size:            11px; // Minutes on left Scale
+@scale-hour-line-height:            44px;
+@scale-hour-font-color:             #FFF;
+@scale-hour-font-size:              16px;
+
+
+/*============================================================================================
+                            1. DHX Scheduler Container
+==============================================================================================*/
+// Scale Holder - Columns
+
+@scale-column-border-right:         1px solid #8d8d8d;
+@scale-column-background-img:       url(imgs_contrast_black/databg.png);
+
+@scale-column-now-border-right:     1px solid #8d8d8d;
+@scale-column-now-background-img:   url(imgs_contrast_black/databg.png);
+@scale-column-now-background:       rgba(144,136,15,.5);
+
+
+/*============================================================================================
+                            1. DHX Scheduler Container
+==============================================================================================*/
+// Data Section Border
+
+@data-container-border-top:         1px solid #8d8d8d;
+
+
+/*============================================================================================
+                            1. DHX Scheduler Container
+==============================================================================================*/
+// Month view / Day box
+
+    // ** Day box Title
+
+        @daybox-title-border-right:             1px solid #8d8d8d;
+        @daybox-title-font-size:                @default-font-size;
+        @daybox-title-font-weight:              700;
+        @daybox-title-line-height:              21px;
+        @daybox-title-text-align:               right;
+        @daybox-title-padding:                  0 5px 0 0; 
+        @daybox-title-height:                   21px;
+        @daybox-title-color:                    #e9e9e9;
+        @daybox-title-background:               #000;
+
+
+    // ** Day box Body
+
+        @daybox-body-border-right:              1px solid #8d8d8d;
+        @daybox-body-border-bottom:             1px solid #8d8d8d;
+        @daybox-body-background:                #000;
+
+
+    // ** Other month Day box Title ( Motnth that goes afret or before currently shown month )
+
+        @other-month-daybox-title-background:   #2e2e2e;
+        @other-month-daybox-title-font-color:   #e9e9e9;
+
+    // ** Other month Day box Body
+
+        @other-month-daybox-body-background:    #2e2e2e;
+
+    // ** Current Day box Title 
+
+        @current-daybox-title-background:       #FFF3A1;
+        @current-daybox-title-font-weight:      normal;
+
+    // ** Current Day box Body 
+
+        @current-daybox-body-background:        rgba(144,136,15,0.5);
+
+
+
+    // ** Day box Content
+
+        @daybox-content-height:                 14px;
+        @daybox-content-padding:                0 0 0 2px;
+        @daybox-content-font-color:             #FFF;
+        @daybox-content-font-family:            @secondary-font-family;
+        @daybox-content-font-size:              14px;
+
+    // ** New event in move background
+    
+
+
+
+
+/*============================================================================================
+                            1. DHX Scheduler Container
+==============================================================================================*/
+        //  Event
+        
+        @event-header-line-height:              1px; 
+        @event-header-line-margin:              0 0 0 1px;
+        @event-header-line-border-width:        1px 1px 0px 1px;
+        
+        
+        @event-title-height:                    12px;
+        @event-title-border-width:              1px 1px 0 1px;
+        @event-title-border-radius:                   4px 4px 0 0;
+        @event-title-border-bottom-style:       dotted;
+        @event-title-font-size:                 @default-font-size;
+        @event-title-line-height:               14px;
+        @event-title-font-weight:               bold;
+        @event-title-text-align:                center;
+        @event-title-padding:                   1px 0 0 0;
+
+
+        @event-body-border-radius:                    0 0 4px 4px;
+        @event-body-padding:                    5px 5px 8px 5px;
+        
+        
+        @event-background:                      @mainColor;
+        @event-border:                          1px solid @eventBorderColor;
+        @event-font-color:                      #FFFFFF;
+
+        @event-resizer-height:                  5px; 
+        @event-resizer-border-width:            0;
+        @event-resizer-margin:                  -6px 0 0 2px; 
+        @event-resizer-background:              @event-background url(imgs_contrast_black/resizing.png) no-repeat center center;
+        
+        
+                // * Event Editor
+        
+        @event-editor-border:                   1px solid #1796b0;
+        @event-editor-border-top-style:         solid;
+        @event-editor-font-family:              @default-font-family;
+        @event-editor-font-size:                @default-font-size;
+        @event-resizer-top-pos:                 -1px;
+        
+        
+                // * Selected Event Menu
+        
+        @event-menu-head-background-img:        url(imgs_contrast_black/controls.png);
+        @event-menu-head-background-pos:        1px -41px;
+        @event-menu-head-border:                none;
+        @event-menu-head-cursor:                default;
+        @event-menu-shadow:                     0 0 1px #FFF;
+        
+        @event-menu-icon-background-img:        url(imgs_contrast_black/controls.png);
+        @event-menu-detail-icon-bg-pos:         0px 0px;
+        @event-menu-edit-icon-bg-pos:           -21px 0px;
+        @event-menu-save-icon-bg-pos:           -82px -1px;
+        @event-menu-cancel-icon-bg-pos:         -62px 0px;
+        @event-menu-delete-icon-bg-pos:         -42px 0px;
+
+
+/*============================================================================================
+                            1. DHX Scheduler Container
+==============================================================================================*/
+// Modal Box 
+
+@modal-box-width:                       330px;
+@modal-box-text-align:                  center;
+@modal-box-font-family:                 @secondary-font-family;
+@modal-box-background:                  #000;
+@modal-box-background-gradient:         -webkit-linear-gradient(top, #ffffff 1%, #ffffff 99%);
+@modal-box-shadow:                       inset 0px 0px 0px 4px @mainColor;
+@modal-box-border:                      1px solid #ffffff;
+@modal-box-border-radius:                     6px;
+@modal-wrapper-opacity:                 0.2;
+
+
+    // ** Modal box - Pop Up Text
+
+        @modal-popup-text-margin:           15px 15px 5px 15px;
+        @modal-popup-text-font-size:        14px;
+        @modal-popup-text-color:            #FFF;
+        @modal-popup-text-min-height:       30px;
+        @modal-popup-text-border-radius:    6px;
+
+    // ** Modal box - Control block
+
+        @modal-popup-controls-border-radius:      6px;
+        @modal-popup-controls-padding:      5px 5px 9px 5px;
+
+
+    // **  Control Button Wrapper
+
+    @modal-popup-button-wrap-height:        30px;
+    @modal-popup-button-wrap-line-height:   28px;
+    @modal-popup-button-wrap-margin:        0 5px;
+    @modal-popup-button-wrap-border-radius:       6px;
+    @modal-popup-button-wrap-color:         #fff;
+    @modal-popup-button-wrap-min-width:     120px;
+    @modal-popup-button-wrap-border:        2px solid #FFF;
+    @modal-popup-button-wrap-shadow:        none;
+
+
+    // **  Control Button 
+
+    @modal-popup-button-border:             none;
+    @modal-popup-button-background:         transparent;
+    @modal-popup-button-background-img:     none;
+    @modal-popup-button-border-radius:            6px;
+    @modal-popup-button-font-color:         inherit;
+    @modal-popup-button-font-size:          15px;
+    @modal-popup-button-font-weight:        normal;
+    @modal-popup-button-height:             28px;
+    @modal-popup-button-line-height:        28px;
+        
+
+    // ** Control OK Button 
+    @modal-ok-button-wrap-border:   2px solid @eventBorderColor;
+    @modal-ok-button-wrap-background:    @mainColor;
+    @modal-ok-button-background:    @mainColor;
+    @modal-ok-button-border:        1px solid transparent;
+    @modal-ok-button-color:         #ffffff;
+    @modal-ok-button-text-shadow:   none;
+    
+    // ** Control Cancel Button 
+    @modal-cancel-button-wrap-border:   2px solid #FFFFFF;
+    @modal-cancel-button-wrap-background: #000;
+    @modal-cancel-button-color:         #ffffff;
+
+    // **  Control Button:active
+    @modal-popup-button-act-background:         @mainColor;
+    @modal-popup-button-act-background-img:     none;
+    @modal-popup-button-act-color:              #FFF;
+    @modal-popup-button-act-shadow:             none;
+
+@info-popup-background: #000;
+@info-popup-font-color: @fontColor;
+@info-popup-shadow: none;
+@info-popup-border: 1px solid #fff;
+@info-popup-inner-border: 1px solid #fff;
+/*============================================================================================
+                            1. DHX Scheduler Container
+==============================================================================================*/
+// Modal Quick Info Box - touch tap appearing
+
+@infobox-border:                2px solid #888;
+@infobox-border-radius:               5px;
+@infobox-background:            rgba(50,50,50,.5);
+@infobox-padding:               0 0 0 7px;
+@infobox-width:                 300px;
+@infobox-transition:            left 0.5s ease, right 0.5s;
+@infobox-font-family:           "Tahoma", san-serif;
+@infobox-font-size:             8pt;
+
+
+    // ** Quick inFo Title
+    @infobox-title-padding:             5px 0px 10px 5px;
+    @infobox-font-color:                #FFF;
+    @infobox-letter-spacing:            1px;
+    @infobox-title-cont-font-size:      18px;
+    @infobox-title-cont-font-weight:    700;
+    @infobox-title-date-font-size:      14px;
+
+    // ** Quick inFo Content
+    @infobox-content-width:             275px;
+    @infobox-content-padding:           16px 8px;
+    @infobox-content-background:        #fefefe;
+    @infobox-content-border:            1px solid #888;
+    @infobox-content-font-color:        #444;
+    @infobox-content-font-size:         14px;
+
+    // ** Quick inFo Controls
+    @infobox-control-btn-height:        20px;
+    @infobox-control-btn-min-width:     60px;
+    @infobox-control-btn-padding:       5px 10px 5px 5px;
+    @infobox-control-btn-margin:        5px 9px 5px 0px;
+    @infobox-control-btn-bg-color:      #1796b0;
+    @infobox-control-btn-border-bottom: 1px solid #666;
+    @infobox-control-btn-border-right:  1px solid #666;
+    @infobox-control-btn-border-radius: 3px;
+    @infobox-control-btn-lheight:       20px;
+    @infobox-control-btn-font-color:    #FFFFFF;
+    @infobox-control-btn-vertical-align:middle;
+
+
+/*============================================================================================
+                            1. DHX Scheduler Container
+==============================================================================================*/
+// LIGHTBOX
+
+@lightbox-background:   #000;
+@lightbox-border:       1px solid #8d8d8d;
+@lightbox-border-radius:      5px;
+@lightbox-font-color:   #fff;
+@lightbox-font-family:  @secondary-font-family;
+@lightbox-font-size:    14px;
+@lightbox-shadow:       5px 5px 5px #888;
+
+
+    // **LightBox title
+
+    @lightbox-title-padding:                2px 0px 2px 5px;
+    @lightbox-title-height:                 30px;
+    @lightbox-title-line-height:            30px;
+    @lightbox-title-border-bottom:          1px solid #CECECE;
+
+    @lightbox-title-time-font-weight:       bold;
+    @lightbox-title-time-padding:           0 0 0 10px;
+    @lightbox-title-name-padding:           0 0 0 13px;
+
+    // ** LightBox Main Area
+
+    @lightbox-area-border:                  1px solid transparent;
+    @lightbox-area-border-top:              0px;
+    @lightbox-area-background-color:        #000;
+    @lightbox-area-margin:                  0 0 0 3px;
+    @lightbox-area-width:                   730px;
+
+    // ** LightBox Main Area Wrap
+
+    @lightbox-area-wrap-border-top:         0;
+    @lightbox-area-wrap-background:         #000;
+    @lightbox-area-wrap-padding:            5px 0;
+    @lightbox-area-wrap-border-botom:       1px solid #CECECE;
+
+
+    // ** LightBox Main Area - Left Side
+
+    @lightbox-area-ls-background:           rgb(0,0,0);
+    @lightbox-area-ls-font-color:           #FFF;
+    @lightbox-area-ls-font-weight:          700;
+    @lightbox-area-ls-font-size:            14px;
+    @lightbox-area-ls-font-family:          @default-font-family;
+    @lightbox-area-ls-padding:              5px 0px 0px 10px;
+    @lightbox-area-ls-width:                100px;
+
+
+    // ** LightBox Main Area - Left Side - Full Day
+
+    @lightbox-ls-fullday-font-color:        #FFF;
+    @lightbox-ls-fullday-font-size:         13px;
+    @lightbox-ls-fullday-font-family:       @default-font-family;
+    @lightbox-ls-fullday-font-weight:       bold;
+    @lightbox-ls-fullday-line-height:       20px;
+    @lightbox-ls-fullday-margin:            0;
+    @lightbox-ls-fullday-input-margin:      3px 3px 0 0;
+
+
+    // ** LightBox Main Area - Right Side / Text Area
+
+    @lightbox-area-rs-padding:              2px 0px 2px 10px;
+    @lightbox-area-rs-textarea-bg:          #F9F9F9;
+    @lightbox-area-rs-font-size:            14px;
+    @lightbox-area-rs-line-height:          20px;
+    @lightbox-area-rs-outline:              none ~'!important';
+    @lightbox-area-rs-border:               1px solid #CECECE;
+    @lightbox-area-rs-float:                none;
+
+
+    // ** LightBox Main Area - Right Side / Text Area - Disabled
+    
+    @lightbox-rs-disabled-font-color:       #2E2E2E;
+    @lightbox-rs-disabled-font-family:      @secondary-font-family;
+    @lightbox-rs-disabled-font-size:        8pt;
+
+    // ** LightBox Main Area - Right Side / Selects
+    
+    @lightbox-area-rs-select-font-family:   @secondary-font-family;
+    @lightbox-area-rs-select-font-size:     8pt;
+    @lightbox-area-rs-select-color:         #2E2E2E;
+    @lightbox-area-rs-select-padding:       2px;
+    @lightbox-area-rs-select-margin:        0px;
+
+    // ** LightBox Main Area - Right Side / Input[radio]
+
+    @lightbox-input-radio-margin:           3px 3px 0px 5px;
+    @lightbox-input-label-display:          inline-block;
+    @lightbox-input-label-position:         relative;
+    @lightbox-input-label-top:              -3px;
+    
+
+
+    // ** LightBox Main Area - Time block
+
+    @lightbox-area-time-block-bg:           transparent;            // #DBCF8C;
+    @lightbox-area-time-block-padding:      2px 0 0 0  ~'!important';
+    @lightbox-area-time-block-height:       20px  ~'!important';
+    @lightbox-area-time-block-textaligment: center;
+
+
+    // ** LightBox Main Area - Btn
+
+    @lightbox-btn-wrap-padding:             0;
+
+    @lightbox-btn-height:                   30px;
+    @lightbox-btn-line-height:              30px;
+    @lightbox-btn-border:                   1px solid rgb(206, 206, 206);
+    @lightbox-btn-border-radius:            3px;
+    @lightbox-btn-padding:                  0 20px;
+    @lightbox-btn-margin:                   12px 0 0 20px;
+    @lightbox-btn-font-size:                14px;
+    @lightbox-btn-font-weight:              bold;
+    @lightbox-btn-float:                    left;
+
+
+    @lightbox-del-btn-border:               1px solid #ffc400;
+    @lightbox-del-btn-background:           #000;
+    @lightbox-del-btn-font-color:           #ffc400;
+    @lightbox-del-btn-text-shadow:          none;
+    @lightbox-del-btn-margin:               12px 20px 0 20px;
+    @lightbox-btn-recurring-bg-image: url(./imgs_contrast_black/but_repeat.gif);
+
+    @lightbox-save-btn-border:              2px solid @eventBorderColor ~'!important';
+    @lightbox-save-btn-color:               #FFFFFF;
+    @lightbox-save-text-shadow:             none;
+    @lightbox-save-btn-background:          @mainColor;
+
+/*============================================================================================
+                            1. DHX Scheduler Container
+==============================================================================================*/
+// Other
+
+    // ** 02/05_custom_editor.html
+
+    // ** LightBox text area INPUT
+
+    @lightbox-input-font-color:             #747373;
+    @lightbox-input-font-size:              8pt;
+    @lightbox-input-font-family:            @secondary-font-family;
+    @lightbox-input-first-margin:           0 0 0 11px;
+    @lightbox-input-border:                 1px solid rgb(169, 169, 169);
+    @lightbox-input-border-bottom-width:    0;
+    @lightbox-input-padding:                2px 5px 2px 2px;
+
+
+
+    // ** 02/18_combo_select_from_db.html
+
+    // ** LightBox Select Country combo input
+
+    @lightbox-combo-input-top:              -3px;
+
+
+    // ** 03_extensions/25_advanced_limitation.html
+
+    // ** LightBox Select Country combo input
+
+    @grid-border-bottom:                    1px solid #CECECE;
+    @grid-border-right:                     1px solid #CECECE;
+    @grid-tree-cell-font-family:            @secondary-font-family;
+	@grid-tree-cell-font-size:              inherit;
+
+
+    @calendar-open-icon: url(./imgs_contrast_black/calendar.gif);
+
+    // ** Mini Calendar 
+
+    @mini-calendar-border-color:            #8d8d8d;
+    @mini-calendar-font-color:              #000;
+
+    // ** On Drag
+
+    @scale-time-drag-maker-background:  #FFE763;
+    @scale-time-drag-maker-border-top:  1px solid #B6B6B6;
+    @scale-time-drag-maker-border-bottom:  1px solid #B6B6B6;
+    @scale-time-drag-maker-opacity:     0.5;
+
+
+    @agenda-topline-font-color:         #fff;
+    @agenda-data-background-image:      url(./imgs_contrast_black/databg.png);
+    @map-data-bg: url(./imgs_contrast_black/databg.png);
+    @year-tooltip-bg-image: url(imgs_contrast_black/databg.png);

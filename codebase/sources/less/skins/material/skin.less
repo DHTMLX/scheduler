@@ -1,0 +1,768 @@
+
+@import (css) url(https://fonts.googleapis.com/css?family=Roboto:400,500,600);
+
+@base-color:                #0288D1;
+
+@default-font-family:               "Roboto", Arial;
+@secondary-font-family:             @default-font-family;
+@default-font-size:                 14px;
+@default-font-color:                rgba(0,0,0,0.75);
+
+@default-border-color:              #e0e0e0;
+// DHX Scheduler Container
+
+@container-background:              rgb(255, 255, 255);
+@container-font-family:             @default-font-family;
+@container-font-size:               @default-font-size;
+
+
+// NAVLINE - TOP BAR
+
+@navline-font-color:                      rgba(0,0,0,0.75);
+@navline-btn-top-position:                  14px;
+
+
+    // ** Previous / Today / Next **
+
+        @nav-btn-background:                none;
+        @nav-btn-background-img:            url(imgs/buttons.png);
+        @nav-btn-border:                    1px solid transparent;
+        @nav-btn-border:                    1px solid transparent;
+        @nav-btn-height:                    30px;
+        @nav-btn-width:                     30px;
+                    // *Prev Btn
+        // @nav-prev-btn-position:             61px;
+        @nav-prev-btn-position:             148px;
+        @nav-prev-btn-bg-img:               url(imgs_dhx_material/arrow_left.svg);
+        @nav-prev-btn-hov-bg-img:           url(imgs_dhx_material/arrow_left_hov.svg);
+        @nav-prev-btn-bg-position:          center center;
+        @nav-prev-btn-border-radius:        5px 0 0 5px;
+        @nav-prev-btn-hov-background:       rgba(0,0,0,0.1);
+                    // *Next Btn
+        @nav-next-btn-position:             16px;
+        @nav-next-btn-bg-img:               url(imgs_dhx_material/arrow_right.svg);
+        @nav-next-btn-hov-bg-img:           url(imgs_dhx_material/arrow_right_hov.svg);
+        @nav-next-btn-bg-position:          center center;
+        @nav-next-btn-border-radius:        0 5px 5px 0;
+        @nav-next-btn-hov-background:      rgba(0,0,0,0.1);
+
+                    // *Today Btn
+        @nav-today-btn-width:               80px;
+        // @nav-today-btn-position:            123px;
+        @nav-today-btn-position:            57px;
+        @nav-today-btn-bg-img:              none;
+        @nav-today-btn-bg-position:         -62px 0px;
+        @nav-today-btn-text-decor:          none;
+        @nav-today-btn-text-transform:      uppercase;
+        @nav-today-btn-font-color:          @base-color;
+
+        @nav-today-btn-font-size:           14px;
+        @nav-today-btn-font-weight:         500;
+        @nav-today-btn-border-radius:       0px;
+
+
+        @nav-today-btn-hov-border:          1px solid transparent;
+        @nav-today-btn-hov-background:      rgba(0,0,0,0.1);
+
+    // ** Nav Tabs **
+        @nav-tab-width:                     88px;
+        @nav-tab-height:                    29px;
+
+        @nav-tab-background:                none;
+        @nav-tab-text-align:                center;
+        @nav-tab-text-decor:                none;
+        @nav-tab-text-transform:            uppercase;
+        // @nav-tab-text-hov-text-color:       darken(@base-color,15);
+        @nav-tab-hov-background:            lighten(@base-color,55%);
+        @nav-tab-padding:                   1px;
+        @nav-tab-border:                    1px solid @base-color;
+        @nav-tab-border-radius:             0;
+        @nav-tab-font-color:                @base-color;
+        @nav-tab-font-weight:               500;
+        @nav-tab-line-height:               30px; // All BTN line height
+        @nav-tab-cursor:                    pointer;
+
+        @nav-tab-first-border-radius:       2px 0 0 2px;
+
+        @nav-tab-last-border-radius:        0 2px 2px 0;
+        @nav-today-btn-border:              @nav-btn-border;
+
+
+
+
+        @nav-act-tab-text-decor:            none;
+        @nav-act-tab-font-weight:           500;
+        @nav-act-tab-font-color:            #FFFFFF;
+        @nav-act-tab-cursor:                default;
+        @nav-act-tab-border:                1px solid @base-color;
+        @nav-act-tab-border-botom:          1;                      // Set 1 to show bottom border/ Works like true/false switch
+        @nav-act-tab-background:            @base-color;
+
+        @stand-alone-btn-border-radius:           5px ~'!important';
+
+
+    // ** Middle Calendar Date 
+
+        @nav-cal-date-position:             0;
+        @nav-cal-unit-date-position:        unset;
+        @nav-cal-date-font-weight:          500;
+        @nav-cal-date-padding:              1px 0 0 0;
+        @nav-cal-date-font-size:            20px;
+        @nav-cal-date-font-color:           rgba(0,0,0,0.75);
+        @nav-cal-date-text-align:           center;
+        @nav-cal-date-width:                100%;
+        @nav-cal-date-border:               0;
+        @nav-cal-date-index:                -1;
+
+    // ** Info Tooltip Popup 
+
+    @info-popup-shadow:                     0 10px 20px 0 rgba(0, 0, 0, 0.2), 0 1px 6px 0 rgba(0, 0, 0, 0.2);
+    @info-popup-background:                 #FFF;
+    @info-popup-border-radius:              2px;
+    @info-popup-border:                     none;
+    @info-popup-inner-border:               1px solid #ffffff;
+    @info-popup-padding:                    11px ~'!important';
+
+
+// Callumns Header$
+
+@col-header-background:             #FFFFFF;
+@col-header-left-pos:               10px;
+@col-header-border-top:             1px solid transparent;
+@col-header-border-right:           1px solid transparent;
+@col-header-index:                  2;
+@col-header-font-color:             rgba(0,0,0,0.38);
+@col-header-font-size:              14px;
+@col-header-font-weight:            500;
+
+    // ** Scale Bar / column title cell
+
+        @col-header-cell-text-align:        center;
+        @col-header-cell-background:        #FFFFFF;
+        @col-header-cell-padding:           2px 0 0 0;
+        @col-header-cell-border-left:       1px solid @default-border-color;
+        @col-header-cell-font-weight:       500;
+        @col-header-cell-font-size:         14px;
+        @col-header-font-color:        rgba(0,0,0,0.54);
+        @col-header-cell-line-height:       16px;
+
+    // ** Scale Bar / column title cell / UNIT MODE
+
+        @col-unit-header-cell-line-height:  33px; // makes text become in centre of Cell
+
+
+
+// Multiday Section
+
+@multi-day-background:              #FFFFFF;
+@multi-day-shadow:                  0 3px 5px 0 rgba(0,0,0,0.1);
+@multi-day-border-right:            1px solid transparent;
+@multi-day-border-top:              1px solid transparent;
+
+@multi-day-icon-background:         transparent;
+@multi-day-icon-bg-position:        center center;
+@multi-day-icon-bg-repeat:          no-repeat;
+
+@multi-day-icon-border-bottom:      1px solid transparent;
+@multi-day-icon-border-right:       1px solid transparent;
+
+
+@multi-day-large-icon-img:          url(imgs_dhx_material/clock_big.png);
+@multi-day-small-icon-img:          url(imgs_dhx_material/clock_small.png);
+
+
+
+// Multi_Day Event-line
+
+@event-line-background:             @base-color;
+@event-line-border:                 1px solid transparent;
+@event-line-border-radius:          2px;
+@event-line-font-family:            @default-font-family;
+@event-line-font-size:              @default-font-size;
+@event-line-font-weight:            500;
+@event-line-line-height:            17px;
+@event-line-font-color:             #FFFFFF;
+@event-line-height:                 17px;
+@event-line-padiing:                0 0 1px 10px;
+@event-line-topleft-border-radius:        2px;
+@event-line-topright-border-radius:       2px;
+@event-line-bottomleft-border-radius:     2px;
+@event-line-bottomright-border-radius:    2px;
+@event-line-resize-icon:            url(./imgs_dhx_material/drag-vertical.svg) no-repeat center center;
+
+
+
+
+// Hour Scale 
+
+@scale-hour-background:             #FFFFFF;
+@scale-hour-border-bottom:          1px solid @default-border-color;
+@scale-hour-text-align:             center;
+@scale-time-font-size:              12px;
+@scale-time-font-weight:            500;
+@scale-hour-font-size:              12px; // Hours on left Scale
+@scale-minute-font-size:            12px; // Minutes on left Scale
+@scale-hour-line-height:            44px;
+@scale-hour-font-color:             rgba(0,0,0,0.54);
+
+
+// Drag Maker
+
+
+@scale-time-drag-maker-background:  #dedede;
+@scale-time-drag-maker-border-top:  1px solid #dedede;
+@scale-time-drag-maker-border-bottom:  1px solid #dedede;
+@scale-time-drag-maker-opacity:     0.5;
+
+
+
+// Scale Holder - Columns
+
+@scale-column-border-right:         1px solid @default-border-color;
+@scale-column-background-img:       url(imgs_dhx_material/databg.png);
+
+@scale-column-now-border-right:     1px solid @default-border-color;
+@scale-column-now-background-img:   url(imgs_dhx_material/databg.png);
+@now-line-color: #ff5722;
+
+
+// Data Section Border
+
+@data-container-border-top:         1px solid transparent;
+
+
+// Month view / Day box
+
+    // ** Day box Title
+
+        @daybox-title-border-right:             1px solid @default-border-color;
+        @daybox-title-font-size:                12px;
+        @daybox-title-font-weight:              500;
+        @daybox-title-line-height:              21px;
+        @daybox-title-text-align:               right;
+        @daybox-title-padding:                  0 8px 0 0; 
+        @daybox-title-height:                   21px;
+        @daybox-title-color:                    rgba(0,0,0,0.54);
+        @daybox-title-background:               #FFFFFF;
+        @daybox-month-link-font-color:          #1B5DFB;
+        @daybox-month-link-font-family:         @secondary-font-family;
+    // ** Day box Body
+
+        @daybox-body-border-right:              1px solid @default-border-color;
+        @daybox-body-border-bottom:             1px solid @default-border-color;
+        @daybox-body-background:                #FFFFFF;
+
+
+    // ** Other month Day box Title ( Motnth that goes afret or before currently shown month )
+
+        @other-month-daybox-title-background:   #FFFFFF;
+        @other-month-daybox-title-font-color:   rgba(0,0,0,0.38);
+
+    // ** Other month Day box Body
+
+        @other-month-daybox-body-background:    #FFFFFF;
+
+    // ** Current Day box Title 
+
+        @current-daybox-title-background:       #FFF3A1;
+        @current-daybox-title-font-weight:      normal;
+
+    // ** Current Day box Body 
+
+        @current-daybox-body-background:        #F7F7F7;
+
+
+
+    // ** Day box Content
+
+        @daybox-content-height:                 19px;
+        @daybox-content-padding:                1px 0 0 11px;
+        @daybox-content-font-color:             @base-color;
+        @daybox-content-font-family:            @default-font-family;
+        @daybox-content-font-size:              14px;
+        @daybox-content-line-height:            19px;
+        @daybox-content-font-weight:            normal;
+        @daybox-content-background-color:       @base-color;
+        @daybox-content-background-color:       transparent; // Test Color
+
+    // ** New event in move background
+    
+        @event-inmove-background:               @base-color;
+        @event-inmove-font-color:               #fff;
+
+
+
+
+
+        //  Event
+        
+        @event-header-line-height:              1px; 
+        @event-header-line-margin:              0 0 0 1px;
+        @event-header-line-border-width:        1px 1px 0px 1px;
+        
+        
+        @event-title-height:                    18px;
+        @event-title-border-width:              1px 1px 0 1px;
+        @event-title-border-radius:             0 0 0 0;
+        @event-title-border-bottom-style:       dotted;
+        @event-title-font-size:                 12px;
+        @event-title-font-weight:               normal;
+        @event-title-text-align:                left;
+        @event-title-padding:                   4px 0 0 8px;
+        @event-title-line-height: normal;
+
+        @event-body-border-radius:              0 0 0 0;
+        @event-body-padding:                    2px 5px 8px 8px;
+        @event-body-font-weight:                500;
+        @event-body-line-height:                20px;
+        
+        
+        @event-background:                      @base-color;
+        @event-border:                          1px solid transparent;
+        @event-font-color:                      #FFFFFF;
+
+        @event-resizer-height:                  6px; 
+        @event-resizer-top-pos:                 0px;
+        @event-resizer-border-width:            0;
+        @event-resizer-margin:                  0px 0 0px 1px;
+        @event-resizer-background:              url(imgs_dhx_material/drag-horizontal.svg) no-repeat center center;
+        
+        
+                // * Event Editor
+        
+        @event-editor-border:                   1px solid transparent;
+        @event-editor-border-top-style:         solid;
+        @event-editor-font-family:              @default-font-family;
+        @event-editor-font-size:                @default-font-size;
+        @event-editor-font-color:               rgba(0,0,0,0.54);
+        @event-editor-font-weight:              500;
+        @event-editor-background:               @base-color;
+        @event-editor-padding:                  6px 0 0 8px;
+        
+                // * Selected Event Menu
+        
+        @event-menu-head-background-img:        none;
+        @event-menu-head-background-pos:        0px -43px;
+        @event-menu-head-border:                none;
+        @event-menu-padding:                    6px 0 12px 0 ~'!important';
+        @event-menu-head-cursor:                default;
+        @event-menu-shadow:                     0 0 1px #FFF;
+        
+        @event-menu-icon-background-img:        url(imgs_dhx_material/controls.png);
+        @event-menu-detail-icon-bg-pos:         0px 0px;
+        @event-menu-edit-icon-bg-pos:           -22px 0px;
+        @event-menu-save-icon-bg-pos:           -84px -1px;
+        @event-menu-cancel-icon-bg-pos:         -62px 0px;
+        @event-menu-delete-icon-bg-pos:         -42px 0px;
+
+
+
+// Modal Box 
+
+@modal-wrapper-opacity:                 0.4;
+
+@modal-box-width:                       341px;
+@modal-box-text-align:                  center;
+@modal-box-font-family:                 @default-font-family;
+@modal-box-background:                  #fff;
+@modal-box-background-gradient:         -webkit-linear-gradient(top, #ffffff 1%, #ffffff 99%);
+@modal-box-shadow:                      0px 0px 14px #888;
+@modal-box-border:                      none;
+@modal-box-border-radius:               2px;
+
+
+    // ** Modal box - Pop Up Text
+
+        @modal-popup-text-margin:           28px 15px 5px 15px;
+        @modal-popup-text-font-size:        14px;
+        @modal-popup-text-color:            rgba(0,0,0,0.87);
+        @modal-popup-text-min-height:       30px;
+        @modal-popup-text-border-radius:    6px;
+
+    // ** Modal box - Control block
+
+        @modal-popup-controls-border-radius:      6px;
+        @modal-popup-controls-padding:      5px 15px 20px 5px;
+
+
+    // **  Control Button Wrapper
+
+    @modal-popup-button-wrap-height:        30px;
+    @modal-popup-button-wrap-line-height:   28px;
+    @modal-popup-button-wrap-margin:        0 5px;
+    @modal-popup-button-wrap-border-radius: 2px;
+    @modal-popup-button-wrap-color:         @base-color;
+    @modal-popup-button-wrap-min-width:     82px;
+    @modal-popup-button-wrap-border:        1px solid transparent;
+    @modal-popup-button-wrap-shadow:        none;
+
+
+    // **  Control Button 
+
+    @modal-popup-button-border:             1px solid #FFF;
+    @modal-popup-button-background:         rgb(255, 255, 255);
+    @modal-popup-button-background-img:     none;
+    @modal-popup-button-border-radius:      2px;
+    @modal-popup-button-font-color:         @base-color;
+    @modal-popup-button-font-size:          15px;
+    @modal-popup-button-font-weight:        500;
+    @modal-popup-button-height:             28px;
+    @modal-popup-button-line-height:        28px;
+
+
+    @modal-popup-button-hov-color:          #D9EDF8;
+        
+
+    // ** Control OK Button 
+    @modal-ok-button-wrap-border:   1px solid #FF584C;
+    @modal-ok-button-wrap-background:    #FF584C;
+    @modal-ok-button-background:    #FF584C;
+    @modal-popup-button-act-background:         #ffffff;
+    @modal-ok-button-border:        1px solid #FF584C;
+    @modal-ok-button-color:         white;
+    @modal-ok-button-text-shadow:   none;
+    
+
+    // **  Control Button:active
+    @modal-popup-button-act-background:         #FF584C;
+    @modal-popup-button-act-background-img:     none;
+    @modal-popup-button-act-color:              @base-color;
+    @modal-popup-button-act-shadow:             none;
+    @modal-popup-cancel-btn-background:         #d9edf8;
+    @modal-popup-cancel-btn-border-color:       none;
+
+
+
+
+// Modal Quick Info Box - touch tap appearing
+
+@infobox-border:                1px solid rgba(50, 50, 50, 0.19);
+@infobox-border-radius:               2px;
+@infobox-background:            #fff;
+@infobox-padding:               0;
+@infobox-width:                 300px;
+@infobox-transition:            left 0.5s ease, right 0.5s;
+@infobox-font-family:           @default-font-family;
+@infobox-font-size:             @default-font-size;
+
+
+    // ** Quick inFo Title
+    @infobox-title-padding:             10px 0px 10px 10px;
+    @infobox-font-color:                #FFF;
+    @infobox-letter-spacing:            unset;
+    @infobox-title-cont-font-size:      18px;
+    @infobox-title-cont-font-weight:    500;
+    @infobox-title-date-font-size:      14px;
+
+    // ** Quick inFo Content
+    @infobox-content-width:             275px;
+    @infobox-content-padding:           24px 8px 16px 10px;
+    @infobox-content-background:        #fefefe;
+    @infobox-content-border:            none;
+    @infobox-content-font-color:        @default-font-color;
+    @infobox-content-font-size:         14px;
+
+    // ** Quick inFo Controls
+    @infobox-control-btn-height:        20px;
+    @infobox-control-btn-min-width:     60px;
+    @infobox-control-btn-padding:       5px 10px 5px 9px;;
+    @infobox-control-btn-margin:        5px 9px 5px 0px;
+    @infobox-control-btn-bg-color:      transparent;
+    @infobox-control-btn-border-bottom: none;
+    @infobox-control-btn-border-right:  none;
+    @infobox-control-btn-border-radius: 2px;
+    @infobox-control-btn-lheight:       20px;
+    @infobox-control-btn-font-color:    @base-color;
+    @infobox-control-btn-vertical-align: middle;
+    @infobox-control-info-btn-margin:   -1px 8px 0 0px;
+    @infobox-control-del-btn-margin:    2px 8px 0 0px; 
+
+
+
+// LIGHTBOX
+
+@lightbox-background:   #FFFFFF;
+@lightbox-border:       0 solid transparent;
+@lightbox-border-radius:2px;
+@lightbox-font-color:   #2E2E2E;
+@lightbox-font-family:  @default-font-family;
+@lightbox-font-size:    14px;
+@lightbox-shadow:       none;
+@lightbox-height:       auto ~'!important';
+@lightbox-padding:      0 0 20px 0;
+@lightbox-wrapper-opacity:  0.4;
+
+    // **LightBox title
+
+    @lightbox-title-padding:                3px 15px 1px 15px;
+    @lightbox-title-height:                 35px;
+    @lightbox-title-line-height:            35px;
+    @lightbox-title-border-bottom:          1px solid @base-color;
+    @lightbox-title-section-background:     @base-color;
+    @lightbox-title-border-radius:          2px 2px 0 0;
+    @lightbox-title-margin:                 0 0 20px 0; 
+
+    @lightbox-title-time-font-weight:       500;
+    @lightbox-title-time-font-color:        #ffffff;
+    @lightbox-title-time-font-size:         14px;
+    @lightbox-title-time-padding:           0 0 0 0;
+    @lightbox-title-name-text-transfor:     uppercase;
+    @lightbox-title-name-font-color:        #ffffff;
+    @lightbox-title-name-font-size:         14px;
+    @lightbox-title-name-padding:           0 0 0 13px;
+    @lightbox-title-name-margin:            0;
+
+
+    // ** LightBox Main Area
+
+    @lightbox-area-border:                  none;
+    @lightbox-area-border-top:              0px;
+    @lightbox-area-background-color:        #FFFFFF;
+    @lightbox-area-margin: 0;
+    @lightbox-area-width:                   100%;
+
+    // ** LightBox Main Area Wrap
+
+    @lightbox-area-wrap-border-top:         0;
+    @lightbox-area-wrap-background:         #FFFFFF;
+
+
+    @lightbox-area-wrap-padding:            0px;
+    @lightbox-area-first-wrap-padding:      0;
+
+    // @lightbox-area-second-wrap-height:      80px!important;
+    @lightbox-area-second-wrap-height:      auto ~'!important';
+    
+    @lightbox-area-wrap-border-botom:       none;
+
+
+    // ** LightBox Main Text area
+
+    @lightbox-textarea-margin:               0 0 16px 0;
+
+
+    // ** LightBox Main Area - Left Side
+
+    @lightbox-area-ls-background:           rgb(255, 255, 255);
+    @lightbox-area-ls-font-color:           rgba(0,0,0,0.75);
+    @lightbox-area-ls-font-weight:          500;
+    @lightbox-area-ls-font-size:            14px;
+    @lightbox-area-ls-line-height:          20px;
+    @lightbox-area-ls-font-family:          @default-font-family;
+    @lightbox-area-ls-padding:              3px 0px 0px 0;
+    @lightbox-area-ls-margin:               0 0 0 20px;
+    @lightbox-area-ls-text-align:           left;
+    @lightbox-area-ls-width: 82px;
+
+
+    // ** LightBox Main Area - Left Side - Full Day
+
+    @lightbox-ls-fullday-font-color:        rgba(0,0,0,0.75);
+    @lightbox-ls-fullday-font-size:         14px;
+    @lightbox-ls-fullday-font-family:       @default-font-family;
+    @lightbox-ls-fullday-font-weight:       500;
+    @lightbox-ls-fullday-line-height:       20px;
+    @lightbox-ls-fullday-margin:            0;
+    @lightbox-ls-fullday-input-margin:      0px 3px 0 0;
+
+
+    // ** LightBox Main Area - Right Side / Text Area
+
+    @lightbox-area-textarea-rs-padding:              4px 0 0 8px;
+    @lightbox-area-rs-textarea-bg:          #FFFFFF;
+    @lightbox-area-rs-font-color:           rgba(0,0,0,0.8 );
+    @lightbox-area-rs-line-height:          20px;
+    @lightbox-area-rs-outline:              none ~'!important';
+    @lightbox-area-rs-border:               1px solid rgba(0,0,0,0.08);
+    @lightbox-area-rs-font-size:            14px;
+    @lightbox-area-rs-width:                auto;
+    @lightbox-area-rs-height:               auto;
+    @lightbox-area-ls-height:               auto;
+    @lightbox-area-rs-padding:              4px 0 0 4px;
+    @lightbox-area-rs-float: none;
+
+    // ** LightBox Main Area - Right Side / Text Area - Disabled
+    
+    @lightbox-rs-disabled-font-color:       #2E2E2E;
+    @lightbox-rs-disabled-font-family:      @default-font-family;
+    @lightbox-rs-disabled-font-size:        @default-font-size;
+
+    // ** LightBox Main Area - Right Side / Selects
+    
+    @lightbox-area-rs-select-font-family:   @default-font-family;
+    @lightbox-area-rs-select-font-size:     @default-font-size;
+    @lightbox-area-rs-select-color:         rgba(0,0,0,0.8);
+    @lightbox-area-rs-select-padding:       2px 2px 2px 8px;
+    @lightbox-area-rs-select-margin:        0 8px 16px 0;
+    @lightbox-area-rs-select-border:        1px solid rgba(0,0,0,0.08);
+
+    // ** LightBox Main Area - Right Side / Input[radio]
+
+    @lightbox-input-radio-margin:           0px 0px 0px 5px;
+    @lightbox-input-label-margin:           3px 30px 0px 5px;
+    @lightbox-input-label-display:          inline-block;
+    @lightbox-input-label-position:         relative;
+    @lightbox-input-label-top:              -2px;
+    
+
+
+    // ** LightBox Main Area - Time block
+
+    @lightbox-area-time-block-bg:           transparent;            // #DBCF8C;
+    @lightbox-area-time-block-padding:      2px 0 0 117px ~'!important';
+    @lightbox-area-time-block-height:       20px ~'!important';
+    @lightbox-area-time-block-textaligment: center;
+
+
+    // ** LightBox Main Area - Btn
+
+    @lightbox-btn-wrap-padding:             0;
+
+    @lightbox-btn-height:                   30px;
+    @lightbox-btn-line-height:              30px;
+    @lightbox-btn-border:                   1px solid #ffffff;
+    @lightbox-btn-hov-border:                   1px solid #D9EDF8;
+    @lightbox-btn-border-radius:            2px;
+    @lightbox-btn-background:               #FFFFFF;
+    @lightbox-btn-hov-background:           #D9EDF8;
+    @lightbox-btn-text-transform:           uppercase;
+    @lightbox-btn-text-color:               @base-color;
+    @lightbox-btn-font-color:               @base-color;
+    @lightbox-btn-padding:                  0 16px;
+    @lightbox-btn-margin:                   0 16px 0 0;
+    @lightbox-btn-right-margin:             16px;
+    @lightbox-btn-font-size:                14px;
+    @lightbox-btn-font-weight:              500;
+
+
+    @lightbox-del-btn-border:               1px solid #ffffff;
+    @lightbox-del-btn-hov-border:           1px solid rgba(255, 88, 76, 0.01);
+    @lightbox-del-btn-background:           #FFFFFF;
+    @lightbox-del-btn-hov-background:       rgba(255, 88, 76, 0.3);
+    @lightbox-del-btn-font-color:           #FF584C;
+    @lightbox-del-btn-text-shadow:          none;
+    @lightbox-del-btn-margin:               0px 20px 0 20px;
+
+
+    @lightbox-save-btn-border:              1px solid @base-color;
+    @lightbox-save-btn-color:               #FFFFFF;
+    @lightbox-save-text-shadow:             none;
+    @lightbox-save-btn-background:          @base-color;
+    @lightbox-save-btn-float:               right;
+    @lightbox-save-btn-margin:              0 20px 0 0;
+
+
+    @lightbox-rec-month-label-width:         65px ~'!important';
+    @lightbox-rec-month-input-width:         25px ~'!important';
+    @lightbox-rec-month-input-height:        30px ~'!important';
+
+
+
+// Eror/Info popUp BOX
+
+    @alertbox-series-btn-padding:           0 16px;
+    @alertbox-series-btn-border:            1px solid @base-color;
+    @alertbox-series-btn-background:        @base-color;
+    @alertbox-series-btn-font-color:        #ffffff;
+
+    @alertbox-occur-btn-padding:           0 16px;
+    @alertbox-occur-btn-border:            1px solid #fff;
+    @alertbox-occur-btn-background:        #fff;
+    @alertbox-occur-btn-font-color:        @base-color;
+
+
+// Other
+
+    // ** 02/05_custom_editor.html
+
+    // ** LightBox text area INPUT
+
+    @lightbox-input-font-color:             #747373;
+    @lightbox-input-font-size:              8pt;
+    @lightbox-input-font-family:            @default-font-family;
+    @lightbox-input-first-margin:           0 0 0 11px;
+    @lightbox-input-border:                 1px solid rgb(169, 169, 169);
+    @lightbox-input-border-bottom-width:    0;
+    @lightbox-input-padding:                2px 5px 2px 2px;
+
+
+
+    // ** 02/18_combo_select_from_db.html
+
+    // ** LightBox Select Country combo input
+
+    @lightbox-combo-input-top:              -3px;
+
+
+    // ** 03_extensions/25_advanced_limitation.html
+
+    // ** LightBox Select Country combo input
+
+    @grid-border-bottom:                    1px solid @default-border-color;
+    @grid-border-right:                     1px solid @default-border-color;
+    @grid-tree-cell-font-family:            @default-font-family;
+	@grid-tree-cell-font-size:              14px;
+    @grid-tree-cell-font-color:             rgba(0,0,0,0.54);
+    
+
+    // Timeline  - Tree View / Folder Cell
+
+    @grid-tree-folder-cell-bg:             #EBECED;
+    @grid-tree-folder-name-text-transform:  uppercase;
+    @grid-tree-folder-name-font-color:      @base-color;
+    @grid-tree-folder-name-font-weight:     500;
+
+    @treemode-expand-icon-bg-image:         url(imgs_dhx_material/tree_arrow.svg);
+
+
+
+// Mini-Calendar
+
+    @mini-calendar-font-family:             @default-font-family;
+    @mini-calendar-header-font-color:       rgba(0,0,0,0.75);
+    @mini-calendar-header-font-size:        14px;
+    @mini-calendar-header-font-weight:      500;
+
+
+    @mini-calendar-weekday-font-size:      12px;
+    @mini-calendar-weekday-font-weight:    500;
+    
+
+    @mini-calendar-date-font-size:      12px;
+    @mini-calendar-date-font-weight:    500;
+    @mini-calendar-date-font-color:     rgba(0,0,0,0.54);
+
+    @mini-calendar-date-clicked-bg:     @base-color;
+    @mini-calendar-date-clicked-color:  @default-font-color;
+
+
+    @mini-calendar-date-width:          30px;
+    @mini-calendar-date-height:         30px;
+
+    @mini-calendar-other-date-color:    rgba(0,0,0,0.38);
+    @mini-calendar-year-event-bg:       @base-color;
+    @mini-calendar-year-event-color:    #FFF;
+    
+// Agenda
+
+    @agenda-topline-font-weight:                500;    
+    @agenda-topline-font-color:                 rgba(0,0,0,0.54);  
+    @agenda-topline-border-left-color:          transparent; 
+    @agenda-even-data-background:               #EDEDED;
+    @agenda-data-background-image:              none;
+    @week-agenda-header-background:             #EDEDED;
+    @week-agenda-selected-background:           @base-color;
+    @week-agenda-border:                        1px solid @default-border-color;
+    @week-agenda-font-color:                    rgba(0,0,0,0.75);
+    @week-agenda-font-family:                   @default-font-family;
+    @lightbox-btn-recurring-bg-image:           none;
+    @year-tooltip-bg-image: none;
+// 06/12 Section Tooltip
+
+    @tooltip-border-left:               1px dotted @default-border-color;
+    @tooltip-border-top:                1px dotted @default-border-color;
+    @tooltip-color:                     rgba(0,0,0,0.75);
+    @tooltip-font-family:               @default-font-family;
+    @tooltip-font-size:                 @default-font-size - 2px;
+    @section-focus-background:          #bdbdbd;
+    @calendar-open-icon:                 url(./imgs_dhx_material/calendar.svg);

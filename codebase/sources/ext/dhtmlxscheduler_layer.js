@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -276,18 +276,28 @@ scheduler.attachEvent("onTemplatesReady",function(){
 		if(contentB.indexOf('<div class=') == -1)	
 		contentB = (scheduler.templates['event_text_'+ev.layer])?scheduler.templates['event_text_'+ev.layer](ev.start_date,ev.end_date,ev):contentB;
 		
-		var d=document.createElement("DIV");
+		var d=document.createElement("div");
 		
 		
 		var cs = "dhx_cal_event";
 		var cse = (scheduler.templates['event_class_'+ev.layer])?scheduler.templates['event_class_'+ev.layer](ev.start_date,ev.end_date,ev):scheduler.templates.event_class(ev.start_date,ev.end_date,ev);
 		if (cse) cs=cs+" "+cse;
-		
-		var html='<div event_id="'+id+'" class="'+cs+'" style="position:absolute; top:'+y+'px; left:'+x+'px; width:'+(w-4)+'px; height:'+h+'px;'+(style||"")+'">';
-		html+='<div class="dhx_header" style=" width:'+(w-6)+'px;" >&nbsp;</div>';
+
+		var borderBox = scheduler._border_box_bvents();
+
+		var borderBoxWidth = w - 2;
+		var boxWidth = borderBox ? borderBoxWidth : (w-4),
+		headerWidth = borderBox ? borderBoxWidth : (w-6),
+		bodyWidth = borderBox ? borderBoxWidth : (w-(this._quirks?4:14)),
+		footerWidth = borderBox ? (borderBoxWidth - 2) : (w-8);
+
+		var bodyHeight = borderBox ? (h - this.xy.event_header_height) : (h-(this._quirks?20:30) + 1);
+
+		var html='<div event_id="'+id+'" class="'+cs+'" style="position:absolute; top:'+y+'px; left:'+x+'px; width:'+boxWidth+'px; height:'+h+'px;'+(style||"")+'">';
+		html+='<div class="dhx_header" style=" width:'+headerWidth+'px;" >&nbsp;</div>';
 		html+='<div class="dhx_title">'+contentA+'</div>';
-		html+='<div class="dhx_body" style=" width:'+(w-(this._quirks?4:14))+'px; height:'+(h-(this._quirks?20:30))+'px;">'+contentB+'</div>';
-		html+='<div class="dhx_footer" style=" width:'+(w-8)+'px;'+(bottom?' margin-top:-1px;':'')+'" ></div></div>';
+		html+='<div class="dhx_body" style=" width:'+bodyWidth+'px; height:'+bodyHeight+'px;">'+contentB+'</div>';
+		html+='<div class="dhx_footer" style=" width:'+footerWidth+'px;'+(bottom?' margin-top:-1px;':'')+'" ></div></div>';
 		
 		d.innerHTML=html;
 		d.style.zIndex = 100;
@@ -304,7 +314,7 @@ scheduler.attachEvent("onTemplatesReady",function(){
 		
 		var y=this._colsS.heights[ev._sweek]+(this._colsS.height?(this.xy.month_scale_height+2):2)+ev._sorder*hb; 
 				
-		var d=document.createElement("DIV");
+		var d=document.createElement("div");
 		var cs = ev._timed?"dhx_cal_event_clear":"dhx_cal_event_line";
 		var cse = (scheduler.templates['event_class_'+ev.layer])?scheduler.templates['event_class_'+ev.layer](ev.start_date,ev.end_date,ev):scheduler.templates.event_class(ev.start_date,ev.end_date,ev);
 		if (cse) cs=cs+" "+cse; 
@@ -356,12 +366,12 @@ scheduler.attachEvent("onTemplatesReady",function(){
 			d.style.zIndex = parseInt(d.style.zIndex)+1; //fix overlapping issue
 			var new_zIndex = d.style.zIndex;
 			width=Math.max(width-4,scheduler.xy.editor_width);
-			var d=document.createElement("DIV");
+			var d=document.createElement("div");
 			d.setAttribute("event_id",ev.id);
 			this.set_xy(d,width,height-20,left,top+14);
 			d.className="dhx_cal_editor";
 			d.style.zIndex = new_zIndex;
-			var d2=document.createElement("DIV");
+			var d2=document.createElement("div");
 			this.set_xy(d2,width-6,height-26);
 			d2.style.cssText+=";margin:2px 2px 2px 2px;overflow:hidden;";
 			

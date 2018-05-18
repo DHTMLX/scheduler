@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -9,6 +9,7 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 (function(){
 
 	scheduler.config.all_timed = "short";
+	scheduler.config.all_timed_month = false;
 
 	var is_event_short = function (ev) {
 		return 	!((ev.end_date - ev.start_date)/(1000*60*60) >= 24);
@@ -34,9 +35,21 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 	};
 
 	var old_prerender_events_line = scheduler._pre_render_events_line;
-	scheduler._pre_render_events_line = function(evs, hold){
-		if (!this.config.all_timed)
+	var old_prerender_events_table = scheduler._pre_render_events_table;
+
+	var prerender_events = function (evs, hold) {
+		if (!this._table_view) {
 			return old_prerender_events_line.call(this, evs, hold);
+		}
+
+		return old_prerender_events_table.call(this, evs, hold);
+	};
+
+	scheduler._pre_render_events_line = scheduler._pre_render_events_table = function(evs, hold){
+		if (!this.config.all_timed ||
+			(this._table_view && this._mode != "month") ||
+			(this._mode == "month" && !this.config.all_timed_month))
+			return prerender_events.call(this, evs, hold);
 
 		for (var i=0; i < evs.length; i++) {
 			var ev=evs[i];
@@ -46,7 +59,9 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 
 			if (this.config.all_timed == "short") {
 				if (!is_event_short(ev)) {
-					evs.splice(i--,1);
+					if (this._mode != "month") {
+						evs.splice(i--, 1);
+					}
 					continue;
 				}
 			}
@@ -94,7 +109,7 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 		// in case of all_timed pre_render is not applied to the original event
 		// so we need to force redraw in case of dnd
 		var redraw = (this._drag_mode == 'move')?false:hold;
-		return old_prerender_events_line.call(this, evs, redraw);
+		return prerender_events.call(this, evs, redraw);
 
 
 		function isOvernightEvent(ev){
@@ -132,16 +147,22 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 		// full redraw(update_render=true) messes events order while dnd.
 		// individual redraw(update_render=false) of multiday event, which happens on select/unselect, expands event to full width of the cell and can be fixes only with full redraw.
 		// so for now full redraw is always enabled for not-dnd updates
-		var fullRedrawNeeded = (scheduler.config.all_timed && !(scheduler.isOneDayEvent(scheduler._events[id]) || scheduler.getState().drag_id));
+		var ev = scheduler.getEvent(id);
+		var fullRedrawNeeded;
 		var initial;
-		if(fullRedrawNeeded){
-			initial = scheduler.config.update_render;
-			scheduler.config.update_render = true;
+		if(ev) {
+			fullRedrawNeeded = (scheduler.config.all_timed && !(scheduler.isOneDayEvent(scheduler._events[id]) || scheduler.getState().drag_id));
+			if (fullRedrawNeeded) {
+				initial = scheduler.config.update_render;
+				scheduler.config.update_render = true;
+			}
 		}
 		oldUpdate.apply(scheduler, arguments);
 
-		if(fullRedrawNeeded){
-			scheduler.config.update_render = initial;
+		if(ev) {
+			if (fullRedrawNeeded) {
+				scheduler.config.update_render = initial;
+			}
 		}
 	};
 })();

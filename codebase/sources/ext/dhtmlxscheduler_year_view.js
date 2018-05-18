@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -29,11 +29,19 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 			var t = (e.target || e.srcElement);
 			var className = scheduler._getClassName(t.parentNode);
 			if (className.indexOf("dhx_before") != -1 || className.indexOf("dhx_after") != -1) return false;
-			var start = this.templates.xml_date(t.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.getAttribute("date"));
-			start.setDate(parseInt(t.innerHTML, 10));
-			var end = this.date.add(start, 1, "day");
-			if (!this.config.readonly && this.config.dblclick_create)
-				this.addEventNow(start.valueOf(), end.valueOf(), e);
+
+			var monthNode = t;
+			while(monthNode && !(monthNode.hasAttribute && monthNode.hasAttribute("date"))){
+				monthNode = monthNode.parentNode;
+			}
+
+			if(monthNode){
+				var start = this.templates.xml_date(monthNode.getAttribute("date"));
+				start.setDate(parseInt(t.innerHTML, 10));
+				var end = this.date.add(start, 1, "day");
+				if (!this.config.readonly && this.config.dblclick_create)
+					this.addEventNow(start.valueOf(), end.valueOf(), e);
+			}
 		}
 	};
 
@@ -81,7 +89,7 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 			if (this._tooltip.date.valueOf() == date.valueOf()) return;
 			this._tooltip.innerHTML = "";
 		} else {
-			var t = this._tooltip = document.createElement("DIV");
+			var t = this._tooltip = document.createElement("div");
 			t.className = "dhx_year_tooltip";
 			document.body.appendChild(t);
 			t.onclick = scheduler._click.dhx_cal_data;
@@ -129,7 +137,7 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 		if (src.tagName.toLowerCase() == 'a') // fix for active links extension (it adds links to the date in the cell)
 			src = src.parentNode;
 		if (scheduler._getClassName(src).indexOf("dhx_year_event") != -1)
-			scheduler._showToolTip(from_attr(src.getAttribute("date")), getOffset(src), e, src);
+			scheduler._showToolTip(from_attr(src.getAttribute("date")), scheduler.$domHelpers.getOffset(src), e, src);
 		else
 			scheduler._hideToolTip();
 	};
@@ -260,7 +268,8 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 		var d = null;
 		for (var i = 0; i < c.year_y; i++)
 			for (var j = 0; j < c.year_x; j++) {
-				d = document.createElement("DIV");
+				d = document.createElement("div");
+				d.className = "dhx_year_box";
 				d.style.cssText = "position:absolute;";
 				d.setAttribute("date", this.templates.xml_format(sd));
 				d.innerHTML = "<div class='dhx_year_month'></div><div class='dhx_year_grid'><div class='dhx_year_week'>" + week_template.innerHTML + "</div><div class='dhx_year_body'></div></div>";

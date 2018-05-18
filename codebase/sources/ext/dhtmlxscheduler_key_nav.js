@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -17,6 +17,17 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 				scopeObject.prototype.bind(shortcut, handler);
 			}
 		};
+
+		scheduler.getShortcutHandler = function(shortcut, scope){
+			var scopeObject = getScope(scope);
+			if(scopeObject){
+				var commands = scheduler.$keyboardNavigation.shortcuts.parse(shortcut);
+				if(commands.length){
+					return scopeObject.prototype.findHandler(commands[0]);
+				}
+			}
+		};
+
 		scheduler.removeShortcut = function(shortcut, scope){
 			var scopeObject = getScope(scope);
 			if(scopeObject){
@@ -48,7 +59,13 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 				"event": scheduler.$keyboardNavigation.Event
 			};
 
-			return scopes[mode] || scopes.scheduler;
+			var searchMap = {};
+			for(var i in scopes)
+				searchMap[i.toLowerCase()] = scopes[i];
+
+			mode = (mode + "").toLowerCase();
+
+			return searchMap[mode] || scopes.scheduler;
 		}
 
 		scheduler.$keyboardNavigation = {};
@@ -112,6 +129,12 @@ scheduler.$keyboardNavigation.shortcuts = {
 		command.modifiers.ctrl = !!domEvent.ctrlKey;
 		command.modifiers.meta = !!domEvent.metaKey;
 		command.keyCode = domEvent.which || domEvent.keyCode;
+
+		if(command.keyCode >= 96 && command.keyCode <= 105){
+			// numpad keys 96-105 -> 48-57
+			command.keyCode -= 48;//convert numpad  number code to regular number code
+		}
+
 		var printableKey = String.fromCharCode(command.keyCode );
 		if(printableKey){
 			command.keyCode = printableKey.toLowerCase().charCodeAt(0);
@@ -291,7 +314,7 @@ scheduler.$keyboardNavigation.marker = {
 		}
 	},
 	createElement: function(){
-		var element = document.createElement("DIV");
+		var element = document.createElement("div");
 		element.setAttribute("tabindex", -1);
 		element.className = "dhx_focus_slot";
 		return element;
@@ -730,7 +753,13 @@ scheduler.$keyboardNavigation.SchedulerNode.prototype = scheduler._compose(
 				i--;
 			}
 
-			return evs[0];
+			for(var i = 0; i < evs.length; i++){
+				var eventElement = new scheduler.$keyboardNavigation.Event(evs[i].id);
+				if(eventElement.getNode())
+					return evs[i];
+			}
+
+			return null;
 		},
 
 		nextEventHandler: function(id){
@@ -1043,7 +1072,16 @@ scheduler.$keyboardNavigation.Event.prototype = scheduler._compose(
 		},
 
 		getNode: function(){
-			return scheduler.$container.querySelector("[event_id='"+this.eventId+"']");
+			var idSelector = "[event_id='"+this.eventId+"']";
+
+
+			var inlineEditor = scheduler.$keyboardNavigation.dispatcher.getInlineEditor(this.eventId);
+			if(inlineEditor){// is inline editor visible
+				return inlineEditor;
+			}else{
+				return scheduler.$container.querySelector(idSelector);
+			}
+
 		},
 
 		focus: function(){
@@ -1143,15 +1181,7 @@ scheduler.$keyboardNavigation.TimeSlot = function(from, to, section, movingDate)
 	var timeline = scheduler.matrix && scheduler.matrix[state.mode];
 
 	if(!from){
-
-		if(timeline){
-			from = scheduler.date[timeline.name + "_start"](new Date(state.date));
-			from = this.findVisibleColumn(from);
-		}else{
-			from = new Date(scheduler.getState().min_date);
-			from = this.findVisibleColumn(from);
-			from.setHours(scheduler.config.first_hour);
-		}
+		from = this.getDefaultDate();
 	}
 
 	if(!to){
@@ -1174,6 +1204,31 @@ scheduler.$keyboardNavigation.TimeSlot.prototype = scheduler._compose(
 	scheduler.$keyboardNavigation.KeyNavNode,
 	{
 		_handlers:null,
+
+		getDefaultDate: function(){
+			var from;
+			var state = scheduler.getState();
+			var timeline = scheduler.matrix && scheduler.matrix[state.mode];
+
+			if(timeline){
+				from = scheduler.date[timeline.name + "_start"](new Date(state.date));
+				from = this.findVisibleColumn(from);
+			}else{
+				from = new Date(scheduler.getState().min_date);
+				from = this.findVisibleColumn(from);
+				from.setHours(scheduler.config.first_hour);
+
+				if(!scheduler._table_view){
+					var dataContainer = scheduler.$container.querySelector(".dhx_cal_data");
+					if(dataContainer.scrollTop){
+						from.setHours(scheduler.config.first_hour + Math.ceil(dataContainer.scrollTop / scheduler.config.hour_size_px));
+					}
+				}
+			}
+
+			return from;
+		},
+
 		clone: function(timeslot){
 			return new scheduler.$keyboardNavigation.TimeSlot(timeslot.start_date, timeslot.end_date, timeslot.section, timeslot.movingDate);
 		},
@@ -1883,7 +1938,17 @@ scheduler.$keyboardNavigation.MinicalButton.prototype = scheduler._compose(
 	{
 
 		isValid: function(){
-			return true;
+			var container = this.container;
+			return !!container.offsetWidth;// valid if container is visible
+		},
+
+		fallback: function(){
+			var defaultSlot = new scheduler.$keyboardNavigation.TimeSlot();
+			if(defaultSlot.isValid()){
+				return defaultSlot;
+			}else{
+				return new scheduler.$keyboardNavigation.DataArea();
+			}
 		},
 		focus: function(){
 			scheduler.$keyboardNavigation.dispatcher.globalNode.disable();
@@ -1951,8 +2016,18 @@ scheduler.$keyboardNavigation.MinicalCell.prototype = scheduler._compose(
 			if(row > grid.length / 2){
 				dir = false;
 			}
+
+			if(!grid[row]){
+				var defaultSlot = new scheduler.$keyboardNavigation.TimeSlot();
+				if(defaultSlot.isValid()){
+					return defaultSlot;
+				}else{
+					return new scheduler.$keyboardNavigation.DataArea();
+				}
+			}
+
 			if(dir){
-				for(var c = col; c < grid[row].length; c++){
+				for(var c = col; grid[row] && c < grid[row].length; c++){
 					if(!grid[row][c] && c == grid[row].length - 1){
 						row++;
 						col = 0;
@@ -1962,7 +2037,7 @@ scheduler.$keyboardNavigation.MinicalCell.prototype = scheduler._compose(
 					}
 				}
 			}else{
-				for(var c = col; c < grid[row].length; c--){
+				for(var c = col; grid[row] && c < grid[row].length; c--){
 					if(!grid[row][c] && !c){
 						row--;
 						col = grid[row].length - 1;
@@ -2256,6 +2331,11 @@ scheduler.$keyboardNavigation.dispatcher = {
 	globalNode: new scheduler.$keyboardNavigation.SchedulerNode(),
 
 	enable: function(){
+		if(!scheduler.$container){
+			// do nothing if not initialized
+			return;
+		}
+
 		this.isActive = true;
 		this.globalNode.enable();
 		this.setActiveNode(this.getActiveNode());
@@ -2321,12 +2401,28 @@ scheduler.$keyboardNavigation.dispatcher = {
 		}
 	},
 
+	getInlineEditor: function(id){
+		var editor = scheduler.$container.querySelector(".dhx_cal_editor[event_id='"+id+"'] textarea");
+		if(editor && editor.offsetWidth){
+			// if exists and visible
+			return editor;
+		}
+		return null;
+	},
+
 	keyDownHandler: function (e) {
+
+		if(e.defaultPrevented){
+			return;
+		}
 
 		var activeElement = this.getActiveNode();
 
 		if(scheduler.$keyboardNavigation.isModal() &&
 			!(activeElement && activeElement.container && scheduler._locate_css({target:activeElement.container}, "dhx_minical_popup", false)))
+			return;
+
+		if(scheduler.getState().editor_id && this.getInlineEditor(scheduler.getState().editor_id))
 			return;
 
 		if (!this.isEnabled())
@@ -2345,6 +2441,14 @@ scheduler.$keyboardNavigation.dispatcher = {
 		}else if(schedulerNode.findHandler(command)){
 			schedulerNode.doAction(command, e);
 		}
+
+	},
+
+	_timeout: null,
+	delay: function(callback, delay){
+
+		clearTimeout(this._timeout);
+		this._timeout = setTimeout(callback, delay || 1);
 
 	}
 };
@@ -2404,13 +2508,18 @@ scheduler._temp_key_scope = function (){
 		delete ev.rec_type; delete ev.rec_pattern;
 		delete ev.event_pid; delete ev.event_length;
 	}
+
+	function copyEvent(ev){
+		return scheduler._lame_copy({}, ev);
+	}
+
 	scheduler._make_pasted_event = function(ev){
 		var date = scheduler.$keyboardNavigation._pasteDate;
 		var section = scheduler.$keyboardNavigation._pasteSection;
 
 		var event_duration = ev.end_date-ev.start_date;
 
-		var copy = scheduler._lame_copy({}, ev);
+		var copy = copyEvent(ev);
 		clear_event_after(copy);
 		copy.start_date = new Date(date);
 		copy.end_date = new Date(copy.start_date.valueOf() + event_duration);
@@ -2442,6 +2551,13 @@ scheduler._temp_key_scope = function (){
 		if(node && node.eventId) return node.eventId;
 		return scheduler._select_id;
 	}
+	
+	scheduler.event(document, "keydown", function(e){
+		// compatibility fix - scheduler focus on ctrl+v on mouse hover
+		if(((e.ctrlKey || e.metaKey) && e.keyCode == 86) && scheduler._buffer_event && !scheduler.$keyboardNavigation.dispatcher.isEnabled()) {
+			scheduler.$keyboardNavigation.dispatcher.isActive = currentTarget();
+		}
+	});
 
 	scheduler._key_nav_copy_paste = function(e){
 		if(!scheduler._is_key_nav_active()) return true;
@@ -2459,7 +2575,7 @@ scheduler._temp_key_scope = function (){
 		var select_id = getSelectedEvent();
 		if ((e.ctrlKey || e.metaKey) && e.keyCode == 67) {  // CTRL+C
 			if (select_id) {
-				scheduler._buffer_id = select_id;
+				scheduler._buffer_event = copyEvent(scheduler.getEvent(select_id));
 				isCopy = true;
 				scheduler.callEvent("onEventCopied", [scheduler.getEvent(select_id)]);
 			}
@@ -2468,15 +2584,17 @@ scheduler._temp_key_scope = function (){
 		if ((e.ctrlKey || e.metaKey) && e.keyCode == 88) { // CTRL+X
 			if (select_id) {
 				isCopy = false;
-				scheduler._buffer_id = select_id;
-				var ev = scheduler.getEvent(select_id);
+				var ev = scheduler._buffer_event = copyEvent(scheduler.getEvent(select_id));
+
 				scheduler.updateEvent(ev.id);
 				scheduler.callEvent("onEventCut", [ev]);
 			}
 		}
 
 		if ((e.ctrlKey || e.metaKey) && e.keyCode == 86 && currentTarget(e)) {  // CTRL+V
-			var ev = scheduler.getEvent(scheduler._buffer_id);
+			var ev = scheduler._buffer_event ? scheduler.getEvent(scheduler._buffer_event.id) : scheduler._buffer_event;
+			ev = ev || scheduler._buffer_event;
+
 			if (ev) {
 				var new_ev = scheduler._make_pasted_event(ev);
 				if (isCopy) {
@@ -2500,304 +2618,328 @@ scheduler._temp_key_scope();
 
 
 		(function(){
-			var dispatcher = scheduler.$keyboardNavigation.dispatcher;
 
-			var keyDownHandler = function(e){
-				if(!scheduler.config.key_nav || scheduler._edit_id) return;
+scheduler.$keyboardNavigation.attachSchedulerHandlers = function(){
+	var dispatcher = scheduler.$keyboardNavigation.dispatcher;
 
-				return dispatcher.keyDownHandler(e);
-			};
+	var keyDownHandler = function(e){
+		if(!scheduler.config.key_nav) return;
 
-			var focusHandler = function(){
-				dispatcher.focusGlobalNode();
-			};
+		return dispatcher.keyDownHandler(e);
+	};
 
-			scheduler.attachEvent("onDataRender", function(){
+	var focusHandler = function(){
+		dispatcher.focusGlobalNode();
+	};
 
-				if(!scheduler.config.key_nav) return;
-				if(dispatcher.isEnabled() && !scheduler.getState().editor_id){
-					var activeNode = dispatcher.getActiveNode();
-					if(activeNode instanceof scheduler.$keyboardNavigation.MinicalButton || activeNode instanceof scheduler.$keyboardNavigation.MinicalCell)
-						return;
+	var waitCall;
+	scheduler.attachEvent("onDataRender", function(){
+		if(!scheduler.config.key_nav) return;
+		if(!(dispatcher.isEnabled() && !scheduler.getState().editor_id)) return;
 
-					if(!activeNode.isValid()){
-						dispatcher.setActiveNode(activeNode.fallback());
-					}else{
-						dispatcher.focusNode(activeNode);
-					}
-
-					dispatcher.focusNode(dispatcher.getActiveNode());
-				}
-			});
-
-			scheduler.attachEvent("onSchedulerReady", function(){
-				var container = scheduler.$container;
-				scheduler.eventRemove(document, "keydown", keyDownHandler);
-				scheduler.eventRemove(container, "focus", focusHandler);
-
-
-				if(scheduler.config.key_nav){
-
-					scheduler.event(document, "keydown", keyDownHandler);
-					scheduler.event(container, "focus", focusHandler);
-
-					container.setAttribute("tabindex", "0");
-
-				}else{
-					container.removeAttribute("tabindex");
-				}
-			});
-
-
-			var timeout = null;
-			function delay(callback){
-				clearTimeout(timeout);
-				timeout = setTimeout(callback, 1);
-			}
-
-			function focusEvent(evNode){
-				if(!scheduler.config.key_nav) return;
-				if(!dispatcher.isEnabled()) return;
-
-
-				var prevState = evNode;
-				var focusNode = new scheduler.$keyboardNavigation.Event(prevState.eventId);
-				if(!focusNode.isValid()){
-					var lastStart = focusNode.start || prevState.start;
-					var lastEnd = focusNode.end || prevState.end;
-					var lastSection = focusNode.section || prevState.section;
-
-					focusNode = new scheduler.$keyboardNavigation.TimeSlot(lastStart, lastEnd, lastSection);
-					if(!focusNode.isValid()){
-						focusNode = new scheduler.$keyboardNavigation.TimeSlot();
-					}
-				}
-
-				dispatcher.setActiveNode(focusNode);
-				var node = dispatcher.getActiveNode();
-				if(node && node.getNode && document.activeElement != node.getNode()){
-					dispatcher.focusNode(dispatcher.getActiveNode());
-				}
-			}
-
-			scheduler.attachEvent("onEventAdded", function(id,item){
-				if(!scheduler.config.key_nav) return true;
-				if(dispatcher.isEnabled()){
-					var element = new scheduler.$keyboardNavigation.Event(id);
-					delay(function(){ focusEvent(element);});
-				}
-			});
-
-			var updateEvent = scheduler.updateEvent;
-			scheduler.updateEvent = function(id){
-				var isInlineEdit = false;
-				var activeElement = document.activeElement;
-				if(activeElement && scheduler._getClassName(activeElement).indexOf("dhx_cal_editor") > -1){
-					isInlineEdit = true;
-				}
-				var res = updateEvent.apply(this, arguments);
-				if(scheduler.config.key_nav && dispatcher.isEnabled()){
-					var activeNode = dispatcher.getActiveNode();
-
-					if(activeNode.eventId == id || isInlineEdit){
-						var element = new scheduler.$keyboardNavigation.Event(id);
-						if(isInlineEdit){
-							dispatcher.disable();
-							delay(function(){
-								dispatcher.enable();
-								focusEvent(element);
-							});
-						}else{
-							focusEvent(element);
-						}
-
-					}
-				}
-				return res;
-			};
-
-			scheduler.attachEvent("onEventDeleted", function(id) {
-				if(!scheduler.config.key_nav) return true;
-				if(dispatcher.isEnabled()){
-					var activeNode = dispatcher.getActiveNode();
-					if(activeNode.eventId == id){
-						dispatcher.setActiveNode(new scheduler.$keyboardNavigation.TimeSlot());
-					}
-				}
-				return true;
-			});
-
-			scheduler.attachEvent("onClearAll", function(){
-				if(!scheduler.config.key_nav) return true;
-				if(dispatcher.isEnabled()){
-					if(dispatcher.getActiveNode() instanceof scheduler.$keyboardNavigation.Event){
-						dispatcher.setActiveNode(new scheduler.$keyboardNavigation.TimeSlot());
-					}
-				}
-			});
-
-			scheduler.attachEvent("onClick", function(id){
-				if(!scheduler.config.key_nav) return true;
-				var element = new scheduler.$keyboardNavigation.Event(id);
-				delay(function(){
-					if(scheduler.getEvent(id)){
-						dispatcher.enable();
-						focusEvent(element);
-					}
-				});
-				return true;
-			});
-
-			scheduler.attachEvent("onEmptyClick", function(date, e){
-				if(!scheduler.config.key_nav) return true;
-				if(!dispatcher.isEnabled()) {
-					dispatcher.enable();
-				}
-
-				if(dispatcher.isEnabled()) {
-					var pos = scheduler.getActionData(e);
-					if(pos.date){
-						var slot = scheduler.$keyboardNavigation.TimeSlot;
-						dispatcher.setActiveNode(slot.prototype.nextSlot(new slot(pos.date, null, pos.section)));
-					}
-				}
-			});
-
-
-			function isChildOf(child, parent){
-				while(child && child != parent){
-					child = child.parentNode;
-				}
-
-				return !!(child == parent);
-			}
-
-			function isMinical(focusElement){
-				for(var i = 0; i < minicalendars.length; i++){
-					if(isChildOf(focusElement, minicalendars[i]))
-						return true;
-				}
-				return false;
-			}
-
-
-
-			function focusMinical(e){
-				var target = e.target;
-
+		clearTimeout(waitCall);
+		waitCall = setTimeout(function(){
+			if(!dispatcher.isEnabled())
 				dispatcher.enable();
-				dispatcher.setActiveNode(new scheduler.$keyboardNavigation.MinicalButton(target, 0));
 
-			}
-			var minicalendars = [];
-			var renderMinical = scheduler.renderCalendar;
+			var activeNode = dispatcher.getActiveNode();
+			if(activeNode instanceof scheduler.$keyboardNavigation.MinicalButton || activeNode instanceof scheduler.$keyboardNavigation.MinicalCell)
+				return;
 
-			function minicalClick(e){
-				var target = e.target || e.srcElement;
-
-				var prev = scheduler._locate_css(e, "dhx_cal_prev_button", false);
-				var next = scheduler._locate_css(e, "dhx_cal_next_button", false);
-				var cell = scheduler._locate_css(e, "dhx_year_body", false);
-
-				var rowIndex = 0;
-				var cellIndex = 0;
-				if(cell){
-					var tr;
-					var td;
-					var current = target;
-					while(current && current.tagName.toLowerCase() != "td"){
-						current = current.parentNode;
-					}
-					if(current){
-						td = current;
-						tr = td.parentNode;
-					}
-
-					if(tr && td){
-						var rows = tr.parentNode.querySelectorAll("tr");
-						for(var i = 0; i < rows.length; i++){
-							if(rows[i] == tr){
-								rowIndex = i;
-								break;
-							}
-						}
-						var cells = tr.querySelectorAll("td");
-						for(var i = 0; i < cells.length; i++){
-							if(cells[i] == td){
-								cellIndex = i;
-								break;
-							}
-						}
-					}
-				}
-				var root = e.currentTarget;
-				delay(function(){
-					if(prev || next || cell){
-						dispatcher.enable();
-						dispatcher.activeNode = null;
-					}
-
-
-					if(prev){
-						dispatcher.setActiveNode(new scheduler.$keyboardNavigation.MinicalButton(root, 0));
-					}else if(next){
-						dispatcher.setActiveNode(new scheduler.$keyboardNavigation.MinicalButton(root, 1));
-					}else if(cell){
-						dispatcher.setActiveNode(new scheduler.$keyboardNavigation.MinicalCell(root, rowIndex, cellIndex));
-					}
-				});
+			if(!activeNode.isValid()){
+				dispatcher.setActiveNode(activeNode.fallback());
+			}else{
+				dispatcher.focusNode(activeNode);
 			}
 
-			scheduler.renderCalendar = function(){
-				var cal = renderMinical.apply(this, arguments);
+			dispatcher.focusNode(dispatcher.getActiveNode());
+		});
+	});
 
-				if(!cal._key_nav_click) {
-					cal._key_nav_click = true;
-					scheduler.event(cal, "click", minicalClick);
-				}
+	scheduler.attachEvent("onSchedulerReady", function(){
+		var container = scheduler.$container;
+		scheduler.eventRemove(document, "keydown", keyDownHandler);
+		scheduler.eventRemove(container, "mousedown", mousedownHandler);
+		scheduler.eventRemove(container, "focus", focusHandler);
 
-				if(!cal._key_nav_focus) {
-					cal._key_nav_focus = true;
-					scheduler.event(cal, "focus", focusMinical);
+
+		if(scheduler.config.key_nav){
+
+			scheduler.event(document, "keydown", keyDownHandler);
+			scheduler.event(container, "mousedown", mousedownHandler);
+			scheduler.event(container, "focus", focusHandler);
+
+			container.setAttribute("tabindex", "0");
+
+		}else{
+			container.removeAttribute("tabindex");
+		}
+	});
+
+	function mousedownHandler(e){
+		if(!scheduler.config.key_nav) return true;
+
+
+		var dataAreaClick = scheduler.$keyboardNavigation.isChildOf(e.target || e.srcElement, scheduler.$container.querySelector(".dhx_cal_data"));
+
+
+		var pos = scheduler.getActionData(e);
+
+		var focusNode;
+		if(scheduler._locate_event(e.target || e.srcElement)){
+			focusNode = new scheduler.$keyboardNavigation.Event(scheduler._locate_event(e.target || e.srcElement));
+		}else if(dataAreaClick){
+			focusNode = new scheduler.$keyboardNavigation.TimeSlot();
+			if(pos.date && dataAreaClick){
+				focusNode = focusNode.nextSlot(new scheduler.$keyboardNavigation.TimeSlot(pos.date, null, pos.section));
+			}
+		}
+
+		if(focusNode) {
+			if (!dispatcher.isEnabled()) {
+				dispatcher.activeNode = focusNode;
+
+			} else {
+				if (pos.date && dataAreaClick) {
+					dispatcher.delay(function () {
+						dispatcher.setActiveNode(focusNode);
+					});
 				}
-				var added = false;
-				for(var i = 0; i < minicalendars.length; i++){
-					if(minicalendars[i] == cal){
-						added = true;
+			}
+		}
+	}
+
+	function focusEvent(evNode){
+		if(!scheduler.config.key_nav) return;
+		if(!dispatcher.isEnabled()) return;
+
+
+		var prevState = evNode;
+		var focusNode = new scheduler.$keyboardNavigation.Event(prevState.eventId);
+		if(!focusNode.isValid()){
+			var lastStart = focusNode.start || prevState.start;
+			var lastEnd = focusNode.end || prevState.end;
+			var lastSection = focusNode.section || prevState.section;
+
+			focusNode = new scheduler.$keyboardNavigation.TimeSlot(lastStart, lastEnd, lastSection);
+			if(!focusNode.isValid()){
+				focusNode = new scheduler.$keyboardNavigation.TimeSlot();
+			}
+		}
+
+		dispatcher.setActiveNode(focusNode);
+		var node = dispatcher.getActiveNode();
+		if(node && node.getNode && document.activeElement != node.getNode()){
+			dispatcher.focusNode(dispatcher.getActiveNode());
+		}
+	}
+
+
+	var updateEvent = scheduler.updateEvent;
+	scheduler.updateEvent = function(id){
+		var res = updateEvent.apply(this, arguments);
+		if(scheduler.config.key_nav && dispatcher.isEnabled()){
+			if(scheduler.getState().select_id == id){
+				var element = new scheduler.$keyboardNavigation.Event(id);
+
+				if(!scheduler.getState().lightbox_id){
+					focusEvent(element);
+				}
+			}
+		}
+		return res;
+	};
+
+	scheduler.attachEvent("onEventDeleted", function(id) {
+		if(!scheduler.config.key_nav) return true;
+		if(dispatcher.isEnabled()){
+			var activeNode = dispatcher.getActiveNode();
+			if(activeNode.eventId == id){
+				dispatcher.setActiveNode(new scheduler.$keyboardNavigation.TimeSlot());
+			}
+		}
+		return true;
+	});
+
+	scheduler.attachEvent("onClearAll", function(){
+		if(!scheduler.config.key_nav) return true;
+		if(dispatcher.isEnabled()){
+			if(dispatcher.getActiveNode() instanceof scheduler.$keyboardNavigation.Event){
+				dispatcher.setActiveNode(new scheduler.$keyboardNavigation.TimeSlot());
+			}
+		}
+	});
+
+};
+scheduler.$keyboardNavigation._minicalendars = [];
+
+scheduler.$keyboardNavigation.isMinical = function(node){
+	var minicalendars = scheduler.$keyboardNavigation._minicalendars;
+	for(var i = 0; i < minicalendars.length; i++){
+		if(this.isChildOf(node, minicalendars[i]))
+			return true;
+	}
+	return false;
+};
+
+scheduler.$keyboardNavigation.isChildOf = function(child, parent){
+	while(child && child !== parent){
+		child = child.parentNode;
+	}
+
+	return !!(child === parent);
+};
+
+scheduler.$keyboardNavigation.patchMinicalendar = function(){
+	var dispatcher = scheduler.$keyboardNavigation.dispatcher;
+
+	function focusMinical(e){
+		var target = e.target;
+
+		dispatcher.enable();
+		dispatcher.setActiveNode(new scheduler.$keyboardNavigation.MinicalButton(target, 0));
+	}
+
+	function minicalClick(e){
+		var target = e.target || e.srcElement;
+
+		var prev = scheduler._locate_css(e, "dhx_cal_prev_button", false);
+		var next = scheduler._locate_css(e, "dhx_cal_next_button", false);
+		var cell = scheduler._locate_css(e, "dhx_year_body", false);
+
+		var rowIndex = 0;
+		var cellIndex = 0;
+		if(cell){
+			var tr;
+			var td;
+			var current = target;
+			while(current && current.tagName.toLowerCase() != "td"){
+				current = current.parentNode;
+			}
+			if(current){
+				td = current;
+				tr = td.parentNode;
+			}
+
+			if(tr && td){
+				var rows = tr.parentNode.querySelectorAll("tr");
+				for(var i = 0; i < rows.length; i++){
+					if(rows[i] == tr){
+						rowIndex = i;
 						break;
 					}
 				}
-				if(!added)
-					minicalendars.push(cal);
-
-				if(dispatcher.isEnabled()){
-					var node = dispatcher.getActiveNode();
-					if(node.container == cal){
-						dispatcher.focusNode(node);
-					}else{
-						cal.setAttribute("tabindex", "0");
+				var cells = tr.querySelectorAll("td");
+				for(var i = 0; i < cells.length; i++){
+					if(cells[i] == td){
+						cellIndex = i;
+						break;
 					}
+				}
+			}
+		}
+		var root = e.currentTarget;
+		dispatcher.delay(function(){
+			if(prev || next || cell){
+
+				var element;
+				if(prev){
+					element = new scheduler.$keyboardNavigation.MinicalButton(root, 0);
+					dispatcher.setActiveNode(new scheduler.$keyboardNavigation.MinicalButton(root, 0));
+				}else if(next){
+					element = new scheduler.$keyboardNavigation.MinicalButton(root, 1);
+				}else if(cell){
+					element = new scheduler.$keyboardNavigation.MinicalCell(root, rowIndex, cellIndex);
+
+				}
+
+				if(element){
+
+					dispatcher.enable();
+					if(element.isValid()){
+						dispatcher.activeNode = null;
+						dispatcher.setActiveNode(element);
+					}
+
+				}
+			}
+
+		});
+	}
+
+	if(scheduler.renderCalendar){
+		var renderMinical = scheduler.renderCalendar;
+		scheduler.renderCalendar = function(){
+			var cal = renderMinical.apply(this, arguments);
+			var minicalendars = scheduler.$keyboardNavigation._minicalendars;
+
+			scheduler.eventRemove(cal, "click", minicalClick);
+			scheduler.event(cal, "click", minicalClick);
+
+			scheduler.eventRemove(cal, "focus", focusMinical);
+			scheduler.event(cal, "focus", focusMinical);
+
+			var added = false;
+			for(var i = 0; i < minicalendars.length; i++){
+				if(minicalendars[i] == cal){
+					added = true;
+					break;
+				}
+			}
+			if(!added)
+				minicalendars.push(cal);
+
+			if(dispatcher.isEnabled()){
+				var node = dispatcher.getActiveNode();
+				if(node && node.container == cal){
+					dispatcher.focusNode(node);
 				}else{
 					cal.setAttribute("tabindex", "0");
 				}
+			}else{
+				cal.setAttribute("tabindex", "0");
+			}
+			return cal;
+		};
+	}
 
-				return cal;
-			};
+	if(scheduler.destroyCalendar){
+		var destroyMinical = scheduler.destroyCalendar;
+		scheduler.destroyCalendar = function(cal, force){
+			cal = cal || (scheduler._def_count ? scheduler._def_count.firstChild : null);
+			var res = destroyMinical.apply(this, arguments);
 
-
-			var destroyMinical = scheduler.destroyCalendar;
-			scheduler.destroyCalendar = function(cal){
-
-
+			if(!cal || !cal.parentNode){
+				var minicalendars = scheduler.$keyboardNavigation._minicalendars;
 				for(var i = 0; i < minicalendars.length; i++){
 					if(minicalendars[i] == cal){
 						scheduler.eventRemove(minicalendars[i], "focus", focusMinical);
-						minicalendars[i].splice(i, 1);
+						minicalendars.splice(i, 1);
 						i--;
 					}
 				}
-				return destroyMinical.apply(this, arguments);
-			};
+			}
+
+			return res;
+		};
+	}
+};
+
+
+			var dispatcher = scheduler.$keyboardNavigation.dispatcher;
+
+			scheduler.$keyboardNavigation.attachSchedulerHandlers();
+
+			if(scheduler.renderCalendar){
+				// if minical ext loaded before key nav ext - patch it now
+				scheduler.$keyboardNavigation.patchMinicalendar();
+			}else{
+				// otherwise - wait until everything is loaded and try again
+				var attachOnce = scheduler.attachEvent("onSchedulerReady", function(){
+					scheduler.detachEvent(attachOnce);
+					scheduler.$keyboardNavigation.patchMinicalendar();
+				});
+			}
 
 
 
@@ -2810,11 +2952,13 @@ scheduler._temp_key_scope();
 				if(!focusElement || scheduler._locate_css(focusElement, "dhx_cal_quick_info", false)){
 					enable = false;
 				}else{
-					enable = isChildOf(focusElement, scheduler.$container) || isMinical(focusElement);
+					enable = scheduler.$keyboardNavigation.isChildOf(focusElement, scheduler.$container) || scheduler.$keyboardNavigation.isMinical(focusElement);
 				}
 
 				return enable;
 			}
+
+
 
 			function changeState(enable){
 				if(enable && !dispatcher.isEnabled()){
@@ -2825,6 +2969,10 @@ scheduler._temp_key_scope();
 			}
 
 			setInterval(function(){
+				if(!scheduler.$container || !scheduler.$keyboardNavigation.isChildOf(scheduler.$container, document.body)){
+					return;
+				}
+
 				var enable = isSchedulerSelected();
 
 				if(enable){
@@ -2838,10 +2986,8 @@ scheduler._temp_key_scope();
 							scheduler.$container.removeAttribute("tabindex");
 						}
 
-					}, 20);
+					}, 100);
 				}
-
-
 			}, 500);
 
 		})();

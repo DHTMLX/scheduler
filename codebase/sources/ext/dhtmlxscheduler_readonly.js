@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -76,7 +76,7 @@ scheduler.attachEvent("onTemplatesReady", function() {
 				if(d.checked)
 					n.checked = true;
 			}else {
-				var t = document.createElement("SPAN");
+				var t = document.createElement("span");
 				t.className = "dhx_text_disabled";
 				t.innerHTML = text(txts[i]);
 				n.parentNode.insertBefore(t, n);
@@ -107,7 +107,7 @@ scheduler.attachEvent("onTemplatesReady", function() {
 			var d = this.getLightbox();
 			var n = this._lightbox_r = d.cloneNode(true);
 			n.id = scheduler.uid();
-
+			n.className += " dhx_cal_light_readonly";
 			txt_replace("textarea", d, n, function(a) {
 				return a.value;
 			});
@@ -129,8 +129,17 @@ scheduler.attachEvent("onTemplatesReady", function() {
 			this.setLightboxSize();
 			n.onclick = function(e) {
 				var src = e ? e.target : event.srcElement;
+
+				if (!src.className) src=src.previousSibling;
+
+				if(src && src.className && scheduler._getClassName(src).indexOf("dhx_btn_set") > -1){
+					// assistive software (e.g. jaws) can dispatch event on the top element of a button
+					src = src.querySelector("[dhx_button]");
+					if(!src) return;
+				}
+
 				if (!scheduler._getClassName(src)) src = src.previousSibling;
-				if (src && src.className)
+				if (src && scheduler._getClassName(src))
 					switch (scheduler._getClassName(src)) {
 						case "dhx_cancel_btn":
 							scheduler.callEvent("onEventCancel", [scheduler._lightbox_id]);

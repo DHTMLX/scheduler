@@ -1,3 +1,15 @@
+5.0
+	New Material skin
+	Classic and Glossy skins are removed
+	Major css overhaul
+	Updated REST api integration options and documentation
+	Updated touch support for Microsoft devices
+	Fix compatibility issues with es6/ts imports
+	Add Hebrew locale for recurring form
+	Fixes in keyboard navigation support
+	Add onLoadError for network and server errors
+	Minor bugfixes
+
 4.4.0
 	High contrast color themes
 	Full-featured keyboard navigation

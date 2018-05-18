@@ -1,12 +1,13 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
 */
 scheduler.xy.map_date_width = 188; // date column width
+scheduler.xy.map_icon_width = 25; // event details icon width
 scheduler.xy.map_description_width = 400; // description column width
 
 scheduler.config.map_resolve_event_location = true; // if events in database doesn't have lat and lng values there will be an attempt to resolve them on event loading, useful for migration
@@ -226,9 +227,9 @@ scheduler.attachEvent("onSchedulerReady", function() {
 			var ariaAttr = scheduler._waiAria.mapRowAttrString(ev);
 			var ariaButtonAttr = scheduler._waiAria.mapDetailsBtnString();
 
-			html += "<div "+ariaAttr+" class='" + event_class + "' event_id='" + ev.id + "' style='" + bg_color + "" + color + "" + (ev._text_style || "") + " width: " + (scheduler.xy.map_date_width + scheduler.xy.map_description_width + 2) + "px;'><div style='width: " + scheduler.xy.map_date_width + "px;' >" + scheduler.templates.map_time(ev.start_date, ev.end_date, ev) + "</div>";
-			html += "<div "+ariaButtonAttr+" class='dhx_event_icon icon_details'>&nbsp</div>";
-			html += "<div class='line_description' style='width:" + (scheduler.xy.map_description_width - 25) + "px;'>" + scheduler.templates.map_text(ev.start_date, ev.end_date, ev) + "</div></div>"; // -25 = icon size 20 and padding 5
+			html += "<div "+ariaAttr+" class='" + event_class + "' event_id='" + ev.id + "' style='" + bg_color + "" + color + "" + (ev._text_style || "") + " width: " + (scheduler.xy.map_date_width + scheduler.xy.map_description_width + 2) + "px;'><div class='dhx_map_event_time' style='width: " + scheduler.xy.map_date_width + "px;' >" + scheduler.templates.map_time(ev.start_date, ev.end_date, ev) + "</div>";
+			html += "<div "+ariaButtonAttr+" class='dhx_event_icon icon_details'>&nbsp;</div>";
+			html += "<div class='line_description' style='width:" + (scheduler.xy.map_description_width - scheduler.xy.map_icon_width) + "px;'>" + scheduler.templates.map_text(ev.start_date, ev.end_date, ev) + "</div></div>"; // -25 = icon size 20 and padding 5
 		}
 		html += "<div class='dhx_v_border' style='left: " + (scheduler.xy.map_date_width - 2) + "px;'></div><div class='dhx_v_border_description'></div></div>";
 

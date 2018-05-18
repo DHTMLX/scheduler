@@ -1,0 +1,984 @@
+@mainColor: #a8b2f5;
+@selectColor: #42425e;
+
+@eventBorderColor: #677cfb;
+
+@backColor: #FFF;
+@monthAltBg: #e5e5e5;
+
+@layoutFontColor: #585858;
+@foreColor: #585858;
+@fontColor: #000000;
+
+@nowDate: #feff87;
+
+@layoutColor: @backColor;
+@fontFamily: "arial";
+@fontSize: 16px;
+@scaleFontSize: 16px;
+
+@borderColor: @foreColor;
+@lightBorderColor: #7e7e7e;
+@borderRadius: 2px;
+
+@saveBtnColor: @mainColor;
+@saveBtnBorderColor: @eventBorderColor;
+@regularBtnColor: @fontColor;
+@deleteBtnColor: #9f3500;
+@buttonFontSize: 14px;
+@calendar-open-icon: url(./imgs_contrast_white/calendar.gif);
+
+.dhx_cal_container,
+.dhx_cal_light,
+.dhx_cal_quick_info,
+.dhtmlXTooltip{
+	color:@fontColor;
+	font-size:@fontSize;
+}
+
+/* event start */
+.dhx_cal_event .dhx_title {
+	border-width: 1px 1px 0 1px;
+	padding-top: 1px;
+	-webkit-border-top-left-radius: @borderRadius;
+	-webkit-border-top-right-radius: @borderRadius;
+	-moz-border-radius-topleft: @borderRadius;
+	-moz-border-radius-topright: @borderRadius;
+	border-top-left-radius: @borderRadius;
+	border-top-right-radius: @borderRadius;
+
+	font-family: @fontFamily;
+	font-weight: bold;
+	font-size: @fontSize;
+	line-height: @fontSize;
+	font-size: 14px;
+	line-height: 14px;
+}
+
+.dhx_cal_event .dhx_body, .dhx_cal_event.dhx_cal_select_menu .dhx_body {
+	padding-bottom: 8px;
+	-webkit-border-bottom-right-radius: @borderRadius;
+	-webkit-border-bottom-left-radius: @borderRadius;
+	-moz-border-radius-bottomright: @borderRadius;
+	-moz-border-radius-bottomleft: @borderRadius;
+	border-bottom-right-radius: @borderRadius;
+	border-bottom-left-radius: @borderRadius;
+
+}
+
+.dhx_cal_event .dhx_header, .dhx_cal_event.dhx_cal_select_menu .dhx_footer {
+	display: none;
+}
+
+.dhx_cal_event.dhx_cal_select_menu {
+	-webkit-box-shadow: 0 0 1px #FFF;
+	-moz-box-shadow: 0 0 1px #FFF;
+	box-shadow: 0 0 1px #FFF;
+}
+
+.dhx_cal_event .dhx_footer {
+	height: 5px;
+	border: 0;
+	margin-top: -6px;
+	background: url(imgs_contrast_white/resizing.png) no-repeat center center;
+}
+
+.dhx_cal_event .dhx_header, .dhx_cal_event .dhx_footer, .dhx_cal_event .dhx_body, .dhx_cal_event .dhx_title {
+	background-color: @mainColor;
+	border-color: @eventBorderColor;
+	color: @fontColor;
+}
+
+.dhx_cal_event.dhx_cal_editor {
+	border: 1px solid @eventBorderColor;
+}
+
+.dhx_cal_editor {
+	font-size: 16px;
+	font-family: Arial, sans-serif;
+}
+
+div.dhx_menu_head, div.dhx_menu_icon {
+	background-image: url(imgs_contrast_white/controls.png);
+}
+div.dhx_menu_head {
+	background-position: 1px -39px;
+}
+
+.dhx_cal_event_line {
+	border: 1px solid @eventBorderColor;
+	background-color: @mainColor;
+	color: @fontColor;
+	height: 17px;
+	line-height: 17px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+}
+
+.dhx_cal_event_line_start {
+	-webkit-border-top-left-radius: 9px;
+	-webkit-border-bottom-left-radius: 9px;
+	-moz-border-radius-topleft: 9px;
+	-moz-border-radius-bottomleft: 9px;
+	border-top-left-radius: 9px;
+	border-bottom-left-radius: 9px;
+}
+
+.dhx_cal_event_line_end {
+	-webkit-border-top-right-radius: 9px;
+	-webkit-border-bottom-right-radius: 9px;
+	-moz-border-radius-topright: 9px;
+	-moz-border-radius-bottomright: 9px;
+	border-top-right-radius: 9px;
+	border-bottom-right-radius: 9px;
+}
+
+.dhx_cal_event .dhx_body, .dhx_cal_event_line {
+	font-size: @fontSize;
+	font-family: @fontFamily, sans-serif;
+}
+
+/* event end */
+
+/* scales, containers start */
+.dhx_cal_container {
+	font-family: @fontFamily;
+	font-size: @fontSize;
+	background-color: @backColor;
+}
+
+.dhx_cal_data {
+	color: @fontColor;
+	background: @backColor;
+	border-top: 1px solid @borderColor;
+}
+
+.dhx_scale_holder {
+	background-image: url(imgs_contrast_white/databg.png);
+	border-right: 1px solid @borderColor;
+}
+
+.dhx_scale_holder_now {
+	background-image: url(imgs_contrast_white/databg.png);
+	background-color: @nowDate;
+	border-right: 1px solid @borderColor;
+}
+
+.dhx_scale_hour {
+	border-bottom: 1px solid @borderColor;
+	background-color: @backColor;
+	font: @scaleFontSize/44px @fontFamily;
+	color: @layoutFontColor;
+	font-weight: bold;
+}
+
+.dhx_cal_header {
+	border: 1px solid @borderColor;
+	color: @layoutFontColor;
+	font-weight: bold;
+	border-left: 0;
+	border-bottom: 0;
+}
+
+.dhx_scale_bar {
+	border-left: 1px solid @borderColor;
+}
+
+.dhx_scale_bar {
+	font: @scaleFontSize/16px @fontFamily;
+	color: @layoutFontColor;
+	font-weight: bold;
+	padding-top: 2px;
+	background-color: @backColor;
+}
+
+/* scales, containers end */
+
+/* navigation start */
+.dhx_cal_navline div {
+	top: 14px;
+}
+
+.dhx_cal_tab, .dhx_cal_date, .dhx_cal_today_button, .dhx_cal_prev_button, .dhx_cal_next_button {
+	color: @layoutFontColor;
+	height: 30px;
+	line-height: 30px;
+	background: none;
+	border: 2px solid @layoutFontColor;
+}
+
+.dhx_cal_navline .dhx_cal_date {
+	border: 0;
+	font-size: 18px;
+	font-weight: normal;
+	font-family: @fontFamily;
+	width: 100%;
+	top: 14px;
+	text-align: center;
+	position: absolute;
+	left: 0;
+	z-index: -1;
+}
+
+.dhx_cal_today_button {
+	color: @fontColor;
+	left: auto;
+	right: 123px;
+	background: none;
+	text-decoration: none;
+
+	width: 80px;
+	font-size: @fontSize;
+	font-weight: bold;
+	font-family: @fontFamily;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.dhx_cal_prev_button, .dhx_cal_next_button {
+	left: auto;
+	width: 46px;
+}
+
+.dhx_cal_prev_button {
+	right: 61px;
+	background: url(imgs_contrast_white/arrow_left.png) no-repeat center center;
+	-webkit-border-top-left-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+.dhx_cal_next_button {
+	right: 14px;
+	background: url(imgs_contrast_white/arrow_right.png) no-repeat center center;
+	-webkit-border-top-right-radius: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	-moz-border-radius-topright: 5px;
+	-moz-border-radius-bottomright: 5px;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+.dhx_cal_tab {
+	color: @fontColor;
+	width: 60px;
+	padding-top: 0;
+	text-decoration: none;
+	-webkit-border-radius: 0px;
+	-moz-border-radius: 0px;
+	border-radius: 0px;
+	font-weight: bold;
+	font-family: @fontFamily;
+	font-size: @fontSize;
+}
+
+.dhx_cal_tab.active {
+	background-color: @layoutFontColor;
+	color: @backColor;
+	border: 2px solid @layoutFontColor;
+	text-shadow: none;
+}
+
+.dhx_cal_tab_first {
+	-webkit-border-top-left-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+.dhx_cal_tab_last {
+	-webkit-border-top-right-radius: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	-moz-border-radius-topright: 5px;
+	-moz-border-radius-bottomright: 5px;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+.dhx_cal_tab_standalone {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	padding: 0 5px;
+}
+
+.dhx_multi_day, .dhx_multi_day_icon_small, .dhx_multi_day_icon {
+	background-color: @backColor;
+}
+
+.dhx_multi_day {
+	border-top: 1px solid @borderColor;
+}
+
+.dhx_multi_day_icon, .dhx_multi_day_icon_small {
+	border-bottom: 1px solid @borderColor;
+	border-right: 1px solid @borderColor;
+}
+
+.dhx_multi_day_icon_small {
+	background-image: url(imgs_contrast_white/clock_small.gif);
+}
+
+.dhx_multi_day_icon {
+	background-image: url(imgs_contrast_white/clock_big.gif);
+}
+
+/* navigation end */
+
+/* month view start */
+.dhx_month_head, .dhx_after .dhx_month_head, .dhx_before .dhx_month_head, .dhx_after .dhx_month_body,
+.dhx_before .dhx_month_body {
+	background-color: @monthAltBg;
+	color: @layoutFontColor;
+}
+
+.dhx_mini_calendar .dhx_before .dhx_month_body,
+.dhx_mini_calendar .dhx_after .dhx_month_body {
+	display: none;
+}
+
+.dhx_month_head {
+	height: 21px;
+	padding-top: 0;
+	font: @fontSize/21px Arial;
+	color: @layoutFontColor;
+	background: @backColor;
+	font-weight: bold;
+	border-right: 1px solid @borderColor;
+}
+
+.dhx_after .dhx_month_head, .dhx_before .dhx_month_head, .dhx_after .dhx_month_head, .dhx_before .dhx_month_head {
+	color: @layoutFontColor;
+}
+
+.dhx_month_body {
+	border-right: 1px solid @borderColor;
+	border-bottom: 1px solid @borderColor;
+	background: @backColor;
+}
+
+.dhx_now .dhx_month_head, .dhx_now .dhx_month_body {
+	background-color: @nowDate;
+	font-weight: normal;
+}
+
+.dhx_cal_event_clear {
+	color: @fontColor;
+	font-size: @fontSize;
+	height: 16px;
+}
+
+/* month view end */
+
+/* lightbox start */
+.dhx_cal_larea {
+	margin-left: 0;
+}
+
+.dhx_cal_light{
+	input, textarea, select{
+		font-size:@fontSize;
+	}
+
+}
+.dhx_cal_light_wide .dhx_section_time{
+	padding-top:0 !important;
+}
+
+.dhx_cal_light_wide .dhx_cal_larea {
+	margin-left: 3px;
+}
+
+.dhx_cal_light_wide .dhx_wrap_section {
+	padding: 5px 0;
+}
+
+.dhx_cal_light, .dhx_cal_larea, .dhx_cal_lsection, .dhx_wrap_section, .dhx_cal_light_wide .dhx_wrap_section, .dhx_cal_ltext textarea {
+	background-color: @backColor;
+}
+
+.dhx_cal_lsection, .dhx_cal_light_wide .dhx_cal_lsection .dhx_fullday, .dhx_cal_lsection .dhx_fullday, .dhx_cal_light input {
+	color: @fontColor;
+}
+
+.dhx_cal_light_wide .dhx_wrap_section {
+	border-top: 0;
+	border-bottom: 1px solid #CECECE;
+}
+
+.dhx_cal_larea {
+	border: 1px solid transparent;
+}
+
+.dhx_cal_ltext textarea, .dhx_cal_light select, .dhx_cal_light input, .dhx_cal_light {
+	color: @fontColor;
+	background: @backColor;
+}
+
+.dhx_cal_light {
+	border: 1px solid #CECECE;
+	font-size: @fontSize;
+}
+
+.dhx_cal_light_wide .dhx_cal_lsection, .dhx_cal_light_wide .dhx_cal_lsection .dhx_fullday {
+	font-size: @fontSize;
+}
+
+.dhx_section_time {
+	background-color: transparent;
+}
+
+.dhx_save_btn, .dhx_cancel_btn, .dhx_delete_btn, .dhx_btn_set div:first-child {
+	display: none;
+}
+
+.dhx_btn_set, .dhx_btn_set div {
+	height: 30px;
+	padding: 0 20px;
+	line-height: 30px;
+}
+
+.dhx_btn_set {
+	margin: 12px 0 0 0;
+	padding: 0;
+	font-size: @buttonFontSize;
+	color: @regularBtnColor;
+	font-weight: bold;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
+.dhx_left_btn_set {
+	margin-left: 20px
+}
+
+.dhx_right_btn_set {
+	margin-right: 20px;
+}
+
+.dhx_btn_set, .dhx_cancel_btn_set {
+	border: 2px solid @foreColor;
+}
+
+.dhx_save_btn_set {
+	border: 2px solid @saveBtnBorderColor;
+	color: @fontColor;
+	text-shadow: none;
+	background-color: @saveBtnColor;
+}
+
+.dhx_delete_btn_set {
+	border: 2px solid @deleteBtnColor;
+	background-color: @deleteBtnColor;
+	color: @backColor
+
+}
+
+.dhx_cal_ltitle {
+	height: 30px;
+	line-height: 30px;
+	border-bottom: 1px solid @lightBorderColor;
+}
+
+.dhx_cal_ltitle span {
+	float: left;
+}
+
+.dhx_cal_light .dhx_title {
+	padding-left: 13px;
+}
+
+.dhx_mark {
+	display: none;
+}
+
+.dhx_time {
+	padding-left: 10px;
+}
+
+.dhx_close_icon {
+	float: right;
+	width: 9px;
+	height: 9px;
+	background: url(imgs_contrast_white/close_icon.png) no-repeat center center;
+	padding: 10px;
+	margin-top: 1px;
+}
+
+.dhx_cal_light_wide .dhx_cal_ltext.dhx_cal_template {
+	line-height: 22px;
+}
+
+.dhx_cal_ltext textarea {
+	line-height: 20px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	border: 1px solid @lightBorderColor;;
+	background-color: @backColor;
+}
+
+/* lightbox end */
+
+/* modal box */
+.dhtmlx_modal_box {
+	background: @backColor;
+	border: 3px solid @borderColor;
+	color: @fontColor;
+	font-family: @fontFamily;
+	border-radius: 6px;
+	width: 330px;
+}
+
+.dhtmlx_popup_title {
+	text-shadow: none;
+	background: transparent;
+	border-bottom: 1px solid @fontColor;
+	color: @fontColor;
+}
+
+.dhtmlx_popup_controls {
+	padding-bottom: 9px;
+}
+
+.dhtmlx_popup_button, .dhtmlx_popup_button:active, .dhtmlx_popup_button div, .dhtmlx_popup_button div:active {
+	color: @fontColor;
+	background: @backColor;
+	box-shadow: none;
+}
+
+.dhtmlx_popup_button.dhtmlx_ok_button {
+	border: 2px solid @saveBtnBorderColor;
+	color: @fontColor;
+	background-color: @saveBtnColor;
+}
+
+.dhtmlx_popup_button.dhtmlx_ok_button div {
+	background: @saveBtnColor;
+	color: @fontColor;
+	border: none;
+	font-weight: bold;
+	text-shadow: none;
+}
+
+/* mobdal box end */
+
+/* minicalendar */
+.dhx_cal_container.dhx_mini_calendar {
+	box-sizing: border-box;
+	border: 1px solid @borderColor;
+	box-shadow: none;
+	border-radius: 3px;
+}
+
+.dhx_mini_calendar .dhx_year_month {
+	border: 1px solid @lightBorderColor;
+	color: @fontColor;
+	font-family: Arial;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.dhx_mini_calendar .dhx_month_head, .dhx_mini_calendar .dhx_year_month, .dhx_mini_calendar .dhx_month_body,
+.dhx_mini_calendar .dhx_scale_bar, .dhx_mini_calendar .dhx_year_body {
+	border-color: transparent;
+}
+
+.dhx_mini_calendar .dhx_year_body {
+	padding-top: 1px;
+}
+
+.dhx_mini_calendar .dhx_scale_bar {
+	border-width: 0;
+	font-size: @fontSize;
+}
+
+.dhx_mini_calendar .dhx_year_week {
+	border-bottom: 1px solid @lightBorderColor;
+	padding-top: 1px;
+}
+
+.dhx_mini_calendar .dhx_month_head {
+	padding-right: 0;
+	margin-right: 1px;
+	text-align: center;
+}
+
+.dhx_mini_calendar .dhx_cal_prev_button, .dhx_mini_calendar .dhx_cal_next_button {
+	border: 0;
+	height: 20px;
+}
+
+/* minicalendar end */
+
+.dhx_cal_navline div.dhx_minical_icon {
+	left: 210px;
+	top: 14px;
+	width: 30px;
+	height: 30px;
+	background-position: 3px 5px;
+}
+
+/* timeline */
+.dhx_cal_event_line .dhx_event_resize {
+	background: url(./imgs_contrast_white/resize_dots.png) repeat-y;
+}
+
+.dhx_matrix_scell, .dhx_matrix_cell {
+	border-bottom: 1px solid @lightBorderColor;
+	border-right: 1px solid @lightBorderColor;
+}
+
+.dhx_cal_header div div {
+	border-left: 1px solid @borderColor;
+}
+
+.dhx_matrix_scell.folder {
+	border-right: 0;
+}
+
+.dhx_second_scale_bar {
+	border-bottom: 1px solid @borderColor;
+}
+
+.dhx_matrix_cell {
+	background: transparent;
+}
+
+/* timeline end */
+
+/* recurring */
+.dhx_repeat_divider {
+	border-left: 1px solid @lightBorderColor;;
+}
+
+.dhx_form_repeat {
+	font-size: 13px;
+	font-family: @fontFamily;
+	background: @backColor;
+}
+
+.dhx_custom_button {
+	background-color: @backColor;
+	border: 1px solid @foreColor;
+	font-size: 16px;
+	color: @fontColor;
+}
+
+.dhx_cal_light_wide .dhx_custom_button {
+	margin-top: 6px;
+}
+
+.dhx_custom_button_recurring {
+	background-image: url(./imgs_contrast_white/but_repeat.gif);
+}
+
+/* recurring end */
+
+/* agenda */
+.dhx_v_border, .dhx_agenda_line div {
+	border-right: 1px solid @lightBorderColor;
+}
+
+.dhx_agenda_area, .dhx_scheduler_agenda .dhx_cal_data {
+	background-image: url(imgs_contrast_white/databg.png);
+}
+
+.dhx_agenda_line {
+	font-size: @scaleFontSize;
+	height:22px;
+}
+
+.dhx_agenda_line .dhx_event_icon {
+	background: url(./imgs/icon.png) no-repeat;
+	background-position: 4px 4px;
+}
+
+/* agenda end */
+
+/* year */
+
+.dhx_year_tooltip {
+	background-image: url(imgs_contrast_white/databg.png);
+}
+
+.dhx_tooltip_line {
+	line-height: 22px;
+	height: 22px;
+	font-size: @fontSize;
+}
+
+.dhx_year_body .dhx_before .dhx_month_head,
+.dhx_year_body .dhx_after .dhx_month_head,
+.dhx_year_body .dhx_before .dhx_month_head a,
+.dhx_year_body .dhx_after .dhx_month_head a {
+	color: #454545 !important;
+}
+
+.dhx_year_week {
+	border-bottom: 1px solid @borderColor;
+}
+
+.dhx_year_month {
+	border: 1px solid @borderColor;;
+	font-size: @scaleFontSize;
+}
+
+.dhx_scale_bar_last {
+	border-right: 1px solid @borderColor;
+}
+
+.dhx_year_body {
+	border-left: 1px solid @borderColor;
+}
+
+.dhx_year_week {
+	border-bottom: 1px solid @borderColor;
+}
+
+.dhx_tooltip_line {
+	height: 22px;
+	line-height: 22px;
+	color: @fontColor;
+}
+
+.dhx_tooltip_line .dhx_event_icon {
+	background-position: 5px 4px;
+	background-repeat: no-repeat;
+	height: 20px;
+	margin: 0px 2px;
+}
+
+.dhx_year_tooltip {
+	font-size: @fontSize;
+	background-color: @backColor;
+}
+
+/* year end */
+
+/* expand */
+.dhx_expand_icon {
+	top: -3px;
+}
+
+/* expand end */
+
+/* units view */
+.dhx_scale_bar .dhx_cal_next_button, .dhx_scale_bar .dhx_cal_prev_button {
+	width: 20px;
+	height: 20px;
+	top: 0px !important;
+	border: 0;
+}
+
+.dhx_scale_bar .dhx_cal_next_button {
+	right: 1px !important;
+	border-left: 1px solid @borderColor;
+}
+
+.dhx_scale_bar .dhx_cal_prev_button {
+	left: 1px !important;
+	border-right: 1px solid @borderColor;
+}
+
+/* units view end */
+
+/* map view */
+.dhx_map_line .headline_date, .dhx_map_line .headline_description {
+	border: 0;
+}
+
+.dhx_map_line .headline_date {
+	border-right: 1px solid @borderColor;
+}
+
+/* map view end */
+
+/* tooltip start */
+.dhtmlXTooltip.tooltip {
+	font-size: @fontSize;
+	color: @fontColor;
+	background: @backColor;
+	border: 1px solid @borderColor;
+	line-height: 16px;
+}
+
+/* tooltip end */
+
+/* week agenda start */
+
+.dhx_wa_day_data {
+	background: @backColor;
+}
+
+.dhx_wa_scale_bar {
+	border-top: 1px solid @borderColor;
+	border-bottom: 1px solid @borderColor;
+}
+
+.dhx_wa_column_last .dhx_wa_day_cont {
+	border-left: 1px solid @borderColor;
+}
+
+.dhx_wa_ev_body {
+	font-size: @fontSize;
+	border-bottom: 1px solid @lightBorderColor;
+}
+
+.dhx_wa_scale_bar {
+	font-size: @scaleFontSize;
+	color: @layoutFontColor;
+	font-weight: bold;
+	background-color: @backColor;
+}
+
+.dhx_wa_ev_body.dhx_cal_event_selected {
+	background-color: #fff3a1;
+	color: #362d26;
+}
+
+.dhx_wa_dnd {
+	background-color: #fddb93 !important;
+	color: #747473 !important;
+	border: 1px solid #ccb177;
+}
+
+/* week agenda end */
+
+/* readonly start */
+.dhx_text_disabled {
+	color: #2E2E2E;
+}
+
+.dhx_cal_ltext .dhx_text_disabled {
+	line-height: 22px;
+}
+
+/* readonly end */
+
+/* grid view start */
+.dhx_grid_v_border {
+	border-right-color: @lightBorderColor;
+}
+
+.dhx_grid_area {
+	background: transparent;
+}
+
+.dhx_grid_area tr.dhx_grid_event:nth-child(2n) {
+	background: @monthAltBg;
+}
+
+.dhx_grid_line {
+	font-size: @scaleFontSize;
+}
+
+/* grid view end*/
+
+/* left border support */
+.dhx_scale_hour_border, .dhx_month_body_border, .dhx_scale_bar_border, .dhx_month_head_border {
+	border-left: 1px solid @lightBorderColor;
+}
+
+.dhx_cal_quick_info {
+	background: @backColor;
+	border: 1px solid @foreColor;
+	-webkit-box-shadow: inset 0px 0px 0px 4px @foreColor;
+	-moz-box-shadow: inset 0px 0px 0px 4px @foreColor;
+	box-shadow: inset 0px 0px 0px 4px @foreColor;
+	padding: 4px;
+}
+
+.dhx_cal_qi_title {
+	padding: 5px 0px 8px 12px;
+	color: @fontColor;
+	background-color: @backColor;
+	border-bottom: 1px solid @borderColor;
+}
+
+.dhx_cal_qi_content {
+	background: transparent;
+	width: auto;
+	border: none;
+	color: @fontColor;
+}
+
+.dhx_qi_big_icon {
+	margin: 8px 9px 8px 6px;
+	background: @backColor;
+	color: @fontColor;
+	border: 2px solid @fontColor;
+}
+
+.dhx_qi_big_icon div.icon_details {
+	background-image: url('imgs_contrast_white/quick_info_edit.png');
+}
+
+.dhx_qi_big_icon.icon_delete {
+	background: @deleteBtnColor;
+	border-color: @deleteBtnColor;
+	color: @backColor;
+	font-weight: bold;
+}
+
+/* export to PDF and iCal buttons start */
+.dhx_cal_navline .dhx_cal_export {
+	width: 32px;
+	height: 32px;
+	margin: 2px;
+	cursor: pointer;
+	top: 12px;
+}
+
+.dhx_cal_navline .dhx_cal_export.pdf {
+	left: auto;
+	right: 249px;
+	background-image: url('imgs_contrast_white/export_pdf.png');
+}
+
+.dhx_cal_navline .dhx_cal_export.ical {
+	left: auto;
+	right: 210px;
+	background-image: url('imgs_contrast_white/export_ical.png');
+}
+
+/* export to PDF and iCal buttons end */
+
+/* minicalendar */
+.dhx_mini_calendar {
+	padding: 5px;
+}
+
+.dhx_mini_calendar .dhx_year_event, .dhx_mini_calendar .dhx_calendar_click {
+	border-radius: 7px;
+}
+
+.dhx_mini_calendar .dhx_month_head {
+	margin: 2px 2px;
+}
+
+.dhx_mini_calendar .dhx_year_month {
+	line-height: 20px;
+	height: 25px;
+	font-size: 14px;
+}
+
+.dhx_mini_calendar .dhx_cal_prev_button {
+	top: 8px !important;
+}
+
+.dhx_mini_calendar .dhx_cal_next_button {
+	top: 8px !important;
+}
+
+.dhx_year_body .dhx_month_head.dhx_year_event,
+.dhx_year_body .dhx_month_head.dhx_calendar_click {
+	color: @foreColor;
+}

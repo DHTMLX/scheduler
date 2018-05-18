@@ -1,0 +1,345 @@
+.dhx_unselectable, .dhx_unselectable div{
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -moz-user-select:-moz-none;
+}
+
+.dhx_cal_light {
+    -webkit-tap-highlight-color:transparent;
+    background-color:@lightbox-background;
+    border-radius: @lightbox-border-radius;
+    border: @lightbox-border;
+    color: @lightbox-font-color;
+    font-family: @lightbox-font-family;
+    font-size: @lightbox-font-size;
+    box-shadow: @lightbox-shadow;
+    position:absolute;
+    z-index:15;
+    width:580px;
+}
+
+.dhx_cal_ltitle{
+    padding: @lightbox-title-padding;
+    height: @lightbox-title-height;
+    line-height: @lightbox-title-line-height;
+    border-bottom: @lightbox-title-border-bottom;
+    background: @lightbox-title-section-background;
+    margin: @lightbox-title-margin;
+    border-radius: @lightbox-title-border-radius;
+    overflow:hidden;
+    white-space:nowrap;
+}
+
+.dhx_cal_ltext.dhx_cal_template {
+    position: relative;
+}
+
+
+
+.dhx_cal_ltitle span{
+    white-space:nowrap;
+}
+
+.dhx_time{
+    font-weight: @lightbox-title-time-font-weight;
+    padding: @lightbox-title-time-padding;
+    font-size: @lightbox-title-time-font-size;
+    display: inline-block;
+    margin: @lightbox-title-name-margin;
+}
+
+.dhx_cal_light_wide{
+    width:650px;
+}
+
+.dhx_mark{
+    position:relative; top:3px;
+    background-image:url('./imgs/controls.gif');
+    background-position: 0px -43px;
+    padding-left:10px;
+}
+.dhx_ie6 .dhx_mark{
+    background-position: 6px -41px;
+}
+
+.dhx_cal_light select {
+    font-family: @lightbox-area-rs-select-font-family;
+    font-size: @lightbox-area-rs-select-font-size;
+    color: @lightbox-area-rs-select-color;
+    padding: @lightbox-area-rs-select-padding;
+    margin: @lightbox-area-rs-select-margin;
+}
+
+
+
+.dhx_cal_light .dhx_title{
+    padding: @lightbox-title-name-padding;
+    font-size: @lightbox-title-name-font-size;
+    text-transform: @lightbox-title-name-text-transfor;
+    color: @lightbox-title-name-font-color;
+    display: inline-block;
+    margin: @lightbox-title-name-margin;
+}
+
+.dhx_cal_larea {
+    border: @lightbox-area-border;
+    background-color: @lightbox-area-background-color;
+    overflow:hidden;
+}
+
+.dhx_cal_light_wide .dhx_cal_larea{
+    border-top-width: @lightbox-area-border-top;
+    margin: @lightbox-area-margin;
+}
+
+.dhx_cal_light_wide .dhx_wrap_section{
+    border-top: @lightbox-area-wrap-border-top;
+    border-bottom: @lightbox-area-wrap-border-botom;
+    position:relative;
+    background-color: @lightbox-area-wrap-background;
+    overflow:hidden;
+    padding: @lightbox-area-wrap-padding;
+    margin: @lightbox-textarea-margin;
+}
+
+.dhx_cal_lsection {
+    background-color: @lightbox-area-ls-background;
+    color: @lightbox-area-ls-font-color;
+    font-weight: @lightbox-area-ls-font-weight;
+    font-family: @lightbox-area-ls-font-family;
+    font-size: 18px;
+    padding: 5px 0 5px 10px;
+}
+
+.dhx_cal_light_wide .dhx_cal_lsection{
+    border:0px;
+    float:left;
+    text-align:right;
+    width: 82px;
+    width: @lightbox-area-ls-width;
+
+    min-height:20px;
+    line-height: @lightbox-area-ls-line-height;
+    height: auto;
+    font-size: @lightbox-area-ls-font-size;
+    padding: @lightbox-area-ls-padding;
+    margin: @lightbox-area-ls-margin;
+}
+
+.dhx_cal_lsection .dhx_fullday{
+    float:right;
+    margin-right:5px;
+    color: @lightbox-ls-fullday-font-color;
+    font-family: @lightbox-ls-fullday-font-family;
+    font-size:12px;
+    font-weight:normal;
+    line-height:20px;
+    vertical-align:top;
+    cursor:pointer;
+
+    & input[type="checkbox"] {
+       margin: 3px 3px 3px 4px;
+
+    }
+}
+
+.dhx_cal_ltext{
+    /*margin: 0 0 0 15px;*/
+    overflow:hidden;
+    float: left;
+    float: @lightbox-area-rs-float;
+    width: @lightbox-area-rs-width;
+    height: @lightbox-area-rs-height;
+    padding: @lightbox-area-rs-padding;
+}
+
+.dhx_readonly {
+    height: 15px;
+}
+
+.dhx_cal_ltext textarea{
+    background-color: @lightbox-area-rs-textarea-bg ; 
+    overflow:auto;
+    color: @lightbox-area-rs-font-color;
+    height:100%;
+    width: 100%;
+    outline: @lightbox-area-rs-outline !important;
+    resize: none;
+    border: @lightbox-area-rs-border; 
+    line-height: @lightbox-area-rs-line-height;
+    font-family: @lightbox-area-rs-font-family;
+    box-sizing: border-box;
+    padding: @lightbox-area-textarea-rs-padding;
+}
+
+.dhx_section_time {
+    background-color: @lightbox-area-time-block-bg;
+    white-space:nowrap;
+}
+
+.dhx_cal_light_wide .dhx_section_time{
+    padding: @lightbox-area-time-block-padding;
+    height: @lightbox-area-time-block-height;
+}
+
+.dhx_section_time{
+    text-align: @lightbox-area-time-block-textaligment;
+}
+
+.dhx_cal_light_wide .dhx_section_time{
+    background: @lightbox-area-time-block-bg;
+}
+
+.dhx_btn_set{
+    padding: @lightbox-btn-wrap-padding;
+    float:left;
+    margin: @lightbox-btn-margin;
+    font-size: @lightbox-btn-font-size;
+    font-weight: @lightbox-btn-font-weight;
+    border-radius: @lightbox-btn-border-radius;
+    text-transform: @lightbox-btn-text-transform;
+    color: @lightbox-btn-text-color;
+}
+
+.dhx_right_btn_set {
+    margin-right: @lightbox-btn-right-margin;
+}
+
+.dhx_btn_set div{
+    float:left;
+    height: @lightbox-btn-height;
+    line-height: @lightbox-btn-line-height;
+    padding: @lightbox-btn-padding;
+    vertical-align:middle;
+    cursor:pointer;
+}
+
+.dhx_btn_set, .dhx_cancel_btn_set {
+    border: @lightbox-btn-border;
+    background-color: @lightbox-btn-background;
+    color: @lightbox-btn-font-color;
+    float: right;
+    float: @lightbox-btn-float;
+}
+
+.dhx_save_btn{
+    background-image:url('./imgs/controls.gif');
+    background-position:-84px 0px;
+    width:21px;
+}
+
+.dhx_cancel_btn{
+    background-image:url('./imgs/controls.gif');
+    background-position:-63px 0px;
+    width:20px;
+}
+
+.dhx_delete_btn {
+    background-image:url('./imgs/controls.gif');
+    background-position:-42px 0px;
+    width:20px;
+}
+
+.dhx_delete_btn_set {
+	border: @lightbox-del-btn-border;
+	background-color: @lightbox-del-btn-background;
+	color: @lightbox-del-btn-font-color;
+    text-shadow: @lightbox-del-btn-text-shadow;
+    margin: @lightbox-del-btn-margin;
+}
+
+
+.dhx_save_btn_set {
+	border: @lightbox-save-btn-border;
+	color: @lightbox-save-btn-color;
+	text-shadow: @lightbox-save-text-shadow;
+    background-color: @lightbox-save-btn-background;
+}
+
+.dhx_cal_cover{
+    width:100%;
+    height:100%;
+    position:absolute;
+    z-index:14;
+    top:0px;
+    left:0px;
+    background-color:black;
+    opacity: @lightbox-wrapper-opacity;
+}
+.dhx_custom_button{
+    padding:0px 3px 0px 3px;
+    color: @default-font-color;
+    font-family: @default-font-family;
+    font-size:8pt;
+    background-color:white;
+    border: 1px solid @default-border-color;
+    font-weight:normal;
+    margin-right:5px;
+    margin-top:0px;
+    cursor:pointer;
+}
+.dhx_custom_button div{
+    cursor:pointer;
+    float:left;
+    height:21px;
+    line-height:21px;
+    vertical-align:middle;
+}
+
+.dhx_cal_light_wide .dhx_cal_lsection .dhx_fullday{
+    float:none;
+    margin: @lightbox-ls-fullday-margin;
+    font-weight: @lightbox-ls-fullday-font-weight;
+    font-size: @lightbox-ls-fullday-font-size;
+    cursor:pointer;
+}
+
+.dhx_cal_light_wide .dhx_cal_larea{
+    width:@lightbox-area-width;
+}
+
+
+.dhx_cal_light_wide{
+    width:738px;
+}
+
+.dhx_cal_light_wide .dhx_cal_checkbox label{
+    padding-left:0px;
+}
+
+.dhx_wrap_section .dhx_cal_wide_checkbox input[type="checkbox"] {
+    margin-top:8px;
+    margin-left:14px;
+}
+
+.dhx_cal_light input {
+    font-family: @lightbox-input-font-family;
+    font-size: @lightbox-input-font-size;
+    color: @lightbox-input-font-color;
+}
+
+#input_1518604462804 {
+    margin: @lightbox-input-first-margin;
+    border-bottom-width: @lightbox-input-border-bottom-width;
+    border-bottom: 0;
+}
+
+.dhx_custom_button{
+    float: right;
+    height: 21px;
+	width:90px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    border-radius: 4px;
+}
+.dhx_cal_light_wide .dhx_custom_button {
+    position:absolute;
+    top:0;
+    right:0;
+    margin-top: 6px;
+}
+.dhx_cal_light_wide .dhx_repeat_right {
+    margin-right: 55px;
+}

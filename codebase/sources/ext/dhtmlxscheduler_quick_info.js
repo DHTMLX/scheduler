@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -52,6 +52,35 @@ scheduler.showQuickInfo = function(id){
 scheduler._hideQuickInfo = function(){
 	scheduler.hideQuickInfo();
 };
+
+(function(){
+
+function cssTimeToMs(time) {
+	time = time || "";
+
+	var num = parseFloat(time),
+		unit = time.match(/m?s/),
+		milliseconds;
+
+	if (unit) {
+		unit = unit[0];
+	}
+
+	switch (unit) {
+		case "s": // seconds
+			milliseconds = num * 1000;
+			break;
+		case "ms": // milliseconds
+			milliseconds = num;
+			break;
+		default:
+			milliseconds = 0;
+			break;
+	}
+
+	return milliseconds;
+}
+
 scheduler.hideQuickInfo = function(forced){
 	var qi = this._quick_info_box;
 	var eventId = this._quick_info_box_id;
@@ -69,12 +98,30 @@ scheduler.hideQuickInfo = function(forced){
 		else
 			qi.style.right = -width + "px";
 
-		if (forced)
+		if (forced) {
 			qi.parentNode.removeChild(qi);
+		}else{
+
+			var style;
+			if(window.getComputedStyle){
+				style = window.getComputedStyle(qi, null);
+			}else if(qi.currentStyle){
+				style = qi.currentStyle;
+			}
+			var delay = cssTimeToMs(style["transition-delay"]) + cssTimeToMs(style["transition-duration"]);
+			setTimeout(function(){
+				if(qi.parentNode){
+					qi.parentNode.removeChild(qi);
+				}
+			}, delay);
+		}
 
 		this.callEvent("onAfterQuickInfo", [eventId]);
 	}
 };
+
+})();
+
 dhtmlxEvent(window, "keydown", function(e){
 	if (e.keyCode == 27)
 		scheduler.hideQuickInfo();

@@ -1,0 +1,1751 @@
+/*                                              Table of Content
+
+
+
+		1.	Various Elements 
+
+		|_______ 1.1 Mini Calendar on its own 
+
+
+		2.	Navigation Bar and It's Elements 
+		|___
+			|_______ 2.1 Tabs Possition
+			|_______ 2.2 Navigation Button Hover
+			|_______ 2.3 Tabs Hover
+
+
+		3.	Event and It's Elements 
+		|___
+			|_______ 3.1 Selection Menue ICONS
+			|_______ 3.2 Selected Event Menu
+
+
+		4.	Data section and It's Elements 
+		|___
+			|_______ 4.1 Data Column Header/Title
+			|_______ 4.2 Event Links 
+			|_______ 4.3 Timeline tooltip
+			|_______ 4.4 Data Columns navigation
+
+			
+		5.	Modal Pop-Ups and It's Elements 
+
+		6.	Lightbox and It's Elements 
+
+		7.	YEAR CALENDAR and It's Elements 
+		
+		8.	Agenda and It's Elements 
+
+
+*/
+
+
+
+/*============================================================================================
+                            1.	Various Elements 
+==============================================================================================*/
+
+
+.dhx_cal_container, .dhtmlx_modal_box, .dhtmlx_message_area, .dhx_cal_light, .dhtmlXTooltip {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.dhx_cal_event .dhx_header, .dhx_cal_event.dhx_cal_select_menu .dhx_footer {
+	display: none;
+}
+
+.dhx_cal_event_line.dhx_cal_event_drag{
+	box-shadow: 0 0 1px 0 rgb(255, 255, 255);
+}
+.dhx_cal_event.dhx_cal_event_drag{
+	box-shadow: 1px 1px 0 0 rgba(255, 255, 255, 0.47);
+}
+
+.dhx_btn_set {
+	float:left/@lightbox-save-btn-float;
+}
+
+.dhx_save_btn, .dhx_cancel_btn, .dhx_delete_btn, .dhx_btn_set div:first-child {
+	display: none;
+}
+
+.dhx_mark {
+	display: none;
+}
+
+.dhx_cal_event .dhx_footer, 
+.dhx_cal_event .dhx_select_menu_footer{
+	display: none;
+}
+
+.dhx_cal_container .dhx_multi_day{
+	box-sizing: border-box;
+	border-bottom: 1px solid @default-border-color;
+}
+
+.dhx_cal_container.dhx_scheduler_month .dhx_cal_data  {
+	border-top-color: transparent;
+}
+
+.dhx_cal_event.dhx_cal_select_menu .dhx_body {
+	overflow: unset;
+}
+
+.dhx_cal_container b {
+	font-weight: 500;
+}
+
+
+.dhx_cal_event_clear {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+//  1.1 Mini Calendar on its own
+
+.dhx_scheduler_unit .dhx_cal_header {
+	overflow: visible;
+}
+
+.dhx_multi_day_icon, .dhx_multi_day{
+	/*box-shadow: 0 3px 5px 0 rgba(0,0,0,0.1); *///, 0 1px 2px 0 rgba(0,0,0,0.1);
+}
+// _____________________________ End Of Various Elements  _____________________________
+
+
+
+/*============================================================================================
+                            2.	Navigation Bar and It's Elements 
+==============================================================================================*/
+
+//	2.2 Navigation Button Hover
+.dhx_cal_navline .dhx_cal_today_button {
+	border-radius: 2px;
+	&:hover {
+		border: @nav-today-btn-hov-border;
+		background-color: @nav-today-btn-hov-background;
+		transition: all 0.1s ease-in-out;
+	}
+}
+
+.dhx_cal_navline .dhx_cal_prev_button {
+	height: 30px;
+	width: 30px;
+	top: 14px;
+
+	&:hover {
+		background-color: @nav-prev-btn-hov-background;
+		border-radius: 50%;
+	}
+}
+
+.dhx_cal_navline .dhx_cal_next_button {
+	height: 30px;
+	width: 30px;
+	top: 14px;
+
+	&:hover {
+		background-color: @nav-next-btn-hov-background;
+		border-radius: 50%;
+	}
+}
+
+.dhx_scale_holder_now {
+	background-color:#f7f7f7;
+}
+
+/* export to PDF and iCal buttons start */
+.dhx_cal_navline .dhx_cal_export{
+	width:32px;
+	height:32px;
+	margin:2px;
+	cursor:pointer;
+	top: 13px;
+}
+.dhx_cal_navline .dhx_cal_export.pdf{
+	left: auto;
+	right: 200px;
+	background-image:url('imgs_dhx_material/export_pdf.png');
+}
+
+// 2.3 Tabs Hover
+
+
+.dhx_cal_tab {
+	&:hover {
+		background-color:  @nav-tab-hov-background;
+	}
+}
+
+.dhx_cal_tab.active:hover{
+	color: @nav-act-tab-font-color;
+	background-color: @nav-act-tab-background;
+}
+
+// _____________________________ End Of Navigation Bar and It's Elements  _____________________________
+
+
+
+
+/*============================================================================================
+                            3.	Event and It's Elements 
+==============================================================================================*/
+
+.dhx_cal_data div{
+	.dhx_cal_event,
+	/*.dhx_menu_icon ,*/
+	.dhx_title,
+	.dhx_body,
+	.dhx_footer{
+		box-sizing: border-box;
+		div{
+			box-sizing: border-box;
+		}
+	}
+}
+
+.dhx_cal_event.dhx_cal_select_menu .dhx_event_move.dhx_title {
+	display:none;
+}
+
+
+.dhx_cal_event.dhx_cal_event_selected .dhx_event_resize.dhx_footer,
+.dhx_cal_event.dhx_cal_event_drag .dhx_event_resize.dhx_footer,
+.dhx_cal_event:hover .dhx_event_resize.dhx_footer {
+	display: block;
+	background-color: transparent;
+	margin-top:-11px;
+}
+
+// 3.1 Selection Menue ICONS
+
+
+// 3.2 Selected Event Menu
+.dhx_scale_holder .dhx_cal_event .dhx_header, .dhx_scale_holder .dhx_cal_event .dhx_title, .dhx_scale_holder .dhx_cal_event .dhx_body, .dhx_scale_holder .dhx_cal_event .dhx_footer {
+	width:100%;
+	box-sizing: border-box;
+
+}
+
+.dhx_scale_holder .dhx_cal_event .dhx_body {
+	overflow: visible;
+}
+
+.dhx_cal_event.dhx_cal_select_menu .dhx_body{
+	border-width: 0;
+	padding: @event-menu-padding;
+	border-radius: @event-body-border-radius;
+	font-weight: @event-body-font-weight;
+	line-height: @event-body-line-height;
+	box-sizing: content-box;
+}
+
+div.dhx_menu_icon {
+	margin: 0 1px 5px;
+}
+
+.dhx_cal_event.dhx_cal_event_cascade {
+	box-shadow: 0 1px 5px 0 rgba(0,0,0,0.30);
+}
+
+.dhx_cal_event.dhx_cal_editor {
+	box-shadow: none;
+	background-color: @event-editor-background;
+	min-height: 24px;
+	box-shadow: 1px 1px 0 0 rgba(255, 255, 255, 0.47);
+}
+.dhx_cal_event.dhx_cal_editor > div{
+	min-height: 19px;
+}
+// _____________________________ End Of Event and It's Elements  _____________________________
+
+
+
+/*============================================================================================
+                            4.	Data section and It's Elements
+==============================================================================================*/
+
+
+// 4.1 Data Column Header/Title
+.dhx_cal_scale_placeholder{
+	position: absolute;
+	z-index: 1;
+	box-shadow: @multi-day-shadow;
+	left: 0;
+}
+
+.dhx_matrix_scell.folder .dhx_scell_expand {
+	margin: 0 10px;
+}
+
+.dhx_cal_header div.dhx_bottom_scale_container .dhx_scale_bar,
+.dhx_cal_header div.dhx_second_cal_header .dhx_scale_bar
+{
+	border-left-style: solid;
+	border-left-color: @default-border-color;
+}
+
+.dhx_scale_bar.dhx_second_scale_bar {
+	border-bottom: 0px;
+	border-bottom-style: solid;
+	border-bottom-color: @default-border-color;
+}
+
+.dhx_matrix_scell.folder {
+	border-right: 1px solid transparent;
+}
+.dhx_matrix_scell.folder.closed .dhx_scell_expand{
+
+	&:after {
+		content: "";
+		display: block;
+		position: absolute;
+		top: 3px;
+		left: 0px;
+		height: 10px;
+		width: 13px;
+		background: #ebeced @treemode-expand-icon-bg-image no-repeat;
+		background-position: 3px center;
+	}
+}
+
+.dhx_matrix_scell.folder.opened .dhx_scell_expand{
+
+	&:after {
+		content: "";
+		display: block;
+		position: absolute;
+		top: 3px;
+		left: 0px;
+		height: 10px;
+		width: 13px;
+		transform: rotate(-90deg);
+		background: #ebeced @treemode-expand-icon-bg-image no-repeat;
+		background-position: 3px center;
+	}
+}
+
+.dhx_row_folder .dhx_data_table .dhx_matrix_cell{
+	background-color: @grid-tree-folder-cell-bg;
+	cursor: pointer;
+}
+
+.dhx_row_folder {
+	.dhx_matrix_scell,
+	.dhx_data_table.folder .dhx_matrix_cell,
+	.dhx_data_table .dhx_matrix_cell {
+		border-bottom-color: transparent;
+		border-right-color: transparent;
+	}
+}
+
+.dhx_cal_header .dhx_second_scale_bar {
+	border-top: 1px solid @default-border-color;
+	padding: 1px 0 0 0;
+}
+
+.dhx_cal_header .dhx_scale_bar{
+	border-left-color: #ffffff;
+}
+
+.dhx_cal_header div .dhx_scale_bar {
+	border-top: 1px solid transparent;
+}
+
+.dhx_cal_container .dhx_cal_header.dhx_second_cal_header .dhx_scale_bar.dhx_second_scale_bar {
+	border-top: 1px solid transparent;
+	border-bottom: 1px solid transparent;
+	border-left: 1px solid @default-border-color;
+}
+
+.dhx_cal_container .dhx_cal_header.dhx_second_cal_header .dhx_scale_bar {
+	border-left: 1px solid @default-border-color;
+}
+
+.dhx_cal_header.dhx_second_cal_header {
+	border-right: 1px solid @default-border-color;
+}
+
+.dhx_cal_header .dhx_scale_bar.dhx_second_scale_bar:last-child {
+	border-right: 1px solid @default-border-color;
+}
+
+.dhx_scale_bar.undefined:last-child {
+	border-right: 1px solid @default-border-color!important;
+}
+
+//  4.2 Event Links
+td .dhx_month_head a,
+.dhx_cal_header .dhx_scale_bar a {
+	text-decoration: none;
+	color: #1B5DFB;
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.dhx_cal_data table .dhx_cal_event_line,
+.dhx_cal_event_line{
+	box-sizing: border-box;
+	text-overflow: ellipsis;
+}
+
+.dhx_cal_event_line .dhx_event_resize {
+	padding-bottom: 1px;
+	width: 10px;
+	display:none;
+}
+
+.dhx_cal_event_line.dhx_cal_event_selected .dhx_event_resize,
+.dhx_cal_event_line.dhx_cal_event_drag .dhx_event_resize,
+.dhx_cal_event_line:hover .dhx_event_resize{
+	display: block;
+}
+
+// 4.3 Timeline tooltip
+
+.dhtmlXTooltip.tooltip{
+	border-left: @tooltip-border-left;
+	border-top: @tooltip-border-top;
+	font-family: @tooltip-font-family;
+	font-size: @tooltip-font-size;
+	color: @tooltip-color;
+	z-index:10;
+	b{
+		font-weight: 500;
+	}
+}
+
+.dhtmlXTooltip.tooltip[role="tooltip"] {
+	font-size: 14px;
+	box-shadow: 0 10px 20px 0 rgba(0,0,0,0.2), 0 1px 6px 0 rgba(0,0,0,0.2);
+	border-style: solid;
+	border-color: transparent;
+}
+
+// 4.4 Data Columns navigation
+.dhx_scale_bar .dhx_cal_next_button,
+.dhx_scale_bar .dhx_cal_prev_button {
+	width: 20px;
+	height: 20px;
+	border: none;
+	top: 0px!important;
+	right: 7px!important;
+
+	&:hover {
+		background-image: @nav-prev-btn-hov-bg-img;
+		background-color: rgba(0,0,0,0.1);
+		border-radius: 50%;
+	}
+}
+
+.dhx_scale_bar .dhx_cal_next_button {
+	&:hover {
+		background-image:@nav-next-btn-hov-bg-img;
+	}
+}
+// _____________________________ End Of Data section and It's Elements  _____________________________
+
+
+/*============================================================================================
+                            5.	Modal Pop-Ups and It's Elements
+==============================================================================================*/
+
+.dhtmlx_popup_title {
+	border-top-left-radius:0;
+	border-top-right-radius:0;
+	border-width:0px;
+	background:transparent;
+	color:@default-font-color;
+	font-weight: 500;
+	font-size:16px;
+	text-transform: uppercase;
+	text-shadow:none;
+	line-height:42px;
+}
+
+.dhtmlx_modal_box .dhtmlx_popup_controls {
+	text-align: left;
+}
+
+.dhtmlx_modal_box .dhtmlx_popup_controls .dhtmlx_popup_button.dhtmlx_ok_button,
+.dhtmlx_modal_box .dhtmlx_popup_controls .dhtmlx_popup_button.dhtmlx_cancel_button {
+	float: right;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+.dhtmlx_popup_controls::after {
+	content: "";
+	display: table;
+	clear: both;
+}
+
+.dhtmlx_popup_button.dhtmlx_cancel_button {
+	margin-right: 10px;
+}
+
+.dhtmlx_popup_button.dhtmlx_ok_button:active div {
+	color: @modal-ok-button-color;
+}
+
+.dhtmlx_message_area .dhtmlx-error{
+	box-shadow: @info-popup-shadow;
+}
+
+.dhtmlx_message_area .dhtmlx-error,
+.dhtmlx_message_area .dhtmlx-error div{
+	background: #FF584C;
+	border:1px solid transparent;
+	border-radius: 0;
+}
+
+/* minicalendar */
+
+// Calendar
+.dhx_minical_icon {
+	left: 291px!important;
+	top: 10px!important;
+}
+
+.dhx_year_month {
+	height: 30px!important;
+}
+
+.dhx_cal_navline div.dhx_minical_icon {
+	left:210px;
+	top:16px;
+	width:40px!important;
+	height:40px!important;
+	background-position: center center;
+
+	&:hover {
+		background-color: rgba(0,0,0,0.1);
+		border-radius: 50%;
+		transition: all 0.05s ease;
+	}
+}
+
+.dhx_cal_container.dhx_mini_calendar {
+	box-sizing:border-box;
+	border: none;
+	box-shadow: 0px 2px 10px 0px #AAA;
+	border-radius: 0px;
+	font-family: @mini-calendar-font-family;
+	padding:5px;
+}
+
+// Calendar Months
+.dhx_mini_calendar .dhx_year_month {
+	border: 1px solid @default-border-color;
+	color: @mini-calendar-header-font-color;
+	line-height: 20px;
+	font-size: @mini-calendar-header-font-size;
+	font-weight: @mini-calendar-header-font-weight;
+}
+
+.dhx_mini_calendar .dhx_cal_prev_button, .dhx_mini_calendar .dhx_cal_next_button {
+	border: 0;
+}
+
+// Calendar Weekdays Title
+.dhx_mini_calendar .dhx_year_week {
+	border-bottom: 1px solid @default-border-color;
+	padding-top: 1px;
+}
+
+.dhx_mini_calendar .dhx_scale_bar{
+	font-family: @mini-calendar-font-family;
+	font-size: @mini-calendar-weekday-font-size;
+	font-weight: @mini-calendar-weekday-font-weight;
+	border-width: 0;
+}
+
+// Calendar Dates
+.dhx_mini_calendar .dhx_year_body{
+	padding-top:1px;
+}
+
+.dhx_mini_calendar .dhx_month_head, .dhx_mini_calendar .dhx_year_month, .dhx_mini_calendar .dhx_month_body,
+.dhx_mini_calendar .dhx_scale_bar, .dhx_mini_calendar .dhx_year_body{
+	border-color: transparent;
+}
+
+.dhx_mini_calendar .dhx_month_head {
+	font-size: @mini-calendar-date-font-size;
+	font-weight: @mini-calendar-date-font-weight;
+	color: @mini-calendar-date-font-color;
+	margin:2px 2px;
+	border-radius: 50%;
+	padding: 5px 0 0 1px;
+	text-align: center;
+	box-sizing: border-box;
+	height: @mini-calendar-date-height;
+	width: @mini-calendar-date-width;
+}
+
+
+.dhx_after >.dhx_month_head {
+	color: rgba(0,0,0,0.38);
+}
+
+
+.dhx_minical_popup .dhx_cal_container.dhx_mini_calendar .dhx_cal_next_button {
+	width: 25px;
+	height: 25px;
+	right: 10px!important;
+	top: 5px!important;
+
+		&:hover {
+		background-color: @nav-prev-btn-hov-background;
+		border-radius: 50%;
+	}
+}
+
+.dhx_cal_container.dhx_mini_calendar .dhx_cal_prev_button {
+	width: 25px;
+	height: 25px;
+	left: 10px!important;
+	top: 5px!important;
+
+		&:hover {
+		background-color: @nav-prev-btn-hov-background;
+		border-radius: 50%;
+	}
+}
+
+.dhx_mini_calendar div.dhx_month_head.dhx_calendar_click {
+	background-color: #e5e5e5;
+	color: @default-font-color;
+}
+
+.dhx_mini_calendar div.dhx_month_head.dhx_year_event{
+	background-color: rgba(2, 136, 209, 0.2);
+	color: @base-color;
+}
+
+.dhx_mini_calendar div.dhx_month_head.dhx_year_event.dhx_calendar_click {
+	background-color: #e5e5e5;
+	color: @base-color;
+}
+
+// mini calendar - styles for week row selection
+/*tr.selected-week-row {
+	td {
+		background-color: #D5ECFB;
+*/
+
+
+/*	}
+
+	td:first-child{
+		background-color: #D5ECFB;
+		border-radius: 50% 0 0 50%;
+	}
+	td:last-child{
+		background-color: #D5ECFB;
+		border-radius: 0 50% 50% 0;
+	}
+}*/
+// End of Calendar
+
+
+ // Modal Pop up - Series Event edition
+ .dhtmlx_modal_box.dhtmlx-alert .dhtmlx_edit_series_button {
+	float: right;
+	text-align: center;
+	text-transform: uppercase;
+	padding: @alertbox-series-btn-padding;
+	border: @alertbox-series-btn-border;
+	background-color:  @alertbox-series-btn-background;
+
+	div {
+		border: 1px solid @base-color;
+		background-color: @base-color;
+		color: @alertbox-series-btn-font-color;
+	}
+
+	&:hover {
+		border-color: darken(@base-color, 15);
+		background-color: darken(@base-color, 15);
+		transition: all .1s ease-in-out;
+
+		div {
+			background-color: darken(@base-color, 15);;
+			border-color: darken(@base-color, 15);
+			transition: all .1s ease-in-out;
+		}
+	}
+}
+
+.dhtmlx_modal_box.dhtmlx-alert .dhtmlx_edit_occurrence_button {
+	float: right;
+	text-align: center;
+	text-transform: uppercase;
+	padding: @alertbox-occur-btn-padding;
+	border: @alertbox-occur-btn-border;
+	background-color:  @alertbox-occur-btn-background;
+
+	div {
+		border: 1px solid #fff;
+		background-color: #fff;
+		color: @alertbox-occur-btn-font-color;
+	}
+
+	&:hover {
+		background-color: @lightbox-btn-hov-background;
+		transition: all 0.1s ease-in-out;
+		border: @lightbox-btn-hov-border;
+
+		div {
+			background-color: @lightbox-btn-hov-background;
+			transition: all 0.1s ease-in-out;
+		border: @lightbox-btn-hov-border;
+		}
+	}
+}
+ // End OF Series Event edition
+
+
+
+
+// Event Touch pop-up
+
+.dhx_cal_quick_info{
+	box-shadow: 0 3px 5px 0 rgba(0,0,0,.1);
+}
+
+.dhx_cal_qi_title{
+	background-color: @base-color;
+}
+.dhx_cal_qi_tdate{
+	margin-top: 4px;
+}
+
+
+.dhx_qi_big_icon .dhx_menu_icon{
+	display: none;
+}
+.dhx_qi_big_icon{
+	border: 1px solid transparent;
+	font-weight: 500;
+}
+
+.dhx_qi_big_icon:hover{
+	border: 1px solid rgba(255,88,76,.01);
+	background-color: @modal-popup-button-hov-color;
+	transition: all .1s ease-in-out;
+}
+.dhx_qi_big_icon.icon_delete:hover{
+	border: 1px solid rgba(255,88,76,.01);
+	background-color: rgba(255,88,76,.3);
+}
+.dhx_qi_big_icon.icon_delete{
+	color:@lightbox-del-btn-font-color;
+}
+
+.dhx_cal_qi_controls div{
+	float:unset;
+}
+.dhx_cal_qi_controls div.dhx_qi_big_icon{
+	 display:inline-block;
+}
+
+.dhx_cal_qi_controls{
+	text-align:right;
+	direction: rtl;
+}
+
+.dhx_qi_right .dhx_cal_qi_controls{
+	padding-right:10px;
+}
+
+.dhx_cal_quick_info.dhx_qi_left .dhx_qi_big_icon.dhx_qi_left{
+	.dhx_cal_qi_title,
+	.dhx_cal_qi_content{
+		padding-left:20px;
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+	}
+	.dhx_cal_qi_controls{
+		padding-right:0;
+		text-align: right;
+		.dhx_qi_big_icon{
+			float:unset;
+		}
+	}
+}
+
+.dhx_cal_qi_controls div.dhx_qi_big_icon{
+
+	text-transform: uppercase;
+	border-right-color:transparent;
+	border-bottom-color: transparent;
+}
+
+.dhx_cal_qi_controls div.dhx_qi_big_icon div{
+	float: unset;
+}
+
+// _____________________________ End Of Modal Pop-Ups and It's Elements  _____________________________
+
+
+
+/*============================================================================================
+                            6.	Lightbox and It's Elements
+==============================================================================================*/
+
+.dhx_cal_light {
+	width: 458px;
+	height:@lightbox-height;
+	padding: @lightbox-padding;
+}
+
+.dhx_cal_light_rec.dhx_cal_light_wide{
+	width: 458px;
+}
+
+.dhx_cal_light{
+	select, input, textarea, .combo>div{
+		border-radius:2px;
+	}
+}
+
+.dhx_cal_light input {
+	border: 1px solid rgb(169, 169, 169);
+	padding: @lightbox-input-padding
+}
+
+.dhx_cal_light .dhx_section_timeline {
+	padding: 4px 0 2px 19px;
+}
+.dhx_cal_light .dhx_section_timeline select{
+	width: 100%;
+	margin: 0
+}
+
+.dhx_cal_title {
+	border-radius: @lightbox-title-border-radius;
+	margin: @lightbox-title-margin;
+}
+
+.dhx_cal_ltext textarea {
+	font-size: @lightbox-area-rs-font-size;
+}
+
+.dhx_cal_header .dhx_scale_bar {
+	border-left-color: transparent;
+}
+
+textarea.dhx_cal_editor {
+	box-sizing: border-box;
+	color: @event-editor-font-color;
+	font-weight: @event-editor-font-weight;
+	resize: none;
+}
+
+.dhx_cal_light.dhx_cal_light_wide .dhx_cal_larea,
+.dhx_cal_light_rec.dhx_cal_light_wide .dhx_cal_larea {
+	height: auto!important;
+	width: 100%!important;
+}
+
+.dhx_section_time select:nth-child(1){
+	margin: 0 0 16px 4px;
+
+}
+
+.dhx_cal_light_readonly .dhx_section_time {
+	color: #2e2e2e;
+}
+
+.dhx_section_time select.dhx_lightbox_time_select {
+	width: 102px;
+	box-sizing: border-box;
+	padding: 0 0 0 34px!important;
+	background: url(imgs_dhx_material/time.svg) no-repeat  8px 5px,
+				url(imgs_dhx_material/menu-down.svg) no-repeat 100% 3px;
+
+}
+
+.dhx_section_time.dhx_lightbox_minical select.dhx_lightbox_time_select{
+	background: url(imgs_dhx_material/menu-down.svg) no-repeat 100% 3px;
+	padding: 0 0 0 5px!important;
+	width: 62px;
+}
+.dhx_section_time.dhx_lightbox_minical span{
+	display:none;
+}
+
+
+.dhx_section_time select.dhx_lightbox_day_select {
+	min-width: 46px!important;
+	background: url(imgs_dhx_material/menu-down.svg) no-repeat 100% 3px;
+	box-sizing: border-box;
+}
+
+.dhx_section_time select.dhx_lightbox_month_select {
+
+	width: 98px!important;
+	background: url(imgs_dhx_material/menu-down.svg) no-repeat 100% 3px;
+}
+
+.dhx_section_time select.dhx_lightbox_year_select {
+	min-width: 58px!important;
+	background: url(imgs_dhx_material/menu-down.svg) no-repeat 100% 3px;
+}
+
+
+.dhx_section_time select:nth-child(6){
+	margin: 0 0px 16px 4px;
+}
+
+.dhx_section_time select:last-child{
+	margin: 0 0px 16px 6px;
+}
+
+.dhx_section_time {
+	color: #ffffff;
+}
+.dhx_section_time select {
+	float: left;
+	height: 32px;
+	box-sizing: border-box;
+	margin: 0 0 16px 6px;
+	-webkit-appearance: none;
+    -moz-appearance: none;
+	appearance: none;
+	position: relative;
+	padding: 0 0 0 4px!important;
+}
+
+.dhx_time{
+	color: @lightbox-title-time-font-color;
+}
+
+.dhx_in_move {
+	background-color: @event-inmove-background;
+	color: @event-inmove-font-color;
+}
+
+.dhx_cal_light select {
+	box-sizing: border-box;
+	height: 32px;
+	-webkit-appearance: none;
+    -moz-appearance: none;
+	appearance: none;
+	background: url(imgs_dhx_material/menu-down.svg) no-repeat 100% 3px;
+	border: @lightbox-area-rs-select-border;
+}
+
+.dhx_multi_select_control{
+	padding-top:3px;
+	padding-left:15px;
+	line-height: 32px;
+}
+
+.dhx_multi_select_control label{
+	margin-right:12px;
+}
+
+.dhx_multi_select_control.dhx_multi_select_control_vertical{
+	padding-top:6px;
+	line-height: 25px;
+}
+
+.dhx_cal_light .combo {
+	min-height: 32px!important;
+}
+
+.dhx_cal_light_wide .combo > div{
+	top: @lightbox-combo-input-top;
+}
+
+.dhx_cal_light_wide .dhx_combo_box, .dhx_cal_light_wide .combo > div.dhxcombo_dhx_terrace {
+	width: 319px!important;
+	margin: 0px 0 0 0;
+	height: 32px!important;
+	position: relative;
+	left: 19px;
+	font-size: 14px;
+	font-family: @default-font-family;
+	border: 1px solid rgba(0,0,0,0.08)!important;
+}
+
+.dhx_cal_light div.dhxcombo_dhx_terrace div.dhxcombo_select_button div.dhxcombo_select_img {
+	background-position: center 10px!important;
+}
+
+.dhxcombolist_dhx_terrace{
+	width: 319px!important;
+}
+
+.dhx_cal_light .dhxcombo_dhx_terrace input.dhxcombo_input {
+	width: 321px!important;
+	box-sizing: border-box;
+	outline: hidden!important;
+	border: none!important;
+	height: 32px!important;
+	padding-left:8px;
+}
+
+.dhxcombolist_dhx_terrace div.dhxcombo_option div.dhxcombo_option_text{
+	padding-left:8px !important;
+}
+
+/*
+.dhx_cal_light_wide .dhx_wrap_section:nth-child(1){
+	padding: @lightbox-area-first-wrap-padding;
+}*/
+.dhx_cal_light_wide .dhx_wrap_section{
+	padding-right: 15px;
+}
+/*.dhx_cal_light_wide .dhx_wrap_section:nth-child(2){
+	height: @lightbox-area-second-wrap-height;
+}*/
+
+.dhx_cal_light .dhx_wrap_section .dhx_cal_lsection {
+	min-height: 25px!important;
+	line-height: 18px;
+	padding-top: 10px;
+}
+
+.dhx_cal_lsection .dhx_fullday{
+	vertical-align: middle;
+}
+
+.dhx_cal_lsection .dhx_fullday input[type="checkbox"]  {
+	margin: @lightbox-ls-fullday-input-margin;
+	vertical-align:middle;
+}
+/*
+.dhx_cal_light .dhx_wrap_section .dhx_cal_ltext {
+	height: 32px!important;
+}*/
+
+.dhx_cal_light .dhx_wrap_section .dhx_section_time {
+	height: 100%!important;
+	line-height:32px;
+
+	&:after {
+		content: " ";
+		clear: both;
+		display: table;
+	  }
+}
+
+.dhx_cancel_btn_set {
+
+	&:hover {
+		background-color: @lightbox-btn-hov-background;
+		transition: all 0.1s ease-in-out;
+		border: @lightbox-btn-hov-border;
+	}
+}
+
+.dhx_delete_btn_set {
+	float: left;
+	&:hover {
+		border: @lightbox-del-btn-hov-border;
+		background-color: @lightbox-del-btn-hov-background;
+	}
+}
+
+.dhx_custom_btn_info_set {
+
+	&:hover {
+		background-color: @lightbox-btn-hov-background;
+		transition: all 0.1s ease-in-out;
+		border: @lightbox-btn-hov-border;
+	}
+}
+
+
+
+.dhx_cal_ltext.dhx_cal_radio br {
+	display: none;
+}
+
+.dhx_cal_ltext {
+	min-height: 32px!important;
+	font-size: 14px;
+	margin: 0 0 0 15px;
+    line-height: 32px;
+    font-family: @default-font-family;
+    input[type="text"] {
+        height: 26px;
+        margin: 0 0 0 4px;
+        font-size: 14px;
+        font-family: @default-font-family;
+        color: rgba(0,0,0,0.8);
+        border-color: rgba(0,0,0,0.08);
+    }
+}
+
+.dhx_cal_light_wide .dhx_cal_ltext {
+	margin: 0 0 0 117px;
+}
+
+.dhx_multi_select_custom {
+	min-height: 52px!important;
+	padding:  5px 0 0 15px;
+
+	label {
+		font-size: 14px;
+		font-family: @default-font-family;
+		width: 35%!important;
+		display: inline-block;
+		margin: 0 0 5px 0;
+	}
+}
+
+.dhx_form_repeat {
+	margin: 30px 0 0 117px;
+	padding-left:0;
+	form {
+		font-size: 14px;
+        font-family: @default-font-family;
+		color: rgba(0,0,0,0.8);
+		padding:  0 0 0 5px;
+	}
+
+	form select {
+		box-sizing: border-box;
+		height: 32px;
+        font-size: 12px;
+        font-family: @default-font-family;
+        color: rgba(0,0,0,0.8);
+		border-color: rgba(0,0,0,0.08);
+	}
+
+	form label {
+		font-size: 14px;
+		font-family: @default-font-family;
+		display: inline-block;
+		margin: 0 0 5px 0;
+		input[type="checkbox"] {
+			margin: 0 5px 0 0;
+		}
+	}
+}
+
+.dhx_section_time input.dhx_readonly {
+	height: 26px;
+	float: left;
+	border-color: @default-border-color;
+	width: 77px;
+	margin: 0 4px 16px 4px;
+	text-align: center;
+	color: rgba(0,0,0,0.8);
+	font-size: 14px;
+}
+
+.dhx_section_time input.dhx_readonly:nth-last-child(2) {
+	margin-left:12px;
+}
+
+.dhx_lightbox_minical.dhx_section_time select{
+	margin: 0 0 16px 3px;
+}
+
+ .dhtmlx_cancel_button:hover {
+	/*border-color:	@modal-popup-button-hov-border;*/
+	background-color: @modal-popup-button-hov-color;
+	transition: all 0.1s ease-in-out;
+
+	& div {
+		background-color: @modal-popup-button-hov-color;
+		border-color: @modal-popup-button-hov-color;
+		transition: all 0.1s ease-in-out;
+	}
+}
+
+.dhtmlx_popup_button.dhtmlx_ok_button {
+
+	&:hover {
+		border-color: darken(#FF584C, 15);
+		transition: all .1s ease-in-out;
+
+		div {
+			background-color: darken(#FF584C, 15);;
+			border-color: darken(#FF584C, 15);
+			transition: all .1s ease-in-out;
+		}
+	}
+}
+
+.dhx_left_btn_set.dhx_btn_set ~ .dhx_left_btn_set.dhx_btn_set{
+	margin: 0 0 0 16px;
+}
+
+.dhx_left_btn_set.dhx_btn_set{
+	margin: 0 0 0 20px;
+}
+
+.dhx_right_btn_set.dhx_btn_set ~ .dhx_right_btn_set.dhx_btn_set{
+	margin: 0 15px 0 0;
+}
+.dhx_right_btn_set.dhx_btn_set{
+	margin: 0 15px 0 0;
+}
+
+.dhx_save_btn_set {
+	/*margin: @lightbox-save-btn-margin;*/
+
+	&:hover {
+		border-color: #0299EB;
+		transition: all .1s ease-in-out;
+
+		div {
+			background-color: #0299EB;
+			border-color: #0299EB;
+			transition: all .1s ease-in-out;
+		}
+	}
+}
+
+// Ligtbox Radio Button Area
+.dhx_cal_ltext.dhx_cal_radio {
+	padding: 4px 0 0 0;
+}
+
+
+.dhx_cal_light .dhx_wrap_section  .dhx_cal_ltext.dhx_cal_ltext_large {
+	/*height: 98px!important;*/
+}
+
+.dhx_cal_light .dhx_wrap_section .dhx_cal_lsection.dhx_cal_lsection_large {
+	/*height: 98px!important;*/
+}
+
+
+.dhx_section_time.dhx_section_time_calendar {
+	& select {
+		width: 64px;
+	}
+}
+
+// Lightbox Reccuring form
+.dhx_repeat_left {
+	width: 325px!important;
+	height: 50px!important;
+	border-bottom: 1px solid #cecece;
+
+	br {
+		display: none;
+	}
+
+	label {
+		width: 24%!important;
+	}
+}
+
+.dhx_repeat_center {
+	width: 325px!important;
+	height:105px!important;
+	padding: 10px 0 0px 0!important;
+	border-bottom: 1px solid #cecece;
+
+	#dhx_repeat_week {
+		table.dhx_repeat_days {
+			width: 100%!important;
+			border-collapse: collapse;
+
+			td {
+				width: 24%!important;
+
+				&:nth-child(3) {
+					width: 28%!important;
+				}
+				label {
+					box-sizing: border-box;
+					height: 20px!important;
+					line-height: 20px;
+					font-size: 12px;
+					width: 100%!important;
+					input {
+						position: relative;
+						top: 2px;
+					}
+				}
+
+			}
+		}
+	}
+
+
+	#dhx_repeat_month label {
+		width: 65px!important;
+	}
+
+
+	#dhx_repeat_year {
+
+		label {
+			width: 60px!important;
+		}
+	}
+}
+
+.dhx_repeat_left {
+	padding-left:0;
+}
+.dhx_repeat_right {
+	float: left;
+	width: 325px!important;
+	padding: 10px 0 0px 0 !important;
+
+	label {
+
+		&:nth-child(3) {
+			width: 49px!important;
+		}
+	}
+
+	input.dhx_repeat_date {
+		margin-left:10px;
+		box-sizing: border-box;
+		height: 32px;
+		font-size: 14px;
+		font-family: @default-font-family;
+		border-color: rgba(0,0,0,0.08)!important;
+	}
+}
+
+.dhx_cal_light_wide .dhx_repeat_right {
+    margin-right: 15px!important;
+}
+
+.dhx_repeat_divider {
+	display: none;
+}
+
+input.dhx_repeat_text {
+    height:32px!important;
+    width: 28px!important;
+    margin: 0 6px 5px 4px!important;
+    line-height:30px!important;
+	padding: 0!important;
+	text-align: center!important;
+	font-size: 12px!important;
+	font-family: @default-font-family!important;
+	box-sizing: border-box!important;
+	border-color: rgba(0,0,0,0.08)!important;
+}
+
+.dhx_repeat_center .dhx_repeat_month select {
+	margin: 0 6px 0 0;
+	box-sizing: border-box;
+	height:32px!important;
+}
+.dhx_wrap_section .dhx_cal_wide_checkbox {
+	line-height:32px;
+}
+.dhx_wrap_section .dhx_cal_wide_checkbox input[type="checkbox"] {
+    margin-top:8px;
+    margin-left:19px;
+	vertical-align: middle;
+}
+
+.dhx_cal_light .dhx_cal_radio input[type="radio"] {
+	position: relative;
+	top: -1px;
+}
+
+// Lightbox Reccuring button
+.dhx_cal_lsection div.dhx_custom_button {
+    padding: 0;
+    color:@base-color;
+    font-family:@default-font-family;
+    font-size:14px;
+    background-color:rgba(255, 255, 255, 0);
+    margin: 0 20px 0 0;
+	width: auto;
+	height: 32px;
+	font-weight: 500;
+	text-align: center;
+	border-radius: 2px;
+	&:hover {
+		background-color: #D9EDF8;
+	}
+}
+
+.dhx_cal_lsection div.dhx_custom_button .dhx_custom_button_recurring {
+	display: none;
+}
+
+.dhx_cal_lsection div.dhx_custom_button div{
+    float:none;
+    height:32px;
+    line-height:32px;
+	text-transform: uppercase;
+	padding:0px 16px 0px 16px;
+	border-radius: 2px;
+}
+// _____________________________ End Of Lightbox and It's Elements  _____________________________
+
+
+
+/*============================================================================================
+                            7.	YEAR CALENDAR and It's Elements
+==============================================================================================*/
+
+
+// ** Calendar-Year view
+.dhx_year_box .dhx_year_month {
+	color: @base-color;
+	font-family: @default-font-family;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 20px;
+	text-align: center;
+}
+
+
+.dhx_scheduler_year .dhx_cal_data {
+	padding: 25px 0;
+	box-sizing: border-box;
+	text-align: center;
+}
+.dhx_scheduler_year .dhx_cal_data::before {
+	position: absolute;
+	top: -3px;
+	left: 0;
+	width: 100%;
+	height: 3px;
+	content: " ";
+	box-shadow: @multi-day-shadow;
+}
+
+
+
+.dhx_year_box {
+	box-sizing: border-box;
+	text-align: center;
+	margin: 15px 35px;
+	margin-top:15px !important;
+	.dhx_year_week {
+		display: inline-block;
+		> div{
+			position: static;
+			display: inline-block;
+		}
+	}
+}
+
+@media (max-width:1790px) {
+	.dhx_year_box{
+		margin: 15px 20px;
+	}
+}
+
+@media (max-width:1350px) {
+	.dhx_year_box{
+		margin: 15px 10px;
+	}
+}
+
+.dhx_year_box {
+	position:static !important;
+	display: inline-block;
+	width: 224px!important;
+	height: 250px!important;
+	overflow: hidden;
+
+	.dhx_year_month {
+		width: 100%!important;
+		border:none;
+		padding: 0;
+	}
+
+	.dhx_year_grid {
+		width: 100%!important;
+
+		.dhx_year_week {
+			width: 100%!important;
+			margin: 0 0 7px 0;
+			.dhx_scale_bar {
+				width: 32px!important;
+				font-size: 12px;
+				box-sizing: border-box;
+				text-align: center;
+				border-color: transparent;
+				&:nth-child(1) {
+					left: 0;
+				}
+
+				&:nth-child(2) {
+					left: 32px!important;
+				}
+
+				&:nth-child(3) {
+					left: 64px!important;
+				}
+
+				&:nth-child(4) {
+					left: 96px!important;
+				}
+
+				&:nth-child(5) {
+					left: 128px!important;
+				}
+
+				&:nth-child(6) {
+					left: 160px!important;
+				}
+
+				&:nth-child(7) {
+					left: 192px!important;
+				}
+			}
+		}
+
+	.dhx_year_body {
+		width: 224px!important;
+		height: 192px!important;
+			display: inline-block;
+			border: none;
+
+			& table {
+				width: 224px!important;
+				height: 192px!important;
+				display: inline-block;
+				padding: 0;
+				margin: 0;
+				box-sizing: border-box;
+
+				& tbody {
+					width: 224px!important;
+					height: 192px;
+					display: inline-block;
+					padding: 0;
+					margin: 0;
+					box-sizing: border-box;
+
+					tr {
+						height: 32px!important;
+					}
+
+					td, .dhx_before {
+						width: 32px!important;
+						height: 32px!important;
+						padding: 0;
+						display: inline-block;
+						text-align: center;
+						box-sizing: border-box!important;
+						padding: 2px 0 0 0;
+
+						.dhx_month_head {
+							border:none;
+							width: 28px!important;
+							height: 28px!important;
+							display: inline-block;
+							text-align: center;
+							padding: 1px 0 0 0;
+							border-radius: 50%;
+							padding: 0;
+							box-sizing: border-box;
+							font-size: 14px;
+							line-height: 28px;
+							&.dhx_year_event {
+								background-color: @base-color;
+								color:#ffffff;
+								font-weight: 500;
+								cursor: pointer;
+							}
+						}
+
+						.dhx_month_body {
+							border: none;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+// Year View - Event tooltip
+div.dhx_year_tooltip {
+	border: none;
+	box-sizing: border-box;
+	box-shadow: 0 2px 5px 0 rgba(0,0,0,0.3);
+	background: #fff;
+	font-family:@default-font-family;
+	font-size:14px;
+	overflow:hidden;
+	color: rgba(0,0,0,0.8);
+
+	.dhx_tooltip_line {
+		box-sizing: border-box;
+		min-height: 20px;
+		height: auto;
+		line-height: 20px;
+		margin: 14px 12px 14px 0;
+		overflow: visible;
+		position: relative;
+		box-sizing: border-box;
+		padding: 0 0 0 48px;
+
+		.dhx_event_icon.icon_details {
+			background: url(./imgs_dhx_material/agenda-calendar.svg) no-repeat center center;
+			width: 40px;
+			height: 40px;
+			position: absolute;
+			top: -10px;
+			left: 4px;
+			padding: 0;
+			&:hover {
+				background-color: rgba(0,0,0,0.1);
+				border-radius: 50%;
+			}
+		}
+
+		.dhx_event_icon.icon_details {
+			float: left;
+		}
+
+		.dhx_tooltip_date {
+			float: right;
+		}
+	}
+  }
+// End OF Year View - Event tooltip
+
+
+// _____________________________ End Of YEAR CALENDAR and It's Elements  _____________________________
+
+
+/*============================================================================================
+                            8.	Agenda and It's Elements
+==============================================================================================*/
+
+.dhx_cal_header div.dhx_map_line div.headline_date,
+.dhx_cal_header div.dhx_map_line div.headline_description,
+.dhx_cal_header div.dhx_grid_line div,
+.dhx_cal_header div.dhx_agenda_line div,
+.dhx_cal_header div.dhx_agenda_line span {
+	border-color: @agenda-topline-border-left-color;
+}
+
+.dhx_scheduler_agenda .dhx_cal_data{
+	border-top:1px solid #fff;
+	background: #fff;
+}
+
+.dhx_map_area{
+	background-image: none;
+}
+
+.dhx_grid_area div[role="row"],
+.dhx_agenda_area div[role="row"],
+.dhx_map_area div[role="row"]{
+	box-sizing: border-box;
+	height: 36px;
+	border-bottom: 1px solid transparent;
+}
+
+.dhx_map_area .dhx_event_icon.icon_details,
+.dhx_agenda_area .dhx_event_icon.icon_details {
+	border:none;
+}
+
+.dhx_grid_v_border,
+.dhx_map_area .dhx_v_border,
+.dhx_agenda_area .dhx_v_border {
+	border-right: 1px solid @default-border-color;
+}
+
+.dhx_grid_area tr.dhx_grid_event:nth-child(even),
+.dhx_map_area div[role="row"]:nth-child(even),
+.dhx_agenda_area div[role="row"]:nth-child(even) {
+	background-color: @agenda-even-data-background;
+}
+
+.dhx_grid_area tr.dhx_grid_event:nth-child(odd),
+.dhx_map_area div[role="row"]:nth-child(odd),
+.dhx_agenda_area div[role="row"]:nth-child(odd) {
+	background-color: #fff;
+}
+
+.dhx_grid_area tr.dhx_grid_event,
+.dhx_map_line div.dhx_map_event_time,
+.dhx_agenda_line div.dhx_agenda_event_time {
+	line-height: 36px;
+	height: 36px;
+	color: rgba(0,0,0,0.75);
+}
+
+.dhx_map_area .dhx_map_line .dhx_event_icon,
+.dhx_agenda_area .dhx_agenda_line .dhx_event_icon {
+	background: url(./imgs_dhx_material/agenda-calendar.svg) no-repeat center center;
+	height: 33px;
+	width: 33px;
+	margin: 2px 0 0 3px;
+	background-size: 20px 20px;
+	border-radius: 50%;
+}
+
+.dhx_map_area .dhx_map_line .dhx_event_icon:hover,
+.dhx_agenda_area .dhx_agenda_line .dhx_event_icon:hover {
+	background-color: rgba(0,0,0,.1);
+}
+
+
+.dhx_map_area .dhx_map_line .line_description{
+	box-sizing: border-box;
+	line-height: 36px;
+	height: 100%;
+	color: rgba(0,0,0,0.75);
+}
+.dhx_agenda_area .dhx_agenda_line span {
+	display: inline-block;
+	line-height: 36px;
+	height: 100%;
+	color: rgba(0,0,0,0.75);
+}
+
+.dhx_scheduler_week_agenda .dhx_wa_column {
+	font-family: @week-agenda-font-family;
+	font-size: 14px;
+	color: @week-agenda-font-color;
+}
+
+.dhx_scheduler_week_agenda .dhx_wa_scale_bar {
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: 500;
+	color: inherit;
+	border-top: @week-agenda-border;
+	border-bottom: @week-agenda-border;
+	background-color: @week-agenda-header-background;
+	padding-left:7px;
+}
+
+.dhx_scheduler_week_agenda .dhx_wa_ev_body {
+	border-bottom: @week-agenda-border;
+    padding: 5px 0 5px 7px;
+}
+
+.dhx_wa_column.dhx_wa_column_last .dhx_wa_day_cont {
+	border-left: @week-agenda-border;
+}
+
+.dhx_scheduler_week_agenda .dhx_cal_event_selected{
+    background-color: @week-agenda-selected-background;
+    color: white;
+}
+// _____________________________ End Of Agenda and It's Elements  _____________________________
+
+
+.dhx_cal_ltitle {
+	text-overflow: ellipsis;
+}
+
+.dhx_expand_icon {
+	background-image: url("./imgs_dhx_material/collapse_expand_icon.png");
+}

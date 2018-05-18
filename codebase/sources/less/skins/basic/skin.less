@@ -1,0 +1,608 @@
+@default-font-family:               "Tahoma", san-serif;
+@default-font-size:                 8pt;
+@default-font-color:                #2f3a48;
+
+@default-border-color:              #CECECE;
+// DHX Scheduler Container
+
+@container-background:              #C2D5FC;
+@container-font-family:             @default-font-family;
+@container-font-size:               @default-font-size;
+
+
+// NAVLINE - TOP BAR
+
+@navline-font-color:                        @default-font-color;
+@navline-btn-top-position:                  2px;
+@navline-height:                            20px;
+
+
+    // ** Previous / Today / Next **
+
+        @nav-btn-background:                #dbe4ed;
+        @nav-btn-background-img:            url(imgs/buttons.png);
+        @nav-btn-border:                    none;
+        @nav-btn-height:                    17px;
+        @nav-btn-width:                     29px;
+                    // *Prev Btn
+        @nav-prev-btn-position:             155px;
+        @nav-prev-btn-bg-img:               @nav-btn-background-img;
+        @nav-prev-btn-bg-position:          0px 0px;
+        @nav-prev-btn-border-radius:              0;
+                    // *Next Btn
+        @nav-next-btn-position:             47px;
+        @nav-next-btn-bg-img:               @nav-btn-background-img;
+        @nav-next-btn-bg-position:          -31px 0px;
+        @nav-next-btn-border-radius:              0;
+                    // *Today Btn
+        @nav-today-btn-width:               75px;
+        @nav-today-btn-position:            78px;
+        @nav-today-btn-bg-img:              @nav-btn-background-img;
+        @nav-today-btn-bg-position:         -62px 0px;
+        @nav-today-btn-text-decor:          underline;
+        @nav-today-btn-font-color:          inherit;
+@nav-today-btn-text-transform: none;
+        @nav-today-btn-font-size:           inherit;
+        @nav-today-btn-font-weight:         normal;
+        @nav-today-btn-border-radius:             0;
+
+    // ** Nav Tabs **
+        @nav-tab-width:                     59px;
+        @nav-tab-height:                    19px;
+@nav-tab-text-transform: none;
+@nav-tab-font-size:inherit;
+        @nav-tab-background:                #D8E1EA;
+        @nav-tab-text-align:                center;
+        @nav-tab-text-decor:                underline;
+        @nav-tab-padding:                   2px 0 0 0;
+        @nav-tab-border:                    none;
+        @nav-tab-border-radius:                   4px 4px 0 0;
+        @nav-tab-font-color:                inherit;
+        @nav-tab-font-weight:               normal;
+        @nav-tab-cursor:                    pointer;
+        @nav-tab-first-border-radius:             0;
+        @nav-tab-last-border-radius:              0;
+
+
+        @nav-act-tab-text-decor:            none;
+        @nav-act-tab-font-weight:           bold;
+        @nav-act-tab-font-size:             inherit;
+        @nav-act-tab-font-color:            inherit;
+        @nav-act-tab-cursor:                default;
+        @nav-act-tab-border:                1px dotted #586A7E;
+        @nav-act-tab-border-botom:          0;                      // Set 1 to show bottom border/ Works like true/false switch
+        @nav-act-tab-background:            #C2D5FC;
+
+
+
+    // ** Middle Calendar Date
+
+        @nav-cal-date-position:             210px;
+
+        @nav-cal-unit-date-position:        300px;
+        @nav-cal-date-font-color:           inherit;
+        @nav-cal-date-font-weight:          600;
+        @nav-cal-date-padding:              1px 0 0 0;
+        @nav-cal-date-font-size:            inherit;
+        @nav-cal-date-text-align:           start;
+        @nav-cal-date-width:                auto;
+        @nav-cal-date-border:               0;
+        @nav-cal-date-index:                -1;
+
+
+    // ** Info Tooltip Popup
+
+    @info-popup-shadow:                     0px 0px 10px #888;
+    @info-popup-background:                 #FFF;
+    @info-popup-border-radius:              3px;
+    @info-popup-border:                     1px solid #ffffff;
+    @info-popup-inner-border:               1px solid #b8b8b8;
+    @info-popup-padding:                    5px 10px 5px 10px;
+@info-popup-font-color: #000;
+
+// Callumns Header$
+
+@col-header-background:             inherit;
+@col-header-left-pos:               10px;
+@col-header-border-top:             1px dotted #8894A3;
+@col-header-border-right:           1px dotted #8894A3;
+@col-header-index:                  2;
+@col-header-font-color:             @default-font-color;
+
+    // ** Scale Bar / column title cell
+
+        @col-header-cell-text-align:        center;
+        @col-header-cell-background:        inherit;
+        @col-header-cell-padding:           3px 0 0 0;
+        @col-header-cell-border-left:       1px dotted #586A7E;
+        @col-header-cell-font-weight:       inherit;
+        @col-header-cell-font-size:         inherit;
+        @col-header-font-color:        inherit;
+        @col-header-cell-line-height:       unset;
+
+
+
+// Multiday Section
+
+@multi-day-background:              #E1E6FF;
+@multi-day-border-right:            1px dotted #8894A3;
+@multi-day-border-top:              1px dotted #8894A3;
+
+@multi-day-icon-background:         #E1E6FF;
+@multi-day-icon-bg-position:        center center;
+@multi-day-icon-bg-repeat:          no-repeat;
+
+@multi-day-icon-border-bottom:      1px dotted #8894A3;
+@multi-day-icon-border-right:       1px dotted #8894A3;
+
+
+@multi-day-large-icon-img:          url(imgs/clock_big.gif);
+@multi-day-small-icon-img:          url(imgs/clock_small.gif);
+
+
+
+// Multi_Day Event-line
+
+@event-line-background:             #FFE763;
+@event-line-border:                 1px solid #B7A543;
+@event-line-border-radius:                3px;
+@event-line-font-family:            @default-font-family;
+@event-line-font-weight:            normal;
+@event-line-font-size:              @default-font-size;
+@event-line-line-height:            1;
+@event-line-font-color:             #887A2E;
+@event-line-height:                  13px;
+@event-line-padiing:                0 0 0 10px;
+@event-line-topleft-border-radius:        9px;
+@event-line-topright-border-radius:       9px;
+@event-line-bottomleft-border-radius:     9px;
+@event-line-bottomright-border-radius:    9px;
+@event-line-resize-icon:            url(./imgs_dhx_terrace/resize_dots.png) repeat-y;
+
+
+
+
+// Hour Scale
+
+@scale-hour-background:             #C2D5FC;
+@scale-hour-border-bottom:          1px dotted #8894A3;
+@scale-hour-text-align:             center;
+@scale-hour-font-size:              inherit;
+@scale-hour-line-height:            44px;
+@scale-hour-font-color:             #586A7E;
+@scale-hour-font-weight:inherit;
+@scale-time-font-size: 11px;
+@scale-time-font-weight:inherit;
+
+// Drag Maker
+
+@scale-time-drag-maker-background:  #FFE763;
+@scale-time-drag-maker-border-top:  1px solid #B6B6B6;
+@scale-time-drag-maker-border-bottom:  1px solid #B6B6B6;
+@scale-time-drag-maker-opacity:     0.5;
+
+
+
+// Scale Holder - Columns
+
+@scale-column-border-right:         1px dotted #586A7E;
+@scale-column-background-img:       url(imgs/databg.png);
+
+@scale-column-now-border-right:     1px dotted #586A7E;
+@scale-column-now-background-img:   url(imgs/databg_now.png);
+@now-line-color: red;
+
+// Data Section Border
+
+@data-container-border-top:         1px dotted #8894A3;
+
+
+// Month view / Day box
+
+    // ** Day box Title
+
+        @daybox-title-border-right:             1px dotted #586A7E;
+        @daybox-title-font-size:                inherit;
+        @daybox-title-font-weight:              inherit;
+        @daybox-title-line-height:              1;
+        @daybox-title-text-align:               right;
+        @daybox-title-padding:                  3px 5px 0 0;   // double check if we need this 5px padding
+        @daybox-title-height:                   18px;
+        @daybox-title-color:                    #2F3A48;
+        @daybox-title-background:               #EBEFF4;
+
+
+    // ** Day box Body
+
+        @daybox-body-border-right:              1px dotted #586A7E;
+        @daybox-body-border-bottom:             1px dotted #586A7E;
+        @daybox-body-background:                #FFFFFF;
+
+
+    // ** Other month Day box Title ( Motnth that goes afret or before currently shown month )
+
+        @other-month-daybox-title-background:   #E2E3E6;
+        @other-month-daybox-title-font-color:   #94A6BB;
+
+    // ** Other month Day box Body
+
+        @other-month-daybox-body-background:    #ECECEC;
+
+    // ** Current Day box Title
+
+        @current-daybox-title-background:       #D1DEF4;
+        @current-daybox-title-font-weight:      bold;
+
+    // ** Current Day box Body
+
+        @current-daybox-body-background:        #E2EDFF;
+
+
+
+    // ** Day box Content
+        @daybox-month-link-font-color:          #00f;
+        @daybox-month-link-font-size:           @daybox-content-font-size;
+        @daybox-month-link-font-family:         @secondary-font-family;
+        @daybox-content-height:                 13px;
+        @daybox-content-padding:                0 0 0 2px;
+        @daybox-content-font-color:             #887A2E;
+        @daybox-content-line-height:            normal;
+        @daybox-content-background-color:       transparent;
+        @daybox-content-font-weight:            normal;
+    // ** New event in move background
+
+
+
+
+
+
+//  Event
+
+@event-header-line-height:              1px;
+@event-header-line-margin:              0 0 0 1px;
+@event-header-line-border-width:        1px 1px 0px 1px;
+
+
+@event-title-height:                    12px;
+@event-title-line-height:               @event-title-height;
+@event-title-border-width:              0px 1px 1px 1px;
+@event-title-border-radius:                   0 0 0 0;
+@event-title-border-bottom-style:       dotted;
+@event-title-font-size:                 7pt;
+@event-title-font-weight:               bold;
+@event-title-text-align:                center;
+@event-title-padding:                   0 0 0 0;
+
+@event-body-border-radius:                    0 0 0 0;
+@event-body-padding:                    5px 5px 5px 5px;
+@event-body-font-weight:                normal;
+@event-body-line-height:                normal;
+
+@event-background:                      #FFE763;
+@event-border:                          1px solid #B7A543;
+@event-font-color:                      #887A2E;
+
+@event-resizer-height:                  1px;
+@event-resizer-border-width:            0px 1px 1px 1px;
+@event-resizer-margin:                  0 0 0 2px;
+@event-resizer-background:              @event-background;
+@event-resizer-top-pos:                 auto;
+
+        // * Event Editor
+
+@event-editor-border:                   1px solid #B7A543;
+@event-editor-border-top-style:         dotted;
+@event-editor-padding:                  0;
+
+        // * Selected Event Menu
+
+@event-menu-head-background-img:        url(imgs/controls.gif);
+@event-menu-head-background-pos:        0px -43px;
+@event-menu-head-border:                none;
+@event-menu-head-cursor:                default;
+
+@event-menu-icon-background-img:        url(imgs/controls.gif);
+@event-menu-detail-icon-bg-pos:         0px 0px;
+@event-menu-edit-icon-bg-pos:           -22px 0px;
+@event-menu-save-icon-bg-pos:           -84px -1px;
+@event-menu-cancel-icon-bg-pos:         -62px 0px;
+@event-menu-delete-icon-bg-pos:         -42px 0px;
+
+
+
+// Modal Box
+
+@modal-box-width:                       300px;
+@modal-box-text-align:                  center;
+@modal-box-font-family:                 @default-font-family;
+@modal-box-background:                  #fff;
+@modal-box-background-gradient:         -webkit-linear-gradient(top, #ffffff 1%, #d0d0d0 99%);
+@modal-box-shadow:                      0px 0px 14px #888;
+@modal-box-border:                      1px solid #ffffff;
+@modal-box-border-radius:                     6px;
+@modal-wrapper-opacity:                 0.1;
+@lightbox-wrapper-opacity:              0.2;
+
+    // ** Modal box - Pop Up Text
+
+        @modal-popup-text-margin:           15px 15px 5px 15px;
+        @modal-popup-text-font-size:        14px;
+        @modal-popup-text-color:            #000;
+        @modal-popup-text-min-height:       30px;
+        @modal-popup-text-border-radius:    6px;
+
+    // ** Modal box - Control block
+
+        @modal-popup-controls-border-radius:      6px;
+        @modal-popup-controls-padding:      5px 5px 5px 5px;
+
+
+    // **  Control Button Wrapper
+
+        @modal-popup-button-wrap-height:        30px;
+        @modal-popup-button-wrap-line-height:   30px;
+        @modal-popup-button-wrap-margin:        0 5px;
+        @modal-popup-button-wrap-border-radius:       6px;
+        @modal-popup-button-wrap-color:         #FFF;
+        @modal-popup-button-wrap-border:        1px solid #838383;
+        @modal-popup-button-wrap-shadow:        0px 0px 4px #888;
+        @modal-popup-button-wrap-min-width:     120px;
+
+
+        // **  Control Button
+
+        @modal-popup-button-border:          1px solid #FFF;
+        @modal-popup-button-background:      url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAeCAMAAADaS4T1AAAAYFBMVEVwcHBtbW1ra2toaGhmZmZjY2NhYWFeXl5cXFxaWlpXV1dVVVVSUlJQUFBNTU1LS0tJSUlGRkZERERBQUE/Pz88PDw9PT0+Pj5AQEBCQkJDQ0NFRUVHR0dISEhKSkpMTEzqthaMAAAAMklEQVQImQXBhQ2AMAAAsOIMlwWH/8+kRSKVyRVKlVrQaHV6g9FktlhFm93hdLk9Xt8PIfgBvdUqyskAAAAASUVORK5CYII=);
+        @modal-popup-button-background-img:  -webkit-linear-gradient(top, #707070 1%, #3d3d3d 70%, #4c4c4c 99%);
+        @modal-popup-button-border-radius:         6px;
+        @modal-popup-button-font-color:      #fff;
+        @modal-popup-button-font-size:       15px;
+        @modal-popup-button-font-weight:     normal;
+        @modal-popup-button-height:          28px;
+        @modal-popup-button-line-height:     28px;
+        @modal-popup-cancel-btn-background:  transparent;
+        @modal-popup-cancel-btn-border-color:transparent;
+
+        // **  Control Button:active
+        @modal-popup-button-act-background:         url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAeCAMAAADaS4T1AAAAXVBMVEVwcHBubm5tbW1sbGxra2tpaWloaGhnZ2dmZmZlZWVjY2NiYmJhYWFgYGBfX19dXV1cXFxbW1taWlpZWVlXV1dWVlZVVVVUVFRTU1NRUVFQUFBPT09OTk5NTU1LS0tT9SY0AAAAMUlEQVQImQXBhQGAMAAAIGxnx2z9/00BiVQmVyhVakGj1ekNRpPZYhVtdofT5fZ4fT8hpwG05JjexgAAAABJRU5ErkJggg==);
+        @modal-popup-button-act-background-img:     -webkit-linear-gradient(top, #707070 1%, #4c4c4c 99%);
+        @modal-popup-button-act-color:              #fff;
+        @modal-popup-button-act-shadow:             none;
+
+
+
+
+// Modal Quick Info Box - touch tap appearing
+
+@infobox-border:                2px solid #888;
+@infobox-border-radius:               5px;
+@infobox-background:            rgba(98,107,127,0.5);
+@infobox-padding:               0 0 0 7px;
+@infobox-width:                 300px;
+@infobox-transition:            left 0.5s ease, right 0.5s;
+@infobox-font-family:           "Tahoma", san-serif;
+@infobox-font-size:             8pt;
+
+
+    // ** Quick inFo Title
+    @infobox-padding:                   5px 0px 10px 5px;
+    @infobox-font-color:                #FFF;
+    @infobox-letter-spacing:            1px;
+    @infobox-title-cont-font-size:      18px;
+    @infobox-title-cont-font-weight:    bold;
+    @infobox-title-date-font-size:      14px;
+
+    // ** Quick inFo Content
+    @infobox-content-width:             275px;
+    @infobox-content-padding:           16px 8px;
+    @infobox-content-background:        #fefefe;
+    @infobox-content-border:            1px solid #888;
+    @infobox-content-font-color:        #444;
+    @infobox-content-font-size:         14px;
+
+    // ** Quick inFo Controls
+    @infobox-control-btn-height:        20px;
+    @infobox-control-btn-min-width:     60px;
+    @infobox-control-btn-padding:       5px 10px 5px 5px;
+    @infobox-control-btn-margin:        5px 9px 5px 0px;
+    @infobox-control-btn-bg-color:      #fefefe;
+    @infobox-control-btn-border-bottom: 1px solid #666;
+    @infobox-control-btn-border-right:  1px solid #666;
+    @infobox-control-btn-border-radius: 3px;
+    @infobox-control-btn-lheight:       20px;
+    @infobox-control-btn-font-color:    #444;
+    @infobox-control-btn-vertical-align:middle;
+
+
+
+
+
+
+
+// LIGHTBOX
+
+@lightbox-background:   #FFE763;
+@lightbox-border:       1px solid #B7A64B;
+@lightbox-border-radius:      5px;
+@lightbox-font-color:   #887A2E;
+@lightbox-font-family:  @default-font-family;
+@lightbox-font-size:    @default-font-size;
+@lightbox-shadow:       5px 5px 5px #888;
+
+    // **LightBox title
+
+    @lightbox-title-padding:                2px 0px 2px 5px;
+    @lightbox-title-section-background: transparent;
+    @lightbox-title-time-font-weight:       bold;
+    @lightbox-title-name-padding:          0 0 0 10px;
+    @lightbox-title-name-margin: 0;
+    @lightbox-title-time-font-size: 8pt;
+    @lightbox-title-name-font-size: 8pt;
+    @lightbox-title-name-text-transfor: none;
+    @lightbox-title-name-font-color: inherit;
+    @lightbox-title-margin:0;
+    @lightbox-title-border-radius:0;
+
+// ** LightBox Main Area
+
+    @lightbox-area-border:                  1px solid #DCC43E;
+    @lightbox-area-border-top:              0px;
+    @lightbox-area-background-color:        #FFF4B5;
+    @lightbox-area-margin:                  0 0 0 3px;
+    @lightbox-area-width:                   730px;
+
+    // ** LightBox Main Area Wrap
+
+    @lightbox-area-wrap-border-top:         1px solid #DBCF8C;
+    @lightbox-area-wrap-background:         #DBCF8C;
+    @lightbox-area-wrap-padding:            0;
+    @lightbox-area-wrap-border-botom:       none;
+
+
+    // ** LightBox Main Area - Left Side
+
+    @lightbox-area-ls-background:           #DBCF8C;
+    @lightbox-area-ls-font-color:           #FFF4B5;
+    @lightbox-area-ls-font-weight:          bold;
+    @lightbox-area-ls-font-size:            16px;
+    @lightbox-area-ls-line-height:          normal;
+    @lightbox-area-ls-font-family:          "Tahoma", sans-serif;
+    @lightbox-area-ls-padding:              5px 0px 0px 10px;
+    @lightbox-area-ls-width:                100px;
+    @lightbox-area-ls-margin:               0;
+
+    // ** LightBox Main Area - Left Side - Full Day
+
+    @lightbox-ls-fullday-font-color:        #FFF4B5;
+    @lightbox-ls-fullday-font-size:         16px;
+    @lightbox-ls-fullday-font-family:       "Arial",san-serif;
+    @lightbox-ls-fullday-font-weight:       bold;
+    @lightbox-ls-fullday-line-height:       20px;
+    @lightbox-ls-fullday-margin:            0;
+
+
+    // ** LightBox Main Area - Right Side / Text Area
+
+    @lightbox-area-rs-padding:              2px 0px 2px 10px;
+    @lightbox-area-textarea-rs-padding:     2px;
+    @lightbox-area-rs-textarea-bg:          #FFF4B5;
+    @lightbox-area-rs-font-color:           #887A2E;
+    @lightbox-area-rs-outline:              none !important;
+    @lightbox-area-rs-border:               none;
+    @lightbox-area-rs-float:                none;
+    @lightbox-area-rs-height:               auto;
+    @lightbox-area-rs-font-family:          inherit;
+    // ** LightBox Main Area - Right Side / Text Area - Disabled
+
+    @lightbox-rs-disabled-font-color:       #887A2E;
+    @lightbox-rs-disabled-font-family:      "Tahoma", san-serif;
+    @lightbox-rs-disabled-font-size:        8pt;
+
+    @lightbox-textarea-margin:               0;
+    // ** LightBox Main Area - Right Side / Selects
+
+    @lightbox-area-rs-select-font-family:   Tahoma;
+    @lightbox-area-rs-select-font-size:     8pt;
+    @lightbox-area-rs-select-color:         #2E2E2E;
+    @lightbox-area-rs-select-padding:       2px;
+    @lightbox-area-rs-select-margin:        0px;
+    @lightbox-area-rs-width:                auto;
+    // ** LightBox Main Area - Right Side / Input[radio]
+
+    @lightbox-input-radio-margin:           3px 3px 0px 5px;
+    @lightbox-input-label-margin:           0;
+    @lightbox-input-label-display:          inline-block;
+    @lightbox-input-label-position:         relative;
+    @lightbox-input-label-top:              -3px;
+
+
+
+    // ** LightBox Main Area - Time block
+
+    @lightbox-area-time-block-bg:           transparent;            // #DBCF8C;
+    @lightbox-area-time-block-padding:      2px 0 0 0 ~'!important';
+    @lightbox-area-time-block-height:       20px ~'!important';
+    @lightbox-area-time-block-textaligment: center;
+
+
+
+
+    // ** LightBox Main Area - Btn
+
+    @lightbox-btn-wrap-padding:             5px 10px 0px 10px;
+
+    @lightbox-btn-height:                   21px;
+    @lightbox-btn-line-height:              21px;
+    @lightbox-btn-border:                   none;
+    @lightbox-btn-float:                    left;
+    @lightbox-btn-text-transform:           none;
+    @lightbox-btn-text-color:               @default-font-color;
+    @lightbox-btn-font-color:               @default-font-color;
+    @lightbox-btn-background:               transparent;
+    @lightbox-del-btn-border:               none;
+    @lightbox-del-btn-background:           none;
+    @lightbox-del-btn-font-color:           inherit;
+    @lightbox-del-btn-text-shadow:          0px -1px 0px rgba(255, 255, 255, 0);
+    @lightbox-btn-margin:                   12px 0 0 20px;
+    @lightbox-btn-right-margin:             20px;
+
+    @lightbox-btn-recurring-bg-image: url(./imgs/but_repeat.gif);
+
+
+// Other
+
+    // ** 02/05_custom_editor.html
+
+    // ** LightBox text area INPUT
+
+    @lightbox-input-font-color:             #887A2E;
+    @lightbox-input-font-size:              @default-font-size;
+    @lightbox-input-font-family:            @default-font-family;
+    @lightbox-input-first-margin:           0 0 0 11px;
+    @lightbox-input-border:                 1px solid rgb(169, 169, 169);
+    @lightbox-input-border-bottom-width:    0;
+    @lightbox-input-padding:                0 5px 0 2px;
+
+
+
+    // ** 02/18_combo_select_from_db.html
+
+    // ** LightBox Select Country combo input
+
+    @lightbox-combo-input-top:              0;
+
+
+    // ** 03_extensions/25_advanced_limitation.html
+
+    // ** LightBox Select Country combo input
+
+    @grid-border-bottom:                    1px solid #8894A3;
+    @grid-border-right:                     1px solid #8894A3;
+    @grid-tree-cell-font-family:            "Tahoma",san-serif;
+    @grid-tree-cell-font-size:              8pt;
+    @grid-tree-cell-font-color:             inherit;
+    @grid-tree-folder-cell-bg: #969394;
+@grid-tree-folder-name-font-color: inherit;
+@grid-tree-folder-name-text-transform: none;
+@grid-tree-folder-name-font-weight: inherit;
+    @calendar-open-icon:                    url(./imgs/calendar.gif);
+
+
+
+// Agenda
+@agenda-topline-font-weight:                normal;
+@agenda-topline-font-color:                 @default-font-color;
+@agenda-topline-border-left-color:          transparent;
+@agenda-data-background-image:              url(./imgs/databg.png);
+@mini-calendar-other-date-color:    #E2E3E6;
+
+@mini-calendar-year-event-bg: #FFE763;
+@mini-calendar-year-event-color: '';
+@mini-calendar-date-clicked-bg: #C2D5FC;
+
+@year-tooltip-bg-image: url(./imgs/databg.png);
+
+/* key nav */
+@section-focus-background: #FFE763;
+
+@map-data-bg: url(./imgs/databg.png);

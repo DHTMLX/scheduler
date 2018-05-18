@@ -1,0 +1,608 @@
+@default-font-family:               "Segoe UI", Arial, san-serif;
+@secondary-font-family:             "Tahoma", san-serif;
+@default-font-size:                 12px;
+@default-font-color:                #444;
+
+
+// DHX Scheduler Container
+
+@container-background:              rgb(255, 255, 255);
+
+@container-font-family:             @default-font-family;
+@container-font-size:               @default-font-size;
+
+@button-font-size: 13px;
+
+// NAVLINE - TOP BAR
+
+@navline-font-color:                      #2F3A48;
+@navline-btn-top-position:                  14px;
+
+
+    // ** Previous / Today / Next **
+
+        @nav-btn-background:                none;
+        @nav-btn-background-img:            url(imgs/buttons.png);
+        @nav-btn-border:                    none;
+        @nav-btn-height:                    30px;
+        @nav-btn-width:                     46px;
+                    // *Prev Btn
+        @nav-prev-btn-position:             61px;
+        @nav-prev-btn-bg-img:               url(imgs_flat/arrow_left.png);  //center center no-repeat
+        @nav-prev-btn-bg-position:          center center;
+        @nav-prev-btn-border-radius:        0;
+                    // *Next Btn
+        @nav-next-btn-position:             14px;
+        @nav-next-btn-bg-img:               url(imgs_flat/arrow_right.png);
+        @nav-next-btn-bg-position:          center center;
+        @nav-next-btn-border-radius:        0;
+                    // *Today Btn
+        @nav-today-btn-width:               80px;
+        @nav-today-btn-position:            123px;
+        @nav-today-btn-bg-img:              none;
+        @nav-today-btn-bg-position:         -62px 0px;
+        @nav-today-btn-text-decor:          none;
+        @nav-today-btn-text-hov-decor:      underline;
+        @nav-today-btn-font-color:          #5780AD;
+        @nav-today-btn-font-size:           @button-font-size;
+        @nav-today-btn-font-weight:         bolder;
+        @nav-today-btn-border-radius:             0;
+        @nav-today-btn-border:              none;
+
+    // ** Nav Tabs **
+        @nav-tab-width:                     60px;
+        @nav-tab-height:                    30px;
+
+        @nav-tab-background:                none;
+        @nav-tab-text-align:                center;
+        @nav-tab-text-decor:                none;
+        @nav-tab-text-hov-decor:            underline;
+        @nav-tab-padding:                   0;
+        @nav-tab-border:                    none;
+        @nav-tab-border-radius:                   0;
+        @nav-tab-font-color:                #5780AD;
+        @nav-tab-font-weight:               bolder;
+        @nav-tab-font-size:                 @button-font-size;
+        @nav-tab-line-height:               30px; // All BTN line height
+        @nav-tab-cursor:                    pointer;
+        @nav-tab-first-border-radius:             0;
+        @nav-tab-last-border-radius:              0;
+
+
+
+
+        @nav-act-tab-text-decor:            none;
+        @nav-act-tab-font-weight:           300;
+        @nav-act-tab-font-size:             @button-font-size;
+        @nav-act-tab-font-color:            #FFF;
+        @nav-act-tab-cursor:                default;
+        @nav-act-tab-border:                none;
+        @nav-act-tab-border-botom:          0;                      // Set 1 to show bottom border/ Works like true/false switch
+        @nav-act-tab-background:            #5780AD;
+
+        @stand-alone-btn-border-radius:           0px ~'!important';
+
+
+    // ** Middle Calendar Date 
+
+        @nav-cal-date-position:             0;
+        @nav-cal-date-font-weight:          300;
+        @nav-cal-date-font-color:           #454544;
+        @nav-cal-date-padding:              1px 0 0 0;
+        @nav-cal-date-font-size:            22px;
+        @nav-cal-date-text-align:           center;
+        @nav-cal-date-width:                100%;
+        @nav-cal-date-border:               0;
+        @nav-cal-date-index:                -1;
+
+
+
+
+
+// Callumns Header$
+
+@col-header-background:             #FFFFFF;
+@col-header-left-pos:               50px;
+
+@col-header-border-top:             1px solid #CECECE;
+@col-header-border-right:           1px solid #CECECE;
+@col-header-index:                  2;
+@col-header-font-color:             #767676;
+
+    // ** Scale Bar / column title cell
+
+        @col-header-cell-text-align:        center;
+        @col-header-cell-background:        #FFFFFF;
+        @col-header-cell-padding:           2px 0 0 0;
+        @col-header-cell-border-left:       1px solid #CECECE;
+        @col-header-cell-font-weight:       inherit;
+        @col-header-cell-font-size:         12px;
+        @col-header-cell-line-height:       30px;
+
+    // ** Scale Bar / column title cell / UNIT MODE
+
+        @col-unit-header-cell-line-height:  33px; // makes text become in centre of Cell
+
+
+
+// Multiday Section
+
+@multi-day-background:              #FFFFFF;
+@multi-day-border-right:            1px solid #CECECE;
+@multi-day-border-top:              1px solid #CECECE;
+
+@multi-day-icon-background:         #FFFFFF;
+@multi-day-icon-bg-position:        center center;
+@multi-day-icon-bg-repeat:          no-repeat;
+
+@multi-day-icon-border-bottom:      1px solid #CECECE;
+@multi-day-icon-border-right:       1px solid #CECECE;
+
+
+@multi-day-large-icon-img:          url(imgs_dhx_terrace/clock_big.gif);
+@multi-day-small-icon-img:          url(imgs_flat/clock.png);
+
+
+
+// Multi_Day Event-line
+
+@event-line-background:             #5B9BE0;
+@event-line-border:                 1px solid transparent;
+@event-line-border-radius:          1px;
+@event-line-font-family:            @default-font-family;
+@event-line-font-size:              @default-font-size;
+@event-line-line-height:            16px;
+@event-line-font-color:             #FFFFFF;
+@event-line-height:                  17px;
+@event-line-padiing:                0 0 0 10px;
+@event-line-topleft-border-radius:        1px;
+@event-line-topright-border-radius:       1px;
+@event-line-bottomleft-border-radius:     1px;
+@event-line-bottomright-border-radius:    1px;
+@event-line-resize-icon:             0 0;
+@event-line-resize-icon-hover:       url(./imgs_flat/resize_dots.png) repeat-y;
+
+
+
+// Hour Scale 
+
+@scale-hour-background:             #FFFFFF;
+@scale-hour-border-bottom:          1px solid #CECECE;
+@scale-hour-text-align:             center;
+
+@scale-hour-font-size:              22px; // Hours on left Scale
+@scale-hour-line-height:            44px;
+@scale-hour-height:                 44px;
+@scale-hour-font-weight:            lighter;
+
+
+
+@scale-minute-font-size:            11px; // Minutes on left Scale
+@scale-minute-height:               44px;
+
+@scale-minute-font-weight:          lighter;
+@scale-minute-line-height:          35px;
+
+@scale-hour-font-color:             #767676;
+
+
+
+// Scale Holder - Columns
+
+@scale-column-border-right:         1px solid #CECECE;
+@scale-column-background-img:       url(imgs_dhx_terrace/databg.png);
+
+@scale-column-now-border-right:     1px solid #CECECE;
+@scale-column-now-background-img:   url(imgs_dhx_terrace/databg_now.png);
+
+
+
+// Data Section Border
+
+@data-container-border-top:         1px solid #CECECE;
+
+
+// Month view / Day box
+
+    // ** Day box Title
+
+        @daybox-title-border-right:             1px solid #CECECE;
+        @daybox-title-font-size:                @default-font-size;
+        @daybox-title-line-height:              21px;
+        @daybox-title-text-align:               right;
+        @daybox-title-padding:                  0 5px 0 0; 
+        @daybox-title-height:                   21px;
+        @daybox-title-color:                    #5780AD;
+        @daybox-title-background:               #FFFFFF;
+
+
+    // ** Day box Body
+
+        @daybox-body-border-right:              1px solid #CECECE;
+        @daybox-body-border-bottom:             1px solid #CECECE;
+        @daybox-body-background:                #FFFFFF;
+
+
+    // ** Other month Day box Title ( Motnth that goes afret or before currently shown month )
+
+        @other-month-daybox-title-background:   #F7F7F7;
+        @other-month-daybox-title-font-color:   #bbbbbb;
+
+    // ** Other month Day box Body
+
+        @other-month-daybox-body-background:    #F7F7F7;
+
+    // ** Current Day box Title 
+
+        @current-daybox-title-background:       #FFF3A1;
+        @current-daybox-title-font-weight:      normal;
+
+    // ** Current Day box Body 
+
+        @current-daybox-body-background:        #FFF3A1;
+
+
+
+    // ** Day box Content
+
+        @daybox-content-height:                 13px;
+        @daybox-content-padding:                0 0 0 2px;
+        @daybox-content-font-color:             #0E64A0;
+        @daybox-content-font-family:            @secondary-font-family;
+        @daybox-content-font-size:              8pt;
+
+    // ** New event in move background
+    
+
+
+
+
+
+        //  Event
+        
+        @event-header-line-height:              1px; 
+        @event-header-line-margin:              0 0 0 1px;
+        @event-header-line-border-width:        1px 1px 0px 1px;
+        
+        
+        @event-title-height:                    14px;
+        @event-title-border-width:              1px 1px 0;
+        @event-title-border-radius:             1px 1px 0 0;
+        @event-title-border-bottom-style:       dotted;
+        @event-title-font-size:                 @default-font-size;
+        @event-title-line-height:               14px;
+        @event-title-font-weight:               700;
+        @event-title-text-align:                center;
+        @event-title-padding:                   0;
+
+
+        @event-body-border-radius:              0 0 1px 1px;
+        @event-body-padding:                    5px 5px 8px 5px;
+        
+        
+        @event-background:                      #5B9BE0;
+        @event-border:                          1px solid transparent;
+        @event-font-color:                      #FFFFFF;
+
+        @event-resizer-height:                  15px;
+        @event-resizer-border-width:            0;
+        @event-resizer-margin:                  -11px 0 0 2px; 
+        @event-resizer-background:              transparent url(imgs_flat/resizing.png) center center no-repeat ~'!important';;
+        
+        
+                // * Event Editor
+        
+        @event-editor-border:                   1px solid transparent;
+        @event-editor-border-top-style:         solid;
+        @event-editor-font-family:              @default-font-family;
+        @event-editor-font-size:                @default-font-size;
+        
+        
+                // * Selected Event Menu
+        
+        @event-menu-head-background-img:        url(imgs_dhx_terrace/controls.png);
+        @event-menu-head-background-pos:        0px -43px;
+        @event-menu-head-border:                none;
+        @event-menu-head-cursor:                default;
+        @event-menu-shadow:                     0 0 1px #FFF;
+        
+        @event-menu-icon-background-img:        url(imgs_dhx_terrace/controls.png);
+        @event-menu-detail-icon-bg-pos:         0px 0px;
+        @event-menu-edit-icon-bg-pos:           -22px 0px;
+        @event-menu-save-icon-bg-pos:           -84px -1px;
+        @event-menu-cancel-icon-bg-pos:         -62px 0px;
+        @event-menu-delete-icon-bg-pos:         -42px 0px;
+
+
+
+// Modal Box 
+
+@modal-box-width:                       330px;
+@modal-box-text-align:                  center;
+@modal-box-font-family:                 @default-font-family;
+@modal-box-background:                  #fff;
+@modal-box-background-gradient:         -webkit-linear-gradient(top, #ffffff 1%, #ffffff 99%);
+@modal-box-shadow:                      0px 0px 14px #888;
+@modal-box-border:                      none;
+@modal-box-border-radius:               0px;
+@modal-wrapper-opacity:                 0.2;
+
+
+    // ** Modal box - Pop Up Text
+
+        @modal-popup-text-margin:           15px 15px 5px 15px;
+        @modal-popup-text-font-size:        16px;
+        @modal-popup-text-color:            #000;
+        @modal-popup-text-min-height:       30px;
+        @modal-popup-text-border-radius:    6px;
+
+    // ** Modal box - Control block
+
+        @modal-popup-controls-border-radius:6px;
+        @modal-popup-controls-padding:      5px 5px 9px 5px;
+
+
+    // **  Control Button Wrapper
+
+    @modal-popup-button-wrap-height:        30px;
+    @modal-popup-button-wrap-line-height:   30px;
+    @modal-popup-button-wrap-margin:        0 5px;
+    @modal-popup-button-wrap-border-radius: 0px;
+    @modal-popup-button-wrap-color:         #444;
+    @modal-popup-button-wrap-min-width:     120px;
+    @modal-popup-button-wrap-border:        1px solid #888;
+    @modal-popup-button-wrap-shadow:        none;
+
+
+    // **  Control Button 
+
+    @modal-popup-button-border:             none;
+    @modal-popup-button-background:        #fff;
+    @modal-popup-button-background-img:     none;
+    @modal-popup-button-border-radius:      0px;
+    @modal-popup-button-font-color:         #444;
+    @modal-popup-button-font-size:          15px;
+    @modal-popup-button-font-weight:        400;
+    @modal-popup-button-height:             28px;
+    @modal-popup-button-line-height:        28px;
+        
+
+    // ** Control OK Button 
+    @modal-ok-button-wrap-border:       1px solid #5B9BE0;
+    @modal-ok-button-wrap-background:   #5B9BE0;
+    @modal-ok-button-background:        #5B9BE0;
+    @modal-ok-button-border:            1px solid #5B9BE0;
+    @modal-ok-button-color:             #ffffff;
+    @modal-ok-button-text-shadow:       none;
+    
+
+    // **  Control Button:active
+    @modal-popup-button-act-background:         #5B9BE0;
+    @modal-popup-button-act-background-img:     none;
+    @modal-popup-button-act-color:              #ffffff;
+    @modal-popup-button-act-shadow:             none;
+    @modal-popup-cancel-btn-background:         #FE7510;
+    @modal-popup-cancel-btn-border-color:       #FE7510;
+    @modal-popup-cancel-btn-font-color:       #fff;
+
+
+
+
+
+// Modal Quick Info Box - touch tap appearing
+
+@infobox-border:                none;
+@infobox-border-radius:         0px;
+@infobox-background:            rgba(204,204,204,.8);
+@infobox-padding:               0 0 0 7px;
+@infobox-width:                 280px;
+@infobox-transition:            left 0.5s ease, right 0.5s;
+@infobox-font-family:           @default-font-family;
+@infobox-font-size:             8pt;
+
+
+    // ** Quick inFo Title
+    @infobox-title-padding:             5px 0px 10px 5px;
+    @infobox-font-color:                #000;
+    @infobox-letter-spacing:            1px;
+    @infobox-title-cont-font-size:      18px;
+    @infobox-title-cont-font-weight:    700;
+    @infobox-title-date-font-size:      14px;
+
+    // ** Quick inFo Content
+    @infobox-content-width:             275px;
+    @infobox-content-padding:           10px 8px;
+    @infobox-content-background:        0 0;
+    @infobox-content-border:            none;
+    @infobox-content-font-color:        #444;
+    @infobox-content-font-size:         14px;
+
+    // ** Quick inFo Controls
+    @infobox-control-btn-height:        20px;
+    @infobox-control-btn-min-width:     60px;
+    @infobox-control-btn-padding:       5px 10px 5px 5px;
+    @infobox-control-btn-margin:        5px 9px 5px 0px;
+    @infobox-control-btn-bg-color:      #5b9be0;
+    @infobox-control-btn-border-bottom: none;
+    @infobox-control-btn-border-right:  none;
+    @infobox-control-btn-border-radius: 0px;
+    @infobox-control-btn-lheight:       20px;
+    @infobox-control-btn-font-color:    #FFFFFF;
+    @infobox-control-btn-vertical-align:middle;
+
+
+
+// LIGHTBOX
+
+@lightbox-background:           #FFFFFF;
+@lightbox-border:               none;
+@lightbox-border-radius:        0px;
+@lightbox-font-color:           #2E2E2E;
+@lightbox-font-family:          @default-font-family;
+@lightbox-font-size:            8pt;
+@lightbox-shadow:               5px 5px 5px #888;
+@lightbox-wrapper-opacity:      0.1;
+
+    // **LightBox title
+
+    @lightbox-title-padding:                2px 0px 2px 5px;
+    @lightbox-title-height:                 30px;
+    @lightbox-title-line-height:            30px;
+    @lightbox-title-border-bottom:          1px solid #CECECE;
+
+    @lightbox-title-time-font-weight:       700;
+    @lightbox-title-time-font-size:         12px;
+    @lightbox-title-time-padding:           0 0 0 10px;
+    @lightbox-title-name-padding:           0 0 0 13px;
+    @lightbox-title-name-font-size:         @button-font-size;
+
+    // ** LightBox Main Area
+
+    @lightbox-area-border:                  1px solid transparent;
+    @lightbox-area-border-top:              0px;
+    @lightbox-area-background-color:        #FFFFFF;
+    @lightbox-area-margin:                  0 0 0 3px;
+    @lightbox-area-width:                   730px;
+
+    // ** LightBox Main Area Wrap
+
+    @lightbox-area-wrap-border-top:         0;
+    @lightbox-area-wrap-background:         #FFFFFF;
+    @lightbox-area-wrap-padding:            5px 0;
+    @lightbox-area-wrap-border-botom:       1px solid #CECECE;
+
+
+    // ** LightBox Main Area - Left Side
+
+    @lightbox-area-ls-background:           rgb(255, 255, 255);
+    @lightbox-area-ls-font-color:           #444444;
+    @lightbox-area-ls-font-weight:          700;
+    @lightbox-area-ls-font-size:            @button-font-size;
+    @lightbox-area-ls-font-family:          @default-font-family;
+    @lightbox-area-ls-padding:              5px 0px 0px 10px;
+    @lightbox-area-ls-width:                100px;
+
+
+    // ** LightBox Main Area - Left Side - Full Day
+
+    @lightbox-ls-fullday-font-color:        #444;
+    @lightbox-ls-fullday-font-size:         @button-font-size;
+    @lightbox-ls-fullday-font-family:       @default-font-family;
+    @lightbox-ls-fullday-font-weight:       bold;
+    @lightbox-ls-fullday-line-height:       20px;
+    @lightbox-ls-fullday-margin:            0;
+    @lightbox-ls-fullday-input-margin:      3px 3px 0 0;
+
+
+    // ** LightBox Main Area - Right Side / Text Area
+
+    @lightbox-area-rs-textarea-bg:          #F9F9F9;
+    @lightbox-area-rs-font-color:           #2E2E2E;
+    @lightbox-area-rs-line-height:          20px;
+    @lightbox-area-rs-outline:              none  ~'!important';
+    @lightbox-area-rs-border:               1px solid #CECECE;
+    @lightbox-area-rs-font-family:          @default-font-family;
+    @lightbox-area-rs-float:                none;
+
+
+    // ** LightBox Main Area - Right Side / Text Area - Disabled
+    
+    @lightbox-rs-disabled-font-color:       #2E2E2E;
+    @lightbox-rs-disabled-font-family:      @secondary-font-family;
+    @lightbox-rs-disabled-font-size:        8pt;
+
+    // ** LightBox Main Area - Right Side / Selects
+    
+    @lightbox-area-rs-select-font-family:   @secondary-font-family;
+    @lightbox-area-rs-select-font-size:     8pt;
+    @lightbox-area-rs-select-color:         #2E2E2E;
+    @lightbox-area-rs-select-padding:       2px;
+    @lightbox-area-rs-select-margin:        0px;
+
+    // ** LightBox Main Area - Right Side / Input[radio]
+
+    @lightbox-input-radio-margin:           3px 3px 0px 5px;
+    @lightbox-input-label-display:          inline-block;
+    @lightbox-input-label-position:         relative;
+    @lightbox-input-label-top:              -3px;
+
+    // ** LightBox Main Area - Right Side / Template
+
+    @lightbox-input-template-top-pos:       5px;
+    
+
+
+    // ** LightBox Main Area - Time block
+
+    @lightbox-area-time-block-bg:           transparent;            // #DBCF8C;
+    @lightbox-area-time-block-padding:      2px 0 0 0  ~'!important';
+    @lightbox-area-time-block-height:       20px  ~'!important';
+    @lightbox-area-time-block-textaligment: center;
+
+
+    // ** LightBox Main Area - Btn
+
+    @lightbox-btn-wrap-padding:             0;
+
+    @lightbox-btn-height:                   30px;
+    @lightbox-btn-line-height:              30px;
+    @lightbox-btn-border:                   1px solid #888;
+    @lightbox-btn-border-radius:            0;
+    @lightbox-btn-padding:                  0 20px;
+    @lightbox-btn-margin:                   12px 0 0 20px;
+    @lightbox-btn-font-size:                13px;
+    @lightbox-btn-font-color:               #444;
+    @lightbox-btn-font-weight:              400;
+    @lightbox-btn-background:               #fff;
+    @lightbox-btn-float:                    left;
+
+    @lightbox-cancel-btn-border:            none;
+    @lightbox-cancel-btn-font-color:        #ffffff;
+    @lightbox-cancel-btn-background:        #FE7510;
+
+    @lightbox-del-btn-border:               1px solid #888;
+    @lightbox-del-btn-background:           #ffffff;
+    @lightbox-del-btn-font-color:           #444444;
+    @lightbox-del-btn-text-shadow:          none;
+    @lightbox-del-btn-margin:               12px 20px 0 20px;
+    @lightbox-btn-recurring-bg-image: url(./imgs_flat/but_repeat.gif);
+
+    @lightbox-save-btn-border:              none;
+    @lightbox-save-btn-color:               #FFFFFF;
+    @lightbox-save-text-shadow:             none;
+    @lightbox-save-btn-background:          #5B9BE0;
+
+
+// Other
+
+    // ** 02/05_custom_editor.html
+
+    // ** LightBox text area INPUT
+
+    @lightbox-input-font-color:             #747373;
+    @lightbox-input-font-size:              8pt;
+    @lightbox-input-font-family:            @secondary-font-family;
+    @lightbox-input-first-margin:           0 0 0 13px;
+    @lightbox-input-border:                 1px solid rgb(169, 169, 169);
+    @lightbox-input-border-bottom-width:    1px;
+    @lightbox-input-padding:                2px 5px 2px 2px;
+
+
+
+    // ** 02/18_combo_select_from_db.html
+
+    // ** LightBox Select Country combo input
+
+    @lightbox-combo-input-top:              -3px;
+
+
+    // ** 03_extensions/25_advanced_limitation.html
+
+    // ** LightBox Select Country combo input
+
+    @grid-border-bottom:                    1px solid #CECECE;
+    @grid-border-right:                     1px solid #CECECE;
+    @grid-tree-cell-font-family:            @default-font-family;
+	@grid-tree-cell-font-size:              13px;
+
+    @calendar-open-icon:                 url(./imgs_flat/calendar.gif);

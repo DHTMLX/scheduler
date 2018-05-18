@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -538,7 +538,7 @@ scheduler._temp_limit_scope = function(){
 		return css_classes.join(" ");
 	};
 	scheduler._get_block_by_config = function(config) {
-		var block  = document.createElement("DIV");
+		var block  = document.createElement("div");
 		if (config.html) {
 			if (typeof config.html == "string")
 				block.innerHTML = config.html;

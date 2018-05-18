@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -21,7 +21,7 @@ dhtmlXTooltip.tooltip.className = dhtmlXTooltip.config.className;
 scheduler._waiAria.tooltipAttr(dhtmlXTooltip.tooltip);
 
 dhtmlXTooltip.show = function(event, text) { //browser event, text to display
-	if (scheduler.config.touch && !scheduler.config.touch_tooltip) return;
+	if (this._mobile && !scheduler.config.touch_tooltip) return;
 	
 	var dhxTooltip = dhtmlXTooltip;
 	var tooltip_div = this.tooltip;
@@ -163,7 +163,7 @@ scheduler.attachEvent("onMouseMove", function(event_id, e) { // (scheduler event
 	var is_tooltip_target = (dhxTooltip.isTooltipTarget && dhxTooltip.isTooltipTarget(target));
 
 	// if we are over event or tooltip or custom target for tooltip
-	if (event_id || is_tooltip || is_tooltip_target) {
+	if ((event_id && scheduler.getState().editor_id != event_id) || is_tooltip || is_tooltip_target) {
 		var text;
 
 		if (event_id || dhxTooltip.tooltip.event_id) {

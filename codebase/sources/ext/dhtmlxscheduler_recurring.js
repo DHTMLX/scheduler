@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -453,15 +453,15 @@ scheduler.form_blocks["recurring"] = {
 		if (!scheduler._lightbox._rec_init_done)
 			rf._init_set_value(node, value, ev);
 		node.open = !ev.rec_type;
-		if (this._is_modified_occurence(ev))
-			node.blocked = true;
-		else node.blocked = false;
+
+		node.blocked = this._is_modified_occurence(ev);
 
 		var ds = rf._ds;
 		ds.start = ev.start_date;
 		ds.end = ev._end_date;
 
-		rf.button_click(0, node.previousSibling.firstChild.firstChild, node, node);
+		rf._toggle_block();
+
 		if (value)
 			rf._set_repeat_code(value, ds);
 	},
@@ -534,7 +534,10 @@ scheduler.form_blocks["recurring"] = {
 	focus:function(node) {
 	},
 	button_click:function(index, el, section, cont) {
-		scheduler.form_blocks.recurring._toggle_block();
+		var block = scheduler.form_blocks.recurring;
+		var cont = block._get_form();
+		if (!cont.blocked)
+			scheduler.form_blocks.recurring._toggle_block();
 	}
 };
 
@@ -562,7 +565,7 @@ scheduler._rec_temp = [];
 	scheduler.addEvent = function(start_date, end_date, text, id, extra_data) {
 		var ev_id = old_add_event.apply(this, arguments);
 
-		if (ev_id) {
+		if (ev_id && scheduler.getEvent(ev_id)) {
 			var ev = scheduler.getEvent(ev_id);
 			if (this._is_modified_occurence(ev))
 				scheduler._add_rec_marker(ev, ev.event_length * 1000);
@@ -651,7 +654,7 @@ scheduler.attachEvent("onEventDeleted", function(id, ev){
 		}
 	}
 });
-scheduler.attachEvent("onEventChanged", function(id) {
+scheduler.attachEvent("onEventChanged", function(id, event) {
 	if (this._loading) return true;
 
 	var ev = this.getEvent(id);
@@ -661,7 +664,7 @@ scheduler.attachEvent("onEventChanged", function(id) {
 		var nid = this.uid();
 		this._not_render = true;
 
-		var nev = this._copy_event(ev);
+		var nev = this._copy_event(event);
 		nev.id = nid;
 		nev.event_pid = id[0];
 		var timestamp = id[1];
@@ -897,7 +900,7 @@ scheduler.transpose_type = function(type) {
 		}
 		else if (str[0] == "month" || str[0] == "year") {
 			this.date[f] = function(nd, td) {
-				var delta = Math.ceil(((td.getFullYear() * 12 + td.getMonth() * 1) - (nd.getFullYear() * 12 + nd.getMonth() * 1)) / (step));
+				var delta = Math.ceil(((td.getFullYear() * 12 + td.getMonth() * 1 + 1) - (nd.getFullYear() * 12 + nd.getMonth() * 1 + 1)) / (step) - 1);
 				if (delta >= 0)
 					nd.setMonth(nd.getMonth() + delta * step);
 				if (str[3])
@@ -920,6 +923,8 @@ scheduler.repeat_date = function(ev, stack, non_render, from, to, maxCount) {
 	var max = maxCount || -1;
 	var td = new Date(ev.start_date.valueOf());
 
+	var startHour = td.getHours();
+
 	var visibleCount = 0;
 
 	if (!ev.rec_pattern && ev.rec_type)
@@ -930,6 +935,8 @@ scheduler.repeat_date = function(ev, stack, non_render, from, to, maxCount) {
 	while (td < ev.start_date || scheduler._fix_daylight_saving_date(td,from,ev,td,new Date(td.valueOf() + ev.event_length * 1000)).valueOf() <= from.valueOf() || td.valueOf() + ev.event_length * 1000 <= from.valueOf())
 		td = this.date.add(td, 1, ev.rec_pattern);
 	while (td < to && td < ev.end_date && (max < 0 || visibleCount < max)) {
+		td.setHours(startHour);
+
 		var timestamp = (scheduler.config.occurrence_timestamp_in_utc) ? Date.UTC(td.getFullYear(), td.getMonth(), td.getDate(), td.getHours(), td.getMinutes(), td.getSeconds()) : td.valueOf();
 		var ch = this._get_rec_marker(timestamp, ev.id);
 		if (!ch) { // unmodified element of series
@@ -1031,7 +1038,7 @@ scheduler.getEvents = function(from, to) {
 
 scheduler.config.repeat_date = "%m.%d.%Y";
 scheduler.config.lightbox.sections = [
-	{name:"description", height:130, map_to:"text", type:"textarea" , focus:true},
+	{name:"description", map_to:"text", type:"textarea" , focus:true},
 	{name:"recurring", type:"recurring", map_to:"rec_type", button:"recurring"},
 	{name:"time", height:72, type:"time", map_to:"auto"}
 ];

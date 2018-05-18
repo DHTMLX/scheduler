@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -100,7 +100,7 @@ scheduler.attachEvent("onTemplatesReady",function() {
 			var agendaDetailsButtonAttr = scheduler._waiAria.agendaDetailsBtnString();
 
 			html+="<div "+agendaEventAttrString+" class='dhx_agenda_line"+(ev_class?' '+ev_class:'')+"' event_id='"+ev.id+"' style='"+color+""+bg_color+""+(ev._text_style||"")+"'><div class='dhx_agenda_event_time'>"+scheduler.templates.agenda_time(ev.start_date, ev.end_date,ev)+"</div>";
-			html+="<div "+agendaDetailsButtonAttr+" class='dhx_event_icon icon_details'>&nbsp</div>";
+			html+="<div "+agendaDetailsButtonAttr+" class='dhx_event_icon icon_details'>&nbsp;</div>";
 			html+="<span>"+scheduler.templates.agenda_text(ev.start_date, ev.end_date, ev)+"</span></div>";
 		}
 		html+="<div class='dhx_v_border'></div></div>";

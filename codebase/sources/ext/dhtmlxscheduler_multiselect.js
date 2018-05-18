@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -8,7 +8,12 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 */
 scheduler.form_blocks["multiselect"]={
 	render:function(sns) {
-		var _result = "<div class='dhx_multi_select_"+sns.name+"' style='overflow: auto; height: "+sns.height+"px; position: relative;' >";
+		var css = "dhx_multi_select_control dhx_multi_select_"+sns.name;
+		if(convertStringToBoolean(sns.vertical)){
+			css += " dhx_multi_select_control_vertical";
+		}
+
+		var _result = "<div class='"+css+"' style='overflow: auto; height: "+sns.height+"px; position: relative;' >";
 		for (var i=0; i<sns.options.length; i++) {
 			_result += "<label><input type='checkbox' value='"+sns.options[i].key+"'/>"+sns.options[i].label+"</label>";
 			if(convertStringToBoolean(sns.vertical)) _result += '<br/>';
@@ -44,8 +49,15 @@ scheduler.form_blocks["multiselect"]={
 			divLoading.className = 'dhx_loading';
 			divLoading.style.cssText = "position: absolute; top: 40%; left: 40%;";
 			node.appendChild(divLoading);
-			dhtmlxAjax.get(config.script_url + '?dhx_crosslink_' + config.map_to + '=' + ev.id + '&uid=' + scheduler.uid(), function(loader) {
-				var _result = loader.doXPath("//data/item");
+
+			var url = [
+				config.script_url,
+				(config.script_url.indexOf("?") == -1 ? "?" : "&"),
+				'dhx_crosslink_' + config.map_to + '=' + ev.id + '&uid=' + scheduler.uid()
+			].join("");
+
+			scheduler.$ajax.get(url, function(loader) {
+				var _result = scheduler.$ajax.xpath("//data/item", loader.xmlDoc);
 				var _ids = {};
 				for (var i = 0; i < _result.length; i++) {
 					_ids[_result[i].getAttribute(config.map_to)] = true;

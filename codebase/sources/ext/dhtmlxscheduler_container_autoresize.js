@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.4.4.0 Stardard
+dhtmlxScheduler v.5.0.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -244,10 +244,18 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 
 		var mode = scheduler.getState().mode;
 
+		if(!mode) {
+			return true;
+		}
+
+		var scrollTop = document.documentElement.scrollTop;
+
 		updateContainterHeight();
 		if ( (scheduler.matrix && scheduler.matrix[mode]) || mode == "month") {
-			window.setTimeout(function() {
+			var asyncRepaint = window.requestAnimationFrame || window.setTimeout;
+			asyncRepaint(function() {
 				updateContainterHeight(true);
+				document.documentElement.scrollTop = scrollTop;
 			}, 1);
 		}
 	};
