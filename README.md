@@ -1,4 +1,4 @@
-dhtmlxScheduler v.5.0.0
+dhtmlxScheduler v.5.1.0
 =====================
 
 [![Join the chat at https://gitter.im/dhtmlx/dhtmlx](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dhtmlx/dhtmlx) 
@@ -22,11 +22,9 @@ Useful links
 -------------
 
 - Online  documentation
-	http://docs.dhtmlx.com/scheduler/index.html
+	https://docs.dhtmlx.com/scheduler/
 - Support forum
-	http://forum.dhtmlx.com/viewforum.php?f=6
-- Skin builder
-	http://dhtmlx.com/docs/products/dhtmlxScheduler/skinBuilder/index.shtml
+	https://forum.dhtmlx.com/c/scheduler-all/scheduler
 
 
 Other editions
@@ -34,7 +32,5 @@ Other editions
 
 - MVC.Net edition
 	http://scheduler-net.com
-- Windows8 edition
-	http://dhtmlx.com/download/regular/dhtmlxScheduler_windows.zip
 - Scheduler for mobile devices
 	http://dhtmlx.com/x/download/regular/dhtmlxScheduler_mobile.zip

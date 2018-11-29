@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.5.0.0 Stardard
+dhtmlxScheduler v.5.1.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -505,27 +505,36 @@ scheduler.linkCalendar = function(calendar, datediff) {
 	scheduler.attachEvent("onXLE", action);
 	scheduler.attachEvent("onEventAdded", action);
 	scheduler.attachEvent("onEventChanged", action);
-	scheduler.attachEvent("onAfterEventDelete", action);
+	scheduler.attachEvent("onEventDeleted", action);
 	action();
 };
 
 scheduler._markCalendarCurrentDate = function(calendar) {
-	var date = scheduler._date;
-	var mode = scheduler._mode;
+	var state = scheduler.getState();
+	var from = state.min_date;
+	var to = state.max_date;
+	var mode = state.mode;
+
 	var month_start = scheduler.date.month_start(new Date(calendar._date));
 	var month_end = scheduler.date.add(month_start, 1, "month");
 
-	if (mode == 'day' || (this._props && !!this._props[mode])) { // if day or units view
-		if (month_start.valueOf() <= date.valueOf() && month_end > date) {
-			scheduler.markCalendar(calendar, date, "dhx_calendar_click");
+	var noHighlight = {
+		"month":true,
+		"year":true,
+		"agenda":true,
+		"grid":true
+	};
+	// no need to highlight current dates for a large range views - agenda, year, etc.
+	if(noHighlight[mode] || (from.valueOf() <= month_start.valueOf() && to.valueOf() >= month_end.valueOf())){
+		return;
+	}
+
+	var current = from;
+	while(current.valueOf() < to.valueOf()){
+		if (month_start.valueOf() <= current.valueOf() && month_end > current) {
+			scheduler.markCalendar(calendar, current, "dhx_calendar_click");
 		}
-	} else if (mode == 'week') {
-		var dateNew = scheduler.date.week_start(new Date(date.valueOf()));
-		for (var i = 0; i < 7; i++) {
-			if (month_start.valueOf() <= dateNew.valueOf() && month_end > dateNew) // >= would mean mark first day of the next month
-				scheduler.markCalendar(calendar, dateNew, "dhx_calendar_click");
-			dateNew = scheduler.date.add(dateNew, 1, "day");
-		}
+		current = scheduler.date.add(current, 1, "day");
 	}
 };
 

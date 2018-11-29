@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.5.0.0 Stardard
+dhtmlxScheduler v.5.1.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -306,6 +306,11 @@ scheduler._temp_limit_scope = function(){
 		window.setTimeout(function(){ scheduler._mark_now(); }, 1);
 		return true;
 	});
+	scheduler.attachEvent("onAfterSchedulerResize", function(){
+		window.setTimeout(function(){ scheduler._mark_now(); }, 1);
+		return true;
+	});
+
 	scheduler.attachEvent("onTemplatesReady", function() {
 		scheduler._mark_now_timer = window.setInterval(function() {
 			if(!scheduler._is_initialized())
@@ -343,6 +348,9 @@ scheduler._temp_limit_scope = function(){
 				var view = this._props[this._mode];
 				var units_l = view.size || view.options.length;
 				if (view.days > 1) {
+					if(view.size && view.options.length){
+						day_index = ((view.position+ day_index) / view.options.length) * view.size;
+					}
 					start_index = day_index;
 					end_index = day_index + units_l;
 				}
@@ -1047,8 +1055,8 @@ scheduler._temp_limit_scope = function(){
 			}else{
 				var dx = 24*60*60*1000;
 				var day_ind = Math.round((day - scheduler._min_date)/dx);
-
-				day = scheduler.date.add(scheduler._min_date, Math.floor(day_ind/units.length), "day"); // to the "same" day for all sections
+				var unitsPerDay = view.size || units.length;
+				day = scheduler.date.add(scheduler._min_date, Math.floor(day_ind/unitsPerDay), "day"); // to the "same" day for all sections
 				day = scheduler.date.date_part(day);
 			}
 			day_index = day.getDay();

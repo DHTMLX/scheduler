@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.5.0.0 Stardard
+dhtmlxScheduler v.5.1.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -115,9 +115,9 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 		} else if (scheduler._mode == "year") {
 			var xh = scheduler._els.dhx_cal_data[0].childNodes;
 			for (var i = 0; i < xh.length; i++) {
-				xml += "<month label='" + clean_html(xh[i].childNodes[0].innerHTML) + "'>";
-				xml += xml_month_scale(xh[i].childNodes[1].childNodes);
-				xml += xml_month(xh[i].childNodes[2]);
+				xml += "<month label='" + clean_html(xh[i].querySelector(".dhx_year_month").innerHTML) + "'>";
+				xml += xml_month_scale(xh[i].querySelector(".dhx_year_week").childNodes);
+				xml += xml_month(xh[i].querySelector(".dhx_year_body"));
 				xml += "</month>";
 			}
 		} else {
@@ -156,14 +156,16 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 
 	function xml_month(yh) {
 		var xml = "";
-		var r = yh.firstChild.rows;
+		var r = yh.querySelectorAll("tr");
 		for (var i = 0; i < r.length; i++) {
 			var days = [];
-			for (var j = 0; j < r[i].cells.length; j++)
-				days.push(r[i].cells[j].firstChild.innerHTML);
+			var cells = r[i].querySelectorAll("td");
 
-			xml += "\n<row height='" + yh.firstChild.rows[i].cells[0].offsetHeight + "'><![CDATA[" + clean_html(days.join("|")) + "]]></row>";
-			dy = yh.firstChild.rows[0].cells[0].offsetHeight;
+			for (var j = 0; j < cells.length; j++)
+				days.push(cells[j].querySelector(".dhx_month_head").innerHTML);
+
+			xml += "\n<row height='" + cells[0].offsetHeight + "'><![CDATA[" + clean_html(days.join("|")) + "]]></row>";
+			dy = cells[0].offsetHeight;
 		}
 		return xml;
 	}

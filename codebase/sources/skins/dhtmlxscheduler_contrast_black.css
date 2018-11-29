@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.5.0.0 Stardard
+dhtmlxScheduler v.5.1.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -99,7 +99,7 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
   min-width: 300px;
   width: 330px;
   text-align: center;
-  background-color: #000000;
+  background: #000000;
   background: -webkit-linear-gradient(top, #ffffff 1%, #ffffff 99%);
   box-shadow: inset 0px 0px 0px 4px #1b4872;
   border: 1px solid #ffffff;
@@ -919,7 +919,8 @@ div.icon_delete {
   cursor: pointer;
   background: url(imgs_contrast_black/calendar.gif) no-repeat;
 }
-.dhx_matrix_scell {
+.dhx_matrix_scell,
+.dhx_timeline_scale_header {
   height: 100%;
   font-family: "Tahoma", san-serif;
   font-size: inherit;
@@ -933,6 +934,12 @@ div.icon_delete {
   vertical-align: middle;
   border-bottom: 1px solid #cecece;
   border-right: 1px solid #cecece;
+}
+.dhx_timeline_scale_header {
+  border-right: 1px solid #8d8d8d;
+}
+.dhx_cal_data .dhx_timeline_table_wrapper div {
+  box-sizing: border-box;
 }
 .dhx_matrix_cell {
   background-color: white;
@@ -1292,7 +1299,6 @@ div.icon_delete {
 .dhx_now_time {
   width: 100%;
   border-bottom: 2px solid #ff0000;
-  z-index: 1;
 }
 .dhx_scheduler_month .dhx_now_time {
   border-bottom: 0;
@@ -1300,7 +1306,6 @@ div.icon_delete {
 }
 .dhx_matrix_now_time {
   border-left: 2px solid #ff0000;
-  z-index: 1;
 }
 .dhx_now_time,
 .dhx_matrix_now_time {
@@ -1402,6 +1407,56 @@ div.icon_delete {
   outline-style: auto;
 }
 /* key nav end*/
+/* timeline scroll */
+.dhx_timeline_scale_header {
+  position: absolute;
+  z-index: 2;
+  overflow: hidden;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #000000;
+}
+.dhx_timeline_label_wrapper {
+  overflow: hidden;
+  background-color: #000000;
+  position: absolute;
+  z-index: 1;
+}
+.dhx_timeline_label_col {
+  position: relative;
+}
+.dhx_timeline_label_row {
+  position: absolute;
+  left: 0;
+  background-color: inherit;
+}
+.dhx_timeline_data_wrapper {
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  width: 100%;
+}
+.dhx_timeline_data_row {
+  position: relative;
+}
+.dhx_timeline_data_cell {
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+.dhx_timeline_table_wrapper .dhx_marked_timespan {
+  z-index: 1;
+}
+.dhx_timeline_table_wrapper .dhx_time_block {
+  z-index: 2;
+}
+.dhx_timeline_table_wrapper .dhx_cal_event_line {
+  z-index: 1;
+}
+.dhx_timeline_table_wrapper .dhx_timeline_scrollable_data {
+  overflow-x: auto;
+}
+/* timeline scroll end*/
 /* bootstrap CSS fix start */
 .dhx_cal_navline div,
 .dhx_cal_header,
@@ -1599,15 +1654,12 @@ div.icon_delete {
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }
-.dhx_cal_data {
-  -ms-touch-action: pan-y;
-  touch-action: pan-y;
-}
+.dhx_cal_data,
 .dhx_cal_event,
 .dhx_cal_event_line,
 .dhx_cal_event_clear {
-  -ms-touch-action: none;
-  touch-action: none;
+  -ms-touch-action: pan-y;
+  touch-action: pan-y;
 }
 .dhx_scale_bar {
   position: absolute;
@@ -1960,14 +2012,14 @@ input.dhx_repeat_checkbox {
 }
 /* expand end */
 /* units view */
-.dhx_scale_bar .dhx_cal_next_button,
-.dhx_scale_bar .dhx_cal_prev_button {
+.dhx_cal_header .dhx_cal_next_button,
+.dhx_cal_header .dhx_cal_prev_button {
   width: 20px;
   height: 20px;
   top: 0px !important;
   border: 0;
 }
-.dhx_scale_bar .dhx_cal_next_button {
+.dhx_cal_header .dhx_cal_next_button {
   right: 1px !important;
   border-left: 1px solid #8d8d8d;
 }

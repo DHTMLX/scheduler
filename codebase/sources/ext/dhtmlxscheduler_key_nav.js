@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.5.0.0 Stardard
+dhtmlxScheduler v.5.1.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -1038,7 +1038,6 @@ scheduler.$keyboardNavigation.Event = function(id){
 		this.end = new Date(ev.end_date);
 
 		this.section = this._getSection(ev);
-
 		this.eventId = id;
 	}
 };
@@ -1071,15 +1070,39 @@ scheduler.$keyboardNavigation.Event.prototype = scheduler._compose(
 			return defaultElement;
 		},
 
-		getNode: function(){
-			var idSelector = "[event_id='"+this.eventId+"']";
 
+
+		getNode: function(){
+
+			function isScrolledIntoView(el) {
+				var eventBox = el.getBoundingClientRect();
+				var viewPort = scheduler.$container.querySelector(".dhx_cal_data").getBoundingClientRect();
+				
+				if(eventBox.bottom < viewPort.top || eventBox.top > viewPort.bottom){
+					return false;
+				}
+				return true;
+			}
+
+			var idSelector = "[event_id='"+this.eventId+"']";
 
 			var inlineEditor = scheduler.$keyboardNavigation.dispatcher.getInlineEditor(this.eventId);
 			if(inlineEditor){// is inline editor visible
 				return inlineEditor;
 			}else{
-				return scheduler.$container.querySelector(idSelector);
+				if(scheduler.isMultisectionEvent && scheduler.isMultisectionEvent(scheduler.getEvent(this.eventId))){
+					var nodes = scheduler.$container.querySelectorAll(idSelector);
+					for(var i = 0; i < nodes.length; i++){
+						if(isScrolledIntoView(nodes[i])){
+							return nodes[i];
+						}
+					}
+					return nodes[0];
+				}else{
+					return scheduler.$container.querySelector(idSelector);
+				}
+
+				
 			}
 
 		},

@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.5.0.0 Stardard
+dhtmlxScheduler v.5.1.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -41,7 +41,7 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
   min-width: 300px;
   width: 341px;
   text-align: center;
-  background-color: #ffffff;
+  background: #ffffff;
   background: -webkit-linear-gradient(top, #ffffff 1%, #ffffff 99%);
   box-shadow: 0px 0px 14px #888888;
   border: none;
@@ -860,7 +860,8 @@ div.icon_delete {
   cursor: pointer;
   background: url(imgs_dhx_material/calendar.svg) no-repeat;
 }
-.dhx_matrix_scell {
+.dhx_matrix_scell,
+.dhx_timeline_scale_header {
   height: 100%;
   font-family: "Roboto", Arial;
   font-size: 14px;
@@ -874,6 +875,12 @@ div.icon_delete {
   vertical-align: middle;
   border-bottom: 1px solid #e0e0e0;
   border-right: 1px solid #e0e0e0;
+}
+.dhx_timeline_scale_header {
+  border-right: 1px solid #e0e0e0;
+}
+.dhx_cal_data .dhx_timeline_table_wrapper div {
+  box-sizing: border-box;
 }
 .dhx_matrix_cell {
   background-color: white;
@@ -1233,7 +1240,6 @@ div.icon_delete {
 .dhx_now_time {
   width: 100%;
   border-bottom: 2px solid #ff5722;
-  z-index: 1;
 }
 .dhx_scheduler_month .dhx_now_time {
   border-bottom: 0;
@@ -1241,7 +1247,6 @@ div.icon_delete {
 }
 .dhx_matrix_now_time {
   border-left: 2px solid #ff5722;
-  z-index: 1;
 }
 .dhx_now_time,
 .dhx_matrix_now_time {
@@ -1343,6 +1348,56 @@ div.icon_delete {
   outline-style: auto;
 }
 /* key nav end*/
+/* timeline scroll */
+.dhx_timeline_scale_header {
+  position: absolute;
+  z-index: 2;
+  overflow: hidden;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #ffffff;
+}
+.dhx_timeline_label_wrapper {
+  overflow: hidden;
+  background-color: #ffffff;
+  position: absolute;
+  z-index: 1;
+}
+.dhx_timeline_label_col {
+  position: relative;
+}
+.dhx_timeline_label_row {
+  position: absolute;
+  left: 0;
+  background-color: inherit;
+}
+.dhx_timeline_data_wrapper {
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  width: 100%;
+}
+.dhx_timeline_data_row {
+  position: relative;
+}
+.dhx_timeline_data_cell {
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+.dhx_timeline_table_wrapper .dhx_marked_timespan {
+  z-index: 1;
+}
+.dhx_timeline_table_wrapper .dhx_time_block {
+  z-index: 2;
+}
+.dhx_timeline_table_wrapper .dhx_cal_event_line {
+  z-index: 1;
+}
+.dhx_timeline_table_wrapper .dhx_timeline_scrollable_data {
+  overflow-x: auto;
+}
+/* timeline scroll end*/
 /* bootstrap CSS fix start */
 .dhx_cal_navline div,
 .dhx_cal_header,
@@ -1540,15 +1595,12 @@ div.icon_delete {
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
 }
-.dhx_cal_data {
-  -ms-touch-action: pan-y;
-  touch-action: pan-y;
-}
+.dhx_cal_data,
 .dhx_cal_event,
 .dhx_cal_event_line,
 .dhx_cal_event_clear {
-  -ms-touch-action: none;
-  touch-action: none;
+  -ms-touch-action: pan-y;
+  touch-action: pan-y;
 }
 .dhx_scale_bar {
   position: absolute;
@@ -2035,12 +2087,12 @@ div.dhx_menu_icon {
 ==============================================================================================*/
 .dhx_cal_scale_placeholder {
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.1);
   left: 0;
 }
 .dhx_matrix_scell.folder .dhx_scell_expand {
-  margin: 0 10px;
+  margin: 0 12px;
 }
 .dhx_cal_header div.dhx_bottom_scale_container .dhx_scale_bar,
 .dhx_cal_header div.dhx_second_cal_header .dhx_scale_bar {
@@ -2059,9 +2111,9 @@ div.dhx_menu_icon {
   content: "";
   display: block;
   position: absolute;
-  top: 3px;
+  top: 0px;
   left: 0px;
-  height: 10px;
+  height: 100%;
   width: 13px;
   background: #ebeced url(imgs_dhx_material/tree_arrow.svg) no-repeat;
   background-position: 3px center;
@@ -2070,9 +2122,9 @@ div.dhx_menu_icon {
   content: "";
   display: block;
   position: absolute;
-  top: 3px;
+  top: 0px;
   left: 0px;
-  height: 10px;
+  height: 100%;
   width: 13px;
   transform: rotate(-90deg);
   background: #ebeced url(imgs_dhx_material/tree_arrow.svg) no-repeat;
@@ -2156,21 +2208,21 @@ td .dhx_month_head a:hover,
   border-style: solid;
   border-color: transparent;
 }
-.dhx_scale_bar .dhx_cal_next_button,
-.dhx_scale_bar .dhx_cal_prev_button {
+.dhx_cal_header .dhx_cal_next_button,
+.dhx_cal_header .dhx_cal_prev_button {
   width: 20px;
   height: 20px;
   border: none;
   top: 0px!important;
   right: 7px!important;
 }
-.dhx_scale_bar .dhx_cal_next_button:hover,
-.dhx_scale_bar .dhx_cal_prev_button:hover {
+.dhx_cal_header .dhx_cal_next_button:hover,
+.dhx_cal_header .dhx_cal_prev_button:hover {
   background-image: url(imgs_dhx_material/arrow_left_hov.svg);
   background-color: rgba(0, 0, 0, 0.1);
   border-radius: 50%;
 }
-.dhx_scale_bar .dhx_cal_next_button:hover {
+.dhx_cal_header .dhx_cal_next_button:hover {
   background-image: url(imgs_dhx_material/arrow_right_hov.svg);
 }
 /*============================================================================================
@@ -2223,7 +2275,7 @@ td .dhx_month_head a:hover,
   top: 10px!important;
 }
 .dhx_year_month {
-  height: 30px!important;
+  height: 30px;
 }
 .dhx_cal_navline div.dhx_minical_icon {
   left: 210px;
@@ -2485,6 +2537,12 @@ td .dhx_month_head a:hover,
 .dhx_cal_header .dhx_scale_bar {
   border-left-color: transparent;
 }
+.dhx_timeline_scale_header {
+  border-right-color: transparent;
+}
+.dhx_timeline_scale_header.dhx_timeline_second_scale {
+  border-right-color: #e0e0e0;
+}
 textarea.dhx_cal_editor {
   box-sizing: border-box;
   color: rgba(0, 0, 0, 0.54);
@@ -2527,6 +2585,8 @@ textarea.dhx_cal_editor {
 }
 .dhx_section_time select.dhx_lightbox_year_select {
   min-width: 58px!important;
+  max-width: 58px!important;
+  padding-left: 3px !important;
   background: url(imgs_dhx_material/menu-down.svg) no-repeat 100% 3px;
 }
 .dhx_section_time select:nth-child(6) {
@@ -2584,7 +2644,7 @@ textarea.dhx_cal_editor {
   top: -3px;
 }
 .dhx_cal_light_wide .dhx_combo_box,
-.dhx_cal_light_wide .combo > div.dhxcombo_dhx_terrace {
+.dhx_cal_light_wide .combo > div {
   width: 319px!important;
   margin: 0px 0 0 0;
   height: 32px!important;
@@ -2946,11 +3006,8 @@ input.dhx_repeat_text {
 .dhx_year_box {
   box-sizing: border-box;
   text-align: center;
-  margin: 15px 35px;
+  margin: 15px 35px 18px;
   margin-top: 15px !important;
-}
-.dhx_year_box .dhx_year_week {
-  display: inline-block;
 }
 .dhx_year_box .dhx_year_week > div {
   position: static;
@@ -2969,20 +3026,15 @@ input.dhx_repeat_text {
 .dhx_year_box {
   position: static !important;
   display: inline-block;
-  width: 224px!important;
-  height: 250px!important;
+  width: 224px !important;
+  height: auto !important;
   overflow: hidden;
 }
 .dhx_year_box .dhx_year_month {
-  width: 100%!important;
   border: none;
   padding: 0;
 }
-.dhx_year_box .dhx_year_grid {
-  width: 100%!important;
-}
 .dhx_year_box .dhx_year_grid .dhx_year_week {
-  width: 100%!important;
   margin: 0 0 7px 0;
 }
 .dhx_year_box .dhx_year_grid .dhx_year_week .dhx_scale_bar {
@@ -3014,51 +3066,34 @@ input.dhx_repeat_text {
   left: 192px!important;
 }
 .dhx_year_box .dhx_year_grid .dhx_year_body {
-  width: 224px!important;
-  height: 192px!important;
-  display: inline-block;
   border: none;
 }
 .dhx_year_box .dhx_year_grid .dhx_year_body table {
-  width: 224px!important;
-  height: 192px!important;
-  display: inline-block;
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
 .dhx_year_box .dhx_year_grid .dhx_year_body table tbody {
-  width: 224px!important;
-  height: 192px;
-  display: inline-block;
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
-.dhx_year_box .dhx_year_grid .dhx_year_body table tbody tr {
-  height: 32px!important;
-}
 .dhx_year_box .dhx_year_grid .dhx_year_body table tbody td,
 .dhx_year_box .dhx_year_grid .dhx_year_body table tbody .dhx_before {
-  width: 32px!important;
-  height: 32px!important;
-  padding: 0;
-  display: inline-block;
+  width: 32px;
+  height: 32px;
   text-align: center;
-  box-sizing: border-box !important;
-  padding: 2px 0 0 0;
+  box-sizing: border-box;
+  padding: 2px;
 }
 .dhx_year_box .dhx_year_grid .dhx_year_body table tbody td .dhx_month_head,
 .dhx_year_box .dhx_year_grid .dhx_year_body table tbody .dhx_before .dhx_month_head {
   border: none;
-  width: 28px!important;
-  height: 28px!important;
-  display: inline-block;
+  width: 28px;
+  height: 28px;
   text-align: center;
-  padding: 1px 0 0 0;
   border-radius: 50%;
   padding: 0;
-  box-sizing: border-box;
   font-size: 14px;
   line-height: 28px;
 }
@@ -3071,7 +3106,7 @@ input.dhx_repeat_text {
 }
 .dhx_year_box .dhx_year_grid .dhx_year_body table tbody td .dhx_month_body,
 .dhx_year_box .dhx_year_grid .dhx_year_body table tbody .dhx_before .dhx_month_body {
-  border: none;
+  display: none;
 }
 div.dhx_year_tooltip {
   border: none;

@@ -1,3 +1,13 @@
+5.1
+	Horizontal scroll in the Timeline view
+	Smart rendering and performance update for the Timeline view
+	New API of the Timeline object
+	Autoscroll in the Timeline view
+	Ability to add a label into the header of the column with sections
+	Fix false-positive onEventCollision trigger on editing of recurring events
+	Fix bug when mousewheel canceled creation of new event via click and drag
+	Fix incorrect placement of multi-day events in multi-day units view
+
 5.0
 	New Material skin
 	Classic and Glossy skins are removed

@@ -272,13 +272,13 @@ div.dhx_menu_icon {
 // 4.1 Data Column Header/Title
 .dhx_cal_scale_placeholder{
 	position: absolute;
-	z-index: 1;
+	z-index: 2;
 	box-shadow: @multi-day-shadow;
 	left: 0;
 }
 
 .dhx_matrix_scell.folder .dhx_scell_expand {
-	margin: 0 10px;
+	margin: 0 12px;
 }
 
 .dhx_cal_header div.dhx_bottom_scale_container .dhx_scale_bar,
@@ -303,9 +303,9 @@ div.dhx_menu_icon {
 		content: "";
 		display: block;
 		position: absolute;
-		top: 3px;
+		top: 0px;
 		left: 0px;
-		height: 10px;
+		height: 100%;
 		width: 13px;
 		background: #ebeced @treemode-expand-icon-bg-image no-repeat;
 		background-position: 3px center;
@@ -318,9 +318,9 @@ div.dhx_menu_icon {
 		content: "";
 		display: block;
 		position: absolute;
-		top: 3px;
+		top: 0px;
 		left: 0px;
-		height: 10px;
+		height: 100%;
 		width: 13px;
 		transform: rotate(-90deg);
 		background: #ebeced @treemode-expand-icon-bg-image no-repeat;
@@ -427,8 +427,8 @@ td .dhx_month_head a,
 }
 
 // 4.4 Data Columns navigation
-.dhx_scale_bar .dhx_cal_next_button,
-.dhx_scale_bar .dhx_cal_prev_button {
+.dhx_cal_header .dhx_cal_next_button,
+.dhx_cal_header .dhx_cal_prev_button {
 	width: 20px;
 	height: 20px;
 	border: none;
@@ -442,7 +442,7 @@ td .dhx_month_head a,
 	}
 }
 
-.dhx_scale_bar .dhx_cal_next_button {
+.dhx_cal_header .dhx_cal_next_button {
 	&:hover {
 		background-image:@nav-next-btn-hov-bg-img;
 	}
@@ -512,7 +512,7 @@ td .dhx_month_head a,
 }
 
 .dhx_year_month {
-	height: 30px!important;
+	height: 30px;
 }
 
 .dhx_cal_navline div.dhx_minical_icon {
@@ -841,6 +841,13 @@ td .dhx_month_head a,
 	border-left-color: transparent;
 }
 
+.dhx_timeline_scale_header{
+	border-right-color: transparent;
+}
+.dhx_timeline_scale_header.dhx_timeline_second_scale{
+	border-right-color: @default-border-color;
+}
+
 textarea.dhx_cal_editor {
 	box-sizing: border-box;
 	color: @event-editor-font-color;
@@ -896,6 +903,8 @@ textarea.dhx_cal_editor {
 
 .dhx_section_time select.dhx_lightbox_year_select {
 	min-width: 58px!important;
+	max-width: 58px!important;
+	padding-left: 3px !important;
 	background: url(imgs_dhx_material/menu-down.svg) no-repeat 100% 3px;
 }
 
@@ -965,7 +974,7 @@ textarea.dhx_cal_editor {
 	top: @lightbox-combo-input-top;
 }
 
-.dhx_cal_light_wide .dhx_combo_box, .dhx_cal_light_wide .combo > div.dhxcombo_dhx_terrace {
+.dhx_cal_light_wide .dhx_combo_box, .dhx_cal_light_wide .combo > div {
 	width: 319px!important;
 	margin: 0px 0 0 0;
 	height: 32px!important;
@@ -1426,10 +1435,9 @@ input.dhx_repeat_text {
 .dhx_year_box {
 	box-sizing: border-box;
 	text-align: center;
-	margin: 15px 35px;
+	margin: 15px 35px 18px;
 	margin-top:15px !important;
 	.dhx_year_week {
-		display: inline-block;
 		> div{
 			position: static;
 			display: inline-block;
@@ -1452,104 +1460,84 @@ input.dhx_repeat_text {
 .dhx_year_box {
 	position:static !important;
 	display: inline-block;
-	width: 224px!important;
-	height: 250px!important;
+	width: 224px !important;
+	height: auto !important;
 	overflow: hidden;
 
 	.dhx_year_month {
-		width: 100%!important;
 		border:none;
 		padding: 0;
 	}
 
 	.dhx_year_grid {
-		width: 100%!important;
 
-		.dhx_year_week {
-			width: 100%!important;
-			margin: 0 0 7px 0;
-			.dhx_scale_bar {
-				width: 32px!important;
-				font-size: 12px;
-				box-sizing: border-box;
-				text-align: center;
-				border-color: transparent;
-				&:nth-child(1) {
-					left: 0;
-				}
+	.dhx_year_week {
 
-				&:nth-child(2) {
-					left: 32px!important;
-				}
+		margin: 0 0 7px 0;
+		.dhx_scale_bar {
+			width: 32px!important;
+			font-size: 12px;
+			box-sizing: border-box;
+			text-align: center;
+			border-color: transparent;
+			&:nth-child(1) {
+				left: 0;
+			}
 
-				&:nth-child(3) {
-					left: 64px!important;
-				}
+			&:nth-child(2) {
+				left: 32px!important;
+			}
 
-				&:nth-child(4) {
-					left: 96px!important;
-				}
+			&:nth-child(3) {
+				left: 64px!important;
+			}
 
-				&:nth-child(5) {
-					left: 128px!important;
-				}
+			&:nth-child(4) {
+				left: 96px!important;
+			}
 
-				&:nth-child(6) {
-					left: 160px!important;
-				}
+			&:nth-child(5) {
+				left: 128px!important;
+			}
 
-				&:nth-child(7) {
-					left: 192px!important;
-				}
+			&:nth-child(6) {
+				left: 160px!important;
+			}
+
+			&:nth-child(7) {
+				left: 192px!important;
 			}
 		}
+	}
 
 	.dhx_year_body {
-		width: 224px!important;
-		height: 192px!important;
-			display: inline-block;
 			border: none;
 
 			& table {
-				width: 224px!important;
-				height: 192px!important;
-				display: inline-block;
 				padding: 0;
 				margin: 0;
 				box-sizing: border-box;
 
 				& tbody {
-					width: 224px!important;
-					height: 192px;
-					display: inline-block;
 					padding: 0;
 					margin: 0;
 					box-sizing: border-box;
 
-					tr {
-						height: 32px!important;
-					}
-
 					td, .dhx_before {
-						width: 32px!important;
-						height: 32px!important;
-						padding: 0;
-						display: inline-block;
+						width: 32px;
+						height: 32px;
 						text-align: center;
-						box-sizing: border-box!important;
-						padding: 2px 0 0 0;
+						box-sizing: border-box;
+						padding: 2px;
 
 						.dhx_month_head {
 							border:none;
-							width: 28px!important;
-							height: 28px!important;
-							display: inline-block;
+							width: 28px;
+							height: 28px;
 							text-align: center;
-							padding: 1px 0 0 0;
 							border-radius: 50%;
 							padding: 0;
-							box-sizing: border-box;
-							font-size: 14px;
+							font-size: @default-font-size;
 							line-height: 28px;
 							&.dhx_year_event {
 								background-color: @base-color;
@@ -1560,7 +1548,7 @@ input.dhx_repeat_text {
 						}
 
 						.dhx_month_body {
-							border: none;
+							display: none;
 						}
 					}
 				}

@@ -165,7 +165,8 @@
 	background: @calendar-open-icon  no-repeat;
 }
 
-.dhx_matrix_scell {
+.dhx_matrix_scell,
+.dhx_timeline_scale_header {
 	height: 100%;
 	font-family: @grid-tree-cell-font-family;
 	font-size: @grid-tree-cell-font-size;
@@ -180,7 +181,12 @@
 	border-bottom: @grid-border-bottom;
 	border-right: @grid-border-right;	
 }
-
+.dhx_timeline_scale_header{
+	border-right: @col-header-cell-border-left;	
+}
+.dhx_cal_data .dhx_timeline_table_wrapper div{ 
+	box-sizing: border-box;
+}
 .dhx_matrix_cell{
 	background-color:white;
 }
@@ -629,7 +635,6 @@
 .dhx_now_time {
 	width:100%;
 	border-bottom:2px solid @now-line-color;
-	z-index: 1;
 }
 
 .dhx_scheduler_month .dhx_now_time {
@@ -639,7 +644,6 @@
 
 .dhx_matrix_now_time {
 	border-left:2px solid @now-line-color;
-	z-index: 1;
 }
 
 .dhx_now_time, .dhx_matrix_now_time{
@@ -759,3 +763,69 @@
 }
 
 /* key nav end*/
+
+
+/* timeline scroll */
+
+
+.dhx_timeline_scale_header {
+	position: absolute;
+	z-index: @col-header-index;
+	overflow:hidden;
+	text-align:center;
+	vertical-align:middle;
+	background-color: @container-background;
+}
+
+.dhx_timeline_label_wrapper {
+	overflow: hidden;
+	background-color: @container-background;
+	position: absolute;
+	z-index: 1;
+}
+
+.dhx_timeline_label_col{
+	position: relative;
+}
+
+.dhx_timeline_label_row {
+	position: absolute;
+	left: 0;
+	background-color: inherit
+}
+
+.dhx_timeline_data_wrapper {
+	position: absolute;
+	z-index: 0;
+	left: 0;
+	width: 100%;
+}
+
+.dhx_timeline_data_row {
+	position: relative;
+}
+
+.dhx_timeline_data_cell {
+	position: absolute;
+	top: 0;
+	height: 100%;
+}
+
+.dhx_timeline_table_wrapper {
+	.dhx_marked_timespan {
+		z-index: 1;
+	}
+
+	.dhx_time_block {
+		z-index: 2;
+	}
+
+	.dhx_cal_event_line{
+		z-index: 1;
+	}
+	.dhx_timeline_scrollable_data {
+		overflow-x: auto;
+	}
+}
+
+/* timeline scroll end*/

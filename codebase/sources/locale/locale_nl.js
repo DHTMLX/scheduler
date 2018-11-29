@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.5.0.0 Stardard
+dhtmlxScheduler v.5.1.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -22,7 +22,7 @@ scheduler.locale = {
 		icon_save: "Opslaan",
 		icon_cancel: "Annuleren",
 		icon_details: "Details",
-		icon_edit: "Edit",
+		icon_edit: "Bewerken",
 		icon_delete: "Verwijderen",
 		confirm_closing: "", //Your changes will be lost, are your sure ?
 		confirm_deleting: "Item zal permanent worden verwijderd, doorgaan?",

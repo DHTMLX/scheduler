@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.5.0.0 Stardard
+dhtmlxScheduler v.5.1.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -111,8 +111,8 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 					height = parseInt(checked_div.style.height, 10);
 					break;
 				case "dhx_multi_day":
-                    height = (checked_div) ? checked_div.offsetHeight - 1 : 0;
-                    multiday_height = height;
+					height = (checked_div) ? checked_div.offsetHeight - 1 : 0;
+					multiday_height = height;
 					break;
 				case "dhx_cal_data":
 					var mode = scheduler.getState().mode;
@@ -214,22 +214,24 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 
 					if (scheduler.matrix && scheduler.matrix[mode]) {
 						if (is_repaint) {
-							height += 2;
+							height += 0;
 							checked_div.style.height = height + "px";
 						} else {
-							height = 2;
+							height = 0;
 							var cfg = scheduler.matrix[mode];
 							var rows = cfg.y_unit;
 							for(var r=0; r < rows.length; r++){
-								height += !rows[r].children ? cfg.dy : (cfg.folder_dy||cfg.dy);
+								height += cfg._section_height[rows[r].key];
 							}
 						}
+						height -= 1;
 					}
 					if (mode == "day" || mode == "week" || (scheduler._props && scheduler._props[mode])) {
 						height += 2;
 					}
 					break;
 			}
+			height += 1;
 			total_height += height;
 		}
 		scheduler._obj.style.height = (total_height) + "px";
@@ -237,6 +239,12 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 		if (!is_repaint)
 			scheduler.updateView();
 	};
+
+	function callUpdate(){
+		active = false;
+		scheduler.callEvent("onAfterSchedulerResize", []);
+		active = true;
+	}
 
 	var conditionalUpdateContainerHeight = function() {
 		if(!(scheduler.config.container_autoresize && active))
@@ -256,10 +264,37 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 			asyncRepaint(function() {
 				updateContainterHeight(true);
 				document.documentElement.scrollTop = scrollTop;
+				callUpdate();
 			}, 1);
+		}else{
+			callUpdate();
 		}
 	};
 
+	scheduler.attachEvent("onBeforeViewChange", function(){
+		var autosizeEnabled = scheduler.config.container_autoresize;
+		if(!scheduler.xy.$original_scroll_width){
+			scheduler.xy.$original_scroll_width = scheduler.xy.scroll_width;
+		}
+
+		scheduler.xy.scroll_width = autosizeEnabled ? 0 : scheduler.xy.$original_scroll_width;
+
+		if(scheduler.matrix){
+			for(var i in scheduler.matrix){
+				var timeline = scheduler.matrix[i];
+				if(!timeline.$original_section_autoheight){
+					timeline.$original_section_autoheight = timeline.section_autoheight;
+				}
+				if(autosizeEnabled){
+					timeline.section_autoheight = false;
+				}else{
+					timeline.section_autoheight = timeline.$original_section_autoheight;
+				}
+			}
+		}
+		return true;
+	});
+	
 	scheduler.attachEvent("onViewChange", conditionalUpdateContainerHeight);
 	scheduler.attachEvent("onXLE", conditionalUpdateContainerHeight);
 	scheduler.attachEvent("onEventChanged", conditionalUpdateContainerHeight);

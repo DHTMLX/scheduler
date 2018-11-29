@@ -1,12 +1,12 @@
 /*
 @license
-dhtmlxScheduler v.5.0.0 Stardard
+dhtmlxScheduler v.5.1.0 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
 */
-window.dhtmlXScheduler = window.scheduler = { version: "5.0.0" };
+window.dhtmlXScheduler = window.scheduler = { version: "5.1.0" };
 
 if (!window.dhtmlx) {
 	dhtmlx = function(obj){
@@ -1789,7 +1789,7 @@ dataProcessor.prototype = {
 			case "delete":
 			case "deleted":
 				this.obj.setUserData(sid, this.action_param, "true_deleted");
-				this.obj[this._methods[3]](sid);
+				this.obj[this._methods[3]](sid, tid);
 				delete this._in_progress[marker];
 				return this.callEvent("onAfterUpdate", [sid, action, tid, btag]);
 		}
@@ -1805,6 +1805,13 @@ dataProcessor.prototype = {
 		this.callEvent("onAfterUpdate", [soid, action, tid, btag]);
 	},
 
+	_errorResponse: function (xml, id){
+		if(this.obj && this.obj.callEvent){
+			this.obj.callEvent("onSaveError", [id, xml.xmlDoc]);
+		}
+		return this.cleanUpdate(id);
+	},
+
 	/**
 	 *	@desc: response from server
 	 *	@param: xml - XMLLoader object with response XML
@@ -1812,6 +1819,12 @@ dataProcessor.prototype = {
 	 */
 	afterUpdate: function (that, xml, id) {
 		var ajax = this.obj.$ajax;
+
+		if (xml.xmlDoc.status !== 200){
+			this._errorResponse(xml, id);
+			return;
+		}
+
 		//try to use json first
 		if (window.JSON) {
 			var tag;
@@ -1837,9 +1850,9 @@ dataProcessor.prototype = {
 		}
 		//xml response
 		var top = ajax.xmltop("data", xml.xmlDoc); //fix incorrect content type in IE
-		if (!top) return this.cleanUpdate(id);
+		if (!top) return this._errorResponse(xml, id);
 		var atag = ajax.xpath("//data/action", top);
-		if (!atag.length) return this.cleanUpdate(id);
+		if (!atag.length) this._errorResponse(xml, id);
 
 		for (var i = 0; i < atag.length; i++) {
 			var btag = atag[i];
@@ -2524,6 +2537,14 @@ scheduler.keys={
 	edit_save:13,
 	edit_cancel:27
 };
+
+scheduler.bind = function bind(functor, object){
+	if(functor.bind)
+		return functor.bind(object);
+	else
+		return function(){ return functor.apply(object,arguments); };
+};
+
 scheduler.set_sizes=function(){
 	var w = this._x = this._obj.clientWidth-this.xy.margin_left;
 	var h = this._y = this._obj.clientHeight-this.xy.margin_top;
@@ -6041,7 +6062,9 @@ scheduler.json.parse = function(data) {
 			collections_loaded = true;
 			var collection = collections[key];
 			var arr = scheduler.serverList[key];
-			if (!arr) continue;
+			if (!arr) {
+				scheduler.serverList[key] = arr = [];
+			}
 			arr.splice(0, arr.length); //clear old options
 			for (var j = 0; j < collection.length; j++) {
 				var option = collection[j];
@@ -6099,14 +6122,11 @@ scheduler.serverList = function(name, array) {
 scheduler._userdata = {};
 scheduler._magic_parser = function(loader) {
 	var xml;
-	if (!loader.getXMLTopNode) { //from a string
-		//var xml_string = loader.xmlDoc.responseText;
-		//loader = new dtmlXMLLoaderObject(function() {});
-		//loader.loadXMLString(xml_string);
-        loader = scheduler.$ajax.parse(loader);
+
+	if (!loader.xmlDoc.responseXML) { //from a string
+		loader.xmlDoc.responseXML = scheduler.$ajax.parse(loader.xmlDoc.responseText);
 	}
 
-	//xml = loader.getXMLTopNode("data");
 	xml = scheduler.$ajax.xmltop("data", loader.xmlDoc);
 	if (xml.tagName != "data") return null;//not an xml
 	var skey = xml.getAttribute("dhx_security");
@@ -6117,7 +6137,9 @@ scheduler._magic_parser = function(loader) {
 	for (var i = 0; i < opts.length; i++) {
 		var bind = opts[i].getAttribute("for");
 		var arr = this.serverList[bind];
-		if (!arr) continue;
+		if (!arr) {
+			scheduler.serverList[bind] = arr = [];
+		}
 		arr.splice(0, arr.length);	//clear old options
 		var itms = scheduler.$ajax.xpath(".//item", opts[i]);
 		for (var j = 0; j < itms.length; j++) {
@@ -6179,9 +6201,11 @@ scheduler.attachEvent("onXLS", function() {
 scheduler.attachEvent("onXLE", function() {
 	var t = this.config.show_loading;
 	if (t && typeof t == "object") {
-			this._obj.removeChild(t);
-			this.config.show_loading = true;
+		if(t.parentNode) {
+			t.parentNode.removeChild(t);
 		}
+		this.config.show_loading = true;
+	}
 });
 
 scheduler.ical={
@@ -7009,10 +7033,10 @@ scheduler._lightbox_template="<div class='dhx_cal_ltitle'><span class='dhx_mark'
 
 scheduler._init_touch_events = function(){
 	var mobile = this.config.touch  &&
-		( (navigator.userAgent.indexOf("Mobile")!=-1)   ||
+		( ((navigator.userAgent.indexOf("Mobile")!=-1)   ||
 			(navigator.userAgent.indexOf("iPad")!=-1)       ||
 			(navigator.userAgent.indexOf("Android")!=-1)    ||
-			(navigator.userAgent.indexOf("Touch")!=-1));
+			(navigator.userAgent.indexOf("Touch")!=-1)) && !window.MSStream);
 
 	if(mobile){
 		this.xy.scroll_width = 0;
@@ -7090,6 +7114,14 @@ scheduler._touch_events = function(names, accessor, ignore){
 		if(t != scheduler._obj){
 			//swipe outside scheduler
 			return false;
+		}
+
+		// ignore swipe in horizontal timeline
+		if(scheduler.matrix && scheduler.matrix[scheduler.getState().mode]){
+			var timeline = scheduler.matrix[scheduler.getState().mode];
+			if(timeline.scrollable){
+				return false;
+			}
 		}
 
 		var dy = Math.abs(s_ev.pageY - e_ev.pageY);
@@ -7183,7 +7215,7 @@ scheduler._touch_events = function(names, accessor, ignore){
 
 	});
 
-	attachTouchEvent(this._els["dhx_cal_data"][0], "scroll", drag_cancel);
+	//attachTouchEvent(this._els["dhx_cal_data"][0], "scroll", drag_cancel);
 	attachTouchEvent(this._els["dhx_cal_data"][0], "touchcancel", drag_cancel);
 	attachTouchEvent(this._els["dhx_cal_data"][0], "contextmenu", function(e){
 		if (ignore(e)) return;
@@ -7371,7 +7403,7 @@ scheduler._dp_init=function(dp){
 		if(!scheduler.getEvent(id))
 			return;
 
-		if(id != new_id){
+		if(new_id && id != new_id){
 			if(this.getUserData(id, dp.action_param) == "true_deleted")
 				this.setUserData(id, dp.action_param, "updated");
 
