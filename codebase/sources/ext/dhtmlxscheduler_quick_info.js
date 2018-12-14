@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.5.1.0 Stardard
+dhtmlxScheduler v.5.1.1 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -17,13 +17,16 @@ scheduler.attachEvent("onClick", function(id){
 });
 
 (function(){
+	// pass `force` argument in order to hide quick info synchronously
+	// so it won't affect showQuickInfo call that can follow
 	var events = ["onEmptyClick", "onViewChange", "onLightbox", "onBeforeEventDelete", "onBeforeDrag"];
 	var hiding_function = function(){
-		scheduler._hideQuickInfo();
+		scheduler.hideQuickInfo(true);
 		return true;
 	};
-	for (var i=0; i<events.length; i++)
+	for (var i=0; i<events.length; i++){
 		scheduler.attachEvent(events[i], hiding_function);
+	}
 })();
 
 scheduler.templates.quick_info_title = function(start, end, ev){ return ev.text.substr(0,50); };
@@ -48,9 +51,6 @@ scheduler.showQuickInfo = function(id){
 
 		this.callEvent("onQuickInfo", [id]);
 	}
-};
-scheduler._hideQuickInfo = function(){
-	scheduler.hideQuickInfo();
 };
 
 (function(){

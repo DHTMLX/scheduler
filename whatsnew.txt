@@ -1,3 +1,18 @@
+5.1.1
+	Fix keyboard navigation focus not being highlighted in the timeline
+	Fix incorrect initial height of timeline_scale_header if second_scale specified
+	Fix bug with event_min_dy not affecting section height if only one event is located inside a section
+	Fix bug with quick info popup self-closing if the same event is clicked multiple times
+	Fix script error which fired after deleting event in year view
+	Fix incorrect initial display of scrolled timeline if no events loaded into the scheduler
+	Fix ability to enable smart rendering for non-scrollable timelines
+	Fix issue with scroll position resetting on date change when key_nav extension is enabled in the timeline
+	Fix incorrect value 'olddate' argument of onBeforeViewChange event in some cases
+	Fix incorrect display of scrollable timeline with ignored time cells
+	Fix incorrect behavior if scrolling happened during drag-create of new events
+	Fix onAfterSchedulerResize event not firing in Timeline view
+	Performance improvement for event rendering in week view
+
 5.1
 	Horizontal scroll in the Timeline view
 	Smart rendering and performance update for the Timeline view

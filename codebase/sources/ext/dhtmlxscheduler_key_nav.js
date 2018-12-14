@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.5.1.0 Stardard
+dhtmlxScheduler v.5.1.1 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -531,7 +531,7 @@ scheduler.$keyboardNavigation.marker = {
 		var width = Math.max(1, end_pos - start_pos - 1);
 		block.style.cssText = "height: "+height+"px; left: "+start_pos+"px; width: "+width+"px; top: "+top+"px;";
 
-		area.insertBefore(block, area.firstChild);
+		area.appendChild(block);
 		blocks.push(block);
 
 		return blocks;
@@ -2664,20 +2664,45 @@ scheduler.$keyboardNavigation.attachSchedulerHandlers = function(){
 		waitCall = setTimeout(function(){
 			if(!dispatcher.isEnabled())
 				dispatcher.enable();
-
-			var activeNode = dispatcher.getActiveNode();
-			if(activeNode instanceof scheduler.$keyboardNavigation.MinicalButton || activeNode instanceof scheduler.$keyboardNavigation.MinicalCell)
-				return;
-
-			if(!activeNode.isValid()){
-				dispatcher.setActiveNode(activeNode.fallback());
-			}else{
-				dispatcher.focusNode(activeNode);
-			}
-
-			dispatcher.focusNode(dispatcher.getActiveNode());
+			reFocusActiveNode();
 		});
 	});
+
+	var reFocusActiveNode = function(){
+		if(!dispatcher.isEnabled())
+			return;
+
+		var activeNode = dispatcher.getActiveNode();
+		if(!activeNode)
+			return;
+
+		if(!activeNode.isValid()){
+			activeNode = activeNode.fallback();
+		}
+
+		if(activeNode instanceof scheduler.$keyboardNavigation.MinicalButton || activeNode instanceof scheduler.$keyboardNavigation.MinicalCell)
+			return;
+
+		var top, left;
+
+		var scrollable = scheduler.$container.querySelector(".dhx_timeline_scrollable_data");
+		if(!scrollable){
+			scrollable = scheduler.$container.querySelector(".dhx_cal_data");
+		}
+
+		if(scrollable){
+			top = scrollable.scrollTop;
+			left = scrollable.scrollLeft;
+
+		}
+
+		activeNode.focus(true);
+
+		if(scrollable){
+			scrollable.scrollTop = top;
+			scrollable.scrollLeft = left;
+		}
+	};
 
 	scheduler.attachEvent("onSchedulerReady", function(){
 		var container = scheduler.$container;

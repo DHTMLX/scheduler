@@ -1,12 +1,12 @@
 /*
 @license
-dhtmlxScheduler v.5.1.0 Stardard
+dhtmlxScheduler v.5.1.1 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
 */
-window.dhtmlXScheduler = window.scheduler = { version: "5.1.0" };
+window.dhtmlXScheduler = window.scheduler = { version: "5.1.1" };
 
 if (!window.dhtmlx) {
 	dhtmlx = function(obj){
@@ -2149,7 +2149,7 @@ dhtmlxError.catchError("LoadXML", function(a, b, c){
 
 
 		_eventCommonAttr: function(event, div){
-			div.setAttribute("aria-label", stripHTMLLite(scheduler.templates.tooltip_text(event.start_date, event.end_date, event)));
+			div.setAttribute("aria-label", stripHTMLLite(scheduler.templates.event_text(event.start_date, event.end_date, event)));
 
 			if(scheduler.config.readonly){
 				div.setAttribute("aria-readonly", true);
@@ -2450,12 +2450,12 @@ scheduler._init_once = function(){
 					return;
 
 				if (scheduler.callEvent("onSchedulerResize", [])) {
-					scheduler.update_view();
+					scheduler.updateView();
 					scheduler.callEvent("onAfterSchedulerResize", []);
 				}
 			}
 			oldSize = newSize;
-		}, 20);
+		}, 100);
 
 	});
 
@@ -2717,7 +2717,7 @@ scheduler._click={
 	},
 	dhx_cal_next_button:function(dummy,step){
 		scheduler.setCurrentView(scheduler.date.add( //next line changes scheduler._date , but seems it has not side-effects
-			scheduler.date[scheduler._mode+"_start"](scheduler._date),(step||1),scheduler._mode));
+			scheduler.date[scheduler._mode+"_start"](new Date(scheduler._date)),(step||1),scheduler._mode));
 	},
 	dhx_cal_today_button:function(){
 		if (scheduler.callEvent("onBeforeTodayDisplayed", [])) {
@@ -4954,8 +4954,13 @@ scheduler.render_view_data = function(evs, hold) {
 		this.render_data(tvs, hold);
 
 	} else {
-		this._rendered_location = this._els['dhx_cal_data'][0];
+		var buffer = document.createDocumentFragment();
+		var renderedLocation = this._els['dhx_cal_data'][0];
+		this._rendered_location = buffer;
 		this.render_data(evs, hold);
+		renderedLocation.appendChild(buffer);
+		this._rendered_location = renderedLocation;
+
 	}
 
 	if(full){
@@ -5018,7 +5023,7 @@ scheduler.attachEvent("onEventAdded", scheduler._recalculate_timed);
 
 scheduler.render_data = function(evs, hold) {
 	evs = this._pre_render_events(evs, hold);
-
+	var containers = {};
 	for (var i = 0; i < evs.length; i++)
 		if (this._table_view){
 			if(scheduler._mode != 'month'){
@@ -5039,8 +5044,29 @@ scheduler.render_data = function(evs, hold) {
 
 
 
-		}else
-			this.render_event(evs[i]);
+		}else{
+			var ev = evs[i];
+			var parent = scheduler.locate_holder(ev._sday);
+			if (!parent) continue; //attempt to render non-visible event
+
+			if(!containers[ev._sday]){
+				containers[ev._sday] = {
+					real: parent,
+					buffer: document.createDocumentFragment(),
+					width: parent.clientWidth
+				};
+			}
+			
+			var container = containers[ev._sday];
+			this.render_event(ev, container.buffer, container.width);
+		}
+
+		for(var i in containers){
+			var container = containers[i];
+			if(container.real && container.buffer){
+				container.real.appendChild(container.buffer);
+			}
+		}
 };
 
 scheduler._get_first_visible_cell = function(cells) {
@@ -5481,13 +5507,15 @@ scheduler._calc_event_y = function(ev, min_height){
 		height: height
 	};
 };
-scheduler.render_event = function(ev) {
+scheduler.render_event = function(ev, buffer, parentWidth) {
 	var menu = scheduler.xy.menu_width;
 	var menu_offset = (this.config.use_select_menu_space) ? 0 : menu;
 	if (ev._sday < 0) return; //can occur in case of recurring event during time shift
 
 	var parent = scheduler.locate_holder(ev._sday);	
 	if (!parent) return; //attempt to render non-visible event
+
+	buffer = buffer || parent;
 
 	var pos_y = this._calc_event_y(ev, scheduler.xy.min_event_height);
 	var top = pos_y.top,
@@ -5496,7 +5524,9 @@ scheduler.render_event = function(ev) {
 	var ev_count = ev._count || 1;
 	var ev_sorder = ev._sorder || 0;
 
-	var width = Math.floor((parent.clientWidth - menu_offset) / ev_count);
+	parentWidth = parentWidth || parent.clientWidth;
+
+	var width = Math.floor((parentWidth - menu_offset) / ev_count);
 	var left = ev_sorder * width + 1;
 	if (!ev._inner) width = width * (ev_count - ev_sorder);
 	if (this.config.cascade_event_display) {
@@ -5504,13 +5534,13 @@ scheduler.render_event = function(ev) {
 		var margin = this.config.cascade_event_margin;
 		left = ev_sorder % limit * margin;
 		var right = (ev._inner) ? (ev_count - ev_sorder - 1) % limit * margin / 2 : 0;
-		width = Math.floor(parent.clientWidth - menu_offset - left - right);
+		width = Math.floor(parentWidth - menu_offset - left - right);
 	}
 
 	var d = this._render_v_bar(ev, menu_offset + left, top, width, height, ev._text_style, scheduler.templates.event_header(ev.start_date, ev.end_date, ev), scheduler.templates.event_text(ev.start_date, ev.end_date, ev));
 	this._waiAria.eventAttr(ev, d);
 	this._rendered.push(d);
-	parent.appendChild(d);
+	buffer.appendChild(d);
 
 	left = left + parseInt(parent.style.left, 10) + menu_offset;
 

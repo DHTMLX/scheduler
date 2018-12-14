@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.5.1.0 Stardard
+dhtmlxScheduler v.5.1.1 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -302,10 +302,7 @@ scheduler._temp_limit_scope = function(){
 	scheduler.attachEvent("onViewChange", function(){
 		scheduler._mark_now();
 	});
-	scheduler.attachEvent("onSchedulerResize", function(){
-		window.setTimeout(function(){ scheduler._mark_now(); }, 1);
-		return true;
-	});
+
 	scheduler.attachEvent("onAfterSchedulerResize", function(){
 		window.setTimeout(function(){ scheduler._mark_now(); }, 1);
 		return true;

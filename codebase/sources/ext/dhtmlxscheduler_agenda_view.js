@@ -1,6 +1,6 @@
 /*
 @license
-dhtmlxScheduler v.5.1.0 Stardard
+dhtmlxScheduler v.5.1.1 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
@@ -34,14 +34,6 @@ scheduler.attachEvent("onTemplatesReady",function() {
 				return old_dblclick_dhx_cal_data.apply(this, arguments);
 		}
 	};
-	scheduler.attachEvent("onSchedulerResize",function(){
-	if (this._mode == "agenda"){
-		this.agenda_view(true);
-		return false;
-	}
-		return true;
-	});
-	
 	
 	var old = scheduler.render_data;
 	scheduler.render_data=function(evs){
