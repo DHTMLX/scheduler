@@ -1,4 +1,4 @@
-dhtmlxScheduler v.5.1.1
+dhtmlxScheduler v.5.1.6
 =====================
 
 [![Join the chat at https://gitter.im/dhtmlx/dhtmlx](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dhtmlx/dhtmlx) 

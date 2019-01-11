@@ -1,12 +1,12 @@
 /*
 @license
-dhtmlxScheduler v.5.1.1 Stardard
+dhtmlxScheduler v.5.1.6 Stardard
 
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
 */
-window.dhtmlXScheduler = window.scheduler = { version: "5.1.1" };
+window.dhtmlXScheduler = window.scheduler = { version: "5.1.6" };
 
 if (!window.dhtmlx) {
 	dhtmlx = function(obj){
@@ -5351,6 +5351,25 @@ scheduler._time_order = function(evs) {
 		return a.start_date > b.start_date ? 1 : -1;
 	});
 };
+
+scheduler._is_any_multiday_cell_visible = function(from, to, event){
+	var cols = this._cols.length;
+	var isAnyCellVisible = false;
+	var checkDate = from;
+	var noCells = true;
+	while(checkDate < to){
+		noCells = false;
+		var cellIndex = this.locate_holder_day(checkDate, false, event);
+		var weekCellIndex = cellIndex % cols;
+		if(!this._ignores[weekCellIndex]){
+			isAnyCellVisible = true;
+			break;
+		}
+		checkDate = scheduler.date.add(checkDate, 1, "day");
+	}
+	return noCells || isAnyCellVisible;
+};
+
 scheduler._pre_render_events_table = function(evs, hold) { // max - max height of week slot
 	this._time_order(evs);
 	var out = [];
@@ -5402,6 +5421,12 @@ scheduler._pre_render_events_table = function(evs, hold) { // max - max height o
 
 		//3600000 - compensate 1 hour during winter|summer time shift
 		ev._sweek = Math.floor((this._correct_shift(sd.valueOf(), 1) - this._min_date.valueOf()) / (60 * 60 * 1000 * 24 * cols));
+
+		var isAnyCellVisible = scheduler._is_any_multiday_cell_visible(sd, ed, ev);
+		
+		if(!isAnyCellVisible){
+			continue;
+		}
 
 		//current slot
 		var stack = weeks[ev._sweek];
@@ -5665,7 +5690,7 @@ scheduler._render_v_bar = function (ev, x, y, w, h, style, contentA, contentB, b
 		inner_html += '<div class="dhx_body" style=" width:' + bodyWidth + 'px; height:' + bodyHeight + 'px;' + bg_color + '' + color + '">' + contentB + '</div>'; // +2 css specific, moved from render_event
 
 		var footer_class = "dhx_event_resize dhx_footer";
-		if (bottom)
+		if (bottom || ev._drag_resize === false)
 			footer_class = "dhx_resize_denied " + footer_class;
 
 		inner_html += '<div class="' + footer_class + '" style=" width:' + footerWidth + 'px;' + (bottom ? ' margin-top:-1px;' : '') + '' + bg_color + '' + color + '" ></div>';

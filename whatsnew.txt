@@ -1,3 +1,12 @@
+5.1.6
+	Fix incorrect position of events scheduled on Sat-Sun with start_on_monday = false in Month view
+	Fix script error in scrollable timeline with the current time marker
+	Fix incorrect argument value of onYScaleClick handler in the scrollable timeline after horizontal scroll
+	Fix bug that caused the scrollable timeline to be rendered empty until next refresh after reloading sections
+	Fix bug with the scrollable timeline which caused some cells of Tree timeline folders not being rendered after horizontal scroll
+	Fix unexpected behavior of event resize with 'all_timed' extension, only the last event chunk should be resizeable
+	Fix event disappearing during resize in all_timed="short" mode
+
 5.1.1
 	Fix keyboard navigation focus not being highlighted in the timeline
 	Fix incorrect initial height of timeline_scale_header if second_scale specified
