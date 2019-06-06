@@ -15,13 +15,13 @@ Getting started
 ----------
 
 Add files:
-~~~
+~~~html
 <script src="dhtmlxscheduler.js" ></script>
 <link rel="stylesheet" href="dhtmlxscheduler_material.css" type="text/css" charset="utf-8">
 ~~~
 
 Add markup:
-~~~
+~~~html
 <div id="scheduler_here" class="dhx_cal_container" style='width:100%; height:100vh;'>
 	<div class="dhx_cal_navline">
 		<div class="dhx_cal_prev_button">&nbsp;</div>
@@ -38,7 +38,7 @@ Add markup:
 ~~~
 
 And initialize:
-~~~
+~~~js
 scheduler.config.first_hour = 6;
 scheduler.config.last_hour = 19;
 scheduler.init('scheduler_here', new Date(2019, 3, 20), "week");
