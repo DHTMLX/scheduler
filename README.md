@@ -14,13 +14,13 @@ Very lightweight, highly customizable, and fast, dhtmlxScheduler provides a quic
 Getting started
 ----------
 
-add files:
+Add files:
 ~~~
 <script src="dhtmlxscheduler.js" ></script>
 <link rel="stylesheet" href="dhtmlxscheduler_material.css" type="text/css" charset="utf-8">
 ~~~
 
-add markup:
+Add markup:
 ~~~
 <div id="scheduler_here" class="dhx_cal_container" style='width:100%; height:100vh;'>
 	<div class="dhx_cal_navline">
