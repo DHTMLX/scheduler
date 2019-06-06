@@ -1,17 +1,20 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
+Scheduler.plugin(function(scheduler){
+
 (function(){
 
 var temp_section;
 var before;
 
-scheduler.config.collision_limit = 1;	
+scheduler.config.collision_limit = 1;
 
 function _setTempSection(event_id) { // for custom views (matrix, timeline, units)
 	var checked_mode = scheduler._get_section_view();
@@ -21,7 +24,7 @@ function _setTempSection(event_id) { // for custom views (matrix, timeline, unit
 }
 
 scheduler.attachEvent("onBeforeDrag",function(id){
-	_setTempSection(id); 
+	_setTempSection(id);
 	return true;
 });
 scheduler.attachEvent("onBeforeLightbox",function(id){
@@ -81,7 +84,7 @@ scheduler.checkCollision = function(ev) {
 		var evs_dates = scheduler.getRecDates(ev);
 		for(var k=0; k<evs_dates.length; k++) {
 			var tevs = scheduler.getEvents(evs_dates[k].start_date, evs_dates[k].end_date);
-			for(var j=0; j<tevs.length; j++) { 
+			for(var j=0; j<tevs.length; j++) {
 				if ((tevs[j].event_pid || tevs[j].id) != ev.id )
 					evs.push(tevs[j]);
 			}
@@ -97,11 +100,10 @@ scheduler.checkCollision = function(ev) {
 			}
 		}
 	}
-	
 
 	var checked_mode = scheduler._get_section_view();
 	var map_to = scheduler._get_section_property();
-	
+
 	var single = true;
 	if (checked_mode) { // custom view
 		var count = 0;
@@ -128,7 +130,10 @@ scheduler.checkCollision = function(ev) {
 		return res;
 	}
 	return single;
-	
+
 };
 
 })();
+
+
+});

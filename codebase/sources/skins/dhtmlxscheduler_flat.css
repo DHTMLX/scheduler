@@ -1,10 +1,11 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
 /* key nav */
 .dhtmlx_message_area {
@@ -21,10 +22,10 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
   overflow: hidden;
   margin: 5px;
   margin-bottom: 10px;
-  -webkit-transition: all .5s ease;
-  -moz-transition: all .5s ease;
-  -o-transition: all .5s ease;
-  transition: all .5s ease;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
 }
 .dhtmlx-info.hidden {
   height: 0px;
@@ -40,9 +41,9 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
   min-width: 300px;
   width: 330px;
   text-align: center;
-  background: #ffffff;
+  background: #fff;
   background: -webkit-linear-gradient(top, #ffffff 1%, #ffffff 99%);
-  box-shadow: 0px 0px 14px #888888;
+  box-shadow: 0px 0px 14px #888;
   border: none;
   z-index: 18;
   border-radius: 0px;
@@ -51,7 +52,7 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 .dhtmlx_popup_text {
   margin: 15px 15px 5px 15px;
   font-size: 16px;
-  color: #000000;
+  color: #000;
   min-height: 30px;
   border-radius: 6px;
 }
@@ -85,25 +86,25 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
   display: inline-block;
   margin: 0 5px;
   border-radius: 0px;
-  color: #444444;
-  border: 1px solid #888888;
+  color: #444;
+  border: 1px solid #888;
   box-shadow: none;
 }
 .dhtmlx_popup_button {
   min-width: 120px;
-  background: #ffffff;
+  background: #fff;
 }
 .dhtmlx_button input,
 .dhtmlx_popup_button div {
   border: none;
-  background: #ffffff;
+  background: #fff;
   background-image: none;
   border-radius: 0px;
   font-size: 15px;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   text-shadow: none;
-  color: #444444;
+  color: #444;
   font-weight: 400;
   padding: 0px;
   margin: 0px;
@@ -112,30 +113,30 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
   line-height: 28px;
 }
 .dhtmlx_popup_button.dhtmlx_ok_button div {
-  background: #5b9be0;
-  border: 1px solid #5b9be0;
+  background: #5B9BE0;
+  border: 1px solid #5B9BE0;
   color: #ffffff;
   text-shadow: none;
   outline: none;
 }
 .dhtmlx_popup_button.dhtmlx_ok_button {
-  border: 1px solid #5b9be0;
-  background-color: #5b9be0;
+  border: 1px solid #5B9BE0;
+  background-color: #5B9BE0;
   outline: none;
 }
 .dhtmlx_button input:focus,
 .dhtmlx_button input:active,
 .dhtmlx_popup_button div:active,
 .dhtmlx_popup_button div:focus {
-  background: #5b9be0;
+  background: #5B9BE0;
   background-image: none;
   color: #ffffff;
   box-shadow: none;
   outline: none;
 }
 .dhtmlx_popup_button.dhtmlx_cancel_button div:active {
-  background-color: #fe7510;
-  border-color: #fe7510;
+  background-color: #FE7510;
+  border-color: #FE7510;
   outline: none;
 }
 div.dhx_modal_cover {
@@ -175,16 +176,16 @@ div.dhx_modal_cover {
 .dhtmlx-info,
 .dhtmlx-error {
   font-size: 14px;
-  color: #000000;
-  box-shadow: 0px 0px 10px #888888;
+  color: #000;
+  box-shadow: 0px 0px 10px #888;
   padding: 0px;
-  background-color: #ffffff;
+  background-color: #FFF;
   border-radius: 3px;
   border: 1px solid #ffffff;
 }
 .dhtmlx-info div {
   padding: 5px 10px 5px 10px;
-  background-color: #ffffff;
+  background-color: #FFF;
   border-radius: 3px;
   border: 1px solid #b8b8b8;
 }
@@ -207,9 +208,9 @@ div.dhx_modal_cover {
 .dhx_cal_event .dhx_title,
 .dhx_cal_event .dhx_body,
 .dhx_cal_event .dhx_footer {
-  background-color: #5b9be0;
+  background-color: #5B9BE0;
   border: 1px solid transparent;
-  color: #ffffff;
+  color: #FFFFFF;
   overflow: hidden;
   width: 100%;
 }
@@ -246,9 +247,9 @@ div.dhx_modal_cover {
   line-height: normal;
 }
 .dhx_cal_event.dhx_cal_select_menu {
-  -webkit-box-shadow: 0 0 1px #ffffff;
-  -moz-box-shadow: 0 0 1px #ffffff;
-  box-shadow: 0 0 1px #ffffff;
+  -webkit-box-shadow: 0 0 1px #FFF;
+  -moz-box-shadow: 0 0 1px #FFF;
+  box-shadow: 0 0 1px #FFF;
 }
 .dhx_resize_denied,
 .dhx_resize_denied .dhx_event_resize {
@@ -271,7 +272,7 @@ div.dhx_modal_cover {
   height: 0;
 }
 .dhx_cal_event_line {
-  background-color: #5b9be0;
+  background-color: #5B9BE0;
   border: 1px solid transparent;
   border-radius: 1px;
   font-family: "Segoe UI", Arial, san-serif;
@@ -280,7 +281,7 @@ div.dhx_modal_cover {
   line-height: 16px;
   height: 17px;
   padding: 0 0 0 10px;
-  color: #ffffff;
+  color: #FFFFFF;
   cursor: pointer;
   overflow: hidden;
 }
@@ -295,7 +296,7 @@ div.dhx_modal_cover {
 .dhx_cal_event_clear {
   height: 13px;
   padding: 0 0 0 2px;
-  color: #0e64a0;
+  color: #0E64A0;
   font-family: "Tahoma", san-serif;
   font-size: 8pt;
   line-height: normal;
@@ -368,7 +369,7 @@ div.icon_delete {
   font-family: "Tahoma", san-serif;
 }
 .dhx_month_link a {
-  color: #0000ff;
+  color: #00f;
 }
 .dhx_month_link a:hover {
   text-decoration: underline;
@@ -404,13 +405,13 @@ div.icon_delete {
 }
 .dhx_cal_light {
   -webkit-tap-highlight-color: transparent;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   border-radius: 0px;
   border: none;
-  color: #2e2e2e;
+  color: #2E2E2E;
   font-family: "Segoe UI", Arial, san-serif;
   font-size: 8pt;
-  box-shadow: 5px 5px 5px #888888;
+  box-shadow: 5px 5px 5px #888;
   position: absolute;
   z-index: 15;
   width: 580px;
@@ -419,7 +420,7 @@ div.icon_delete {
   padding: 2px 0px 2px 5px;
   height: 30px;
   line-height: 30px;
-  border-bottom: 1px solid #cecece;
+  border-bottom: 1px solid #CECECE;
   background: transparent;
   margin: 0;
   border-radius: 0;
@@ -445,7 +446,7 @@ div.icon_delete {
 .dhx_mark {
   position: relative;
   top: 3px;
-  background-image: url('imgs/controls.gif');
+  background-image: url('./imgs/controls.gif');
   background-position: 0px -43px;
   padding-left: 10px;
 }
@@ -455,7 +456,7 @@ div.icon_delete {
 .dhx_cal_light select {
   font-family: "Tahoma", san-serif;
   font-size: 8pt;
-  color: #2e2e2e;
+  color: #2E2E2E;
   padding: 2px;
   margin: 0px;
 }
@@ -469,7 +470,7 @@ div.icon_delete {
 }
 .dhx_cal_larea {
   border: 1px solid transparent;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   overflow: hidden;
 }
 .dhx_cal_light_wide .dhx_cal_larea {
@@ -478,9 +479,9 @@ div.icon_delete {
 }
 .dhx_cal_light_wide .dhx_wrap_section {
   border-top: 0;
-  border-bottom: 1px solid #cecece;
+  border-bottom: 1px solid #CECECE;
   position: relative;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   overflow: hidden;
   padding: 5px 0;
   margin: 0;
@@ -509,7 +510,7 @@ div.icon_delete {
 .dhx_cal_lsection .dhx_fullday {
   float: right;
   margin-right: 5px;
-  color: #444444;
+  color: #444;
   font-family: "Segoe UI", Arial, san-serif;
   font-size: 12px;
   font-weight: normal;
@@ -533,14 +534,14 @@ div.icon_delete {
   height: 15px;
 }
 .dhx_cal_ltext textarea {
-  background-color: #f9f9f9;
+  background-color: #F9F9F9;
   overflow: auto;
-  color: #2e2e2e;
+  color: #2E2E2E;
   height: 100%;
   width: 100%;
   outline: none !important !important;
   resize: none;
-  border: 1px solid #cecece;
+  border: 1px solid #CECECE;
   line-height: 20px;
   font-family: "Segoe UI", Arial, san-serif;
   box-sizing: border-box;
@@ -568,7 +569,7 @@ div.icon_delete {
   font-weight: 400;
   border-radius: 0;
   text-transform: none;
-  color: #444444;
+  color: #444;
 }
 .dhx_right_btn_set {
   margin-right: 20px;
@@ -583,29 +584,29 @@ div.icon_delete {
 }
 .dhx_btn_set,
 .dhx_cancel_btn_set {
-  border: 1px solid #888888;
-  background-color: #ffffff;
-  color: #444444;
+  border: 1px solid #888;
+  background-color: #fff;
+  color: #444;
   float: right;
   float: left;
 }
 .dhx_save_btn {
-  background-image: url('imgs/controls.gif');
+  background-image: url('./imgs/controls.gif');
   background-position: -84px 0px;
   width: 21px;
 }
 .dhx_cancel_btn {
-  background-image: url('imgs/controls.gif');
+  background-image: url('./imgs/controls.gif');
   background-position: -63px 0px;
   width: 20px;
 }
 .dhx_delete_btn {
-  background-image: url('imgs/controls.gif');
+  background-image: url('./imgs/controls.gif');
   background-position: -42px 0px;
   width: 20px;
 }
 .dhx_delete_btn_set {
-  border: 1px solid #888888;
+  border: 1px solid #888;
   background-color: #ffffff;
   color: #444444;
   text-shadow: none;
@@ -613,9 +614,9 @@ div.icon_delete {
 }
 .dhx_save_btn_set {
   border: none;
-  color: #ffffff;
+  color: #FFFFFF;
   text-shadow: none;
-  background-color: #5b9be0;
+  background-color: #5B9BE0;
 }
 .dhx_cal_cover {
   width: 100%;
@@ -629,11 +630,11 @@ div.icon_delete {
 }
 .dhx_custom_button {
   padding: 0px 3px 0px 3px;
-  color: #444444;
+  color: #444;
   font-family: "Segoe UI", Arial, san-serif;
   font-size: 8pt;
   background-color: white;
-  border: 1px solid #cecece;
+  border: 1px solid #CECECE;
   font-weight: normal;
   margin-right: 5px;
   margin-top: 0px;
@@ -710,7 +711,7 @@ div.icon_delete {
   position: absolute;
   top: 0px;
   right: 0px;
-  background-image: url(imgs/collapse_expand_icon.gif);
+  background-image: url(./imgs/collapse_expand_icon.gif);
   width: 18px;
   height: 18px;
   cursor: pointer;
@@ -718,12 +719,12 @@ div.icon_delete {
   z-index: 4;
 }
 .dhx_scheduler_agenda .dhx_cal_data {
-  background-image: url(imgs/databg.png);
+  background-image: url(./imgs/databg.png);
 }
 .dhx_agenda_area {
   width: 100%;
   overflow-y: auto;
-  background-image: url(imgs/databg.png);
+  background-image: url(./imgs/databg.png);
 }
 .dhx_agenda_line {
   height: 21px;
@@ -742,7 +743,7 @@ div.icon_delete {
 .dhx_cal_header div.dhx_agenda_line div,
 .dhx_cal_header div.dhx_agenda_line span {
   font-weight: normal;
-  color: #444444;
+  color: #444;
 }
 .dhx_agenda_area .dhx_agenda_line div {
   border-right: 0px dotted #000;
@@ -758,7 +759,7 @@ div.icon_delete {
 .dhx_agenda_line .dhx_event_icon {
   width: 20px;
   border-width: 0px;
-  background: url(imgs/icon.png) no-repeat;
+  background: url(./imgs/icon.png) no-repeat;
   background-position: 5px 4px;
   cursor: pointer;
 }
@@ -767,18 +768,18 @@ div.icon_delete {
   line-height: 21px;
 }
 .dhx_year_body {
-  border-left: 1px solid #cecece;
+  border-left: 1px solid #CECECE;
 }
 .dhx_year_week {
   position: relative;
 }
 .dhx_scale_bar_last {
-  border-right: 1px solid #cecece;
+  border-right: 1px solid #CECECE;
 }
 .dhx_year_month {
   height: 18px;
   padding-top: 3px;
-  border: 1px solid #cecece;
+  border: 1px solid #CECECE;
   text-align: center;
   vertical-align: middle;
 }
@@ -786,14 +787,14 @@ div.icon_delete {
 .dhx_year_body .dhx_after .dhx_month_head,
 .dhx_year_body .dhx_before .dhx_month_head a,
 .dhx_year_body .dhx_after .dhx_month_head a {
-  color: #e2e3e6;
+  color: #E2E3E6;
 }
 .dhx_year_body .dhx_month_body {
   height: 0px;
   overflow: hidden;
 }
 .dhx_month_head.dhx_year_event {
-  background-color: #ffe763;
+  background-color: #FFE763;
   color: '';
 }
 .dhx_year_body .dhx_before .dhx_month_head,
@@ -802,7 +803,7 @@ div.icon_delete {
 }
 .dhx_year_tooltip {
   border: 1px solid #BBBBBB;
-  background-image: url(imgs/databg.png);
+  background-image: url(./imgs/databg.png);
   position: absolute;
   z-index: 12;
   width: 300px;
@@ -823,7 +824,7 @@ div.icon_delete {
   float: left;
   border-width: 0px;
   position: relative;
-  background: url(imgs/icon.png) no-repeat;
+  background: url(./imgs/icon.png) no-repeat;
   background-position: 5px 4px;
   cursor: pointer;
 }
@@ -834,7 +835,7 @@ div.icon_delete {
   text-align: center;
 }
 .dhx_text_disabled {
-  color: #2e2e2e;
+  color: #2E2E2E;
   font-family: "Tahoma", san-serif;
   font-size: 8pt;
 }
@@ -850,7 +851,7 @@ div.icon_delete {
   cursor: pointer;
 }
 .dhx_mini_calendar .dhx_calendar_click {
-  background-color: #c2d5fc;
+  background-color: #C2D5FC;
 }
 .dhx_cal_navline div.dhx_minical_icon {
   width: 18px;
@@ -858,7 +859,7 @@ div.icon_delete {
   left: 190px;
   top: 1px;
   cursor: pointer;
-  background: url(imgs_flat/calendar.gif) no-repeat;
+  background: url(./imgs_flat/calendar.gif) no-repeat;
 }
 .dhx_matrix_scell,
 .dhx_timeline_scale_header {
@@ -873,11 +874,11 @@ div.icon_delete {
   overflow: hidden;
   text-align: center;
   vertical-align: middle;
-  border-bottom: 1px solid #cecece;
-  border-right: 1px solid #cecece;
+  border-bottom: 1px solid #CECECE;
+  border-right: 1px solid #CECECE;
 }
 .dhx_timeline_scale_header {
-  border-right: 1px solid #cecece;
+  border-right: 1px solid #CECECE;
 }
 .dhx_cal_data .dhx_timeline_table_wrapper div {
   box-sizing: border-box;
@@ -975,12 +976,12 @@ div.icon_delete {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  background-image: url(imgs/databg.png);
+  background-image: url(./imgs/databg.png);
 }
 .dhx_map_line .dhx_event_icon {
   width: 20px;
   border-width: 0px;
-  background: url(imgs/icon.png) no-repeat;
+  background: url(./imgs/icon.png) no-repeat;
   background-position: 5px 4px;
   cursor: pointer;
 }
@@ -1087,21 +1088,21 @@ div.icon_delete {
   float: left;
 }
 .dhx_wa_column_last .dhx_wa_day_cont {
-  border-left: 1px solid #cecece;
+  border-left: 1px solid #CECECE;
 }
 .dhx_wa_scale_bar {
   font-family: "Tahoma", san-serif;
   padding-left: 10px;
   font-size: 11px;
-  border-top: 1px solid #cecece;
-  border-bottom: 1px solid #cecece;
+  border-top: 1px solid #CECECE;
+  border-bottom: 1px solid #CECECE;
 }
 .dhx_wa_day_data {
   background-color: #FCFEFC;
   overflow-y: auto;
 }
 .dhx_wa_ev_body {
-  border-bottom: 1px solid #cecece;
+  border-bottom: 1px solid #CECECE;
   font-size: 12px;
   padding: 5px 0 5px 7px;
 }
@@ -1120,13 +1121,13 @@ div.icon_delete {
 /* Agenda week end */
 /* timeline second scale start */
 .dhx_second_scale_bar {
-  border-bottom: 1px solid #cecece;
+  border-bottom: 1px solid #CECECE;
   padding-top: 2px;
 }
 /* timeline second scale end */
 /* grid view */
 .dhx_cal_header div.dhx_grid_line div {
-  border-left: 1px solid #cecece;
+  border-left: 1px solid #CECECE;
 }
 .dhx_grid_area {
   width: 100%;
@@ -1208,7 +1209,7 @@ div.icon_delete {
   border: none !important;
   top: 5px;
   background-repeat: no-repeat;
-  background-image: url(imgs/images.png);
+  background-image: url(./imgs/images.png);
 }
 /* end grid */
 /* marked timespans */
@@ -1239,14 +1240,14 @@ div.icon_delete {
 /* now time */
 .dhx_now_time {
   width: 100%;
-  border-bottom: 2px solid #ff0000;
+  border-bottom: 2px solid red;
 }
 .dhx_scheduler_month .dhx_now_time {
   border-bottom: 0;
-  border-left: 2px solid #ff0000;
+  border-left: 2px solid red;
 }
 .dhx_matrix_now_time {
-  border-left: 2px solid #ff0000;
+  border-left: 2px solid red;
 }
 .dhx_now_time,
 .dhx_matrix_now_time {
@@ -1280,7 +1281,7 @@ div.icon_delete {
 }
 .dhx_cal_qi_title {
   padding: 5px 0px 10px 5px;
-  color: #000000;
+  color: #000;
   letter-spacing: 1px;
 }
 .dhx_cal_qi_tdate {
@@ -1298,7 +1299,7 @@ div.icon_delete {
   background-color: 0 0;
   padding: 10px 8px;
   font-size: 14px;
-  color: #444444;
+  color: #444;
   width: 275px;
   overflow: hidden;
 }
@@ -1311,7 +1312,7 @@ div.icon_delete {
   border-right: none;
   border-radius: 0px;
   line-height: 20px;
-  color: #ffffff;
+  color: #FFFFFF;
   vertical-align: middle;
   cursor: pointer;
   float: left;
@@ -1329,15 +1330,15 @@ div.icon_delete {
   width: 100%;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
   opacity: 0.5;
-  background-color: #ffe763;
+  background-color: #FFE763;
   position: absolute;
   box-sizing: border-box !important;
-  border-top: 1px solid #b6b6b6;
-  border-bottom: 1px solid #b6b6b6;
+  border-top: 1px solid #B6B6B6;
+  border-bottom: 1px solid #B6B6B6;
 }
 /* key nav */
 .dhx_focus_slot {
-  background: #ffe763;
+  background: #FFE763;
   position: absolute;
   pointer-events: none;
   opacity: 0.3;
@@ -1346,6 +1347,22 @@ div.icon_delete {
   outline-style: solid;
   /*not visible focus outline in ie11*/
   outline-style: auto;
+}
+/* key nav end*/
+.dhx_no_select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.dhx_drag_placeholder {
+  z-index: 10;
+  opacity: 0.8;
+}
+.dhx_drag_placeholder .dhx_cal_select_menu {
+  display: none;
 }
 /* key nav end*/
 /* timeline scroll */
@@ -1466,7 +1483,7 @@ div.icon_delete {
   position: absolute;
   z-index: 3;
   width: 750px;
-  color: #2f3a48;
+  color: #2F3A48;
 }
 .dhx_cal_navline div {
   position: absolute;
@@ -1509,7 +1526,7 @@ div.icon_delete {
   text-align: center;
   font-size: 13px;
   font-weight: bolder;
-  color: #5780ad;
+  color: #5780AD;
   right: 123px;
   background-color: none;
   background-image: none;
@@ -1546,7 +1563,7 @@ div.icon_delete {
   border-radius: 0;
   cursor: pointer;
   border: none;
-  color: #5780ad;
+  color: #5780AD;
   font-size: 13px;
 }
 .dhx_cal_tab:hover {
@@ -1557,10 +1574,10 @@ div.icon_delete {
   cursor: default;
   font-weight: 300;
   font-size: 13px;
-  color: #ffffff;
+  color: #FFF;
   border: none;
   border-bottom: 0;
-  background-color: #5780ad;
+  background-color: #5780AD;
   z-index: 25;
 }
 .dhx_cal_tab_first {
@@ -1581,14 +1598,14 @@ div.icon_delete {
   position: absolute;
   overflow: hidden;
   left: 50px;
-  background: #ffffff;
-  border-top: 1px solid #cecece;
-  border-right: 1px solid #cecece;
+  background: #FFFFFF;
+  border-top: 1px solid #CECECE;
+  border-right: 1px solid #CECECE;
   z-index: 2;
 }
 .dhx_cal_data {
   -webkit-tap-highlight-color: transparent;
-  border-top: 1px solid #cecece;
+  border-top: 1px solid #CECECE;
   position: absolute;
   width: 600px;
   overflow-y: auto;
@@ -1605,9 +1622,9 @@ div.icon_delete {
 .dhx_scale_bar {
   position: absolute;
   text-align: center;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   padding: 2px 0 0 0;
-  border-left: 1px solid #cecece;
+  border-left: 1px solid #CECECE;
   font-size: 12px;
   font-weight: inherit;
   line-height: 30px;
@@ -1615,7 +1632,7 @@ div.icon_delete {
 }
 .dhx_scale_holder {
   position: absolute;
-  border-right: 1px solid #cecece;
+  border-right: 1px solid #CECECE;
   background-image: url(imgs_dhx_terrace/databg.png);
   -ms-interpolation-mode: nearest-neighbor;
   image-rendering: -moz-crisp-edges;
@@ -1624,7 +1641,7 @@ div.icon_delete {
 }
 .dhx_scale_holder_now {
   position: absolute;
-  border-right: 1px solid #cecece;
+  border-right: 1px solid #CECECE;
   -ms-interpolation-mode: nearest-neighbor;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
@@ -1632,12 +1649,12 @@ div.icon_delete {
 }
 .dhx_scale_holder_now {
   position: absolute;
-  border-right: 1px solid #cecece;
+  border-right: 1px solid #CECECE;
   background-image: url(imgs_dhx_terrace/databg_now.png);
 }
 .dhx_scale_hour {
-  border-bottom: 1px solid #cecece;
-  background-color: #ffffff;
+  border-bottom: 1px solid #CECECE;
+  background-color: #FFFFFF;
   text-align: center;
   line-height: 44px;
   color: #767676;
@@ -1651,37 +1668,37 @@ div.icon_delete {
   font-size: 12px;
   font-weight: inherit;
   line-height: 21px;
-  color: #5780ad;
-  border-right: 1px solid #cecece;
-  background-color: #ffffff;
+  color: #5780AD;
+  border-right: 1px solid #CECECE;
+  background-color: #FFFFFF;
   text-align: right;
 }
 .dhx_after .dhx_month_head,
 .dhx_before .dhx_month_head {
-  background-color: #f7f7f7;
+  background-color: #F7F7F7;
   color: #bbbbbb;
 }
 .dhx_now .dhx_month_head {
-  background-color: #fff3a1;
+  background-color: #FFF3A1;
   font-weight: normal;
 }
 .dhx_scale_hour_border {
   border-left: 1px dotted #8894A3;
 }
 .dhx_month_body {
-  border-right: 1px solid #cecece;
-  border-bottom: 1px solid #cecece;
-  background-color: #ffffff;
+  border-right: 1px solid #CECECE;
+  border-bottom: 1px solid #CECECE;
+  background-color: #FFFFFF;
 }
 .dhx_after .dhx_month_body,
 .dhx_before .dhx_month_body {
-  background-color: #f7f7f7;
+  background-color: #F7F7F7;
 }
 .dhx_now .dhx_month_body {
-  background-color: #fff3a1;
+  background-color: #FFF3A1;
 }
 .dhx_now .dhx_month_head {
-  background-color: #fff3a1;
+  background-color: #FFF3A1;
 }
 .dhx_scale_ignore {
   display: none;
@@ -1703,22 +1720,22 @@ div.icon_delete {
 }
 .dhx_multi_day_icon,
 .dhx_multi_day {
-  background-color: #ffffff;
-  border-right: 1px solid #cecece;
+  background-color: #FFFFFF;
+  border-right: 1px solid #CECECE;
 }
 .dhx_multi_day {
   position: absolute;
-  border-top: 1px solid #cecece;
-  background-color: #ffffff;
+  border-top: 1px solid #CECECE;
+  background-color: #FFFFFF;
   border-right: none;
   box-shadow: none;
 }
 .dhx_multi_day_icon,
 .dhx_multi_day_icon_small {
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   background-position: center center;
-  border-bottom: 1px solid #cecece;
-  border-right: 1px solid #cecece;
+  border-bottom: 1px solid #CECECE;
+  border-right: 1px solid #CECECE;
   background-repeat: no-repeat;
 }
 .dhx_multi_day_icon {
@@ -1851,7 +1868,7 @@ input.dhx_repeat_checkbox {
   border-radius: 4px;
 }
 .dhx_custom_button_recurring {
-  background-image: url(imgs_flat/but_repeat.gif);
+  background-image: url(./imgs_flat/but_repeat.gif);
   background-position: -5px 20px;
   width: 20px;
   margin-right: 10px;
@@ -1880,7 +1897,7 @@ input.dhx_repeat_checkbox {
   box-shadow: 0 0 1px #FFF;
 }
 .dhx_cal_event_line:hover .dhx_event_resize {
-  background: url(imgs_flat/resize_dots.png) repeat-y;
+  background: url(./imgs_flat/resize_dots.png) repeat-y;
 }
 .dhx_cal_event.dhx_cal_editor {
   box-shadow: none;
@@ -1913,7 +1930,7 @@ input.dhx_repeat_checkbox {
 .dhx_month_head > a,
 .dhx_scale_bar > a {
   text-decoration: none;
-  color: #5780ad;
+  color: #5780AD;
 }
 .dhx_month_head > a:hover,
 .dhx_scale_bar > a:hover {
@@ -1970,14 +1987,14 @@ input.dhx_repeat_checkbox {
 }
 .dhx_btn_set.dhx_cancel_btn_set {
   border: none;
-  background-color: #fe7510;
+  background-color: #FE7510;
   color: #ffffff;
 }
 .dhtmlx_popup_button.dhtmlx_cancel_button,
 .dhtmlx_popup_button.dhtmlx_cancel_button div {
-  background-color: #fe7510;
-  border-color: #fe7510;
-  color: #ffffff;
+  background-color: #FE7510;
+  border-color: #FE7510;
+  color: #fff;
 }
 /* minicalendar */
 .dhx_mini_calendar {

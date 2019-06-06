@@ -1,12 +1,13 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
-scheduler.locale = {
+Scheduler.plugin(function(scheduler){scheduler.locale = {
 	date: {
 		month_full: ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"],
 		month_short: ["ינו", "פבר", "מרץ", "אפר", "מאי", "יונ", "יול", "אוג", "ספט", "אוק", "נוב", "דצמ"],
@@ -71,3 +72,4 @@ scheduler.locale = {
 };
 
 
+});

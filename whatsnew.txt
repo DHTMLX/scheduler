@@ -1,11 +1,28 @@
+5.2.0
+	Custom HTML content for timeline cells (PRO version)
+	Drag-n-drop of events by the body
+	The data format parameter of load and parse became optional, scheduler now detects format automatically
+	Date-to-string functions can now auto-detect the date strings format, if it doesn't match the provided one
+	dhtmlxConnector library is no longer shipped with the dhtmlxScheduler package
+	dhtmlxScheduler package samples no longer require a php/apache server to work
+	New methods for the timeline object
+	The Multiselect control allows loading options in the JSON format
+	onLoadStart, onBeforeParse, onParse, onLoadEnd are introduced instead of the deprecated - onXLS and onXLE events
+	Fix incorrect behavior which happened when clearAll was called before scheduler.endLightbox(false) while creating a new event
+	Fix flickering issue with timeline horizontal scroll on iPad
+	Fix various display issues with scrollable timeline
+	The Units view {unitsName}_scale_text now provides a section date in arguments
+	Fix script error which was thrown from the Units view during an event creation if no sections are loaded
+	The Multiselect control now expects only boolean values for vertical property vertical:false - string values as in vertical:"false" will be interpreted as boolean true
+
 5.1.6
 	Fix incorrect position of events scheduled on Sat-Sun with start_on_monday = false in Month view
-	Fix script error in scrollable timeline with the current time marker
-	Fix incorrect argument value of onYScaleClick handler in the scrollable timeline after horizontal scroll
-	Fix bug that caused the scrollable timeline to be rendered empty until next refresh after reloading sections
-	Fix bug with the scrollable timeline which caused some cells of Tree timeline folders not being rendered after horizontal scroll
-	Fix unexpected behavior of event resize with 'all_timed' extension, only the last event chunk should be resizeable
-	Fix event disappearing during resize in all_timed="short" mode
+	Fix script error in a scrollable timeline with the current time marker
+	Fix incorrect argument value of the `onYScaleClick` handler in a scrollable timeline after horizontal scrolling
+	Fix the bug that caused a scrollable timeline to be rendered empty until the next refresh after reloading sections
+	Fix the bug with a scrollable timeline which caused some cells of Tree timeline folders not being rendered after horizontal scrolling
+	Fix unexpected behavior of event resize with the 'all_timed' extension, only the last event chunk should be resizeable
+	Fix event disappearing during resize in the all_timed="short" mode
 
 5.1.1
 	Fix keyboard navigation focus not being highlighted in the timeline
@@ -17,7 +34,7 @@
 	Fix ability to enable smart rendering for non-scrollable timelines
 	Fix issue with scroll position resetting on date change when key_nav extension is enabled in the timeline
 	Fix incorrect value 'olddate' argument of onBeforeViewChange event in some cases
-	Fix incorrect display of scrollable timeline with ignored time cells
+	Fix incorrect display of a scrollable timeline with ignored time cells
 	Fix incorrect behavior if scrolling happened during drag-create of new events
 	Fix onAfterSchedulerResize event not firing in Timeline view
 	Performance improvement for event rendering in week view

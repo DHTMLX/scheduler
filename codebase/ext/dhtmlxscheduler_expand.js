@@ -1,13 +1,14 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
-scheduler.expand=function(){if(scheduler.callEvent("onBeforeExpand",[])){var e=scheduler._obj;do e._position=e.style.position||"",e.style.position="static";while((e=e.parentNode)&&e.style);e=scheduler._obj,e.style.position="absolute",e._width=e.style.width,e._height=e.style.height,e.style.width=e.style.height="100%",e.style.top=e.style.left="0px";var t=document.body;t.scrollTop=0,t=t.parentNode,t&&(t.scrollTop=0),document.body._overflow=document.body.style.overflow||"",document.body.style.overflow="hidden",
-scheduler._maximize(),scheduler.callEvent("onExpand",[])}},scheduler.collapse=function(){if(scheduler.callEvent("onBeforeCollapse",[])){var e=scheduler._obj;do e.style.position=e._position;while((e=e.parentNode)&&e.style);e=scheduler._obj,e.style.width=e._width,e.style.height=e._height,document.body.style.overflow=document.body._overflow,scheduler._maximize(),scheduler.callEvent("onCollapse",[])}},scheduler.attachEvent("onTemplatesReady",function(){var e=document.createElement("div");e.className="dhx_expand_icon",
-scheduler.toggleIcon=e,scheduler._obj.appendChild(e),e.onclick=function(){scheduler.expanded?scheduler.collapse():scheduler.expand()}}),scheduler._maximize=function(){this.expanded=!this.expanded,this.toggleIcon.style.backgroundPosition="0 "+(this.expanded?"0":"18")+"px";for(var e=["left","top"],t=0;t<e.length;t++){var a=(scheduler.xy["margin_"+e[t]],scheduler["_prev_margin_"+e[t]]);scheduler.xy["margin_"+e[t]]?(scheduler["_prev_margin_"+e[t]]=scheduler.xy["margin_"+e[t]],scheduler.xy["margin_"+e[t]]=0):a&&(scheduler.xy["margin_"+e[t]]=scheduler["_prev_margin_"+e[t]],
-delete scheduler["_prev_margin_"+e[t]])}scheduler.setCurrentView()};
+Scheduler.plugin(function(e){e.expand=function(){if(e.callEvent("onBeforeExpand",[])){var t=e._obj;do{t._position=t.style.position||"",t.style.position="static"}while((t=t.parentNode)&&t.style);t=e._obj,t.style.position="absolute",t._width=t.style.width,t._height=t.style.height,t.style.width=t.style.height="100%",t.style.top=t.style.left="0px";var a=document.body;a.scrollTop=0,a=a.parentNode,a&&(a.scrollTop=0),document.body._overflow=document.body.style.overflow||"",
+document.body.style.overflow="hidden",e._maximize(),e.callEvent("onExpand",[])}},e.collapse=function(){if(e.callEvent("onBeforeCollapse",[])){var t=e._obj;do{t.style.position=t._position}while((t=t.parentNode)&&t.style);t=e._obj,t.style.width=t._width,t.style.height=t._height,document.body.style.overflow=document.body._overflow,e._maximize(),e.callEvent("onCollapse",[])}},e.attachEvent("onTemplatesReady",function(){var t=document.createElement("div");t.className="dhx_expand_icon",e.toggleIcon=t,
+e._obj.appendChild(t),t.onclick=function(){e.expanded?e.collapse():e.expand()}}),e._maximize=function(){this.expanded=!this.expanded,this.toggleIcon.style.backgroundPosition="0 "+(this.expanded?"0":"18")+"px";for(var t=["left","top"],a=0;a<t.length;a++){var i=(e.xy["margin_"+t[a]],e["_prev_margin_"+t[a]]);e.xy["margin_"+t[a]]?(e["_prev_margin_"+t[a]]=e.xy["margin_"+t[a]],e.xy["margin_"+t[a]]=0):i&&(e.xy["margin_"+t[a]]=e["_prev_margin_"+t[a]],delete e["_prev_margin_"+t[a]])}e.setCurrentView()}
+});
 //# sourceMappingURL=../sources/ext/dhtmlxscheduler_expand.js.map

@@ -1,14 +1,14 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
-*/
-window.dhtmlXScheduler = window.scheduler = { version: "5.1.6" };
 
-if (!window.dhtmlx) {
+*/
+(function () {
+	if (!window.dhtmlx) {
 	dhtmlx = function(obj){
 		for (var a in obj) dhtmlx[a]=obj[a];
 		return dhtmlx; //simple singleton
@@ -273,42 +273,6 @@ dtmlXMLLoaderObject.prototype.xmlNodeToJSON = function(node){
     return t;
 };
 
-/**
- *     @desc: Convert string to it boolean representation
- *     @type: private
- *     @param: inputString - string for covertion
- *     @topic: 0
- */
-function convertStringToBoolean(inputString){
-    if (typeof (inputString) == "string")
-        inputString=inputString.toLowerCase();
-
-    switch (inputString){
-        case "1":
-        case "true":
-        case "yes":
-        case "y":
-        case 1:
-        case true:
-            return true;
-        default:
-            return false;
-    }
-}
-
-/**
- *     @desc: find out what symbol to use as url param delimiters in further params
- *     @type: private
- *     @param: str - current url string
- *     @topic: 0
- */
-function getUrlSymbol(str){
-    if (str.indexOf("?") != -1)
-        return "&";
-    else
-        return "?";
-}
-
 function dhtmlDragAndDropObject(){
     if (window.dhtmlDragAndDrop)
         return window.dhtmlDragAndDrop;
@@ -430,7 +394,7 @@ dhtmlDragAndDropObject.prototype.callDrag=function(e){
         oldBody.dhtmlDragAndDrop.dragNode=dragger.dragNode;
     }
 
-    dragger.dragNode.style.left=e.clientX+15 + 
+    dragger.dragNode.style.left=e.clientX+15 +
         (dragger.fx ? dragger.fx*(-1) : 0) +
         (document.body.scrollLeft||document.documentElement.scrollLeft)+"px";
     dragger.dragNode.style.top=e.clientY+3+
@@ -813,7 +777,7 @@ dtmlXMLLoaderObject.prototype.doXSLTransToObject=function(xslDoc, xmlDoc){
     if (xmlDoc.responseXML)
         xmlDoc=xmlDoc.responseXML;
 
-    
+
     var result;
     //Mozilla
     if (!_isIE){
@@ -912,105 +876,6 @@ dhtmlxEventable=function(obj){
         }
     };
     obj = null;
-};
-scheduler.event = window.dhtmlxEvent;
-
-scheduler.eventRemove = function(el, event, handler){
-	if (el.removeEventListener)
-		el.removeEventListener(event, handler, false);
-
-	else if (el.detachEvent)
-		el.detachEvent("on"+event, handler);
-};
-
-(function(){
-	function isVisible(node){
-		var display = false,
-			visibility = false;
-		if(window.getComputedStyle){
-			var style = window.getComputedStyle(node, null);
-			display = style["display"];
-			visibility = style["visibility"];
-		}else if(node.currentStyle){
-			display = node.currentStyle["display"];
-			visibility = node.currentStyle["visibility"];
-		}
-
-		var hiddenSection = false;
-		var recurringSection = scheduler._locate_css({target:node}, "dhx_form_repeat", false);
-		if(recurringSection){
-			hiddenSection = !!(recurringSection.style.height == "0px");
-		}
-		hiddenSection = hiddenSection || !(node.offsetHeight);
-
-		return (display != "none" && visibility != "hidden" && !hiddenSection);
-	}
-
-	function hasNonNegativeTabIndex(node){
-		return !isNaN(node.getAttribute("tabindex")) && (node.getAttribute("tabindex")*1 >= 0);
-	}
-
-	function hasHref(node){
-		var canHaveHref = {"a": true, "area": true};
-		if(canHaveHref[node.nodeName.loLowerCase()]){
-			return !!node.getAttribute("href");
-		}
-		return true;
-	}
-
-	function isEnabled(node){
-		var canDisable = {"input":true, "select":true, "textarea":true, "button":true, "object":true};
-		if(canDisable[node.nodeName.toLowerCase()]){
-			return !node.hasAttribute("disabled");
-		}
-
-		return true;
-	}
-
-
-	scheduler._getFocusableNodes = function getFocusableNodes(root){
-		var nodes = root.querySelectorAll([
-			"a[href]",
-			"area[href]",
-			"input",
-			"select",
-			"textarea",
-			"button",
-			"iframe",
-			"object",
-			"embed",
-			"[tabindex]",
-			"[contenteditable]"
-		].join(", "));
-
-		var nodesArray = Array.prototype.slice.call(nodes, 0);
-		for(var i = 0; i < nodesArray.length; i++){
-			var node = nodesArray[i];
-			var isValid = (hasNonNegativeTabIndex(node)  || isEnabled(node) || hasHref(node)) && isVisible(node);
-			if(!isValid){
-				nodesArray.splice(i, 1);
-				i--;
-			}
-		}
-		return nodesArray;
-	};
-})();
-
-scheduler._trim = function(str){
-	var func = String.prototype.trim || function(){ return this.replace(/^\s+|\s+$/g, ""); };
-	return func.apply(str);
-};
-
-scheduler._isDate = function(obj){
-	if (obj && typeof obj == "object") {
-		return !!(obj.getFullYear && obj.getMonth && obj.getDate);
-	} else {
-		return false;
-	}
-};
-
-scheduler._isObject = function(obj){
-	return (obj && typeof obj == "object");
 };
 if(!window.dhtmlx)
 	window.dhtmlx = {};
@@ -1569,8 +1434,8 @@ dataProcessor.prototype = {
 					keys.push(key);
 				}
 			stack.push("ids=" + this.escape(keys.join(",")));
-			if (dhtmlx.security_key)
-				stack.push("dhx_security=" + dhtmlx.security_key);
+			if (scheduler.security_key || dhtmlx.security_key)
+				stack.push("dhx_security=" + (scheduler.security_key || dhtmlx.security_key));
 			return stack.join("&");
 		}
 	},
@@ -2065,6 +1930,1807 @@ dhtmlxError.catchError("LoadXML", function(a, b, c){
 	}
 });
 
+
+var Scheduler = { _seed: 0 };
+Scheduler.plugin = function (code) {
+	this._schedulerPlugins.push(code);
+	code(window.scheduler);
+};
+Scheduler._schedulerPlugins = [];
+Scheduler.getSchedulerInstance = function () {
+	var scheduler = { version: "5.2.0" };
+
+dhtmlxEventable(scheduler);
+
+scheduler._detachDomEvent = function(el, event, handler){
+	if (el.removeEventListener){
+		el.removeEventListener(event, handler, false);
+
+	}else if (el.detachEvent){
+		el.detachEvent("on"+event, handler);
+	}
+};
+
+scheduler._init_once = function(){
+
+	var oldSize = getWindowSize();
+	dhtmlxEvent(window,"resize",function() {
+		if (!isAttachedNode(scheduler._obj))
+			return;
+
+		window.clearTimeout(scheduler._resize_timer);
+		scheduler._resize_timer = window.setTimeout(function () {
+			var newSize = getWindowSize();
+
+			// ie7-8 triggers "resize" when window's elements are resized, it messes container-autoresize extension
+			// check if it's actually resized
+			if (!equals(oldSize, newSize)) {
+				if (!isAttachedNode(scheduler._obj))
+					return;
+
+				if (scheduler.callEvent("onSchedulerResize", [])) {
+					scheduler.updateView();
+					scheduler.callEvent("onAfterSchedulerResize", []);
+				}
+			}
+			oldSize = newSize;
+		}, 100);
+
+	});
+
+	function isAttachedNode(container){
+		var root = document.body;
+
+		while(container && container != root){
+			container = container.parentNode;
+		}
+
+		return !!(root == container);
+	}
+
+	function getWindowSize(){
+		return {
+			w : window.innerWidth || document.documentElement.clientWidth,
+			h : window.innerHeight || document.documentElement.clientHeight
+		};
+	}
+	function equals(a,b){
+		return a.w == b.w && a.h == b.h;
+	}
+
+	scheduler._init_once = function(){};
+};
+scheduler.init=function(id,date,mode){
+	date=date||(scheduler._currentDate());
+	mode=mode||"week";
+
+	if(this._obj){
+		this.unset_actions();
+	}
+
+	this._obj=(typeof id == "string")?document.getElementById(id):id;
+	this.$container = this._obj;
+	if(this.config.wai_aria_attributes && this.config.wai_aria_application_role){
+		this.$container.setAttribute("role", "application");
+	}
+
+	//hook for terrace skin
+	if (this._skin_init)
+		scheduler._skin_init();
+
+	scheduler.date.init();
+
+
+	this._els=[];
+	this._scroll=true;
+	this._quirks=(_isIE && document.compatMode == "BackCompat");
+	this._quirks7=(_isIE && navigator.appVersion.indexOf("MSIE 8")==-1);
+
+	this.get_elements();
+	this.init_templates();
+	this.set_actions();
+
+	this._init_once();
+	this._init_touch_events();
+
+	this.set_sizes();
+	scheduler.callEvent('onSchedulerReady', []);
+	this.setCurrentView(date,mode);
+
+};
+
+scheduler.xy={
+	min_event_height:40,
+	scale_width:50,
+	scroll_width:18,
+	scale_height:20,
+	month_scale_height:20,
+	menu_width:25,
+	margin_top:0,
+	margin_left:0,
+	editor_width:140,
+	month_head_height:22,
+	event_header_height: 14
+};
+scheduler.keys={
+	edit_save:13,
+	edit_cancel:27
+};
+
+scheduler.bind = function bind(functor, object){
+	if(functor.bind)
+		return functor.bind(object);
+	else
+		return function(){ return functor.apply(object,arguments); };
+};
+
+scheduler.set_sizes=function(){
+	var w = this._x = this._obj.clientWidth-this.xy.margin_left;
+	var h = this._y = this._obj.clientHeight-this.xy.margin_top;
+
+	//not-table mode always has scroll - need to be fixed in future
+	var scale_x=this._table_view?0:(this.xy.scale_width+this.xy.scroll_width);
+	var scale_s=this._table_view?-1:this.xy.scale_width;
+
+	var materialScalePlaceholder = this.$container.querySelector(".dhx_cal_scale_placeholder");
+	if(scheduler._is_material_skin()){
+		if(!materialScalePlaceholder) {
+			materialScalePlaceholder = document.createElement("div");
+			materialScalePlaceholder.className = "dhx_cal_scale_placeholder";
+			this.$container.insertBefore(materialScalePlaceholder, this._els["dhx_cal_header"][0]);
+		}
+		materialScalePlaceholder.style.display = "block";
+		this.set_xy(materialScalePlaceholder,w,this.xy.scale_height + 1,0,this.xy.nav_height+(this._quirks?-1:1));
+
+	}else{
+		if(materialScalePlaceholder){
+			materialScalePlaceholder.parentNode.removeChild(materialScalePlaceholder);
+		}
+	}
+
+	this.set_xy(this._els["dhx_cal_navline"][0],w,this.xy.nav_height,0,0);
+	this.set_xy(this._els["dhx_cal_header"][0],w-scale_x,this.xy.scale_height,scale_s,this.xy.nav_height+(this._quirks?-1:1));
+	//to support alter-skin, we need a way to alter height directly from css
+	var actual_height = this._els["dhx_cal_navline"][0].offsetHeight;
+	if (actual_height > 0) this.xy.nav_height = actual_height;
+
+	var data_y=this.xy.scale_height+this.xy.nav_height+(this._quirks?-2:0);
+	this.set_xy(this._els["dhx_cal_data"][0],w,h-(data_y+2),0,data_y+2);
+};
+scheduler.set_xy=function(node,w,h,x,y){
+	node.style.width=Math.max(0,w)+"px";
+	node.style.height=Math.max(0,h)+"px";
+	if (arguments.length>3){
+		node.style.left=x+"px";
+		node.style.top=y+"px";
+	}
+};
+scheduler.get_elements=function(){
+	//get all child elements as named hash
+	var els=this._obj.getElementsByTagName("DIV");
+	for (var i=0; i < els.length; i++){
+		var class_name= scheduler._getClassName(els[i]);
+		var attr_value = els[i].getAttribute("name") || "";
+		if (class_name) class_name = class_name.split(" ")[0];
+		if (!this._els[class_name]) this._els[class_name]=[];
+		this._els[class_name].push(els[i]);
+
+		//check if name need to be changed
+		var label = scheduler.locale.labels[attr_value||class_name];
+		if (typeof label !== "string" && attr_value && !els[i].innerHTML)
+			 label = attr_value.split("_")[0];
+		if (label) {
+			this._waiAria.labelAttr(els[i], label);
+			els[i].innerHTML = label;
+		}
+	}
+};
+
+scheduler.unset_actions = function(){
+	for (var a in this._els)
+		if (this._click[a])
+			for (var i=0; i < this._els[a].length; i++)
+				this._els[a][i].onclick = null;
+	this._obj.onselectstart = null;
+	this._obj.onmousemove = null;
+	this._obj.onmousedown = null;
+	this._obj.onmouseup = null;
+	this._obj.ondblclick = null;
+	this._obj.oncontextmenu = null;
+};
+
+scheduler.set_actions=function(){
+	for (var a in this._els)
+		if (this._click[a])
+			for (var i=0; i < this._els[a].length; i++)
+				this._els[a][i].onclick=scheduler._click[a];
+	this._obj.onselectstart=function(e){ return false; };
+	this._obj.onmousemove=function(e){
+		if (!scheduler._temp_touch_block)
+			scheduler._on_mouse_move(e||event);
+	};
+	this._obj.onmousedown=function(e){
+		if (!scheduler._ignore_next_click)
+			scheduler._on_mouse_down(e||event);
+	};
+	this._obj.onmouseup=function(e){
+		if (!scheduler._ignore_next_click)
+			scheduler._on_mouse_up(e||event);
+	};
+	this._obj.ondblclick=function(e){
+		scheduler._on_dbl_click(e||event);
+	};
+	this._obj.oncontextmenu = function(e) {
+		var ev = e||event;
+		var src = ev.target||ev.srcElement;
+		var returnValue = scheduler.callEvent("onContextMenu", [scheduler._locate_event(src), ev]);
+		return returnValue;
+	};
+};
+scheduler.select=function(id){
+	if (this._select_id==id) return;
+	scheduler._close_not_saved();
+	this.editStop(false);
+	this.unselect();
+	this._select_id = id;
+	this.updateEvent(id);
+};
+scheduler.unselect=function(id){
+	if (id && id!=this._select_id) return;
+	var t=this._select_id;
+	this._select_id = null;
+	if (t && this.getEvent(t)) this.updateEvent(t);
+};
+scheduler.getState=function(){
+	return {
+		mode: this._mode,
+		date: new Date(this._date),
+		min_date: new Date(this._min_date),
+		max_date: new Date(this._max_date),
+		editor_id: this._edit_id,
+		lightbox_id: this._lightbox_id,
+		new_event: this._new_event,
+		select_id: this._select_id,
+		expanded: this.expanded,
+		drag_id: this._drag_id,
+		drag_mode: this._drag_mode
+	};
+};
+scheduler._click={
+	dhx_cal_data:function(e){
+		//in case of touch disable click processing
+		if (scheduler._ignore_next_click){
+			if (e.preventDefault)
+				e.preventDefault();
+			e.cancelBubble = true;
+			scheduler._ignore_next_click = false;
+			return false;
+		}
+
+		var trg = e?e.target:event.srcElement;
+		var id = scheduler._locate_event(trg);
+
+		e = e || event;
+
+		if (!id) {
+			scheduler.callEvent("onEmptyClick",[scheduler.getActionData(e).date, e]);
+		} else {
+			if ( !scheduler.callEvent("onClick",[id,e]) || scheduler.config.readonly ) return;
+		}
+
+		if (id && scheduler.config.select) {
+
+			scheduler.select(id);
+			var mask = scheduler._getClassName(trg);
+			if (mask.indexOf("_icon")!=-1)
+				scheduler._click.buttons[mask.split(" ")[1].replace("icon_","")](id);
+		} else{
+			scheduler._close_not_saved();
+			if (new Date().valueOf()-(scheduler._new_event||0) > 500){
+				scheduler.unselect();
+			}
+		}
+	},
+	dhx_cal_prev_button:function(){
+		scheduler._click.dhx_cal_next_button(0,-1);
+	},
+	dhx_cal_next_button:function(dummy,step){
+		scheduler.setCurrentView(scheduler.date.add( //next line changes scheduler._date , but seems it has not side-effects
+			scheduler.date[scheduler._mode+"_start"](new Date(scheduler._date)),(step||1),scheduler._mode));
+	},
+	dhx_cal_today_button:function(){
+		if (scheduler.callEvent("onBeforeTodayDisplayed", [])) {
+			scheduler.setCurrentView(scheduler._currentDate());
+		}
+	},
+	dhx_cal_tab:function(){
+		var name = this.getAttribute("name");
+		var mode = name.substring(0, name.search("_tab"));
+		scheduler.setCurrentView(scheduler._date,mode);
+	},
+	buttons:{
+		"delete":function(id){
+			var c = scheduler.locale.labels.confirm_deleting;
+			scheduler._dhtmlx_confirm(c, scheduler.locale.labels.title_confirm_deleting, function(){ scheduler.deleteEvent(id); });
+		},
+		edit:function(id){ scheduler.edit(id); },
+		save:function(id){ scheduler.editStop(true); },
+		details:function(id){ scheduler.showLightbox(id); },
+		cancel:function(id){ scheduler.editStop(false); }
+	}
+};
+scheduler._dhtmlx_confirm = function(message, title, callback) {
+	if (!message)
+		return callback();
+	var opts = { text: message };
+	if (title)
+		opts.title = title;
+	if (callback) {
+		opts.callback = function(result) {
+			if (result)
+				callback();
+		};
+	}
+	dhtmlx.confirm(opts);
+};
+scheduler.addEventNow=function(start,end,e){
+	var base = {};
+	if (scheduler._isObject(start) && !scheduler._isDate(start)){
+		base = start;
+		start = null;
+	}
+
+	var d = (this.config.event_duration||this.config.time_step)*60000;
+	if (!start) start = base.start_date||Math.round((scheduler._currentDate()).valueOf()/d)*d;
+	var start_date = new Date(start);
+	if (!end){
+		var start_hour = this.config.first_hour;
+		if (start_hour > start_date.getHours()){
+			start_date.setHours(start_hour);
+			start = start_date.valueOf();
+		}
+		end = start.valueOf()+d;
+	}
+	var end_date = new Date(end);
+
+	// scheduler.addEventNow(new Date(), new Date()) + collision though get_visible events defect (such event was not retrieved)
+	if(start_date.valueOf() == end_date.valueOf())
+		end_date.setTime(end_date.valueOf()+d);
+
+	base.start_date = base.start_date||start_date;
+	base.end_date =  base.end_date||end_date;
+	base.text = base.text||this.locale.labels.new_event;
+	base.id = this._drag_id = base.id || this.uid();
+	this._drag_mode="new-size";
+
+	this._loading=true;
+	var eventId = this.addEvent(base);
+	this.callEvent("onEventCreated",[this._drag_id,e]);
+	this._loading=false;
+
+	this._drag_event={}; //dummy , to trigger correct event updating logic
+	this._on_mouse_up(e);
+	return eventId;
+};
+scheduler._on_dbl_click=function(e,src){
+	src = src||(e.target||e.srcElement);
+	if (this.config.readonly) return;
+	var name = scheduler._getClassName(src).split(" ")[0];
+	switch(name){
+		case "dhx_scale_holder":
+		case "dhx_scale_holder_now":
+		case "dhx_month_body":
+		case "dhx_wa_day_data":
+			if (!scheduler.config.dblclick_create) break;
+			this.addEventNow(this.getActionData(e).date,null,e);
+			break;
+		case "dhx_cal_event":
+		case "dhx_wa_ev_body":
+		case "dhx_agenda_line":
+		case "dhx_grid_event":
+		case "dhx_cal_event_line":
+		case "dhx_cal_event_clear":
+			var id = this._locate_event(src);
+			if (!this.callEvent("onDblClick",[id,e])) return;
+			if (this.config.details_on_dblclick || this._table_view || !this.getEvent(id)._timed || !this.config.select)
+				this.showLightbox(id);
+			else
+				this.edit(id);
+			break;
+		case "dhx_time_block":
+		case "dhx_cal_container":
+			return;
+		default:
+			var t = this["dblclick_"+name];
+			if (t) {
+				t.call(this,e);
+			}
+			else {
+				if (src.parentNode && src != this)
+					return scheduler._on_dbl_click(e,src.parentNode);
+			}
+			break;
+	}
+};
+//column index by mouse x-coordinate
+scheduler._get_column_index = function(x_pos){
+	var column = 0;
+	if (this._cols){
+
+		var width = 0;
+
+		var i = 0;
+		while (width + this._cols[i] < x_pos && i < this._cols.length){
+			width += this._cols[i];
+			i++;
+		}
+
+		column = i + (this._cols[i] ? ((x_pos - width)/ this._cols[i]) : 0);
+
+		if (this._ignores){
+
+			if(column >= this._cols.length){
+				while(column >= 1 && this._ignores[Math.floor(column)]){
+					column--;
+				}
+			}
+
+		}
+	}
+	return column;
+};
+//transform mouse coordinates to day-time indexes of week based view
+scheduler._week_indexes_from_pos = function(pos){
+	//"get position" can be invoked before columns are loaded into the units view(e.g. by onMouseMove handler in key_nav.js)
+	if(!this._cols){
+		return pos;
+	}else{
+		var column = this._get_column_index(pos.x);
+		pos.x=Math.min(this._cols.length-1, Math.max(0,Math.ceil(column)-1));
+
+		pos.y=Math.max(0,Math.ceil(pos.y*60/(this.config.time_step*this.config.hour_size_px))-1)+this.config.first_hour*(60/this.config.time_step);
+		return pos;
+	}
+};
+
+scheduler._mouse_coords=function(ev){
+	var pos;
+	var b=document.body;
+	var d = document.documentElement;
+	if (!_isIE && (ev.pageX || ev.pageY))
+	    pos={x:ev.pageX, y:ev.pageY};
+	else pos={
+	    x:ev.clientX + (b.scrollLeft||d.scrollLeft||0) - b.clientLeft,
+	    y:ev.clientY + (b.scrollTop||d.scrollTop||0) - b.clientTop
+	};
+
+	//apply layout
+	pos.x-=this.$domHelpers.getAbsoluteLeft(this._obj)+(this._table_view?0:this.xy.scale_width);
+	pos.y-=this.$domHelpers.getAbsoluteTop(this._obj)+this.xy.nav_height+(this._dy_shift||0)+this.xy.scale_height-this._els["dhx_cal_data"][0].scrollTop;
+	pos.ev = ev;
+
+	var handler = this["mouse_"+this._mode];
+	if (handler){
+		pos = handler.call(this,pos);
+	}else{
+		//transform to date
+		if (!this._table_view) {
+			pos = this._week_indexes_from_pos(pos);
+		} else {
+			var column = this._get_column_index(pos.x);
+			if (!this._cols || !this._colsS) // agenda/map views
+				return pos;
+			var dy=0;
+			for (dy=1; dy < this._colsS.heights.length; dy++)
+				if (this._colsS.heights[dy]>pos.y) break;
+
+			pos.y=Math.ceil( (Math.max(0, column)+Math.max(0,dy-1)*7)*24*60/this.config.time_step );
+
+			if (scheduler._drag_mode || this._mode == "month")
+				pos.y=(Math.max(0,Math.ceil(column)-1)+Math.max(0,dy-1)*7)*24*60/this.config.time_step;
+
+			//we care about ignored days only during event moving in month view
+			if (this._drag_mode == "move"){
+				if (scheduler._ignores_detected && scheduler.config.preserve_length){
+					pos._ignores = true;
+					//get real lengtn of event
+					if (!this._drag_event._event_length)
+						this._drag_event._event_length = this._get_real_event_length(this._drag_event.start_date, this._drag_event.end_date, { x_step:1, x_unit:"day"});
+				}
+			}
+
+			pos.x=0;
+		}
+	}
+
+	pos.timestamp = +new Date();
+
+	return pos;
+};
+scheduler._close_not_saved=function(){
+	if (new Date().valueOf()-(scheduler._new_event||0) > 500 && scheduler._edit_id){
+		var c=scheduler.locale.labels.confirm_closing;
+
+		scheduler._dhtmlx_confirm(c, scheduler.locale.labels.title_confirm_closing, function() { scheduler.editStop(scheduler.config.positive_closing); });
+		if(c){
+			this._drag_id = this._drag_pos = this._drag_mode = null;
+		}
+	}
+};
+scheduler._correct_shift=function(start, back){
+	return start-=((new Date(scheduler._min_date)).getTimezoneOffset()-(new Date(start)).getTimezoneOffset())*60000*(back?-1:1);
+};
+
+scheduler._is_pos_changed = function(old_pos, new_pos){
+	function diff(old_val, new_val, acc){
+		return !!(Math.abs(old_val - new_val) > acc);
+	}
+
+	if(!(old_pos && this._drag_pos)){
+		return true;
+	}
+	var delay = 100,
+		d_pos = 5;
+
+	// start drag only if passed some time since mouse down, or if mouse position changed sufficiently
+	return !!(this._drag_pos.has_moved || !this._drag_pos.timestamp || (new_pos.timestamp - this._drag_pos.timestamp > delay) || diff(old_pos.ev.clientX, new_pos.ev.clientX, d_pos) || diff(old_pos.ev.clientY, new_pos.ev.clientY, d_pos));
+};
+
+scheduler._correct_drag_start_date = function(start){
+	var obj;
+	if (scheduler.matrix)
+		obj = scheduler.matrix[scheduler._mode];
+	obj = obj  || { x_step:1, x_unit:"day" };
+
+	start = new Date(start);
+	var len = 1;
+	if(obj._start_correction || obj._end_correction)
+		len = (obj.last_hour||0)*60 - (start.getHours()*60+start.getMinutes()) || 1;
+
+	return start*1 + (scheduler._get_fictional_event_length(start, len, obj)  - len);
+};
+scheduler._correct_drag_end_date = function(start, duration){
+	var obj;
+	if (scheduler.matrix)
+		obj = scheduler.matrix[scheduler._mode];
+	obj = obj  || { x_step:1, x_unit:"day" };
+
+	var end = start*1 + scheduler._get_fictional_event_length(start, duration, obj);
+	return new Date(end*1 - (scheduler._get_fictional_event_length(end, -1, obj, -1) + 1));
+};
+
+scheduler._on_mouse_move=function(e){
+	if (this._drag_mode){
+		var pos=this._mouse_coords(e);
+		if (this._is_pos_changed(this._drag_pos, pos)){
+			var start, end;
+			if (this._edit_id!=this._drag_id)
+				this._close_not_saved();
+
+			if(!this._drag_mode)
+				return;
+
+			var mousedownPos = null;
+			if(this._drag_pos && !this._drag_pos.has_moved){
+				mousedownPos = this._drag_pos;
+				mousedownPos.has_moved = true;
+			}
+
+			this._drag_pos = pos;
+
+			this._drag_pos.has_moved = true;
+
+			if (this._drag_mode=="create"){
+
+				// use mouse down position as a starting point for drag-create
+				if(mousedownPos){
+					pos = mousedownPos;
+				}
+
+				this._close_not_saved();
+				this.unselect(this._select_id);
+				this._loading=true; //will be ignored by dataprocessor
+
+				start = this._get_date_from_pos(pos).valueOf();
+
+				if (!this._drag_start) {
+					var res = this.callEvent("onBeforeEventCreated", [e, this._drag_id]);
+					if (!res){
+						this._loading=false;
+						return;
+
+					}
+
+					this._loading=false;
+					this._drag_start=start;
+					return;
+				}
+
+				end = start;
+				if (end == this._drag_start) {
+				}
+
+				var start_date = new Date(this._drag_start);
+				var end_date = new Date(end);
+				if ( (this._mode == "day" || this._mode == "week") &&
+					(start_date.getHours() == end_date.getHours() &&
+					start_date.getMinutes() == end_date.getMinutes()) ) {
+						end_date = new Date(this._drag_start+1000);
+				}
+
+
+				this._drag_id=this.uid();
+				this.addEvent(start_date, end_date, this.locale.labels.new_event, this._drag_id, pos.fields);
+
+				this.callEvent("onEventCreated",[this._drag_id,e]);
+				this._loading=false;
+				this._drag_mode="new-size";
+
+			}
+
+
+			var ev=this.getEvent(this._drag_id);
+			var obj;
+			if (scheduler.matrix)
+				obj = scheduler.matrix[scheduler._mode];
+			obj = obj  || { x_step:1, x_unit:"day" };
+
+			if (this._drag_mode=="move"){
+				start = this._min_date.valueOf()+(pos.y*this.config.time_step+pos.x*24*60)*60000;
+				if (!pos.custom && this._table_view) {
+					start += this.date.time_part(ev.start_date) * 1000;
+				}
+
+				if (!this._table_view && this._dragEventBody && this._drag_event._move_event_shift === undefined) {
+					this._drag_event._move_event_shift = start - ev.start_date;
+				}
+
+				if (this._drag_event._move_event_shift) {
+					start -= this._drag_event._move_event_shift;
+				}
+
+				start = this._correct_shift(start);
+
+				if (pos._ignores && this.config.preserve_length && this._table_view){
+
+					start = scheduler._correct_drag_start_date(start);
+					end = scheduler._correct_drag_end_date(start,this._drag_event._event_length);
+
+				} else
+					end = ev.end_date.valueOf()-(ev.start_date.valueOf()-start);
+			} else { // resize
+				start = ev.start_date.valueOf();
+				end = ev.end_date.valueOf();
+				if (this._table_view) {
+					var resize_date = this._min_date.valueOf()+pos.y*this.config.time_step*60000 + (pos.custom?0:24*60*60000);
+					if (this._mode == "month") {
+						resize_date = this._correct_shift(resize_date, false);
+						if( this._drag_from_start ) {
+							var day = 24*60*60000;
+							if( resize_date <= scheduler.date.date_part(new Date(end+day-1)).valueOf() ) // to get end time as 23:59:59 and then the day start
+								start = resize_date - day;
+						} else {
+							end = resize_date;
+						}
+					} else {
+						if(this.config.preserve_length) {
+							if (pos.resize_from_start) {
+								start = scheduler._correct_drag_start_date(resize_date);
+							} else {
+								end = scheduler._correct_drag_end_date(resize_date, 0);
+							}
+						}
+						else {
+							if (pos.resize_from_start) {
+								start = resize_date;
+							} else {
+								end = resize_date;
+							}
+						}
+					}
+				} else {
+					var end_day_start = this.date.date_part(new Date(ev.end_date.valueOf() - 1)).valueOf();
+					var end_day_date = new Date(end_day_start);
+
+					end = end_day_start + pos.y*this.config.time_step*60000;
+					end = end + ((new Date(end)).getTimezoneOffset() - end_day_date.getTimezoneOffset()) * 60000;
+					this._els["dhx_cal_data"][0].style.cursor="s-resize";
+					if (this._mode == "week" || this._mode == "day")
+						end = this._correct_shift(end);
+				}
+				if (this._drag_mode == "new-size") {
+					if (end <= this._drag_start){
+						var shift = pos.shift||((this._table_view && !pos.custom)?24*60*60000:0);
+						start = end-(pos.shift?0:shift);
+						end = this._drag_start+(shift||(this.config.time_step*60000));
+					} else {
+						start = this._drag_start;
+					}
+				} else {
+					if (end<=start)
+						end=start+this.config.time_step*60000;
+				}
+			}
+			var new_end = new Date(end-1);
+			var new_start = new Date(start);
+			//deny drag out of visible scheduler scale in timeline view
+			if(this._drag_mode=="move" && scheduler.config.limit_drag_out &&
+				(+new_start < +scheduler._min_date || +end > +scheduler._max_date)){
+
+				if(+ev.start_date < +scheduler._min_date || +ev.end_date > +scheduler._max_date){
+					// not move event if it's already outside time scale
+					new_start = new Date(ev.start_date);
+					end = new Date(ev.end_date);
+				}else{
+
+					var duration = end - new_start;
+
+					if(+new_start < +scheduler._min_date){
+						new_start = new Date(scheduler._min_date);
+						if (pos._ignores && this.config.preserve_length && this._table_view){
+							new_start = new Date(scheduler._correct_drag_start_date(new_start));
+							if(obj._start_correction)
+								new_start = new Date(new_start.valueOf() + obj._start_correction);
+							end = new Date(new_start*1 + this._get_fictional_event_length(new_start, this._drag_event._event_length, obj));
+						}else{
+							end = new Date(+new_start + duration);
+						}
+					}else{
+						end = new Date(scheduler._max_date);
+
+						if (pos._ignores && this.config.preserve_length && this._table_view){
+							if(obj._end_correction)
+								end = new Date(end.valueOf() - obj._end_correction);
+							end = new Date(end*1 - this._get_fictional_event_length(end, 0, obj, true));
+							new_start = new Date(end*1 - this._get_fictional_event_length(end, this._drag_event._event_length, obj, true));
+							if(this._ignores_detected){
+								new_start = scheduler.date.add(new_start, obj.x_step, obj.x_unit);
+								end = new Date(end*1 - this._get_fictional_event_length(end, 0, obj, true));
+								end = scheduler.date.add(end, obj.x_step, obj.x_unit);
+							}
+
+						}else{
+							new_start = new Date(+end - duration);
+						}
+
+					}
+
+				}
+				var new_end = new Date(end-1);
+			}
+
+
+
+			// fix event dates when resized to bottom of the column (day/week views)
+			if(!this._table_view && this._dragEventBody &&
+				!scheduler.config.all_timed &&
+				((!scheduler._get_section_view() && pos.x != this._get_event_sday({start_date: new Date(start), end_date:new Date(start)})) || new Date(start).getHours() < this.config.first_hour)){
+				var duration = end - new_start;
+				if (this._drag_mode == "move") {
+					var day = this._min_date.valueOf() + (pos.x * 24 * 60) * 60000;
+					new_start = new Date(day);
+					new_start.setHours(this.config.first_hour);
+					end = new Date(new_start.valueOf() + duration);
+					new_end = new Date(end-1);
+				}
+			}
+
+			// fix event dates when resized to bottom of the column (day/week views)
+			if(!this._table_view &&
+				!scheduler.config.all_timed &&
+				((!scheduler.getView() && pos.x != this._get_event_sday({start_date: new Date(end), end_date:new Date(end)})) || new Date(end).getHours() >= this.config.last_hour)){
+				var duration = end - new_start;
+				var day = this._min_date.valueOf()+(pos.x*24*60)*60000;
+				end = scheduler.date.date_part(new Date(day));
+				end.setHours(this.config.last_hour);
+				new_end = new Date(end-1);
+				if(this._drag_mode == "move"){
+					new_start = new Date(+end - duration);
+				}
+			}
+
+			//prevent out-of-borders situation for day|week view
+			if ( this._table_view || (new_end.getDate()==new_start.getDate() && new_end.getHours()<this.config.last_hour) || scheduler._allow_dnd ){
+				ev.start_date=new_start;
+				ev.end_date=new Date(end);
+				if (this.config.update_render){
+					//fix for repaint after dnd and scroll issue, #231
+					var sx = scheduler._els["dhx_cal_data"][0].scrollTop;
+					this.update_view();
+					scheduler._els["dhx_cal_data"][0].scrollTop = sx;
+				} else
+					this.updateEvent(this._drag_id);
+			}
+			if (this._table_view) {
+				this.for_rendered(this._drag_id,function(r){
+					r.className+=" dhx_in_move dhx_cal_event_drag";
+				});
+			}
+
+			this.callEvent("onEventDrag", [this._drag_id, this._drag_mode, e]);
+		}
+	}  else {
+		if (scheduler.checkEvent("onMouseMove")){
+			var id = this._locate_event(e.target||e.srcElement);
+			this.callEvent("onMouseMove",[id,e]);
+		}
+	}
+};
+scheduler._on_mouse_down=function(e,src) {
+	// on Mac we do not get onmouseup event when clicking right mouse button leaving us in dnd state
+	// let's ignore right mouse button then
+	if (e.button == 2)
+		return;
+
+	if (this.config.readonly || this._drag_mode) return;
+	src = src||(e.target||e.srcElement);
+	var classname = scheduler._getClassName(src).split(" ")[0];
+
+	if (this.config.drag_event_body && classname == "dhx_body") {
+		if(src.parentNode && src.parentNode.className.indexOf("dhx_cal_select_menu") === -1){
+			classname = "dhx_event_move";
+			this._dragEventBody = true;
+		}
+	}
+
+	switch (classname) {
+		case "dhx_cal_event_line":
+		case "dhx_cal_event_clear":
+			if (this._table_view)
+				this._drag_mode="move"; //item in table mode
+			break;
+		case "dhx_event_move":
+		case "dhx_wa_ev_body":
+			this._drag_mode="move";
+			break;
+		case "dhx_event_resize":
+			this._drag_mode="resize";
+			var fullClass = scheduler._getClassName(src);
+			if((fullClass).indexOf("dhx_event_resize_end") < 0){
+				scheduler._drag_from_start = true;
+			}else{
+				scheduler._drag_from_start = false;
+			}
+			break;
+		case "dhx_scale_holder":
+		case "dhx_scale_holder_now":
+		case "dhx_month_body":
+		case "dhx_matrix_cell":
+		case "dhx_marked_timespan":
+			this._drag_mode="create";
+			break;
+		case "":
+			if (src.parentNode)
+				return scheduler._on_mouse_down(e,src.parentNode);
+			break;
+		default:
+			if (!scheduler.checkEvent("onMouseDown") || scheduler.callEvent("onMouseDown", [classname, e])) {
+				if (src.parentNode && src != this && classname != "dhx_body") {
+					return scheduler._on_mouse_down(e,src.parentNode);
+				}
+			}
+			this._drag_mode=null;
+			this._drag_id=null;
+			break;
+	}
+	if (this._drag_mode){
+		var id = this._locate_event(src);
+		if (!this.config["drag_"+this._drag_mode] || !this.callEvent("onBeforeDrag",[id, this._drag_mode, e]))
+			this._drag_mode=this._drag_id=0;
+		else {
+			this._drag_id= id;
+
+			if (this._edit_id!=this._drag_id || (this._edit_id && this._drag_mode == "create"))
+				this._close_not_saved();
+			if(!this._drag_mode)
+				return;
+
+			this._drag_event = scheduler._lame_clone(this.getEvent(this._drag_id) || {});
+			this._drag_pos = this._mouse_coords(e);
+		}
+	}
+	this._drag_start=null;
+};
+
+
+scheduler._get_private_properties = function(event){
+	var fields = {};
+	for(var i in event){
+		if(i.indexOf("_") === 0){
+			fields[i] = true;
+		}
+	}
+	return fields;
+};
+scheduler._clear_temporary_properties = function(clean, flagged_event){
+	var initial = this._get_private_properties(clean);
+	var current_state = this._get_private_properties(flagged_event);
+	for(var i in current_state){
+		if(!initial[i]){
+			delete flagged_event[i];
+		}
+	}
+};
+
+
+scheduler._on_mouse_up=function(e){
+	if (e && e.button == 2 && this._mobile) return;
+	if (this._drag_mode && this._drag_id){
+		this._els["dhx_cal_data"][0].style.cursor="default";
+		//drop
+
+		var drag_id = this._drag_id;
+		var mode = this._drag_mode;
+
+		var moved = !this._drag_pos || this._drag_pos.has_moved;
+		delete this._drag_event._move_event_shift;
+
+		var ev=this.getEvent(this._drag_id);
+		if (moved && (this._drag_event._dhx_changed || !this._drag_event.start_date || ev.start_date.valueOf()!=this._drag_event.start_date.valueOf() || ev.end_date.valueOf()!=this._drag_event.end_date.valueOf())){
+			var is_new=(this._drag_mode=="new-size");
+			if (!this.callEvent("onBeforeEventChanged",[ev, e, is_new, this._drag_event])){
+				if (is_new)
+					this.deleteEvent(ev.id, true);
+				else {
+					this._drag_event._dhx_changed = false;
+					this._clear_temporary_properties(ev, this._drag_event);
+					scheduler._lame_copy(ev, this._drag_event);
+					this.updateEvent(ev.id);
+				}
+			} else {
+
+				this._drag_id = this._drag_mode = null;
+				if (is_new && this.config.edit_on_create){
+					this.unselect();
+					this._new_event=new Date();//timestamp of creation
+					//if selection disabled - force lightbox usage
+					if (this._table_view || this.config.details_on_create || !this.config.select || !this.isOneDayEvent(this.getEvent(drag_id))) {
+						scheduler.callEvent("onDragEnd", [drag_id, mode, e]);
+						return this.showLightbox(drag_id);
+					}
+					this._drag_pos = true; //set flag to trigger full redraw
+					this._select_id = this._edit_id = drag_id;
+				} else {
+					if (!this._new_event)
+						this.callEvent(is_new?"onEventAdded":"onEventChanged",[drag_id,this.getEvent(drag_id)]);
+				}
+			}
+		}
+		if (this._drag_pos && (this._drag_pos.has_moved || this._drag_pos === true)) {
+			this._drag_id = this._drag_mode = null; // set null to prevent _sorder recalculation for drag event
+			this.render_view_data(); //redraw even if there is no real changes - necessary for correct positioning item after drag
+		}
+		scheduler.callEvent("onDragEnd", [drag_id, mode, e]);
+	}
+	this._drag_id = null;
+	this._drag_mode=null;
+	this._drag_pos=null;
+};
+
+scheduler._trigger_dyn_loading = function(){
+	if (this._load_mode && this._load()){
+		this._render_wait = true;
+		return true;
+	}else{
+		return false;
+	}
+};
+scheduler.update_view=function(){
+	this._reset_ignores();
+
+	var view = this[this._mode + "_view"];
+	if(view){
+		view(true);
+	}else{
+		this._reset_scale();
+	}
+
+	if (this._trigger_dyn_loading()){
+		return true;
+	}
+	this.render_view_data();
+};
+
+scheduler.isViewExists = function(mode){
+	return !!(scheduler[mode+ "_view"] ||
+		(scheduler.date[mode+ "_start"] && scheduler.templates[mode+ "_date"] && scheduler.templates[mode+ "_scale_date"]));
+};
+
+scheduler._set_aria_buttons_attrs = function(){
+	var buttonGroups = ["dhx_cal_next_button", "dhx_cal_prev_button", "dhx_cal_tab", "dhx_cal_today_button"];
+	for(var i = 0; i < buttonGroups.length; i++){
+		var group = this._els[buttonGroups[i]];
+		for(var j = 0; group && j < group.length; j++ ){
+			var name = group[j].getAttribute("name");
+			var label = this.locale.labels[buttonGroups[i]];
+			if(name){
+				label = this.locale.labels[name] || label;
+
+
+			}
+			if(buttonGroups[i] == "dhx_cal_next_button"){
+				label = this.locale.labels.next;
+			}else if(buttonGroups[i] == "dhx_cal_prev_button"){
+				label = this.locale.labels.prev;
+			}
+			this._waiAria.headerButtonsAttributes(group[j], label || "");
+		}
+	}
+};
+
+scheduler.updateView = function(date, mode) {
+	date = date || this._date;
+	mode = mode || this._mode;
+	var dhx_cal_data = 'dhx_cal_data';
+
+	var container = this._obj;
+	var oldClass = "dhx_scheduler_" + this._mode;
+	var newClass = "dhx_scheduler_" + mode;
+
+	if (!this._mode || (container.className.indexOf(oldClass) == -1)){
+		container.className += " " + newClass;
+	} else {
+		container.className = container.className.replace(oldClass, newClass);
+	}
+
+	var dhx_multi_day = 'dhx_multi_day';
+
+	var prev_scroll = (this._mode == mode && this.config.preserve_scroll) ? this._els[dhx_cal_data][0].scrollTop : false; // saving current scroll
+
+	var multidayScroll;
+	if(this._els[dhx_multi_day] && this._els[dhx_multi_day][0]){
+		multidayScroll = this._els[dhx_multi_day][0].scrollTop;
+	}
+
+	//hide old custom view
+	if (this[this._mode + "_view"] && mode && this._mode != mode)
+		this[this._mode + "_view"](false);
+
+	this._close_not_saved();
+
+	if (this._els[dhx_multi_day]) {
+		this._els[dhx_multi_day][0].parentNode.removeChild(this._els[dhx_multi_day][0]);
+		this._els[dhx_multi_day] = null;
+	}
+
+	this._mode = mode;
+	this._date = date;
+	this._table_view = (this._mode == "month");
+
+	this._dy_shift = 0;//correction for multiday section in week/day views
+
+
+	this._set_aria_buttons_attrs();
+
+	var tabs = this._els["dhx_cal_tab"];
+	if(tabs){//calendar can work without view tabs
+		for (var i = 0; i < tabs.length; i++) {
+			var tab = tabs[i];
+
+			var name = tab.className;
+			name = name.replace(/ active/g, "");
+			if (tab.getAttribute("name") == this._mode + "_tab"){
+				name = name + " active";
+				this._waiAria.headerToggleState(tab, true);
+			}else{
+				this._waiAria.headerToggleState(tab, false);
+			}
+
+			tab.className = name;
+		}
+	}
+	//show new view
+	this.update_view();
+
+	if (typeof prev_scroll == "number") // if we are updating or working with the same view scrollTop should be saved
+		this._els[dhx_cal_data][0].scrollTop = prev_scroll; // restoring original scroll
+
+	if(typeof multidayScroll == "number" && this._els[dhx_multi_day] && this._els[dhx_multi_day][0]){
+		this._els[dhx_multi_day][0].scrollTop = multidayScroll;
+	}
+
+};
+scheduler.setCurrentView = function(date, mode) {
+	if (!this.callEvent("onBeforeViewChange", [this._mode, this._date, mode || this._mode, date || this._date])) return;
+	this.updateView(date, mode);
+	this.callEvent("onViewChange", [this._mode, this._date]);
+};
+scheduler._render_x_header = function(i,left,d,h, offset_top){
+	offset_top = offset_top || 0;
+	//header scale
+	var head=document.createElement("div");
+	head.className = "dhx_scale_bar";
+
+	if(this.templates[this._mode+"_scalex_class"]){
+		//'_scalex_class' - timeline already have similar template, use the same name
+		head.className += ' ' + this.templates[this._mode+"_scalex_class"](d);
+	}
+
+	var width = this._cols[i]-1;
+
+	if (this._mode == "month" && i === 0 && this.config.left_border) {
+		head.className += " dhx_scale_bar_border";
+		left = left+1;
+	}
+	this.set_xy(head, width, this.xy.scale_height-2, left, offset_top);//-1 for border
+
+	var columnHeaderText = this.templates[this._mode+"_scale_date"](d,this._mode); //TODO - move in separate method
+	head.innerHTML = columnHeaderText;
+
+	this._waiAria.dayHeaderAttr(head, columnHeaderText);
+
+	h.appendChild(head);
+};
+
+scheduler._get_columns_num = function(from, to){
+	var count = 7;
+	if (!scheduler._table_view){
+		var count_n = scheduler.date["get_"+scheduler._mode+"_end"];
+		if (count_n) to = count_n(from);
+		count = Math.round((to.valueOf()-from.valueOf())/(1000*60*60*24));
+	}
+	return count;
+};
+scheduler._get_timeunit_start = function(){
+	//start date of currently displayed time unit(day, week,...)
+	return this.date[this._mode+"_start"](new Date(this._date.valueOf()));
+};
+
+scheduler._get_view_end = function(){
+	var dd = this._get_timeunit_start();
+	var ed = scheduler.date.add(dd, 1, this._mode);
+	if (!scheduler._table_view){
+		var count_n = scheduler.date["get_"+scheduler._mode+"_end"];
+		if (count_n) ed = count_n(dd);
+	}
+	return ed;
+};
+scheduler._calc_scale_sizes = function(width, from, to){
+	//calculates number of displayed columns(days/units/month view cols) and their widths
+	var summ = width; //border delta
+	var count = this._get_columns_num(from, to);
+
+	this._process_ignores(from, count, "day", 1);
+	var realcount = count - this._ignores_detected;
+
+	for (var i=0; i<count; i++){
+		if (this._ignores[i]){
+			this._cols[i] = 0;
+			realcount++;
+		} else {
+			this._cols[i]=Math.floor(summ/(realcount-i));
+		}
+		summ-=this._cols[i];
+		this._colsS[i]=(this._cols[i-1]||0)+(this._colsS[i-1]||(this._table_view?0:this.xy.scale_width+2));
+	}
+	this._colsS['col_length'] = count;
+
+	this._colsS[count] = (this._cols[count-1]+this._colsS[count-1]) || 0;
+};
+scheduler._set_scale_col_size = function(div, width, left){
+	var c = this.config;
+	this.set_xy(div, width-1, c.hour_size_px*(c.last_hour-c.first_hour), left+this.xy.scale_width+1, 0);//-1 for border
+};
+
+scheduler._render_scales = function(header, data_area){
+	//render columns in week/units view, or header in month view
+	var sd = new Date(scheduler._min_date),
+		ed = new Date(scheduler._max_date),
+		today = this.date.date_part( scheduler._currentDate());
+
+	var summ = parseInt(header.style.width,10); //border delta
+	var d = new Date(this._min_date);
+	var count = this._get_columns_num(sd, ed);
+	this._calc_scale_sizes(summ, sd, ed);
+	var left=0;
+
+	header.innerHTML = "";
+	for (var i=0; i<count; i++){
+		if (!this._ignores[i]){
+			this._render_x_header(i,left,d,header);
+		}
+		if (!this._table_view){
+			var scales=document.createElement("div");
+			var cls = "dhx_scale_holder";
+			if (d.valueOf() == today.valueOf()) cls = "dhx_scale_holder_now";
+
+			if (this._ignores_detected && this._ignores[i]){
+				cls += " dhx_scale_ignore";
+			}
+
+			scales.className = cls+" "+this.templates.week_date_class(d,today);
+			this._waiAria.dayColumnAttr(scales, d);
+			this._set_scale_col_size(scales, this._cols[i], left);
+
+			data_area.appendChild(scales);
+			this.callEvent("onScaleAdd",[scales, d]);
+		}
+
+		left+=this._cols[i];
+		d=this.date.add(d,1,"day");
+		d = this.date.day_start(d);
+	}
+};
+
+scheduler._reset_scale=function(){
+	//current mode doesn't support scales
+	//we mustn't call reset_scale for such modes, so it just to be sure
+	if (!this.templates[this._mode + "_date"]) return;
+
+	var h = this._els["dhx_cal_header"][0];
+	var data_area = this._els["dhx_cal_data"][0];
+	var c = this.config;
+
+	h.innerHTML = "";
+	//data_area.scrollTop = 0; //fix flickering in FF; makes IE8 flicker instead
+	data_area.innerHTML = "";
+
+	var str = ((c.readonly || (!c.drag_resize)) ? " dhx_resize_denied" : "") + ((c.readonly || (!c.drag_move)) ? " dhx_move_denied" : "");
+	data_area.className = "dhx_cal_data" + str;
+
+	this._scales = {};
+	this._cols = [];	//store for data section
+	this._colsS = {height: 0};
+	this._dy_shift = 0;
+
+	this.set_sizes();
+
+	var d,sd,today;
+	var dd = this._get_timeunit_start(),
+		ed = scheduler._get_view_end();
+
+	d = sd = this._table_view ? scheduler.date.week_start(dd) : dd;
+
+
+	this._min_date=d;
+
+	var navBarDateStr = this.templates[this._mode+"_date"](dd,ed,this._mode);
+	this._els["dhx_cal_date"][0].innerHTML = navBarDateStr;
+	this._waiAria.navBarDateAttr(this._els["dhx_cal_date"][0] ,navBarDateStr);
+
+
+	this._max_date = ed;
+	scheduler._render_scales(h, data_area);
+
+	if (this._table_view) // month view
+		this._reset_month_scale(data_area,dd,sd);
+	else{
+		this._reset_hours_scale(data_area,dd,sd);
+		if (c.multi_day) {
+			var dhx_multi_day = 'dhx_multi_day';
+
+			if(this._els[dhx_multi_day]) {
+				this._els[dhx_multi_day][0].parentNode.removeChild(this._els[dhx_multi_day][0]);
+				this._els[dhx_multi_day] = null;
+			}
+
+			var navline = this._els["dhx_cal_navline"][0];
+			var top = navline.offsetHeight + this._els["dhx_cal_header"][0].offsetHeight+1;
+
+			var c1 = document.createElement("div");
+			c1.className = dhx_multi_day;
+			c1.style.visibility="hidden";
+			this.set_xy(c1, Math.max(this._colsS[this._colsS.col_length]+this.xy.scroll_width - 2, 0), 0, 0, top); // 2 extra borders, dhx_header has -1 bottom margin
+			data_area.parentNode.insertBefore(c1,data_area);
+
+			var c2 = c1.cloneNode(true);
+			c2.className = dhx_multi_day+"_icon";
+			c2.style.visibility="hidden";
+			this.set_xy(c2, this.xy.scale_width, 0, 0, top); // dhx_header has -1 bottom margin
+
+			c1.appendChild(c2);
+			this._els[dhx_multi_day]=[c1,c2];
+			this._els[dhx_multi_day][0].onclick = this._click.dhx_cal_data;
+		}
+	}
+};
+scheduler._reset_hours_scale=function(b,dd,sd){
+	var c=document.createElement("div");
+	c.className="dhx_scale_holder";
+
+	var date = new Date(1980,1,1,this.config.first_hour,0,0);
+	for (var i=this.config.first_hour*1; i < this.config.last_hour; i++) {
+		var cc=document.createElement("div");
+		cc.className="dhx_scale_hour";
+		cc.style.height=this.config.hour_size_px+"px";
+		var width = this.xy.scale_width;
+		if (this.config.left_border) {
+			cc.className += " dhx_scale_hour_border";
+		}
+		cc.style.width = width + "px";
+
+		var content = scheduler.templates.hour_scale(date);
+		cc.innerHTML = content;
+		this._waiAria.hourScaleAttr(cc, content);
+
+		c.appendChild(cc);
+		date=this.date.add(date,1,"hour");
+	}
+	b.appendChild(c);
+	if (this.config.scroll_hour)
+		b.scrollTop = this.config.hour_size_px*(this.config.scroll_hour-this.config.first_hour);
+};
+
+scheduler._currentDate = function(){
+	if(scheduler.config.now_date){
+		return new Date(scheduler.config.now_date);
+	}
+	return new Date();
+};
+
+scheduler._reset_ignores = function(){
+	this._ignores={};
+	this._ignores_detected = 0;
+};
+
+scheduler._process_ignores = function(sd, n, mode, step, preserve){
+	this._reset_ignores();
+	var ignore = scheduler["ignore_"+this._mode];
+
+	if (ignore){
+		var ign_date = new Date(sd);
+		for (var i=0; i<n; i++){
+			if (ignore(ign_date)){
+				this._ignores_detected += 1;
+				this._ignores[i] = true;
+				if (preserve)
+					n++;
+			}
+			ign_date = scheduler.date.add(ign_date, step, mode);
+			if(scheduler.date[mode + '_start'])
+				ign_date = scheduler.date[mode + '_start'](ign_date);
+		}
+	}
+};
+
+scheduler._render_month_scale = function(div, dd/*month start*/, sd/*view start*/, rows ){
+	//renders month view layout
+
+	var ed=scheduler.date.add(dd,1,"month"),
+		view_start = new Date(sd);
+	var cd = scheduler._currentDate();
+	this.date.date_part(cd);
+	this.date.date_part(sd);
+
+	rows = rows || Math.ceil(Math.round((ed.valueOf()-sd.valueOf()) / (60*60*24*1000) ) / 7);
+	var tdwidths=[];
+
+	for (var i=0; i<=7; i++) {
+		var cell_width = ((this._cols[i]||0)-1);
+		if (i === 0 && this.config.left_border) {
+			cell_width = cell_width - 1;
+		}
+		tdwidths[i] = cell_width + "px";
+	}
+
+	function getCellHeight(row){
+		var h = scheduler._colsS.height;
+		if(scheduler._colsS.heights[row + 1] !== undefined ){
+			h = scheduler._colsS.heights[row + 1] - (scheduler._colsS.heights[row]||0);
+		}
+		return h;
+	}
+
+
+	var cellheight = 0;
+
+	var table = document.createElement("table");
+	table.setAttribute("cellpadding", "0");
+	table.setAttribute("cellspacing", "0");
+
+	var tableBody = document.createElement("tbody");
+	table.appendChild(tableBody);
+
+	var rendered_dates = [];
+	for (var i=0; i<rows; i++){
+		var row = document.createElement("tr");
+		tableBody.appendChild(row);
+		var row_height = Math.max(getCellHeight(i) - scheduler.xy.month_head_height, 0);
+		for (var j=0; j<7; j++) {
+			var cell = document.createElement("td");
+			row.appendChild(cell);
+
+			var cls = "";
+			if (sd<dd)
+				cls='dhx_before';
+			else if (sd>=ed)
+				cls='dhx_after';
+			else if (sd.valueOf()==cd.valueOf())
+				cls='dhx_now';
+
+			if (this._ignores_detected && this._ignores[j]){
+				cls += " dhx_scale_ignore";
+			}
+
+			cell.className = cls + " " + this.templates.month_date_class(sd, cd);
+
+			var body_class = "dhx_month_body";
+			var head_class = "dhx_month_head";
+			if (j === 0 && this.config.left_border) {
+				body_class += " dhx_month_body_border";
+				head_class += " dhx_month_head_border";
+			}
+			if (!this._ignores_detected || !this._ignores[j]){
+
+				this._waiAria.monthCellAttr(cell, sd);
+
+				var cellHead = document.createElement("div");
+				cellHead.className = head_class;
+				cellHead.innerHTML = this.templates.month_day(sd);
+				cell.appendChild(cellHead);
+
+				var cellBody = document.createElement("div");
+				cellBody.className = body_class;
+				cellBody.style.height = row_height + "px";
+				cellBody.style.width = tdwidths[j];
+				cell.appendChild(cellBody);
+
+			} else {
+				cell.appendChild(document.createElement("div"));
+				cell.appendChild(document.createElement("div"));
+			}
+			rendered_dates.push(sd);
+			var bf1 = sd.getDate();
+			sd=this.date.add(sd,1,"day");
+			if (sd.getDate() - bf1 > 1)
+				sd = new Date(sd.getFullYear(), sd.getMonth(), bf1 + 1, 12, 0);
+		}
+
+		scheduler._colsS.heights[i] = cellheight;
+		cellheight += getCellHeight(i);
+	}
+
+	this._min_date = view_start;
+	this._max_date = sd;
+
+	div.innerHTML = "";
+	div.appendChild(table);
+
+	this._scales = {};
+	var divs = div.getElementsByTagName('div');
+	for (var i=0; i<rendered_dates.length; i++) { // [header, body, header, body, ...]
+		var div = divs[(i*2)+1];
+		var date = rendered_dates[i];
+		this._scales[+date] = div;
+	}
+	for (var i=0; i<rendered_dates.length; i++) {
+		var date = rendered_dates[i];
+		this.callEvent("onScaleAdd", [this._scales[+date], date]);
+	}
+
+
+
+	return this._max_date;
+};
+
+scheduler._reset_month_scale=function(b,dd,sd,rows){
+	//recalculates rows height and redraws month layout
+	var ed=scheduler.date.add(dd,1,"month");
+
+	//trim time part for comparation reasons
+	var cd = scheduler._currentDate();
+	this.date.date_part(cd);
+	this.date.date_part(sd);
+
+	rows = rows || Math.ceil(Math.round((ed.valueOf()-sd.valueOf()) / (60*60*24*1000) ) / 7);
+
+	var height = (Math.floor(b.clientHeight/rows) - this.xy.month_head_height);
+
+	this._colsS.height = height + this.xy.month_head_height;
+	this._colsS.heights = [];
+
+	return scheduler._render_month_scale(b, dd, sd, rows);
+
+};
+
+scheduler.getView = function (viewName) {
+	if (!viewName) {
+		viewName = scheduler.getState().mode;
+	}
+	if (scheduler.matrix && scheduler.matrix[viewName]) {
+		return scheduler.matrix[viewName];
+	}
+
+	if (scheduler._props && scheduler._props[viewName]) {
+		return scheduler._props[viewName];
+	}
+
+	return null;
+};
+
+scheduler.getLabel = function(property, key) {
+	var sections = this.config.lightbox.sections;
+	for (var i=0; i<sections.length; i++) {
+		if(sections[i].map_to == property) {
+			var options = sections[i].options;
+			for (var j=0; j<options.length; j++) {
+				if(options[j].key == key) {
+					return options[j].label;
+				}
+			}
+		}
+	}
+	return "";
+};
+scheduler.updateCollection = function(list_name, collection) {
+	var list = scheduler.serverList(list_name);
+	if (!list) return false;
+	list.splice(0, list.length);
+	list.push.apply(list, collection || []);
+	scheduler.callEvent("onOptionsLoad", []);
+	scheduler.resetLightbox();
+	return true;
+};
+scheduler._lame_clone = function(object, cache) {
+	var i, t, result; // iterator, types array, result
+
+	cache = cache || [];
+
+	for (i=0; i<cache.length; i+=2)
+		if(object === cache[i])
+			return cache[i+1];
+
+	if (object && typeof object == "object") {
+		result = {};
+		t = [Array,Date,Number,String,Boolean];
+		for (i=0; i<t.length; i++) {
+			if (object instanceof t[i])
+				result = i ? new t[i](object) : new t[i](); // first one is array
+		}
+		cache.push(object, result);
+		for (i in object) {
+			if (Object.prototype.hasOwnProperty.apply(object, [i]))
+				result[i] = scheduler._lame_clone(object[i], cache);
+		}
+	}
+	return result || object;
+};
+scheduler._lame_copy = function(target, source) {
+	for (var key in source) {
+		if (source.hasOwnProperty(key)) {
+			target[key] = source[key];
+		}
+	}
+	return target;
+};
+scheduler._get_date_from_pos = function(pos) {
+	var start=this._min_date.valueOf()+(pos.y*this.config.time_step+(this._table_view?0:pos.x)*24*60)*60000;
+	return new Date(this._correct_shift(start));
+};
+// n_ev - native event
+scheduler.getActionData = function(n_ev) {
+	var pos = this._mouse_coords(n_ev);
+	return {
+		date:this._get_date_from_pos(pos),
+		section:pos.section
+	};
+};
+scheduler._focus = function(node, select){
+	if (node && node.focus){
+		if (this._mobile){
+			window.setTimeout(function(){
+				node.focus();
+			},10);
+		} else {
+			try {
+				if (select && node.select && node.offsetWidth) {
+					node.select();
+				}
+				node.focus();
+			} catch (e) {
+			}
+		}
+	}
+};
+
+//non-linear scales
+scheduler._get_real_event_length=function(sd, fd, obj){
+	var ev_length = fd -sd;
+	var hours = (obj._start_correction + obj._end_correction)||0;
+	var ignore = this["ignore_"+this._mode];
+
+	var start_slot = 0,
+		end_slot;
+	if (obj.render){
+		start_slot = this._get_date_index(obj, sd);
+		end_slot = this._get_date_index(obj, fd);
+	} else{
+		end_slot = Math.round(ev_length/60/60/1000/24);
+	}
+
+	var last_column = true;
+	while (start_slot < end_slot){
+		var check = scheduler.date.add(fd, -obj.x_step, obj.x_unit);
+		if (ignore && ignore(fd) && (!last_column || (last_column && ignore(check) ))){
+			ev_length -= (fd-check);
+
+		}else{
+			last_column = false;
+			ev_length -= hours;
+		}
+
+
+		fd = check;
+		end_slot--;
+	}
+	return ev_length;
+};
+scheduler._get_fictional_event_length=function(end_date, ev_length, obj, back){
+	var sd = new Date(end_date);
+	var dir = back ? -1 : 1;
+
+	//get difference caused by first|last hour
+	if (obj._start_correction || obj._end_correction){
+		var today;
+		if (back)
+			today = (sd.getHours()*60+sd.getMinutes()) - (obj.first_hour||0)*60;
+		else
+			today = (obj.last_hour||0)*60 - (sd.getHours()*60+sd.getMinutes());
+		var per_day = (obj.last_hour - obj.first_hour)*60;
+		var days = Math.ceil( (ev_length / (60*1000) - today ) / per_day);
+		if(days < 0) days = 0;
+		ev_length += days * (24*60 - per_day) * 60 * 1000;
+	}
+
+	var fd = new Date(end_date*1+ev_length*dir);
+	var ignore = this["ignore_"+this._mode];
+
+	var start_slot = 0,
+		end_slot;
+	if (obj.render){
+		start_slot = this._get_date_index(obj, sd);
+		end_slot = this._get_date_index(obj, fd);
+	} else{
+		end_slot = Math.round(ev_length/60/60/1000/24);
+	}
+
+	while (start_slot*dir <= end_slot*dir){
+		var check = scheduler.date.add(sd, obj.x_step*dir, obj.x_unit);
+		if (ignore && ignore(sd)){
+			ev_length += (check-sd)*dir;
+			end_slot += dir;
+		}
+
+		sd = check;
+		start_slot+=dir;
+	}
+
+	return ev_length;
+};
+
+scheduler._get_section_view = function(){
+	return this.getView();
+};
+
+scheduler._get_section_property = function(){
+	if(this.matrix && this.matrix[this._mode]){
+		return this.matrix[this._mode].y_property;
+	}else if(this._props && this._props[this._mode]){
+		return this._props[this._mode].map_to;
+	}
+	return null;
+};
+
+scheduler._is_initialized = function(){
+	var state = this.getState();
+	return (this._obj && state.date && state.mode);
+};
+scheduler._is_lightbox_open = function(){
+	var state = this.getState();
+	return state.lightbox_id !== null && state.lightbox_id !== undefined;
+};
+
+scheduler._getClassName = function(node){
+	if(!node) return "";
+
+	var className = node.className || "";
+	if(className.baseVal)//'className' exist but not a string - IE svg element in DOM
+		className = className.baseVal;
+
+	if(!className.indexOf)
+		className = '';
+
+	return className || "";
+};
+scheduler.event = window.dhtmlxEvent;
+
+scheduler.eventRemove = function(el, event, handler){
+	if (el.removeEventListener)
+		el.removeEventListener(event, handler, false);
+
+	else if (el.detachEvent)
+		el.detachEvent("on"+event, handler);
+};
+
+(function(){
+	function isVisible(node){
+		var display = false,
+			visibility = false;
+		if(window.getComputedStyle){
+			var style = window.getComputedStyle(node, null);
+			display = style["display"];
+			visibility = style["visibility"];
+		}else if(node.currentStyle){
+			display = node.currentStyle["display"];
+			visibility = node.currentStyle["visibility"];
+		}
+
+		var hiddenSection = false;
+		var recurringSection = scheduler._locate_css({target:node}, "dhx_form_repeat", false);
+		if(recurringSection){
+			hiddenSection = !!(recurringSection.style.height == "0px");
+		}
+		hiddenSection = hiddenSection || !(node.offsetHeight);
+
+		return (display != "none" && visibility != "hidden" && !hiddenSection);
+	}
+
+	function hasNonNegativeTabIndex(node){
+		return !isNaN(node.getAttribute("tabindex")) && (node.getAttribute("tabindex")*1 >= 0);
+	}
+
+	function hasHref(node){
+		var canHaveHref = {"a": true, "area": true};
+		if(canHaveHref[node.nodeName.loLowerCase()]){
+			return !!node.getAttribute("href");
+		}
+		return true;
+	}
+
+	function isEnabled(node){
+		var canDisable = {"input":true, "select":true, "textarea":true, "button":true, "object":true};
+		if(canDisable[node.nodeName.toLowerCase()]){
+			return !node.hasAttribute("disabled");
+		}
+
+		return true;
+	}
+
+
+	scheduler._getFocusableNodes = function getFocusableNodes(root){
+		var nodes = root.querySelectorAll([
+			"a[href]",
+			"area[href]",
+			"input",
+			"select",
+			"textarea",
+			"button",
+			"iframe",
+			"object",
+			"embed",
+			"[tabindex]",
+			"[contenteditable]"
+		].join(", "));
+
+		var nodesArray = Array.prototype.slice.call(nodes, 0);
+		for(var i = 0; i < nodesArray.length; i++){
+			var node = nodesArray[i];
+			var isValid = (hasNonNegativeTabIndex(node)  || isEnabled(node) || hasHref(node)) && isVisible(node);
+			if(!isValid){
+				nodesArray.splice(i, 1);
+				i--;
+			}
+		}
+		return nodesArray;
+	};
+})();
+
+scheduler._trim = function(str){
+	var func = String.prototype.trim || function(){ return this.replace(/^\s+|\s+$/g, ""); };
+	return func.apply(str);
+};
+
+scheduler._isDate = function(obj){
+	if (obj && typeof obj == "object") {
+		return !!(obj.getFullYear && obj.getMonth && obj.getDate);
+	} else {
+		return false;
+	}
+};
+
+scheduler._isObject = function(obj){
+	return (obj && typeof obj == "object");
+};
 (function(){
 
 	var htmlTags = new RegExp("<(?:.|\n)*?>", "gm");
@@ -2420,1655 +4086,6 @@ dhtmlxError.catchError("LoadXML", function(a, b, c){
 
 
 })();
-
-dhtmlxEventable(scheduler);
-
-scheduler._detachDomEvent = function(el, event, handler){
-	if (el.removeEventListener){
-		el.removeEventListener(event, handler, false);
-
-	}else if (el.detachEvent){
-		el.detachEvent("on"+event, handler);
-	}
-};
-
-scheduler._init_once = function(){
-
-	var oldSize = getWindowSize();
-	dhtmlxEvent(window,"resize",function() {
-		if (!isAttachedNode(scheduler._obj))
-			return;
-
-		window.clearTimeout(scheduler._resize_timer);
-		scheduler._resize_timer = window.setTimeout(function () {
-			var newSize = getWindowSize();
-
-			// ie7-8 triggers "resize" when window's elements are resized, it messes container-autoresize extension
-			// check if it's actually resized
-			if (!equals(oldSize, newSize)) {
-				if (!isAttachedNode(scheduler._obj))
-					return;
-
-				if (scheduler.callEvent("onSchedulerResize", [])) {
-					scheduler.updateView();
-					scheduler.callEvent("onAfterSchedulerResize", []);
-				}
-			}
-			oldSize = newSize;
-		}, 100);
-
-	});
-
-	function isAttachedNode(container){
-		var root = document.body;
-
-		while(container && container != root){
-			container = container.parentNode;
-		}
-
-		return !!(root == container);
-	}
-
-	function getWindowSize(){
-		return {
-			w : window.innerWidth || document.documentElement.clientWidth,
-			h : window.innerHeight || document.documentElement.clientHeight
-		};
-	}
-	function equals(a,b){
-		return a.w == b.w && a.h == b.h;
-	}
-
-	scheduler._init_once = function(){};
-};
-scheduler.init=function(id,date,mode){
-	date=date||(scheduler._currentDate());
-	mode=mode||"week";
-
-	if(this._obj){
-		this.unset_actions();
-	}
-
-	this._obj=(typeof id == "string")?document.getElementById(id):id;
-	this.$container = this._obj;
-	if(this.config.wai_aria_attributes && this.config.wai_aria_application_role){
-		this.$container.setAttribute("role", "application");
-	}
-
-	//hook for terrace skin
-	if (this._skin_init)
-		scheduler._skin_init();
-
-	scheduler.date.init();
-
-
-	this._els=[];
-	this._scroll=true;
-	this._quirks=(_isIE && document.compatMode == "BackCompat");
-	this._quirks7=(_isIE && navigator.appVersion.indexOf("MSIE 8")==-1);
-
-	this.get_elements();
-	this.init_templates();
-	this.set_actions();
-
-	this._init_once();
-	this._init_touch_events();
-
-	this.set_sizes();
-	scheduler.callEvent('onSchedulerReady', []);
-	this.setCurrentView(date,mode);
-
-};
-
-scheduler.xy={
-	min_event_height:40,
-	scale_width:50,
-	scroll_width:18,
-	scale_height:20,
-	month_scale_height:20,
-	menu_width:25,
-	margin_top:0,
-	margin_left:0,
-	editor_width:140,
-	month_head_height:22,
-	event_header_height: 14
-};
-scheduler.keys={
-	edit_save:13,
-	edit_cancel:27
-};
-
-scheduler.bind = function bind(functor, object){
-	if(functor.bind)
-		return functor.bind(object);
-	else
-		return function(){ return functor.apply(object,arguments); };
-};
-
-scheduler.set_sizes=function(){
-	var w = this._x = this._obj.clientWidth-this.xy.margin_left;
-	var h = this._y = this._obj.clientHeight-this.xy.margin_top;
-	
-	//not-table mode always has scroll - need to be fixed in future
-	var scale_x=this._table_view?0:(this.xy.scale_width+this.xy.scroll_width);
-	var scale_s=this._table_view?-1:this.xy.scale_width;
-
-	var materialScalePlaceholder = this.$container.querySelector(".dhx_cal_scale_placeholder");
-	if(scheduler._is_material_skin()){
-		if(!materialScalePlaceholder) {
-			materialScalePlaceholder = document.createElement("div");
-			materialScalePlaceholder.className = "dhx_cal_scale_placeholder";
-			this.$container.insertBefore(materialScalePlaceholder, this._els["dhx_cal_header"][0]);
-		}
-		materialScalePlaceholder.style.display = "block";
-		this.set_xy(materialScalePlaceholder,w,this.xy.scale_height + 1,0,this.xy.nav_height+(this._quirks?-1:1));
-
-	}else{
-		if(materialScalePlaceholder){
-			materialScalePlaceholder.parentNode.removeChild(materialScalePlaceholder);
-		}
-	}
-
-	this.set_xy(this._els["dhx_cal_navline"][0],w,this.xy.nav_height,0,0);
-	this.set_xy(this._els["dhx_cal_header"][0],w-scale_x,this.xy.scale_height,scale_s,this.xy.nav_height+(this._quirks?-1:1));
-	//to support alter-skin, we need a way to alter height directly from css
-	var actual_height = this._els["dhx_cal_navline"][0].offsetHeight;
-	if (actual_height > 0) this.xy.nav_height = actual_height;
-	
-	var data_y=this.xy.scale_height+this.xy.nav_height+(this._quirks?-2:0);
-	this.set_xy(this._els["dhx_cal_data"][0],w,h-(data_y+2),0,data_y+2);
-};
-scheduler.set_xy=function(node,w,h,x,y){
-	node.style.width=Math.max(0,w)+"px";
-	node.style.height=Math.max(0,h)+"px";
-	if (arguments.length>3){
-		node.style.left=x+"px";
-		node.style.top=y+"px";	
-	}
-};
-scheduler.get_elements=function(){
-	//get all child elements as named hash
-	var els=this._obj.getElementsByTagName("DIV");
-	for (var i=0; i < els.length; i++){
-		var class_name= scheduler._getClassName(els[i]);
-		var attr_value = els[i].getAttribute("name") || "";
-		if (class_name) class_name = class_name.split(" ")[0];
-		if (!this._els[class_name]) this._els[class_name]=[];
-		this._els[class_name].push(els[i]);
-		
-		//check if name need to be changed
-		var label = scheduler.locale.labels[attr_value||class_name];
-		if (typeof label !== "string" && attr_value && !els[i].innerHTML)
-			 label = attr_value.split("_")[0];
-		if (label) {
-			this._waiAria.labelAttr(els[i], label);
-			els[i].innerHTML = label;
-		}
-	}
-};
-
-scheduler.unset_actions = function(){
-	for (var a in this._els)
-		if (this._click[a])
-			for (var i=0; i < this._els[a].length; i++)
-				this._els[a][i].onclick = null;
-	this._obj.onselectstart = null;
-	this._obj.onmousemove = null;
-	this._obj.onmousedown = null;
-	this._obj.onmouseup = null;
-	this._obj.ondblclick = null;
-	this._obj.oncontextmenu = null;
-};
-
-scheduler.set_actions=function(){
-	for (var a in this._els)
-		if (this._click[a])
-			for (var i=0; i < this._els[a].length; i++)
-				this._els[a][i].onclick=scheduler._click[a];
-	this._obj.onselectstart=function(e){ return false; };
-	this._obj.onmousemove=function(e){
-		if (!scheduler._temp_touch_block)
-			scheduler._on_mouse_move(e||event);
-	};
-	this._obj.onmousedown=function(e){
-		if (!scheduler._ignore_next_click)
-			scheduler._on_mouse_down(e||event);
-	};
-	this._obj.onmouseup=function(e){
-		if (!scheduler._ignore_next_click)
-			scheduler._on_mouse_up(e||event);
-	};
-	this._obj.ondblclick=function(e){
-		scheduler._on_dbl_click(e||event);
-	};
-	this._obj.oncontextmenu = function(e) {
-		var ev = e||event;
-		var src = ev.target||ev.srcElement;
-		var returnValue = scheduler.callEvent("onContextMenu", [scheduler._locate_event(src), ev]);
-		return returnValue;
-	};
-};
-scheduler.select=function(id){
-	if (this._select_id==id) return;
-	scheduler._close_not_saved();
-	this.editStop(false);
-	this.unselect();
-	this._select_id = id;
-	this.updateEvent(id);
-};
-scheduler.unselect=function(id){
-	if (id && id!=this._select_id) return;
-	var t=this._select_id;
-	this._select_id = null;
-	if (t && this.getEvent(t)) this.updateEvent(t);
-};
-scheduler.getState=function(){
-	return {
-		mode: this._mode,
-		date: new Date(this._date),
-		min_date: new Date(this._min_date),
-		max_date: new Date(this._max_date),
-		editor_id: this._edit_id,
-		lightbox_id: this._lightbox_id,
-		new_event: this._new_event,
-		select_id: this._select_id,
-		expanded: this.expanded,
-		drag_id: this._drag_id,
-		drag_mode: this._drag_mode
-	};
-};
-scheduler._click={
-	dhx_cal_data:function(e){
-		//in case of touch disable click processing
-		if (scheduler._ignore_next_click){
-			if (e.preventDefault)
-				e.preventDefault();
-			e.cancelBubble = true;
-			scheduler._ignore_next_click = false;
-			return false;
-		}
-
-		var trg = e?e.target:event.srcElement;
-		var id = scheduler._locate_event(trg);
-		
-		e = e || event;
-
-		if (!id) {
-			scheduler.callEvent("onEmptyClick",[scheduler.getActionData(e).date, e]);
-		} else {
-			if ( !scheduler.callEvent("onClick",[id,e]) || scheduler.config.readonly ) return;
-		}
-
-		if (id && scheduler.config.select) {
-
-			scheduler.select(id);
-			var mask = scheduler._getClassName(trg);
-			if (mask.indexOf("_icon")!=-1)
-				scheduler._click.buttons[mask.split(" ")[1].replace("icon_","")](id);
-		} else{
-			scheduler._close_not_saved();
-			if (new Date().valueOf()-(scheduler._new_event||0) > 500){
-				scheduler.unselect();
-			}
-		}
-	},
-	dhx_cal_prev_button:function(){
-		scheduler._click.dhx_cal_next_button(0,-1);
-	},
-	dhx_cal_next_button:function(dummy,step){
-		scheduler.setCurrentView(scheduler.date.add( //next line changes scheduler._date , but seems it has not side-effects
-			scheduler.date[scheduler._mode+"_start"](new Date(scheduler._date)),(step||1),scheduler._mode));
-	},
-	dhx_cal_today_button:function(){
-		if (scheduler.callEvent("onBeforeTodayDisplayed", [])) {
-			scheduler.setCurrentView(scheduler._currentDate());
-		}
-	},
-	dhx_cal_tab:function(){
-		var name = this.getAttribute("name");
-		var mode = name.substring(0, name.search("_tab"));
-		scheduler.setCurrentView(scheduler._date,mode);
-	},
-	buttons:{
-		"delete":function(id){
-			var c = scheduler.locale.labels.confirm_deleting;
-			scheduler._dhtmlx_confirm(c, scheduler.locale.labels.title_confirm_deleting, function(){ scheduler.deleteEvent(id); });
-		},
-		edit:function(id){ scheduler.edit(id); },
-		save:function(id){ scheduler.editStop(true); },
-		details:function(id){ scheduler.showLightbox(id); },
-		cancel:function(id){ scheduler.editStop(false); }
-	}
-};
-scheduler._dhtmlx_confirm = function(message, title, callback) {
-	if (!message)
-		return callback();
-	var opts = { text: message };
-	if (title)
-		opts.title = title;
-	if (callback) {
-		opts.callback = function(result) {
-			if (result)
-				callback();
-		};
-	}
-	dhtmlx.confirm(opts);
-};
-scheduler.addEventNow=function(start,end,e){
-	var base = {};
-	if (scheduler._isObject(start) && !scheduler._isDate(start)){
-		base = start;
-		start = null;
-	}
-	
-	var d = (this.config.event_duration||this.config.time_step)*60000;
-	if (!start) start = base.start_date||Math.round((scheduler._currentDate()).valueOf()/d)*d;
-	var start_date = new Date(start);
-	if (!end){
-		var start_hour = this.config.first_hour;
-		if (start_hour > start_date.getHours()){
-			start_date.setHours(start_hour);
-			start = start_date.valueOf();
-		}
-		end = start.valueOf()+d;
-	}
-	var end_date = new Date(end);
-
-	// scheduler.addEventNow(new Date(), new Date()) + collision though get_visible events defect (such event was not retrieved)
-	if(start_date.valueOf() == end_date.valueOf())
-		end_date.setTime(end_date.valueOf()+d);
-
-	base.start_date = base.start_date||start_date;
-	base.end_date =  base.end_date||end_date;
-	base.text = base.text||this.locale.labels.new_event;
-	base.id = this._drag_id = base.id || this.uid();
-	this._drag_mode="new-size";
-
-	this._loading=true;
-	var eventId = this.addEvent(base);
-	this.callEvent("onEventCreated",[this._drag_id,e]);
-	this._loading=false;
-	
-	this._drag_event={}; //dummy , to trigger correct event updating logic
-	this._on_mouse_up(e);
-	return eventId;
-};
-scheduler._on_dbl_click=function(e,src){
-	src = src||(e.target||e.srcElement);
-	if (this.config.readonly) return;
-	var name = scheduler._getClassName(src).split(" ")[0];
-	switch(name){
-		case "dhx_scale_holder":
-		case "dhx_scale_holder_now":
-		case "dhx_month_body":
-		case "dhx_wa_day_data":
-			if (!scheduler.config.dblclick_create) break;
-			this.addEventNow(this.getActionData(e).date,null,e);
-			break;
-		case "dhx_cal_event":
-		case "dhx_wa_ev_body":
-		case "dhx_agenda_line":
-		case "dhx_grid_event":
-		case "dhx_cal_event_line":
-		case "dhx_cal_event_clear":
-			var id = this._locate_event(src);
-			if (!this.callEvent("onDblClick",[id,e])) return;
-			if (this.config.details_on_dblclick || this._table_view || !this.getEvent(id)._timed || !this.config.select)
-				this.showLightbox(id);
-			else
-				this.edit(id);
-			break;
-		case "dhx_time_block":
-		case "dhx_cal_container":
-			return;
-		default:
-			var t = this["dblclick_"+name];
-			if (t) {
-				t.call(this,e);
-			}
-			else {
-				if (src.parentNode && src != this)
-					return scheduler._on_dbl_click(e,src.parentNode);
-			}
-			break;
-	}
-};
-//column index by mouse x-coordinate
-scheduler._get_column_index = function(x_pos){
-	var column = 0;
-	if (this._cols){
-
-		var width = 0;
-
-		var i = 0;
-		while (width + this._cols[i] < x_pos && i < this._cols.length){
-			width += this._cols[i];
-			i++;
-		}
-
-		column = i + (this._cols[i] ? ((x_pos - width)/ this._cols[i]) : 0);
-
-		if (this._ignores){
-
-			if(column >= this._cols.length){
-				while(column >= 1 && this._ignores[Math.floor(column)]){
-					column--;
-				}
-			}
-
-		}
-	}
-	return column;
-};
-//transform mouse coordinates to day-time indexes of week based view
-scheduler._week_indexes_from_pos = function(pos){
-	//"get position" can be invoked before columns are loaded into the units view(e.g. by onMouseMove handler in key_nav.js)
-	if(!this._cols){
-		return pos;
-	}else{
-		var column = this._get_column_index(pos.x);
-		pos.x=Math.min(this._cols.length-1, Math.max(0,Math.ceil(column)-1));
-
-		pos.y=Math.max(0,Math.ceil(pos.y*60/(this.config.time_step*this.config.hour_size_px))-1)+this.config.first_hour*(60/this.config.time_step);
-		return pos;
-	}
-};
-
-scheduler._mouse_coords=function(ev){
-	var pos;
-	var b=document.body;
-	var d = document.documentElement;
-	if (!_isIE && (ev.pageX || ev.pageY))
-	    pos={x:ev.pageX, y:ev.pageY};
-	else pos={
-	    x:ev.clientX + (b.scrollLeft||d.scrollLeft||0) - b.clientLeft,
-	    y:ev.clientY + (b.scrollTop||d.scrollTop||0) - b.clientTop
-	};
-
-	//apply layout
-	pos.x-=this.$domHelpers.getAbsoluteLeft(this._obj)+(this._table_view?0:this.xy.scale_width);
-	pos.y-=this.$domHelpers.getAbsoluteTop(this._obj)+this.xy.nav_height+(this._dy_shift||0)+this.xy.scale_height-this._els["dhx_cal_data"][0].scrollTop;
-	pos.ev = ev;
-
-	var handler = this["mouse_"+this._mode];
-	if (handler){
-		pos = handler.call(this,pos);
-	}else{
-		//transform to date
-		if (!this._table_view) {
-			pos = this._week_indexes_from_pos(pos);
-		} else {
-			var column = this._get_column_index(pos.x);
-			if (!this._cols || !this._colsS) // agenda/map views
-				return pos;
-			var dy=0;
-			for (dy=1; dy < this._colsS.heights.length; dy++)
-				if (this._colsS.heights[dy]>pos.y) break;
-
-			pos.y=Math.ceil( (Math.max(0, column)+Math.max(0,dy-1)*7)*24*60/this.config.time_step );
-
-			if (scheduler._drag_mode || this._mode == "month")
-				pos.y=(Math.max(0,Math.ceil(column)-1)+Math.max(0,dy-1)*7)*24*60/this.config.time_step;
-
-			//we care about ignored days only during event moving in month view
-			if (this._drag_mode == "move"){
-				if (scheduler._ignores_detected && scheduler.config.preserve_length){
-					pos._ignores = true;
-					//get real lengtn of event
-					if (!this._drag_event._event_length)
-						this._drag_event._event_length = this._get_real_event_length(this._drag_event.start_date, this._drag_event.end_date, { x_step:1, x_unit:"day"});
-				}
-			}
-
-			pos.x=0;
-		}
-	}
-
-	pos.timestamp = +new Date();
-
-	return pos;
-};
-scheduler._close_not_saved=function(){
-	if (new Date().valueOf()-(scheduler._new_event||0) > 500 && scheduler._edit_id){
-		var c=scheduler.locale.labels.confirm_closing;
-
-		scheduler._dhtmlx_confirm(c, scheduler.locale.labels.title_confirm_closing, function() { scheduler.editStop(scheduler.config.positive_closing); });
-		if(c){
-			this._drag_id = this._drag_pos = this._drag_mode = null;
-		}
-	}
-};
-scheduler._correct_shift=function(start, back){
-	return start-=((new Date(scheduler._min_date)).getTimezoneOffset()-(new Date(start)).getTimezoneOffset())*60000*(back?-1:1);	
-};
-
-scheduler._is_pos_changed = function(old_pos, new_pos){
-	function diff(old_val, new_val, acc){
-		return !!(Math.abs(old_val - new_val) > acc);
-	}
-
-	if(!(old_pos && this._drag_pos)){
-		return true;
-	}
-	var delay = 100,
-		d_pos = 5;
-
-	// start drag only if passed some time since mouse down, or if mouse position changed sufficiently
-	return !!(this._drag_pos.has_moved || !this._drag_pos.timestamp || (new_pos.timestamp - this._drag_pos.timestamp > delay) || diff(old_pos.ev.clientX, new_pos.ev.clientX, d_pos) || diff(old_pos.ev.clientY, new_pos.ev.clientY, d_pos));
-};
-
-scheduler._correct_drag_start_date = function(start){
-	var obj;
-	if (scheduler.matrix)
-		obj = scheduler.matrix[scheduler._mode];
-	obj = obj  || { x_step:1, x_unit:"day" };
-
-	start = new Date(start);
-	var len = 1;
-	if(obj._start_correction || obj._end_correction)
-		len = (obj.last_hour||0)*60 - (start.getHours()*60+start.getMinutes()) || 1;
-
-	return start*1 + (scheduler._get_fictional_event_length(start, len, obj)  - len);
-};
-scheduler._correct_drag_end_date = function(start, duration){
-	var obj;
-	if (scheduler.matrix)
-		obj = scheduler.matrix[scheduler._mode];
-	obj = obj  || { x_step:1, x_unit:"day" };
-
-	var end = start*1 + scheduler._get_fictional_event_length(start, duration, obj);
-	return new Date(end*1 - (scheduler._get_fictional_event_length(end, -1, obj, -1) + 1));
-};
-
-scheduler._on_mouse_move=function(e){
-	if (this._drag_mode){
-		var pos=this._mouse_coords(e);
-		if (this._is_pos_changed(this._drag_pos, pos)){
-			var start, end;
-			if (this._edit_id!=this._drag_id)
-				this._close_not_saved();
-
-			if(!this._drag_mode)
-				return;
-
-			var mousedownPos = null;
-			if(this._drag_pos && !this._drag_pos.has_moved){
-				mousedownPos = this._drag_pos;
-				mousedownPos.has_moved = true;
-			}
-
-			this._drag_pos = pos;
-
-			this._drag_pos.has_moved = true;
-
-			if (this._drag_mode=="create"){
-
-				// use mouse down position as a starting point for drag-create
-				if(mousedownPos){
-					pos = mousedownPos;
-				}
-
-				this._close_not_saved();
-				this.unselect(this._select_id);
-				this._loading=true; //will be ignored by dataprocessor
-				
-				start = this._get_date_from_pos(pos).valueOf();
-
-				if (!this._drag_start) {
-					var res = this.callEvent("onBeforeEventCreated", [e, this._drag_id]);
-					if (!res){
-						this._loading=false;
-						return;
-
-					}
-
-					this._loading=false;
-					this._drag_start=start;
-					return;
-				}
-
-				end = start;
-				if (end == this._drag_start) {
-				}
-
-				var start_date = new Date(this._drag_start);
-				var end_date = new Date(end);
-				if ( (this._mode == "day" || this._mode == "week") &&
-					(start_date.getHours() == end_date.getHours() &&
-					start_date.getMinutes() == end_date.getMinutes()) ) {
-						end_date = new Date(this._drag_start+1000);
-				}
-
-				
-				this._drag_id=this.uid();
-				this.addEvent(start_date, end_date, this.locale.labels.new_event, this._drag_id, pos.fields);
-				
-				this.callEvent("onEventCreated",[this._drag_id,e]);
-				this._loading=false;
-				this._drag_mode="new-size";
-				
-			}
-
-
-			var ev=this.getEvent(this._drag_id);
-			var obj;
-			if (scheduler.matrix)
-				obj = scheduler.matrix[scheduler._mode];
-			obj = obj  || { x_step:1, x_unit:"day" };
-
-			if (this._drag_mode=="move"){
-				start = this._min_date.valueOf()+(pos.y*this.config.time_step+pos.x*24*60 -(scheduler._move_pos_shift||0) )*60000;
-				if (!pos.custom && this._table_view) start+=this.date.time_part(ev.start_date)*1000;
-				start = this._correct_shift(start);
-
-				if (pos._ignores && this.config.preserve_length && this._table_view){
-
-					start = scheduler._correct_drag_start_date(start);
-					end = scheduler._correct_drag_end_date(start,this._drag_event._event_length);
-
-				} else
-					end = ev.end_date.valueOf()-(ev.start_date.valueOf()-start);
-			} else { // resize
-				start = ev.start_date.valueOf();
-				end = ev.end_date.valueOf();
-				if (this._table_view) {
-					var resize_date = this._min_date.valueOf()+pos.y*this.config.time_step*60000 + (pos.custom?0:24*60*60000);
-					if (this._mode == "month") {
-						resize_date = this._correct_shift(resize_date, false);
-						if( this._drag_from_start ) {
-							var day = 24*60*60000;
-							if( resize_date <= scheduler.date.date_part(new Date(end+day-1)).valueOf() ) // to get end time as 23:59:59 and then the day start
-								start = resize_date - day;
-						} else {
-							end = resize_date;
-						}
-					} else {
-						if(this.config.preserve_length) {
-							if (pos.resize_from_start) {
-								start = scheduler._correct_drag_start_date(resize_date);
-							} else {
-								end = scheduler._correct_drag_end_date(resize_date, 0);
-							}
-						}
-						else {
-							if (pos.resize_from_start) {
-								start = resize_date;
-							} else {
-								end = resize_date;
-							}
-						}
-					}
-				} else {
-					var end_day_start = this.date.date_part(new Date(ev.end_date.valueOf() - 1)).valueOf();
-					var end_day_date = new Date(end_day_start);
-
-					end = end_day_start + pos.y*this.config.time_step*60000;
-					end = end + ((new Date(end)).getTimezoneOffset() - end_day_date.getTimezoneOffset()) * 60000;
-					this._els["dhx_cal_data"][0].style.cursor="s-resize";
-					if (this._mode == "week" || this._mode == "day")
-						end = this._correct_shift(end);
-				}
-				if (this._drag_mode == "new-size") {
-					if (end <= this._drag_start){
-						var shift = pos.shift||((this._table_view && !pos.custom)?24*60*60000:0);
-						start = end-(pos.shift?0:shift);
-						end = this._drag_start+(shift||(this.config.time_step*60000));
-					} else {
-						start = this._drag_start;
-					}
-				} else {
-					if (end<=start)
-						end=start+this.config.time_step*60000;
-				}
-			}
-			var new_end = new Date(end-1);			
-			var new_start = new Date(start);
-			//deny drag out of visible scheduler scale in timeline view
-			if(this._drag_mode=="move" && scheduler.config.limit_drag_out &&
-				(+new_start < +scheduler._min_date || +end > +scheduler._max_date)){
-
-				if(+ev.start_date < +scheduler._min_date || +ev.end_date > +scheduler._max_date){
-					// not move event if it's already outside time scale
-					new_start = new Date(ev.start_date);
-					end = new Date(ev.end_date);
-				}else{
-
-					var duration = end - new_start;
-
-					if(+new_start < +scheduler._min_date){
-						new_start = new Date(scheduler._min_date);
-						if (pos._ignores && this.config.preserve_length && this._table_view){
-							new_start = new Date(scheduler._correct_drag_start_date(new_start));
-							if(obj._start_correction)
-								new_start = new Date(new_start.valueOf() + obj._start_correction);
-							end = new Date(new_start*1 + this._get_fictional_event_length(new_start, this._drag_event._event_length, obj));
-						}else{
-							end = new Date(+new_start + duration);
-						}
-					}else{
-						end = new Date(scheduler._max_date);
-
-						if (pos._ignores && this.config.preserve_length && this._table_view){
-							if(obj._end_correction)
-								end = new Date(end.valueOf() - obj._end_correction);
-							end = new Date(end*1 - this._get_fictional_event_length(end, 0, obj, true));
-							new_start = new Date(end*1 - this._get_fictional_event_length(end, this._drag_event._event_length, obj, true));
-							if(this._ignores_detected){
-								new_start = scheduler.date.add(new_start, obj.x_step, obj.x_unit);
-								end = new Date(end*1 - this._get_fictional_event_length(end, 0, obj, true));
-								end = scheduler.date.add(end, obj.x_step, obj.x_unit);
-							}
-
-						}else{
-							new_start = new Date(+end - duration);
-						}
-
-					}
-
-				}
-				var new_end = new Date(end-1);
-			}
-
-
-
-			// fix event dates when resized to bottom of the column (day/week views)
-			if(!this._table_view &&
-				!scheduler.config.all_timed &&
-				((!scheduler._get_section_view() && pos.x != this._get_event_sday({start_date: new Date(end), end_date:new Date(end)})) || new Date(end).getHours() >= this.config.last_hour)){
-				var duration = end - new_start;
-				var day = this._min_date.valueOf()+(pos.x*24*60)*60000;
-				end = scheduler.date.date_part(new Date(day));
-				end.setHours(this.config.last_hour);
-				new_end = new Date(end-1);
-				if(this._drag_mode == "move"){
-					new_start = new Date(+end - duration);
-				}
-			}
-
-			//prevent out-of-borders situation for day|week view
-			if ( this._table_view || (new_end.getDate()==new_start.getDate() && new_end.getHours()<this.config.last_hour) || scheduler._allow_dnd ){
-				ev.start_date=new_start;
-				ev.end_date=new Date(end);
-				if (this.config.update_render){
-					//fix for repaint after dnd and scroll issue, #231
-					var sx = scheduler._els["dhx_cal_data"][0].scrollTop;
-					this.update_view();
-					scheduler._els["dhx_cal_data"][0].scrollTop = sx;
-				} else
-					this.updateEvent(this._drag_id);
-			}
-			if (this._table_view) {
-				this.for_rendered(this._drag_id,function(r){
-					r.className+=" dhx_in_move dhx_cal_event_drag";
-				});
-			}
-
-			this.callEvent("onEventDrag", [this._drag_id, this._drag_mode, e]);
-		}
-	}  else {
-		if (scheduler.checkEvent("onMouseMove")){
-			var id = this._locate_event(e.target||e.srcElement);
-			this.callEvent("onMouseMove",[id,e]);
-		}
-	}
-};
-scheduler._on_mouse_down=function(e,src) {
-	// on Mac we do not get onmouseup event when clicking right mouse button leaving us in dnd state
-	// let's ignore right mouse button then
-	if (e.button == 2)
-		return;
-
-	if (this.config.readonly || this._drag_mode) return;
-	src = src||(e.target||e.srcElement);
-	var classname = scheduler._getClassName(src).split(" ")[0];
-
-	switch (classname) {
-		case "dhx_cal_event_line":
-		case "dhx_cal_event_clear":
-			if (this._table_view)
-				this._drag_mode="move"; //item in table mode
-			break;
-		case "dhx_event_move":
-		case "dhx_wa_ev_body":
-			this._drag_mode="move";
-			break;
-		case "dhx_event_resize":
-			this._drag_mode="resize";
-			var fullClass = scheduler._getClassName(src);
-			if((fullClass).indexOf("dhx_event_resize_end") < 0){
-				scheduler._drag_from_start = true;
-			}else{
-				scheduler._drag_from_start = false;
-			}
-			break;
-		case "dhx_scale_holder":
-		case "dhx_scale_holder_now":
-		case "dhx_month_body":
-		case "dhx_matrix_cell":
-		case "dhx_marked_timespan":
-			this._drag_mode="create";
-			break;
-		case "":
-			if (src.parentNode)
-				return scheduler._on_mouse_down(e,src.parentNode);
-			break;
-		default:
-			if (!scheduler.checkEvent("onMouseDown") || scheduler.callEvent("onMouseDown", [classname, e])) {
-				if (src.parentNode && src != this && classname != "dhx_body") {
-					return scheduler._on_mouse_down(e,src.parentNode);
-				}
-			}
-			this._drag_mode=null;
-			this._drag_id=null;
-			break;
-	}
-	if (this._drag_mode){
-		var id = this._locate_event(src);
-		if (!this.config["drag_"+this._drag_mode] || !this.callEvent("onBeforeDrag",[id, this._drag_mode, e]))
-			this._drag_mode=this._drag_id=0;
-		else {
-			this._drag_id= id;
-
-			if (this._edit_id!=this._drag_id || (this._edit_id && this._drag_mode == "create"))
-				this._close_not_saved();
-			if(!this._drag_mode)
-				return;
-
-			this._drag_event = scheduler._lame_clone(this.getEvent(this._drag_id) || {});
-			this._drag_pos = this._mouse_coords(e);
-		}
-	}
-	this._drag_start=null;
-};
-
-
-scheduler._get_private_properties = function(event){
-	var fields = {};
-	for(var i in event){
-		if(i.indexOf("_") === 0){
-			fields[i] = true;
-		}
-	}
-	return fields;
-};
-scheduler._clear_temporary_properties = function(clean, flagged_event){
-	var initial = this._get_private_properties(clean);
-	var current_state = this._get_private_properties(flagged_event);
-	for(var i in current_state){
-		if(!initial[i]){
-			delete flagged_event[i];
-		}
-	}
-};
-
-
-scheduler._on_mouse_up=function(e){
-	if (e && e.button == 2 && this._mobile) return;
-	if (this._drag_mode && this._drag_id){
-		this._els["dhx_cal_data"][0].style.cursor="default";
-		//drop
-
-		var drag_id = this._drag_id;
-		var mode = this._drag_mode;
-
-		var moved = !this._drag_pos || this._drag_pos.has_moved;
-
-		var ev=this.getEvent(this._drag_id);
-		if (moved && (this._drag_event._dhx_changed || !this._drag_event.start_date || ev.start_date.valueOf()!=this._drag_event.start_date.valueOf() || ev.end_date.valueOf()!=this._drag_event.end_date.valueOf())){
-			var is_new=(this._drag_mode=="new-size");
-			if (!this.callEvent("onBeforeEventChanged",[ev, e, is_new, this._drag_event])){
-				if (is_new) 
-					this.deleteEvent(ev.id, true);
-				else {
-					this._drag_event._dhx_changed = false;
-					this._clear_temporary_properties(ev, this._drag_event);
-					scheduler._lame_copy(ev, this._drag_event);
-					this.updateEvent(ev.id);
-				}
-			} else {
-
-				this._drag_id = this._drag_mode = null;
-				if (is_new && this.config.edit_on_create){
-					this.unselect();
-					this._new_event=new Date();//timestamp of creation
-					//if selection disabled - force lightbox usage
-					if (this._table_view || this.config.details_on_create || !this.config.select || !this.isOneDayEvent(this.getEvent(drag_id))) {
-						scheduler.callEvent("onDragEnd", [drag_id, mode, e]);
-						return this.showLightbox(drag_id);
-					}
-					this._drag_pos = true; //set flag to trigger full redraw
-					this._select_id = this._edit_id = drag_id;
-				} else {
-					if (!this._new_event)
-						this.callEvent(is_new?"onEventAdded":"onEventChanged",[drag_id,this.getEvent(drag_id)]);
-				}
-			}
-		}
-		if (this._drag_pos && (this._drag_pos.has_moved || this._drag_pos === true)) {
-			this._drag_id = this._drag_mode = null; // set null to prevent _sorder recalculation for drag event
-			this.render_view_data(); //redraw even if there is no real changes - necessary for correct positioning item after drag
-		}
-		scheduler.callEvent("onDragEnd", [drag_id, mode, e]);
-	}
-	this._drag_id = null;
-	this._drag_mode=null;
-	this._drag_pos=null;
-};
-
-scheduler._trigger_dyn_loading = function(){
-	if (this._load_mode && this._load()){
-		this._render_wait = true;
-		return true;
-	}else{
-		return false;
-	}
-};
-scheduler.update_view=function(){
-	this._reset_ignores();
-
-	var view = this[this._mode + "_view"];
-	if(view){
-		view(true);
-	}else{
-		this._reset_scale();
-	}
-
-	if (this._trigger_dyn_loading()){
-		return true;
-	}
-	this.render_view_data();
-};
-
-scheduler.isViewExists = function(mode){
-	return !!(scheduler[mode+ "_view"] ||
-		(scheduler.date[mode+ "_start"] && scheduler.templates[mode+ "_date"] && scheduler.templates[mode+ "_scale_date"]));
-};
-
-scheduler._set_aria_buttons_attrs = function(){
-	var buttonGroups = ["dhx_cal_next_button", "dhx_cal_prev_button", "dhx_cal_tab", "dhx_cal_today_button"];
-	for(var i = 0; i < buttonGroups.length; i++){
-		var group = this._els[buttonGroups[i]];
-		for(var j = 0; group && j < group.length; j++ ){
-			var name = group[j].getAttribute("name");
-			var label = this.locale.labels[buttonGroups[i]];
-			if(name){
-				label = this.locale.labels[name] || label;
-
-
-			}
-			if(buttonGroups[i] == "dhx_cal_next_button"){
-				label = this.locale.labels.next;
-			}else if(buttonGroups[i] == "dhx_cal_prev_button"){
-				label = this.locale.labels.prev;
-			}
-			this._waiAria.headerButtonsAttributes(group[j], label || "");
-		}
-	}
-};
-
-scheduler.updateView = function(date, mode) {
-	date = date || this._date;
-	mode = mode || this._mode;
-	var dhx_cal_data = 'dhx_cal_data';
-
-	var container = this._obj;
-	var oldClass = "dhx_scheduler_" + this._mode;
-	var newClass = "dhx_scheduler_" + mode;
-
-	if (!this._mode || (container.className.indexOf(oldClass) == -1)){
-		container.className += " " + newClass;
-	} else {
-		container.className = container.className.replace(oldClass, newClass);
-	}
-
-	var dhx_multi_day = 'dhx_multi_day';
-
-	var prev_scroll = (this._mode == mode && this.config.preserve_scroll) ? this._els[dhx_cal_data][0].scrollTop : false; // saving current scroll
-
-	var multidayScroll;
-	if(this._els[dhx_multi_day] && this._els[dhx_multi_day][0]){
-		multidayScroll = this._els[dhx_multi_day][0].scrollTop;
-	}
-
-	//hide old custom view
-	if (this[this._mode + "_view"] && mode && this._mode != mode)
-		this[this._mode + "_view"](false);
-
-	this._close_not_saved();
-	
-	if (this._els[dhx_multi_day]) {
-		this._els[dhx_multi_day][0].parentNode.removeChild(this._els[dhx_multi_day][0]);
-		this._els[dhx_multi_day] = null;
-	}
-
-	this._mode = mode;
-	this._date = date;
-	this._table_view = (this._mode == "month");
-
-	this._dy_shift = 0;//correction for multiday section in week/day views
-
-
-	this._set_aria_buttons_attrs();
-
-	var tabs = this._els["dhx_cal_tab"];
-	if(tabs){//calendar can work without view tabs
-		for (var i = 0; i < tabs.length; i++) {
-			var tab = tabs[i];
-
-			var name = tab.className;
-			name = name.replace(/ active/g, "");
-			if (tab.getAttribute("name") == this._mode + "_tab"){
-				name = name + " active";
-				this._waiAria.headerToggleState(tab, true);
-			}else{
-				this._waiAria.headerToggleState(tab, false);
-			}
-
-			tab.className = name;
-		}
-	}
-	//show new view
-	this.update_view();
-
-	if (typeof prev_scroll == "number") // if we are updating or working with the same view scrollTop should be saved
-		this._els[dhx_cal_data][0].scrollTop = prev_scroll; // restoring original scroll
-
-	if(typeof multidayScroll == "number" && this._els[dhx_multi_day] && this._els[dhx_multi_day][0]){
-		this._els[dhx_multi_day][0].scrollTop = multidayScroll;
-	}
-
-};
-scheduler.setCurrentView = function(date, mode) {
-	if (!this.callEvent("onBeforeViewChange", [this._mode, this._date, mode || this._mode, date || this._date])) return;
-	this.updateView(date, mode);
-	this.callEvent("onViewChange", [this._mode, this._date]);
-};
-scheduler._render_x_header = function(i,left,d,h, offset_top){
-	offset_top = offset_top || 0;
-	//header scale	
-	var head=document.createElement("div");
-	head.className = "dhx_scale_bar";
-
-	if(this.templates[this._mode+"_scalex_class"]){
-		//'_scalex_class' - timeline already have similar template, use the same name
-		head.className += ' ' + this.templates[this._mode+"_scalex_class"](d);
-	}
-
-	var width = this._cols[i]-1;
-
-	if (this._mode == "month" && i === 0 && this.config.left_border) {
-		head.className += " dhx_scale_bar_border";
-		left = left+1;
-	}
-	this.set_xy(head, width, this.xy.scale_height-2, left, offset_top);//-1 for border
-
-	var columnHeaderText = this.templates[this._mode+"_scale_date"](d,this._mode); //TODO - move in separate method
-	head.innerHTML = columnHeaderText;
-
-	this._waiAria.dayHeaderAttr(head, columnHeaderText);
-
-	h.appendChild(head);
-};
-
-scheduler._get_columns_num = function(from, to){
-	var count = 7;
-	if (!scheduler._table_view){
-		var count_n = scheduler.date["get_"+scheduler._mode+"_end"];
-		if (count_n) to = count_n(from);
-		count = Math.round((to.valueOf()-from.valueOf())/(1000*60*60*24));
-	}
-	return count;
-};
-scheduler._get_timeunit_start = function(){
-	//start date of currently displayed time unit(day, week,...)
-	return this.date[this._mode+"_start"](new Date(this._date.valueOf()));
-};
-
-scheduler._get_view_end = function(){
-	var dd = this._get_timeunit_start();
-	var ed = scheduler.date.add(dd, 1, this._mode);
-	if (!scheduler._table_view){
-		var count_n = scheduler.date["get_"+scheduler._mode+"_end"];
-		if (count_n) ed = count_n(dd);
-	}
-	return ed;
-};
-scheduler._calc_scale_sizes = function(width, from, to){
-	//calculates number of displayed columns(days/units/month view cols) and their widths
-	var summ = width; //border delta
-	var count = this._get_columns_num(from, to);
-
-	this._process_ignores(from, count, "day", 1);
-	var realcount = count - this._ignores_detected;
-
-	for (var i=0; i<count; i++){
-		if (this._ignores[i]){
-			this._cols[i] = 0;
-			realcount++;
-		} else {
-			this._cols[i]=Math.floor(summ/(realcount-i));
-		}
-		summ-=this._cols[i];
-		this._colsS[i]=(this._cols[i-1]||0)+(this._colsS[i-1]||(this._table_view?0:this.xy.scale_width+2));
-	}
-	this._colsS['col_length'] = count;
-
-	this._colsS[count] = (this._cols[count-1]+this._colsS[count-1]) || 0;
-};
-scheduler._set_scale_col_size = function(div, width, left){
-	var c = this.config;
-	this.set_xy(div, width-1, c.hour_size_px*(c.last_hour-c.first_hour), left+this.xy.scale_width+1, 0);//-1 for border
-};
-
-scheduler._render_scales = function(header, data_area){
-	//render columns in week/units view, or header in month view
-	var sd = new Date(scheduler._min_date),
-		ed = new Date(scheduler._max_date),
-		today = this.date.date_part( scheduler._currentDate());
-
-	var summ = parseInt(header.style.width,10); //border delta
-	var d = new Date(this._min_date);
-	var count = this._get_columns_num(sd, ed);
-	this._calc_scale_sizes(summ, sd, ed);
-	var left=0;
-
-	header.innerHTML = "";
-	for (var i=0; i<count; i++){
-		if (!this._ignores[i]){
-			this._render_x_header(i,left,d,header);
-		}
-		if (!this._table_view){
-			var scales=document.createElement("div");
-			var cls = "dhx_scale_holder";
-			if (d.valueOf() == today.valueOf()) cls = "dhx_scale_holder_now";
-
-			if (this._ignores_detected && this._ignores[i]){
-				cls += " dhx_scale_ignore";
-			}
-
-			scales.className = cls+" "+this.templates.week_date_class(d,today);
-			this._waiAria.dayColumnAttr(scales, d);
-			this._set_scale_col_size(scales, this._cols[i], left);
-
-			data_area.appendChild(scales);
-			this.callEvent("onScaleAdd",[scales, d]);
-		}
-
-		left+=this._cols[i];
-		d=this.date.add(d,1,"day");
-		d = this.date.day_start(d);
-	}
-};
-
-scheduler._reset_scale=function(){
-	//current mode doesn't support scales
-	//we mustn't call reset_scale for such modes, so it just to be sure
-	if (!this.templates[this._mode + "_date"]) return;
-
-	var h = this._els["dhx_cal_header"][0];
-	var data_area = this._els["dhx_cal_data"][0];
-	var c = this.config;
-
-	h.innerHTML = "";
-	//data_area.scrollTop = 0; //fix flickering in FF; makes IE8 flicker instead
-	data_area.innerHTML = "";
-
-	var str = ((c.readonly || (!c.drag_resize)) ? " dhx_resize_denied" : "") + ((c.readonly || (!c.drag_move)) ? " dhx_move_denied" : "");
-	data_area.className = "dhx_cal_data" + str;
-
-	this._scales = {};
-	this._cols = [];	//store for data section
-	this._colsS = {height: 0};
-	this._dy_shift = 0;
-
-	this.set_sizes();
-
-	var d,sd,today;
-	var dd = this._get_timeunit_start(),
-		ed = scheduler._get_view_end();
-
-	d = sd = this._table_view ? scheduler.date.week_start(dd) : dd;
-
-
-	this._min_date=d;
-
-	var navBarDateStr = this.templates[this._mode+"_date"](dd,ed,this._mode);
-	this._els["dhx_cal_date"][0].innerHTML = navBarDateStr;
-	this._waiAria.navBarDateAttr(this._els["dhx_cal_date"][0] ,navBarDateStr);
-
-
-	this._max_date = ed;
-	scheduler._render_scales(h, data_area);
-
-	if (this._table_view) // month view
-		this._reset_month_scale(data_area,dd,sd);
-	else{
-		this._reset_hours_scale(data_area,dd,sd);
-		if (c.multi_day) {
-			var dhx_multi_day = 'dhx_multi_day';
-
-			if(this._els[dhx_multi_day]) {
-				this._els[dhx_multi_day][0].parentNode.removeChild(this._els[dhx_multi_day][0]);
-				this._els[dhx_multi_day] = null;
-			}
-			
-			var navline = this._els["dhx_cal_navline"][0];
-			var top = navline.offsetHeight + this._els["dhx_cal_header"][0].offsetHeight+1;
-			
-			var c1 = document.createElement("div");
-			c1.className = dhx_multi_day;
-			c1.style.visibility="hidden";
-			this.set_xy(c1, Math.max(this._colsS[this._colsS.col_length]+this.xy.scroll_width - 2, 0), 0, 0, top); // 2 extra borders, dhx_header has -1 bottom margin
-			data_area.parentNode.insertBefore(c1,data_area);
-			
-			var c2 = c1.cloneNode(true);
-			c2.className = dhx_multi_day+"_icon";
-			c2.style.visibility="hidden";
-			this.set_xy(c2, this.xy.scale_width, 0, 0, top); // dhx_header has -1 bottom margin
-			
-			c1.appendChild(c2);
-			this._els[dhx_multi_day]=[c1,c2];
-			this._els[dhx_multi_day][0].onclick = this._click.dhx_cal_data;
-		}
-	}
-};
-scheduler._reset_hours_scale=function(b,dd,sd){
-	var c=document.createElement("div");
-	c.className="dhx_scale_holder";
-	
-	var date = new Date(1980,1,1,this.config.first_hour,0,0);
-	for (var i=this.config.first_hour*1; i < this.config.last_hour; i++) {
-		var cc=document.createElement("div");
-		cc.className="dhx_scale_hour";
-		cc.style.height=this.config.hour_size_px+"px";
-		var width = this.xy.scale_width;
-		if (this.config.left_border) {
-			cc.className += " dhx_scale_hour_border";
-		}
-		cc.style.width = width + "px";
-
-		var content = scheduler.templates.hour_scale(date);
-		cc.innerHTML = content;
-		this._waiAria.hourScaleAttr(cc, content);
-
-		c.appendChild(cc);
-		date=this.date.add(date,1,"hour");
-	}
-	b.appendChild(c);
-	if (this.config.scroll_hour)
-		b.scrollTop = this.config.hour_size_px*(this.config.scroll_hour-this.config.first_hour);
-};
-
-scheduler._currentDate = function(){
-	if(scheduler.config.now_date){
-		return new Date(scheduler.config.now_date);
-	}
-	return new Date();
-};
-
-scheduler._reset_ignores = function(){
-	this._ignores={};
-	this._ignores_detected = 0;
-};
-
-scheduler._process_ignores = function(sd, n, mode, step, preserve){
-	this._reset_ignores();
-	var ignore = scheduler["ignore_"+this._mode];
-
-	if (ignore){
-		var ign_date = new Date(sd);
-		for (var i=0; i<n; i++){
-			if (ignore(ign_date)){
-				this._ignores_detected += 1;
-				this._ignores[i] = true;
-				if (preserve)
-					n++;
-			}
-			ign_date = scheduler.date.add(ign_date, step, mode);
-			if(scheduler.date[mode + '_start'])
-				ign_date = scheduler.date[mode + '_start'](ign_date);
-		}
-	}
-};
-
-scheduler._render_month_scale = function(div, dd/*month start*/, sd/*view start*/, rows ){
-	//renders month view layout
-
-	var ed=scheduler.date.add(dd,1,"month"),
-		view_start = new Date(sd);
-	var cd = scheduler._currentDate();
-	this.date.date_part(cd);
-	this.date.date_part(sd);
-
-	rows = rows || Math.ceil(Math.round((ed.valueOf()-sd.valueOf()) / (60*60*24*1000) ) / 7);
-	var tdwidths=[];
-
-	for (var i=0; i<=7; i++) {
-		var cell_width = ((this._cols[i]||0)-1);
-		if (i === 0 && this.config.left_border) {
-			cell_width = cell_width - 1;
-		}
-		tdwidths[i] = cell_width + "px";
-	}
-
-	function getCellHeight(row){
-		var h = scheduler._colsS.height;
-		if(scheduler._colsS.heights[row + 1] !== undefined ){
-			h = scheduler._colsS.heights[row + 1] - (scheduler._colsS.heights[row]||0);
-		}
-		return h;
-	}
-
-
-	var cellheight = 0;
-
-	var table = document.createElement("table");
-	table.setAttribute("cellpadding", "0");
-	table.setAttribute("cellspacing", "0");
-
-	var tableBody = document.createElement("tbody");
-	table.appendChild(tableBody);
-
-	var rendered_dates = [];
-	for (var i=0; i<rows; i++){
-		var row = document.createElement("tr");
-		tableBody.appendChild(row);
-		var row_height = Math.max(getCellHeight(i) - scheduler.xy.month_head_height, 0);
-		for (var j=0; j<7; j++) {
-			var cell = document.createElement("td");
-			row.appendChild(cell);
-
-			var cls = "";
-			if (sd<dd)
-				cls='dhx_before';
-			else if (sd>=ed)
-				cls='dhx_after';
-			else if (sd.valueOf()==cd.valueOf())
-				cls='dhx_now';
-
-			if (this._ignores_detected && this._ignores[j]){
-				cls += " dhx_scale_ignore";
-			}
-
-			cell.className = cls + " " + this.templates.month_date_class(sd, cd);
-
-			var body_class = "dhx_month_body";
-			var head_class = "dhx_month_head";
-			if (j === 0 && this.config.left_border) {
-				body_class += " dhx_month_body_border";
-				head_class += " dhx_month_head_border";
-			}
-			if (!this._ignores_detected || !this._ignores[j]){
-
-				this._waiAria.monthCellAttr(cell, sd);
-
-				var cellHead = document.createElement("div");
-				cellHead.className = head_class;
-				cellHead.innerHTML = this.templates.month_day(sd);
-				cell.appendChild(cellHead);
-
-				var cellBody = document.createElement("div");
-				cellBody.className = body_class;
-				cellBody.style.height = row_height + "px";
-				cellBody.style.width = tdwidths[j];
-				cell.appendChild(cellBody);
-
-			} else {
-				cell.appendChild(document.createElement("div"));
-				cell.appendChild(document.createElement("div"));
-			}
-			rendered_dates.push(sd);
-			var bf1 = sd.getDate();
-			sd=this.date.add(sd,1,"day");
-			if (sd.getDate() - bf1 > 1)
-				sd = new Date(sd.getFullYear(), sd.getMonth(), bf1 + 1, 12, 0);
-		}
-
-		scheduler._colsS.heights[i] = cellheight;
-		cellheight += getCellHeight(i);
-	}
-
-	this._min_date = view_start;
-	this._max_date = sd;
-
-	div.innerHTML = "";
-	div.appendChild(table);
-
-	this._scales = {};
-	var divs = div.getElementsByTagName('div');
-	for (var i=0; i<rendered_dates.length; i++) { // [header, body, header, body, ...]
-		var div = divs[(i*2)+1];
-		var date = rendered_dates[i];
-		this._scales[+date] = div;
-	}
-	for (var i=0; i<rendered_dates.length; i++) {
-		var date = rendered_dates[i];
-		this.callEvent("onScaleAdd", [this._scales[+date], date]);
-	}
-
-
-
-	return this._max_date;
-};
-
-scheduler._reset_month_scale=function(b,dd,sd,rows){
-	//recalculates rows height and redraws month layout
-	var ed=scheduler.date.add(dd,1,"month");
-	
-	//trim time part for comparation reasons
-	var cd = scheduler._currentDate();
-	this.date.date_part(cd);
-	this.date.date_part(sd);
-
-	rows = rows || Math.ceil(Math.round((ed.valueOf()-sd.valueOf()) / (60*60*24*1000) ) / 7);
-
-	var height = (Math.floor(b.clientHeight/rows) - this.xy.month_head_height);
-	
-	this._colsS.height = height + this.xy.month_head_height;
-	this._colsS.heights = [];
-
-	return scheduler._render_month_scale(b, dd, sd, rows);
-
-};
-scheduler.getLabel = function(property, key) {
-	var sections = this.config.lightbox.sections;
-	for (var i=0; i<sections.length; i++) {
-		if(sections[i].map_to == property) {
-			var options = sections[i].options;
-			for (var j=0; j<options.length; j++) {
-				if(options[j].key == key) {
-					return options[j].label;
-				}
-			}
-		}
-	}
-	return "";
-};
-scheduler.updateCollection = function(list_name, collection) {
-	var list = scheduler.serverList(list_name);
-	if (!list) return false;
-	list.splice(0, list.length);
-	list.push.apply(list, collection || []);
-	scheduler.callEvent("onOptionsLoad", []);
-	scheduler.resetLightbox();
-	return true;
-};
-scheduler._lame_clone = function(object, cache) {
-	var i, t, result; // iterator, types array, result
-
-	cache = cache || [];
-
-	for (i=0; i<cache.length; i+=2)
-		if(object === cache[i])
-			return cache[i+1];
-
-	if (object && typeof object == "object") {
-		result = {};
-		t = [Array,Date,Number,String,Boolean];
-		for (i=0; i<t.length; i++) {
-			if (object instanceof t[i])
-				result = i ? new t[i](object) : new t[i](); // first one is array
-		}
-		cache.push(object, result);
-		for (i in object) {
-			if (Object.prototype.hasOwnProperty.apply(object, [i]))
-				result[i] = scheduler._lame_clone(object[i], cache);
-		}
-	}
-	return result || object;
-};
-scheduler._lame_copy = function(target, source) {
-	for (var key in source) {
-		if (source.hasOwnProperty(key)) {
-			target[key] = source[key];
-		}
-	}
-	return target;
-};
-scheduler._get_date_from_pos = function(pos) {
-	var start=this._min_date.valueOf()+(pos.y*this.config.time_step+(this._table_view?0:pos.x)*24*60)*60000;
-	return new Date(this._correct_shift(start));
-};
-// n_ev - native event
-scheduler.getActionData = function(n_ev) {
-	var pos = this._mouse_coords(n_ev);
-	return {
-		date:this._get_date_from_pos(pos),
-		section:pos.section
-	};
-};
-scheduler._focus = function(node, select){
-	if (node && node.focus){
-		if (this._mobile){
-			window.setTimeout(function(){
-				node.focus();
-			},10);
-		} else {
-			try {
-				if (select && node.select && node.offsetWidth) {
-					node.select();
-				}
-				node.focus();
-			} catch (e) {
-			}
-		}
-	}
-};
-
-//non-linear scales
-scheduler._get_real_event_length=function(sd, fd, obj){
-	var ev_length = fd -sd;
-	var hours = (obj._start_correction + obj._end_correction)||0;
-	var ignore = this["ignore_"+this._mode];
-
-	var start_slot = 0,
-		end_slot;
-	if (obj.render){
-		start_slot = this._get_date_index(obj, sd);
-		end_slot = this._get_date_index(obj, fd);
-	} else{
-		end_slot = Math.round(ev_length/60/60/1000/24);
-	}
-
-	var last_column = true;
-	while (start_slot < end_slot){
-		var check = scheduler.date.add(fd, -obj.x_step, obj.x_unit);
-		if (ignore && ignore(fd) && (!last_column || (last_column && ignore(check) ))){
-			ev_length -= (fd-check);
-
-		}else{
-			last_column = false;
-			ev_length -= hours;
-		}
-
-
-		fd = check;
-		end_slot--;
-	}
-	return ev_length;
-};
-scheduler._get_fictional_event_length=function(end_date, ev_length, obj, back){
-	var sd = new Date(end_date);
-	var dir = back ? -1 : 1;
-
-	//get difference caused by first|last hour
-	if (obj._start_correction || obj._end_correction){
-		var today;
-		if (back)
-			today = (sd.getHours()*60+sd.getMinutes()) - (obj.first_hour||0)*60;
-		else
-			today = (obj.last_hour||0)*60 - (sd.getHours()*60+sd.getMinutes());
-		var per_day = (obj.last_hour - obj.first_hour)*60;
-		var days = Math.ceil( (ev_length / (60*1000) - today ) / per_day);
-		if(days < 0) days = 0;
-		ev_length += days * (24*60 - per_day) * 60 * 1000;
-	}
-
-	var fd = new Date(end_date*1+ev_length*dir);
-	var ignore = this["ignore_"+this._mode];
-
-	var start_slot = 0,
-		end_slot;
-	if (obj.render){
-		start_slot = this._get_date_index(obj, sd);
-		end_slot = this._get_date_index(obj, fd);
-	} else{
-		end_slot = Math.round(ev_length/60/60/1000/24);
-	}
-
-	while (start_slot*dir <= end_slot*dir){
-		var check = scheduler.date.add(sd, obj.x_step*dir, obj.x_unit);
-		if (ignore && ignore(sd)){
-			ev_length += (check-sd)*dir;
-			end_slot += dir;
-		}
-
-		sd = check;
-		start_slot+=dir;
-	}
-	
-	return ev_length;
-};
-
-scheduler._get_section_view = function(){
-	if(this.matrix && this.matrix[this._mode]){
-		return this.matrix[this._mode];
-	}else if(this._props && this._props[this._mode]){
-		return this._props[this._mode];
-	}
-	return null;
-};
-
-scheduler._get_section_property = function(){
-	if(this.matrix && this.matrix[this._mode]){
-		return this.matrix[this._mode].y_property;
-	}else if(this._props && this._props[this._mode]){
-		return this._props[this._mode].map_to;
-	}
-	return null;
-};
-
-scheduler._is_initialized = function(){
-	var state = this.getState();
-	return (this._obj && state.date && state.mode);
-};
-scheduler._is_lightbox_open = function(){
-	var state = this.getState();
-	return state.lightbox_id !== null && state.lightbox_id !== undefined;
-};
-
-scheduler._getClassName = function(node){
-	if(!node) return "";
-
-	var className = node.className || "";
-	if(className.baseVal)//'className' exist but not a string - IE svg element in DOM
-		className = className.baseVal;
-
-	if(!className.indexOf)
-		className = '';
-
-	return className || "";
-};
 scheduler.$domHelpers = {
 	/**
 	 *     @desc: Calculate absolute position of html object
@@ -4321,7 +4338,49 @@ scheduler.$ajax = {
 			return "?";
 	}
 };
-scheduler.date={
+var generateStringToDate = function (format, utc) {
+	var splt = "var temp=date.match(/[a-zA-Z]+|[0-9]+/g);";
+	var mask = format.match(/%[a-zA-Z]/g);
+	for (var i = 0; i < mask.length; i++) {
+		switch (mask[i]) {
+			case "%j":
+			case "%d": splt += "set[2]=temp[" + i + "]||1;";
+				break;
+			case "%n":
+			case "%m": splt += "set[1]=(temp[" + i + "]||1)-1;";
+				break;
+			case "%y": splt += "set[0]=temp[" + i + "]*1+(temp[" + i + "]>50?1900:2000);";
+				break;
+			case "%g":
+			case "%G":
+			case "%h":
+			case "%H":
+				splt += "set[3]=temp[" + i + "]||0;";
+				break;
+			case "%i":
+				splt += "set[4]=temp[" + i + "]||0;";
+				break;
+			case "%Y": splt += "set[0]=temp[" + i + "]||0;";
+				break;
+			case "%a":
+			case "%A": splt += "set[3]=set[3]%12+((temp[" + i + "]||'').toLowerCase()=='am'?0:12);";
+				break;
+			case "%s": splt += "set[5]=temp[" + i + "]||0;";
+				break;
+			case "%M": splt += "set[1]=this.locale.date.month_short_hash[temp[" + i + "]]||0;";
+				break;
+			case "%F": splt += "set[1]=this.locale.date.month_full_hash[temp[" + i + "]]||0;";
+				break;
+			default:
+				break;
+		}
+	}
+	var code = "set[0],set[1],set[2],set[3],set[4],set[5]";
+	if (utc) code = " Date.UTC(" + code + ")";
+	return new Function("date", "var set=[0,0,1,0,0,0]; " + splt + " return new Date(" + code + ");");
+};
+
+scheduler.date = {
 	init:function(){
 		var s = scheduler.locale.date.month_short;
 		var t = scheduler.locale.date.month_short_hash = {};
@@ -4332,6 +4391,13 @@ scheduler.date={
 		var t = scheduler.locale.date.month_full_hash = {};
 		for (var i = 0; i < s.length; i++)
 			t[s[i]]=i;
+	},
+	_bind_host_object : function(method){
+		if(method.bind){
+			return method.bind(scheduler);
+		}else{
+			return function(){ return method.apply(scheduler, arguments); };
+		}
 	},
 	date_part:function(date){
 		var old = new Date(date);
@@ -4422,71 +4488,83 @@ scheduler.date={
 	date_to_str:function(format,utc){
 		format=format.replace(/%[a-zA-Z]/g,function(a){
 			switch(a){
-				case "%d": return "\"+scheduler.date.to_fixed(date.getDate())+\"";
-				case "%m": return "\"+scheduler.date.to_fixed((date.getMonth()+1))+\"";
+				case "%d": return "\"+this.date.to_fixed(date.getDate())+\"";
+				case "%m": return "\"+this.date.to_fixed((date.getMonth()+1))+\"";
 				case "%j": return "\"+date.getDate()+\"";
 				case "%n": return "\"+(date.getMonth()+1)+\"";
-				case "%y": return "\"+scheduler.date.to_fixed(date.getFullYear()%100)+\""; 
+				case "%y": return "\"+this.date.to_fixed(date.getFullYear()%100)+\"";
 				case "%Y": return "\"+date.getFullYear()+\"";
-				case "%D": return "\"+scheduler.locale.date.day_short[date.getDay()]+\"";
-				case "%l": return "\"+scheduler.locale.date.day_full[date.getDay()]+\"";
-				case "%M": return "\"+scheduler.locale.date.month_short[date.getMonth()]+\"";
-				case "%F": return "\"+scheduler.locale.date.month_full[date.getMonth()]+\"";
-				case "%h": return "\"+scheduler.date.to_fixed((date.getHours()+11)%12+1)+\"";
+				case "%D": return "\"+this.locale.date.day_short[date.getDay()]+\"";
+				case "%l": return "\"+this.locale.date.day_full[date.getDay()]+\"";
+				case "%M": return "\"+this.locale.date.month_short[date.getMonth()]+\"";
+				case "%F": return "\"+this.locale.date.month_full[date.getMonth()]+\"";
+				case "%h": return "\"+this.date.to_fixed((date.getHours()+11)%12+1)+\"";
 				case "%g": return "\"+((date.getHours()+11)%12+1)+\"";
 				case "%G": return "\"+date.getHours()+\"";
-				case "%H": return "\"+scheduler.date.to_fixed(date.getHours())+\"";
-				case "%i": return "\"+scheduler.date.to_fixed(date.getMinutes())+\"";
+				case "%H": return "\"+this.date.to_fixed(date.getHours())+\"";
+				case "%i": return "\"+this.date.to_fixed(date.getMinutes())+\"";
 				case "%a": return "\"+(date.getHours()>11?\"pm\":\"am\")+\"";
 				case "%A": return "\"+(date.getHours()>11?\"PM\":\"AM\")+\"";
-				case "%s": return "\"+scheduler.date.to_fixed(date.getSeconds())+\"";
-				case "%W": return "\"+scheduler.date.to_fixed(scheduler.date.getISOWeek(date))+\"";
+				case "%s": return "\"+this.date.to_fixed(date.getSeconds())+\"";
+				case "%W": return "\"+this.date.to_fixed(this.date.getISOWeek(date))+\"";
 				default: return a;
 			}
 		});
 		if (utc) format=format.replace(/date\.get/g,"date.getUTC");
-		return new Function("date","return \""+format+"\";");
+		var func = new Function("date","return \""+format+"\";");
+
+		return scheduler.date._bind_host_object(func);
 	},
-	str_to_date:function(format,utc){
-		var splt="var temp=date.match(/[a-zA-Z]+|[0-9]+/g);";
-		var mask=format.match(/%[a-zA-Z]/g);
-		for (var i=0; i<mask.length; i++){
-			switch(mask[i]){
-				case "%j":
-				case "%d": splt+="set[2]=temp["+i+"]||1;";
-					break;
-				case "%n":
-				case "%m": splt+="set[1]=(temp["+i+"]||1)-1;";
-					break;
-				case "%y": splt+="set[0]=temp["+i+"]*1+(temp["+i+"]>50?1900:2000);";
-					break;
-				case "%g":
-				case "%G":
-				case "%h": 
-				case "%H":
-							splt+="set[3]=temp["+i+"]||0;";
-					break;
-				case "%i":
-							splt+="set[4]=temp["+i+"]||0;";
-					break;
-				case "%Y": splt+="set[0]=temp["+i+"]||0;";
-					break;
-				case "%a":					
-				case "%A": splt+="set[3]=set[3]%12+((temp["+i+"]||'').toLowerCase()=='am'?0:12);";
-					break;					
-				case "%s": splt+="set[5]=temp["+i+"]||0;";
-					break;
-				case "%M": splt+="set[1]=scheduler.locale.date.month_short_hash[temp["+i+"]]||0;";
-					break;
-				case "%F": splt+="set[1]=scheduler.locale.date.month_full_hash[temp["+i+"]]||0;";
-					break;
-				default:
-					break;
+	str_to_date:function(format, utc, exactFormat){
+		var parseExactFormat = generateStringToDate(format, utc);
+		//return scheduler.date._bind_host_object(func);
+
+		var yyyyMMddhhIIss = /^[0-9]{4}(\-|\/)[0-9]{2}(\-|\/)[0-9]{2} ?(([0-9]{1,2}:[0-9]{1,2})(:[0-9]{1,2})?)?$/;
+
+		// MM/dd/yyyy - default old format for xml-date
+		var MMddyyyyhhIIss = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4} ?(([0-9]{1,2}:[0-9]{2})(:[0-9]{1,2})?)?$/;
+		// dd-MM-yyyy - default old format for api-date
+		var ddMMyyyyhhIIss = /^[0-9]{2}\-[0-9]{2}\-[0-9]{4} ?(([0-9]{1,2}:[0-9]{1,2})(:[0-9]{1,2})?)?$/;
+		var ISO8601 = /^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/;
+
+		var isYMDDate = function (datestr) {
+			return yyyyMMddhhIIss.test(String(datestr));
+		};
+
+		var isMDYDate = function (datestr) {
+			return MMddyyyyhhIIss.test(String(datestr));
+		};
+		var isDMYDate = function (datestr) {
+			return ddMMyyyyhhIIss.test(String(datestr));
+		};
+		var isISO8601 = function (datestr) {
+			return ISO8601.test(datestr);
+		};
+
+		var parseYMD = generateStringToDate("%Y-%m-%d %H:%i:%s", utc);
+		var parseMDY = generateStringToDate("%m/%d/%Y %H:%i:%s", utc);
+		var parseDMY = generateStringToDate("%d-%m-%Y %H:%i:%s", utc);
+
+		return function (dateString) {
+
+			if (!exactFormat && !scheduler.config.parse_exact_format) {
+				if (dateString && dateString.getISOWeek) {
+					return new Date(dateString);
+				} else if (typeof dateString === "number") {
+					return new Date(dateString);
+				} else if (isYMDDate(dateString)) {
+					return parseYMD(dateString);
+				} else if (isMDYDate(dateString)) {
+					return parseMDY(dateString);
+				} else if (isDMYDate(dateString)) {
+					return parseDMY(dateString);
+				} else if (isISO8601(dateString)) {
+					return new Date(dateString);
+				}
 			}
-		}
-		var code ="set[0],set[1],set[2],set[3],set[4],set[5]";
-		if (utc) code =" Date.UTC("+code+")";
-		return new Function("date","var set=[0,0,1,0,0,0]; "+splt+" return new Date("+code+");");
+
+			return parseExactFormat.call(scheduler, dateString);
+		};
 	},
 	getISOWeek: function(ndate) {
 		if(!ndate) return false;
@@ -4599,21 +4677,24 @@ scheduler.config={
 	day_date: "%D, %F %j",
 	hour_date: "%H:%i",
 	month_day: "%d",
-	xml_date: "%m/%d/%Y %H:%i",
+	//xml_date: "%m/%d/%Y %H:%i",
+	date_format: "%Y-%m-%d %H:%i",
 	api_date: "%d-%m-%Y %H:%i",
+	parse_exact_format: false,
 	preserve_length:true,
 	time_step: 5,
 
-	start_on_monday: 1,
+	start_on_monday: true,
 	first_hour: 0,
 	last_hour: 24,
 	readonly: false,
-	drag_resize: 1,
-	drag_move: 1,
-	drag_create: 1,
-	dblclick_create: 1,
-	edit_on_create: 1,
-	details_on_create: 0,
+	drag_resize: true,
+	drag_move: true,
+	drag_create: true,
+	drag_event_body: true,
+	dblclick_create: true,
+	edit_on_create: true,
+	details_on_create: false,
 	resize_month_events:false,
 	resize_month_timed:false,
 
@@ -4661,6 +4742,17 @@ scheduler.config={
 scheduler.config.buttons_left.$inital = scheduler.config.buttons_left.join();
 scheduler.config.buttons_right.$inital = scheduler.config.buttons_right.join();
 
+scheduler._helpers = {
+	parseDate: function parseDate(date) {
+		var parse = scheduler.templates.xml_date || scheduler.templates.parse_date;
+		return parse(date);
+	},
+	formatDate: function formatDate(date) {
+		var format = scheduler.templates.xml_format || scheduler.templates.format_date;
+		return format(date);
+	}
+};
+
 scheduler.templates={};
 scheduler.init_templates=function(){
 	var labels = scheduler.locale.labels;
@@ -4688,10 +4780,13 @@ scheduler.init_templates=function(){
 		time_picker:d(c.hour_date),
 		event_date:d(c.hour_date),
 		month_day:d(c.month_day),
-		xml_date:scheduler.date.str_to_date(c.xml_date,c.server_utc),
-		load_format:d(c.load_date),
-		xml_format:d(c.xml_date,c.server_utc),
-		api_date:scheduler.date.str_to_date(c.api_date),
+
+		load_format: d(c.load_date),
+	//	xml_date:scheduler.date.str_to_date(c.xml_date,c.server_utc),
+	//	xml_format:d(c.date_format,c.server_utc),
+		format_date: d(c.date_format, c.server_utc),
+		parse_date:scheduler.date.str_to_date(c.date_format,c.server_utc),
+		api_date:scheduler.date.str_to_date(c.api_date, false, false),
 		event_header:function(start,end,ev){
 			return scheduler.templates.event_date(start)+" - "+scheduler.templates.event_date(end);
 		},
@@ -4746,6 +4841,7 @@ scheduler.clearAll = function() {
 	this._drag_id = null;
 	this._drag_mode = null;
 	this._drag_pos = null;
+	this._new_event = null;
 
 	this.clear_view();
 	this.callEvent("onClearAll", []);
@@ -6007,7 +6103,10 @@ scheduler._load = function(url, from) {
 	if (this.config.prevent_cache)    url += "&uid=" + this.uid();
 	var to;
 	from = from || this._date;
-
+	function ajaxCallback(response) {
+		scheduler.on_load(response);
+		scheduler.callEvent("onLoadEnd", []);
+	}
 	if (this._load_mode) {
 		var lf = this.templates.load_format;
 
@@ -6031,239 +6130,178 @@ scheduler._load = function(url, from) {
 		if (to <= from)
 			return false; //already loaded
 
-		scheduler.$ajax.get(url + "&from=" + lf(from) + "&to=" + lf(to), function(l) {scheduler.on_load(l);});
+		scheduler.$ajax.get(url + "&from=" + lf(from) + "&to=" + lf(to), ajaxCallback);
 
 		while (from < to) {
 			this._loaded[lf(from)] = true;
 			from = this.date.add(from, 1, this._load_mode);
 		}
-	} else
-		scheduler.$ajax.get(url, function(l) {scheduler.on_load(l);});
+	} else {
+		scheduler.$ajax.get(url, ajaxCallback);
+	}
+
+	// TODO: remove onXLS
 	this.callEvent("onXLS", []);
+	this.callEvent("onLoadStart", []);
 	return true;
 };
-scheduler.on_load = function(loader) {
-	var evs;
-	var error = false;
-	if (this._process && this._process != "xml") {
+
+scheduler._parsers = {};
+
+scheduler._parsers.xml = {
+	canParse: function(data, xhr){
+		if(xhr.responseXML){
+			return true;
+		}
+	
 		try{
-			evs = this[this._process].parse(loader.xmlDoc.responseText);
-		}catch (e){
-			error = true;
-		}
-	} else {
-		evs = this._magic_parser(loader);
-		if(!evs){
-			error = true;
-		}
-	}
-	
-	if(error || (loader.xmlDoc.status && loader.xmlDoc.status >= 400)){
-		this.callEvent("onLoadError", [loader.xmlDoc]);
-		evs = [];
-	}
-	
-	scheduler._process_loading(evs);
-
-	this.callEvent("onXLE", []);
-};
-scheduler._process_loading = function(evs) {
-	this._loading = true;
-	this._not_render = true;
-	for (var i = 0; i < evs.length; i++) {
-		if (!this.callEvent("onEventLoading", [evs[i]])) continue;
-		this.addEvent(evs[i]);
-	}
-	this._not_render = false;
-	if (this._render_wait) this.render_view_data();
-
-	this._loading = false;
-	if (this._after_call) this._after_call();
-	this._after_call = null;
-};
-scheduler._init_event = function(event) {
-	event.text = (event.text || event._tagvalue) || "";
-	event.start_date = scheduler._init_date(event.start_date);
-	event.end_date = scheduler._init_date(event.end_date);
-};
-
-scheduler._init_date = function(date){
-	if(!date)
-		return null;
-	if(typeof date == "string")
-		return scheduler.templates.xml_date(date);
-	else return new Date(date);
-};
-
-scheduler.json = {};
-scheduler.json.parse = function(data) {
-	if (typeof data == "string") {
-		if(window.JSON){
-			scheduler._temp = JSON.parse(data);
-		}else{
-			scheduler._temp = eval("(" + data + ")");
-		}
-
-		data = (scheduler._temp) ? scheduler._temp.data || scheduler._temp.d || scheduler._temp : [];
-	}
-
-	if (data.dhx_security)
-		dhtmlx.security_key = data.dhx_security;
-
-	var collections = (scheduler._temp && scheduler._temp.collections) ? scheduler._temp.collections : {};
-	var collections_loaded = false;
-	for (var key in collections) {
-		if (collections.hasOwnProperty(key)) {
-			collections_loaded = true;
-			var collection = collections[key];
-			var arr = scheduler.serverList[key];
-			if (!arr) {
-				scheduler.serverList[key] = arr = [];
+			var xmlDoc = scheduler.$ajax.parse(xhr.responseText);
+			var topElement = scheduler.$ajax.xmltop("data", xmlDoc);
+			if(topElement && topElement.tagName === "data"){
+				return true;
 			}
-			arr.splice(0, arr.length); //clear old options
-			for (var j = 0; j < collection.length; j++) {
-				var option = collection[j];
-				var obj = { key: option.value, label: option.label }; // resulting option object
-				for (var option_key in option) {
-					if (option.hasOwnProperty(option_key)) {
-						if (option_key == "value" || option_key == "label")
-							continue;
-						obj[option_key] = option[option_key]; // obj['value'] = option['value']
-					}
+		}catch (e){
+		}
+		return false;
+	},
+	parse: function(loader) {
+		var xml;
+
+		if (!loader.xmlDoc.responseXML) { //from a string
+			loader.xmlDoc.responseXML = scheduler.$ajax.parse(loader.xmlDoc.responseText);
+		}
+	
+		xml = scheduler.$ajax.xmltop("data", loader.xmlDoc);
+		if (xml.tagName != "data") return null;//not an xml
+		var csrfToken = xml.getAttribute("dhx_security");
+		if (csrfToken) {
+			if (window.dhtmlx) {
+				dhtmlx.security_key = csrfToken;
+			}
+			scheduler.security_key = csrfToken;
+		}
+	
+		var opts = scheduler.$ajax.xpath("//coll_options", loader.xmlDoc);
+		for (var i = 0; i < opts.length; i++) {
+			var bind = opts[i].getAttribute("for");
+			var arr = scheduler.serverList[bind];
+			if (!arr) {
+				scheduler.serverList[bind] = arr = [];
+			}
+			arr.splice(0, arr.length);	//clear old options
+			var itms = scheduler.$ajax.xpath(".//item", opts[i]);
+			for (var j = 0; j < itms.length; j++) {
+				var itm = itms[j];
+				var attrs = itm.attributes;
+				var obj = { key: itms[j].getAttribute("value"), label: itms[j].getAttribute("label")};
+				for (var k = 0; k < attrs.length; k++) {
+					var attr = attrs[k];
+					if (attr.nodeName == "value" || attr.nodeName == "label")
+						continue;
+					obj[attr.nodeName] = attr.nodeValue;
 				}
 				arr.push(obj);
 			}
 		}
-	}
-	if (collections_loaded)
-		scheduler.callEvent("onOptionsLoad", []);
-
-	var evs = [];
-	for (var i = 0; i < data.length; i++) {
-		var event = data[i];
-		scheduler._init_event(event);
-		evs.push(event);
-	}
-	return evs;
-};
-scheduler.parse = function(data, type) {
-	this._process = type;
-	this.on_load({xmlDoc: {responseText: data}});
-};
-scheduler.load = function(url, call) {
-	if (typeof call == "string") {
-		this._process = call;
-		call = arguments[2];
-	}
-
-	this._load_url = url;
-	this._after_call = call;
-	this._load(url, this._date);
-};
-//possible values - day,week,month,year,all
-scheduler.setLoadMode = function(mode) {
-	if (mode == "all") mode = "";
-	this._load_mode = mode;
-};
-
-scheduler.serverList = function(name, array) {
-	if (array) {
-		this.serverList[name] = array.slice(0);
-		return this.serverList[name];
-	}
-	this.serverList[name] = (this.serverList[name] || []);
-	return this.serverList[name];
-};
-scheduler._userdata = {};
-scheduler._magic_parser = function(loader) {
-	var xml;
-
-	if (!loader.xmlDoc.responseXML) { //from a string
-		loader.xmlDoc.responseXML = scheduler.$ajax.parse(loader.xmlDoc.responseText);
-	}
-
-	xml = scheduler.$ajax.xmltop("data", loader.xmlDoc);
-	if (xml.tagName != "data") return null;//not an xml
-	var skey = xml.getAttribute("dhx_security");
-	if (skey)
-		dhtmlx.security_key = skey;
-
-	var opts = scheduler.$ajax.xpath("//coll_options", loader.xmlDoc);
-	for (var i = 0; i < opts.length; i++) {
-		var bind = opts[i].getAttribute("for");
-		var arr = this.serverList[bind];
-		if (!arr) {
-			scheduler.serverList[bind] = arr = [];
+		if (opts.length)
+			scheduler.callEvent("onOptionsLoad", []);
+	
+		var ud = scheduler.$ajax.xpath("//userdata", loader.xmlDoc);
+		for (var i = 0; i < ud.length; i++) {
+			var udx = scheduler._xmlNodeToJSON(ud[i]);
+			scheduler._userdata[udx.name] = udx.text;
 		}
-		arr.splice(0, arr.length);	//clear old options
-		var itms = scheduler.$ajax.xpath(".//item", opts[i]);
-		for (var j = 0; j < itms.length; j++) {
-			var itm = itms[j];
-			var attrs = itm.attributes;
-			var obj = { key: itms[j].getAttribute("value"), label: itms[j].getAttribute("label")};
-			for (var k = 0; k < attrs.length; k++) {
-				var attr = attrs[k];
-				if (attr.nodeName == "value" || attr.nodeName == "label")
-					continue;
-				obj[attr.nodeName] = attr.nodeValue;
+	
+		var evs = [];
+		xml = scheduler.$ajax.xpath("//event", loader.xmlDoc);
+	
+		for (var i = 0; i < xml.length; i++) {
+			var ev = evs[i] = scheduler._xmlNodeToJSON(xml[i]);
+			scheduler._init_event(ev);
+		}
+		return evs;
+	}
+};
+scheduler.json = scheduler._parsers.json = {
+	canParse: function(data){
+		if(data && typeof data === "object"){
+			return true;
+		} else if(typeof data === "string"){
+			try {
+				var result = JSON.parse(data);
+				return Object.prototype.toString.call(result) === '[object Object]' || 
+						Object.prototype.toString.call(result) === '[object Array]';
+			} catch (err) {
+				return false;
 			}
-			arr.push(obj);
 		}
-	}
-	if (opts.length)
-		scheduler.callEvent("onOptionsLoad", []);
+		return false;
+	},
+	parse: function(data) {
+		var events = [];
 
-	var ud = scheduler.$ajax.xpath("//userdata", loader.xmlDoc);
-	for (var i = 0; i < ud.length; i++) {
-		var udx = this._xmlNodeToJSON(ud[i]);
-		this._userdata[udx.name] = udx.text;
-	}
-
-	var evs = [];
-	xml = scheduler.$ajax.xpath("//event", loader.xmlDoc);
-
-	for (var i = 0; i < xml.length; i++) {
-		var ev = evs[i] = this._xmlNodeToJSON(xml[i]);
-		scheduler._init_event(ev);
-	}
-	return evs;
-};
-scheduler._xmlNodeToJSON = function(node) {
-	var t = {};
-	for (var i = 0; i < node.attributes.length; i++)
-		t[node.attributes[i].name] = node.attributes[i].value;
-
-	for (var i = 0; i < node.childNodes.length; i++) {
-		var child = node.childNodes[i];
-		if (child.nodeType == 1)
-			t[child.tagName] = child.firstChild ? child.firstChild.nodeValue : "";
-	}
-
-	if (!t.text) t.text = node.firstChild ? node.firstChild.nodeValue : "";
-
-	return t;
-};
-scheduler.attachEvent("onXLS", function() {
-	if (this.config.show_loading === true) {
-		var t;
-		t = this.config.show_loading = document.createElement("div");
-		t.className = 'dhx_loading';
-		t.style.left = Math.round((this._x - 128) / 2) + "px";
-		t.style.top = Math.round((this._y - 15) / 2) + "px";
-		this._obj.appendChild(t);
-	}
-});
-scheduler.attachEvent("onXLE", function() {
-	var t = this.config.show_loading;
-	if (t && typeof t == "object") {
-		if(t.parentNode) {
-			t.parentNode.removeChild(t);
+		if (typeof data == "string") {
+			data = JSON.parse(data);
 		}
-		this.config.show_loading = true;
-	}
-});
+		if (Object.prototype.toString.call(data) === '[object Array]') {
+			events = data;
+		} else {
+			events = data ? data.data : [];
+		}
+		events = events || [];
 
-scheduler.ical={
+		if (data.dhx_security) {
+			if (window.dhtmlx) {
+				dhtmlx.security_key = data.dhx_security;
+			}
+			scheduler.security_key = data.dhx_security;
+		}
+
+		var collections = (data && data.collections) ? data.collections : {};
+		var collections_loaded = false;
+		for (var key in collections) {
+			if (collections.hasOwnProperty(key)) {
+				collections_loaded = true;
+				var collection = collections[key];
+				var arr = scheduler.serverList[key];
+				if (!arr) {
+					scheduler.serverList[key] = arr = [];
+				}
+				arr.splice(0, arr.length); //clear old options
+				for (var j = 0; j < collection.length; j++) {
+					var option = collection[j];
+					var obj = { key: option.value, label: option.label }; // resulting option object
+					for (var option_key in option) {
+						if (option.hasOwnProperty(option_key)) {
+							if (option_key == "value" || option_key == "label")
+								continue;
+							obj[option_key] = option[option_key]; // obj['value'] = option['value']
+						}
+					}
+					arr.push(obj);
+				}
+			}
+		}
+		if (collections_loaded)
+			scheduler.callEvent("onOptionsLoad", []);
+
+		var evs = [];
+		for (var i = 0; i < events.length; i++) {
+			var event = events[i];
+			scheduler._init_event(event);
+			evs.push(event);
+		}
+		return evs;
+	}
+};
+scheduler.ical = scheduler._parsers.ical = {
+	canParse: function(data){
+		if(typeof data === "string"){
+			return new RegExp("^BEGIN:VCALENDAR").test(data);
+		}
+
+		return false;
+	},
 	parse:function(str){
 		var data = str.match(RegExp(this.c_start+"[^\f]*"+this.c_end,""));
 		if (!data.length) return;
@@ -6310,24 +6348,232 @@ scheduler.ical={
 		obj[name]=value;
 	},
 	parse_date:function(value,dh,dm){
-		var t = value.split("T");	
+		var t = value.split("T");
+
+		var utcMark = false;
 		if (t[1]){
 			dh=t[1].substr(0,2);
 			dm=t[1].substr(2,2);
+			utcMark = !!(t[1][6] == "Z");
 		}
 		var dy = t[0].substr(0,4);
 		var dn = parseInt(t[0].substr(4,2),10)-1;
 		var dd = t[0].substr(6,2);
-		if (scheduler.config.server_utc && !t[1]) { // if no hours/minutes were specified == full day event
+
+		if(scheduler.config.server_utc || utcMark){
 			return new Date(Date.UTC(dy,dn,dd,dh,dm)) ;
+		}else{
+			return new Date(dy,dn,dd,dh,dm);
 		}
-		return new Date(dy,dn,dd,dh,dm);
 	},
 	c_start:"BEGIN:VCALENDAR",
 	e_start:"BEGIN:VEVENT",
 	e_end:"END:VEVENT",
 	c_end:"END:VCALENDAR"	
 };
+
+scheduler.on_load = function (loader) {
+	this.callEvent("onBeforeParse", []);
+
+	var evs;
+	var error = false;
+
+	var foundParser = false;
+	for(var i in this._parsers){
+		var parser = this._parsers[i];
+		if(parser.canParse(loader.xmlDoc.responseText, loader.xmlDoc)){
+			try{
+				var param = loader.xmlDoc.responseText;
+				if(i === "xml"){
+					param = loader;
+				}
+				evs = parser.parse(param);
+				if(!evs){
+					error = true;
+				}
+			}catch(e){
+				error = true;
+			}
+			foundParser = true;
+			break;
+		}
+	}
+
+	if(!foundParser){
+		if(this._process && this[this._process]){
+			try{
+				evs = this[this._process].parse(loader.xmlDoc.responseText);
+			}catch (e){
+				error = true;
+			}
+		}else{
+			error = true;
+		}
+	}
+
+	if(error || (loader.xmlDoc.status && loader.xmlDoc.status >= 400)){
+		this.callEvent("onLoadError", [loader.xmlDoc]);
+		evs = [];
+	}
+
+	this._process_loading(evs);
+
+	// TODO: remove onXLE
+	this.callEvent("onXLE", []);
+	this.callEvent("onParse", []);
+};
+scheduler._process_loading = function(evs) {
+	this._loading = true;
+	this._not_render = true;
+	for (var i = 0; i < evs.length; i++) {
+		if (!this.callEvent("onEventLoading", [evs[i]])) continue;
+		this.addEvent(evs[i]);
+	}
+	this._not_render = false;
+	if (this._render_wait) this.render_view_data();
+
+	this._loading = false;
+	if (this._after_call) this._after_call();
+	this._after_call = null;
+};
+scheduler._init_event = function(event) {
+	event.text = (event.text || event._tagvalue) || "";
+	event.start_date = scheduler._init_date(event.start_date);
+	event.end_date = scheduler._init_date(event.end_date);
+};
+
+scheduler._init_date = function(date){
+	if(!date)
+		return null;
+	if (typeof date == "string") {
+		return scheduler._helpers.parseDate(date);
+	}
+	else return new Date(date);
+};
+
+scheduler.json = {};
+scheduler.json.parse = function(data) {
+
+	var events = [];
+
+	if (typeof data == "string") {
+		data = JSON.parse(data);
+	}
+	if (Object.prototype.toString.call(data) === '[object Array]') {
+		events = data;
+	} else {
+		events = data ? data.data : [];
+	}
+	events = events || [];
+
+	if (data.dhx_security) {
+		if (window.dhtmlx) {
+			dhtmlx.security_key = data.dhx_security;
+		}
+		scheduler.security_key = data.dhx_security;
+	}
+
+	var collections = (data && data.collections) ? data.collections : {};
+	var collections_loaded = false;
+	for (var key in collections) {
+		if (collections.hasOwnProperty(key)) {
+			collections_loaded = true;
+			var collection = collections[key];
+			var arr = scheduler.serverList[key];
+			if (!arr) {
+				scheduler.serverList[key] = arr = [];
+			}
+			arr.splice(0, arr.length); //clear old options
+			for (var j = 0; j < collection.length; j++) {
+				var option = collection[j];
+				var obj = { key: option.value, label: option.label }; // resulting option object
+				for (var option_key in option) {
+					if (option.hasOwnProperty(option_key)) {
+						if (option_key == "value" || option_key == "label")
+							continue;
+						obj[option_key] = option[option_key]; // obj['value'] = option['value']
+					}
+				}
+				arr.push(obj);
+			}
+		}
+	}
+	if (collections_loaded)
+		scheduler.callEvent("onOptionsLoad", []);
+
+	var evs = [];
+	for (var i = 0; i < events.length; i++) {
+		var event = events[i];
+		scheduler._init_event(event);
+		evs.push(event);
+	}
+	return evs;
+};
+scheduler.parse = function(data, type) {
+	this._process = type;
+	this.on_load({xmlDoc: {responseText: data}});
+};
+scheduler.load = function(url, call) {
+	if (typeof call == "string") {
+		this._process = call;
+		call = arguments[2];
+	}
+
+	this._load_url = url;
+	this._after_call = call;
+	this._load(url, this._date);
+};
+//possible values - day,week,month,year,all
+scheduler.setLoadMode = function(mode) {
+	if (mode == "all") mode = "";
+	this._load_mode = mode;
+};
+
+scheduler.serverList = function(name, array) {
+	if (array) {
+		this.serverList[name] = array.slice(0);
+		return this.serverList[name];
+	}
+	this.serverList[name] = (this.serverList[name] || []);
+	return this.serverList[name];
+};
+scheduler._userdata = {};
+
+scheduler._xmlNodeToJSON = function(node) {
+	var t = {};
+	for (var i = 0; i < node.attributes.length; i++)
+		t[node.attributes[i].name] = node.attributes[i].value;
+
+	for (var i = 0; i < node.childNodes.length; i++) {
+		var child = node.childNodes[i];
+		if (child.nodeType == 1)
+			t[child.tagName] = child.firstChild ? child.firstChild.nodeValue : "";
+	}
+
+	if (!t.text) t.text = node.firstChild ? node.firstChild.nodeValue : "";
+
+	return t;
+};
+scheduler.attachEvent("onXLS", function() {
+	if (this.config.show_loading === true) {
+		var t;
+		t = this.config.show_loading = document.createElement("div");
+		t.className = 'dhx_loading';
+		t.style.left = Math.round((this._x - 128) / 2) + "px";
+		t.style.top = Math.round((this._y - 15) / 2) + "px";
+		this._obj.appendChild(t);
+	}
+});
+scheduler.attachEvent("onXLE", function() {
+	var t = this.config.show_loading;
+	if (t && typeof t == "object") {
+		if(t.parentNode) {
+			t.parentNode.removeChild(t);
+		}
+		this.config.show_loading = true;
+	}
+});
+
 scheduler._lightbox_controls = {};
 scheduler.formSection = function(name){
 	var config = this.config.lightbox.sections;
@@ -7255,7 +7501,7 @@ scheduler._touch_events = function(names, accessor, ignore){
 		//ignore common and scrolling moves
 		if (!action_mode) return;
 
-		//multitouch		
+		//multitouch
 		if (!tracker){
 			scroll_mode = true;
 			return;
@@ -7306,7 +7552,7 @@ scheduler._touch_events = function(names, accessor, ignore){
 				fake_event.type = "dblclick";
 				scheduler._on_dbl_click(fake_event);
 			}, 50);
-			
+
 			if (e.preventDefault)
 				e.preventDefault();
 			e.cancelBubble = true;
@@ -7316,7 +7562,7 @@ scheduler._touch_events = function(names, accessor, ignore){
 		dblclicktime = now;
 
 		//drag
-		
+
 		if (scroll_mode || drag_mode || !scheduler.config.touch_drag)
 			return;
 
@@ -7346,16 +7592,10 @@ scheduler._touch_events = function(names, accessor, ignore){
 
 			scheduler._on_mouse_down(source, target);
 			if (scheduler._drag_mode && scheduler._drag_mode != "create"){
-				//var pos = -1;
 				scheduler.for_rendered(scheduler._drag_id, function(node, i) {
-				//	pos = node.getBoundingClientRect().top;
 					node.style.display='none';
 					scheduler._rendered.splice(i, 1);
 				});
-				/*if (pos>=0){
-					var step = scheduler.config.time_step;
-					scheduler._move_pos_shift = step* Math.round((fake_event.pageY - pos)*60/(scheduler.config.hour_size_px*step));
-				}*/
 			}
 
 			if (scheduler.config.touch_tip) {
@@ -7389,7 +7629,7 @@ scheduler._touch_events = function(names, accessor, ignore){
 		if (!drag_mode && check_direction_swipe(source, tracker, 200, 100)) {
 			scheduler._block_next_stop = true;
 		}
-		
+
 		if (drag_mode) {
 			scheduler._ignore_next_click = true;
 			setTimeout(function(){
@@ -7403,9 +7643,9 @@ scheduler._touch_events = function(names, accessor, ignore){
 			if (e.preventDefault)
 				e.preventDefault();
 			e.cancelBubble = true;
-			return false;	
+			return false;
 		}
-	});	
+	});
 
 	dhtmlxEvent(document.body, names[2], drag_cancel);
 };
@@ -7473,11 +7713,11 @@ scheduler._dp_init=function(dp){
 	this.attachEvent("onConfirmedBeforeEventDelete", function(id){
 		if (!this._validId(id)) return;
 		var z=dp.getState(id);
-        
+
 		if (z=="inserted" || this._new_event) {  dp.setUpdated(id,false);		return true; }
 		if (z=="deleted")  return false;
     	if (z=="true_deleted")  return true;
-    	
+
 		dp.setUpdated(id,true,"deleted");
       	return false;
 	});
@@ -7497,11 +7737,11 @@ scheduler._dp_init=function(dp){
 	dp._objToJson = function(obj, data, prefix){
 		prefix = prefix || "";
 		data = data || {};
-		
+
 		for (var a in obj){
 			if (a.indexOf("_") === 0) continue;
 			if (obj[a] && obj[a].getUTCFullYear) //not very good, but will work
-				data[prefix+a] = this.obj.templates.xml_format(obj[a]);
+				data[prefix+a] = this.obj._helpers.formatDate(obj[a]);
 			else {
 				if (obj[a] && typeof obj[a] == "object")
 					dp._objToJson(obj[a], data, prefix+a+".");
@@ -7509,7 +7749,7 @@ scheduler._dp_init=function(dp){
 					data[prefix+a] = obj[a];
 			}
 		}
-		
+
 		return data;
 	};
 	dp._getRowData=function(id,pref){
@@ -7517,7 +7757,7 @@ scheduler._dp_init=function(dp){
 		return this._objToJson(ev);
 	};
 	dp._clearUpdateFlag=function(){};
-	
+
 	dp.attachEvent("insertCallback", scheduler._update_callback);
 	dp.attachEvent("updateCallback", scheduler._update_callback);
 	dp.attachEvent("deleteCallback", function(upd, id) {
@@ -7527,7 +7767,7 @@ scheduler._dp_init=function(dp){
 		} else if (this.obj._add_rec_marker)
 			this.obj._update_callback(upd, id);
 	});
-		
+
 };
 
 scheduler._validId=function(id){
@@ -7571,9 +7811,9 @@ scheduler._update_callback = function(upd,id){
 	//fix for updates of recurring events
 	if (data.rec_type == "none") data.rec_pattern = "none";
 	data.text		=	data.text||data._tagvalue;
-	data.start_date	=	scheduler.templates.xml_date(data.start_date);
-	data.end_date	=	scheduler.templates.xml_date(data.end_date);
-	
+	data.start_date	=	scheduler._helpers.parseDate(data.start_date);
+	data.end_date	=	scheduler._helpers.parseDate(data.end_date);
+
 	scheduler.addEvent(data);
 	if (scheduler._add_rec_marker)
 		scheduler.setCurrentView();
@@ -7755,7 +7995,7 @@ scheduler._skin_init = function(){
 if (window.jQuery){
 
 (function( $ ){
-
+	var counter = 0;
 	var methods = [];
 	$.fn.dhx_scheduler = function(config){
 		if (typeof(config) === 'string') {
@@ -7769,20 +8009,30 @@ if (window.jQuery){
 			this.each(function() {
 				if (this && this.getAttribute){
 					if (!this.getAttribute("dhxscheduler")){
+						var name = "scheduler";
+						if (counter){
+							name = "scheduler" + (counter+1);
+							window[name] = Scheduler.getSchedulerInstance();
+						}
+						var comp  = window[name];
+
+						this.setAttribute("dhxscheduler", name);
 						for (var key in config)
 							if (key!="data")
-								scheduler.config[key] = config[key];
+								comp.config[key] = config[key];
 
 						if (!this.getElementsByTagName("div").length){
 							this.innerHTML = '<div class="dhx_cal_navline"><div class="dhx_cal_prev_button">&nbsp;</div><div class="dhx_cal_next_button">&nbsp;</div><div class="dhx_cal_today_button"></div><div class="dhx_cal_date"></div><div class="dhx_cal_tab" name="day_tab" style="right:204px;"></div><div class="dhx_cal_tab" name="week_tab" style="right:140px;"></div><div class="dhx_cal_tab" name="month_tab" style="right:76px;"></div></div><div class="dhx_cal_header"></div><div class="dhx_cal_data"></div>';
 							this.className += " dhx_cal_container";
 						}
-						scheduler.init(this, scheduler.config.date, scheduler.config.mode);
+						comp.init(this, comp.config.date, comp.config.mode);
 						if (config.data)
-							scheduler.parse(config.data);
+							comp.parse(config.data);
 
-						views.push(scheduler);
-					}
+						views.push(comp);
+						counter++;
+					} else
+						views.push(window[this.getAttribute("dhxscheduler")]);
 				}
 			});
 
@@ -7858,4 +8108,40 @@ if (window.jQuery){
 		}
 	});
 
+})();
+
+	for (var i = 0; i < Scheduler._schedulerPlugins.length; i++) {
+		Scheduler._schedulerPlugins[i](scheduler);
+	}
+	scheduler._internal_id = Scheduler._seed++;
+
+	if (Scheduler.$syncFactory)
+		Scheduler.$syncFactory(scheduler);
+
+	return scheduler;
+};
+	window.scheduler = Scheduler.getSchedulerInstance(); // default instance
+
+	window.Scheduler = {
+		plugin: scheduler.bind(Scheduler.plugin, Scheduler)
+	};
+	if (dhtmlx && dhtmlx.attaches) {
+	dhtmlx.attaches.attachScheduler = function (day, mode, tabs, scheduler) {
+		var tabs = tabs || '<div class="dhx_cal_tab" name="day_tab" style="right:204px;"></div><div class="dhx_cal_tab" name="week_tab" style="right:140px;"></div><div class="dhx_cal_tab" name="month_tab" style="right:76px;"></div>';
+		var obj = document.createElement("DIV");
+		obj.id = "dhxSchedObj_" + this._genStr(12);
+		obj.innerHTML = '<div id="' + obj.id + '" class="dhx_cal_container" style="width:100%; height:100%;"><div class="dhx_cal_navline"><div class="dhx_cal_prev_button">&nbsp;</div><div class="dhx_cal_next_button">&nbsp;</div><div class="dhx_cal_today_button"></div><div class="dhx_cal_date"></div>' + tabs + '</div><div class="dhx_cal_header"></div><div class="dhx_cal_data"></div></div>';
+		document.body.appendChild(obj.firstChild);
+
+		this.attachObject(obj.id, false, true);
+
+		this.vs[this.av].sched = scheduler;
+		this.vs[this.av].schedId = obj.id;
+		scheduler.setSizes = scheduler.updateView;
+		scheduler.destructor = function () { };
+		scheduler.init(obj.id, day, mode);
+
+		return this.vs[this._viewRestore()].sched;
+	};
+}
 })();

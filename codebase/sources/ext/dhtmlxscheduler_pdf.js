@@ -1,11 +1,14 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
+Scheduler.plugin(function(scheduler){
+
 (function() {
 	var dx, dy,
 		html_regexp = new RegExp("<[^>]*>", "g"),
@@ -373,6 +376,17 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 		return xml;
 	}
 
+	/*
+	 * scheduler.toPDF(url, mode, header, footer) - for a single scheduler
+	 * scheduler.toPDF(url, [scheduler1, scheduler2,...]) - for multiple schedulers
+	 * example:
+	 * scheduler.toPDF("generate.ashx", [
+	 *     { source: scheduler1, mode: "color" },
+	 *     { source: scheduler2, mode: "gray", view:"week", start:new Date(2013, 06, 1), end:new Date(2013, 06, 28) },
+	 *     { source: scheduler3 }
+	 * ]);
+	 *
+	 */
 	scheduler.toPDF = function(url, mode, header, footer) {
 		return to_pdf.apply(this, [null, null, null, url, mode, header, footer]);
 	};
@@ -385,3 +399,6 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 		return to_pdf.apply(this, arguments);
 	};
 })();
+
+
+});

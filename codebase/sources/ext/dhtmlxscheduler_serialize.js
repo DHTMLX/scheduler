@@ -1,11 +1,14 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
+Scheduler.plugin(function(scheduler){
+
 scheduler._get_serializable_data = function(){
 	var res = {};
 	for (var a in this._events){
@@ -20,7 +23,7 @@ scheduler._get_serializable_data = function(){
 //redefine this method, if you want to provide a custom set of attributes for serialization
 scheduler.data_attributes=function(){
 	var attrs = [];
-	var format = scheduler.templates.xml_format;
+	var format = scheduler._helpers.formatDate;
 	var all_events = this._get_serializable_data();
 	for (var a in all_events){
 		var ev = all_events[a];
@@ -35,15 +38,14 @@ scheduler.data_attributes=function(){
 scheduler.toXML = function(header){
 	var xml = [];
 	var attrs = this.data_attributes();
-
 	var all_events = this._get_serializable_data();
 	for (var a in all_events){
 		var ev = all_events[a];
 
-		xml.push("<event>");	
+		xml.push("<event>");
 		for (var i=0; i < attrs.length; i++)
 			xml.push("<"+attrs[i][0]+"><![CDATA["+(attrs[i][1]?attrs[i][1](ev[attrs[i][0]]):ev[attrs[i][0]])+"]]></"+attrs[i][0]+">");
-			
+
 		xml.push("</event>");
 	}
 	return (header||"")+"<data>"+xml.join("\n")+"</data>";
@@ -71,7 +73,7 @@ scheduler.toJSON = function(){
 	for (var a in all_events){
 		var ev = all_events[a];
 
-		var line =[];	
+		var line =[];
 		for (var i=0; i < attrs.length; i++){
 			value = (attrs[i][1]) ? attrs[i][1](ev[attrs[i][0]]) : ev[attrs[i][0]];
 
@@ -88,24 +90,26 @@ scheduler.toICal = function(header){
 	var end = "END:VCALENDAR";
 	var format = scheduler.date.date_to_str("%Y%m%dT%H%i%s");
 	var full_day_format = scheduler.date.date_to_str("%Y%m%d");
-		
+
 	var ical = [];
 	var all_events = this._get_serializable_data();
 	for (var a in all_events){
 		var ev = all_events[a];
-		
-		
-		ical.push("BEGIN:VEVENT");	
+
+
+		ical.push("BEGIN:VEVENT");
 		if (!ev._timed || (!ev.start_date.getHours() && !ev.start_date.getMinutes()))
-			ical.push("DTSTART:"+full_day_format(ev.start_date));	
+			ical.push("DTSTART:"+full_day_format(ev.start_date));
 		else
 			ical.push("DTSTART:"+format(ev.start_date));
 		if (!ev._timed || (!ev.end_date.getHours() && !ev.end_date.getMinutes()))
-			ical.push("DTEND:"+full_day_format(ev.end_date));	
+			ical.push("DTEND:"+full_day_format(ev.end_date));
 		else
 			ical.push("DTEND:"+format(ev.end_date));
-		ical.push("SUMMARY:"+ev.text);	
+		ical.push("SUMMARY:"+ev.text);
 		ical.push("END:VEVENT");
 	}
 	return start+(header||"")+"\n"+ical.join("\n")+"\n"+end;
 };
+
+});

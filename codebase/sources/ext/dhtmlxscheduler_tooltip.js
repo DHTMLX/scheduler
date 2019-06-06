@@ -1,12 +1,18 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
-window.dhtmlXTooltip = scheduler.dhtmlXTooltip = window.dhtmlxTooltip = {};
+Scheduler.plugin(function(scheduler){
+
+(function(){
+
+
+window.dhtmlXTooltip = scheduler.dhtmlXTooltip = scheduler.tooltip = {};
 
 dhtmlXTooltip.config = {
 	className: 'dhtmlXTooltip tooltip',
@@ -22,7 +28,7 @@ scheduler._waiAria.tooltipAttr(dhtmlXTooltip.tooltip);
 
 dhtmlXTooltip.show = function(event, text) { //browser event, text to display
 	if (this._mobile && !scheduler.config.touch_tooltip) return;
-	
+
 	var dhxTooltip = dhtmlXTooltip;
 	var tooltip_div = this.tooltip;
 	var tooltip_div_style = tooltip_div.style;
@@ -211,4 +217,8 @@ scheduler.attachEvent("onBeforeDrag", function() {
 scheduler.attachEvent("onEventDeleted", function() {
 	dhtmlXTooltip.hide();
 	return true;
+});
+})();
+
+
 });

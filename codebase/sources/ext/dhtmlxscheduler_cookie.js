@@ -1,11 +1,14 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
+Scheduler.plugin(function(scheduler){
+
 (function(){
 	function setCookie(name,cookie_param,value) {
 		var str = name + "=" + value +  (cookie_param?("; "+cookie_param):"");
@@ -35,10 +38,11 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 			}
 		}
 
+		var cookie = (scheduler._obj.id || "scheduler") + "_settings";
+
 		if (first){
 			first = false;
-
-			var data=getCookie("scheduler_settings");
+			var data=getCookie(cookie);
 			if (data){
 
 				if(!scheduler._min_date){
@@ -48,7 +52,7 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 				}
 
 				data = unescape(data).split("@");
-				data[0] = this.templates.xml_date(data[0]);
+				data[0] = this._helpers.parseDate(data[0]);
 				var view = this.isViewExists(data[1]) ? data[1] : m,
 					date = !isNaN(+data[0]) ? data[0] : d;
 
@@ -58,8 +62,8 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 				return false;
 			}
 		}
-		var text = escape(this.templates.xml_format(d||od)+"@"+(m||om));
-		setCookie("scheduler_settings","expires=Sun, 31 Jan 9999 22:00:00 GMT",text);
+		var text = escape(this._helpers.formatDate(d||od)+"@"+(m||om));
+		setCookie(cookie,"expires=Sun, 31 Jan 9999 22:00:00 GMT",text);
 		return true;
 	});
 
@@ -79,3 +83,5 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 		}
 	};
 })();
+
+});

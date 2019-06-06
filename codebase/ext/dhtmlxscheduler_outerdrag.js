@@ -1,12 +1,13 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
-scheduler.attachEvent("onTemplatesReady",function(){function e(e,a,r,n){if(!scheduler.checkEvent("onBeforeExternalDragIn")||scheduler.callEvent("onBeforeExternalDragIn",[e,a,r,n,t])){var i=scheduler.attachEvent("onEventCreated",function(a){scheduler.callEvent("onExternalDragIn",[a,e,t])||(this._drag_mode=this._drag_id=null,this.deleteEvent(a))}),d=scheduler.getActionData(t),l={start_date:new Date(d.date)};if(scheduler.matrix&&scheduler.matrix[scheduler._mode]){var s=scheduler.matrix[scheduler._mode];
-l[s.y_property]=d.section;var o=scheduler._locate_cell_timeline(t);l.start_date=s._trace_x[o.x],l.end_date=scheduler.date.add(l.start_date,s.x_step,s.x_unit)}scheduler._props&&scheduler._props[scheduler._mode]&&(l[scheduler._props[scheduler._mode].map_to]=d.section),scheduler.addEventNow(l),scheduler.detachEvent(i)}}var t,a=new dhtmlDragAndDropObject,r=a.stopDrag;a.stopDrag=function(e){return t=e||event,r.apply(this,arguments)},a.addDragLanding(scheduler._els.dhx_cal_data[0],{_drag:function(t,a,r,n){
-e(t,a,r,n)},_dragIn:function(e,t){return e},_dragOut:function(e){return this}}),dhtmlx.DragControl&&dhtmlx.DragControl.addDrop(scheduler._els.dhx_cal_data[0],{onDrop:function(a,r,n,i){var d=dhtmlx.DragControl.getMaster(a);t=i,e(a,d,r,i.target||i.srcElement)},onDragIn:function(e,t,a){return t}},!0)});
+Scheduler.plugin(function(e){e.attachEvent("onTemplatesReady",function(){function t(t,n,i,r){if(!e.checkEvent("onBeforeExternalDragIn")||e.callEvent("onBeforeExternalDragIn",[t,n,i,r,a])){var o=e.attachEvent("onEventCreated",function(n){e.callEvent("onExternalDragIn",[n,t,a])||(this._drag_mode=this._drag_id=null,this.deleteEvent(n))}),d=e.getActionData(a),l={start_date:new Date(d.date)};if(e.matrix&&e.matrix[e._mode]){var s=e.matrix[e._mode];l[s.y_property]=d.section
+;var _=e._locate_cell_timeline(a);l.start_date=s._trace_x[_.x],l.end_date=e.date.add(l.start_date,s.x_step,s.x_unit)}e._props&&e._props[e._mode]&&(l[e._props[e._mode].map_to]=d.section),e.addEventNow(l),e.detachEvent(o)}}var a,n=new dhtmlDragAndDropObject,i=n.stopDrag;n.stopDrag=function(e){return a=e||event,i.apply(this,arguments)},n.addDragLanding(e._els.dhx_cal_data[0],{_drag:function(e,a,n,i){t(e,a,n,i)},_dragIn:function(e,t){return e},_dragOut:function(e){return this}}),
+dhtmlx.DragControl&&dhtmlx.DragControl.addDrop(e._els.dhx_cal_data[0],{onDrop:function(e,n,i,r){var o=dhtmlx.DragControl.getMaster(e);a=r,t(e,o,n,r.target||r.srcElement)},onDragIn:function(e,t,a){return t}},!0)})});
 //# sourceMappingURL=../sources/ext/dhtmlxscheduler_outerdrag.js.map

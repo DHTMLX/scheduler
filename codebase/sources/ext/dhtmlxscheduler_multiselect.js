@@ -1,38 +1,66 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
+Scheduler.plugin(function(scheduler){
+
+
+function parseXMLOptions(loader, config){
+	var items = scheduler.$ajax.xpath("//data/item", loader.xmlDoc);
+	var ids = {};
+	for (var i = 0; i < items.length; i++) {
+		ids[items[i].getAttribute(config.map_to)] = true;
+	}
+	return ids;
+}
+
+function parseJSONOptions(loader, config){
+	try{
+		var items = JSON.parse(loader.xmlDoc.responseText);
+		var ids = {};
+		for (var i = 0; i < items.length; i++) {
+			var option = items[i];
+
+			ids[option.value || option.key || option.id] = true;
+		}
+		return ids;
+	}catch(e){
+		return null;
+	}
+}
+
 scheduler.form_blocks["multiselect"]={
 	render:function(sns) {
 		var css = "dhx_multi_select_control dhx_multi_select_"+sns.name;
-		if(convertStringToBoolean(sns.vertical)){
+		if(!!sns.vertical){
 			css += " dhx_multi_select_control_vertical";
 		}
 
 		var _result = "<div class='"+css+"' style='overflow: auto; height: "+sns.height+"px; position: relative;' >";
 		for (var i=0; i<sns.options.length; i++) {
 			_result += "<label><input type='checkbox' value='"+sns.options[i].key+"'/>"+sns.options[i].label+"</label>";
-			if(convertStringToBoolean(sns.vertical)) _result += '<br/>';
+			if(!!sns.vertical) _result += '<br/>';
 		}
 		_result += "</div>";
 		return _result;
 	},
 	set_value:function(node,value,ev,config){
-		
+
 		var _children = node.getElementsByTagName('input');
 		for(var i=0;i<_children.length;i++) {
 			_children[i].checked = false; //unchecking all inputs on the form
 		}
-		
+
 		function _mark_inputs(ids) { // ids = [ 0: undefined, 1: undefined, 2: true, 'custom_name': false ... ]
 			var _children = node.getElementsByTagName('input');
 			for(var i=0;i<_children.length; i++) {
 				_children[i].checked = !! ids[_children[i].value];
-			}			
+			}
 		}
 
 		var _ids = {};
@@ -57,12 +85,11 @@ scheduler.form_blocks["multiselect"]={
 			].join("");
 
 			scheduler.$ajax.get(url, function(loader) {
-				var _result = scheduler.$ajax.xpath("//data/item", loader.xmlDoc);
-				var _ids = {};
-				for (var i = 0; i < _result.length; i++) {
-					_ids[_result[i].getAttribute(config.map_to)] = true;
+				var options = parseJSONOptions(loader, config);
+				if(!options){
+					options = parseXMLOptions(loader, config);
 				}
-				_mark_inputs(_ids);
+				_mark_inputs(options);
 				node.removeChild(divLoading);
 			});
 		}
@@ -72,11 +99,13 @@ scheduler.form_blocks["multiselect"]={
 		var _children = node.getElementsByTagName("input");
 		for(var i=0;i<_children.length;i++) {
 			if(_children[i].checked)
-				_result.push(_children[i].value); 
+				_result.push(_children[i].value);
 		}
 		return _result.join(config.delimiter || scheduler.config.section_delimiter || ",");
 	},
-	
+
 	focus:function(node){
 	}
 };
+
+});

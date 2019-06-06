@@ -1,20 +1,23 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
+Scheduler.plugin(function(scheduler){
+
 scheduler.attachEvent("onTemplatesReady",function(){
 
 	this.layers.sort(function(a, b){
 		return a.zIndex - b.zIndex;
 	});
-	
+
 	scheduler._dp_init=function(dp){
 		dp._methods=["_set_event_text_style","","changeEventId","deleteEvent"];
-		
+
 		this.attachEvent("onEventAdded",function(id){
 			if (!this._loading && this.validId(id) && this.getEvent(id) && this.getEvent(id).layer == dp.layer)
 				dp.setUpdated(id,true,"inserted");
@@ -23,13 +26,13 @@ scheduler.attachEvent("onTemplatesReady",function(){
 			if(this.getEvent(id) && this.getEvent(id).layer == dp.layer) {
 				if (!this.validId(id)) return;
 				  var z=dp.getState(id);
-				  
+
 				if (z=="inserted" || this._new_event) {  dp.setUpdated(id,false);		return true; }
 				if (z=="deleted")  return false;
 				if (z=="true_deleted")  return true;
-				
+
 				dp.setUpdated(id,true,"deleted");
-					return false;				
+					return false;
 			}
 			else return true;
 		});
@@ -37,28 +40,28 @@ scheduler.attachEvent("onTemplatesReady",function(){
 			if (!this._loading && this.validId(id) && this.getEvent(id) && this.getEvent(id).layer == dp.layer)
 				dp.setUpdated(id,true,"updated");
 		});
-		
+
 		dp._getRowData=function(id,pref){
 			var ev=this.obj.getEvent(id);
 			var data = {};
-			
+
 			for (var a in ev){
 				if (a.indexOf("_")===0) continue;
 				if (ev[a] && ev[a].getUTCFullYear) //not very good, but will work
-					data[a] = this.obj.templates.xml_format(ev[a]);
+					data[a] = this.obj._helpers.formatDate(ev[a]);
 				else
 					data[a] = ev[a];
 			}
 			return data;
 		};
 		dp._clearUpdateFlag=function(){};
-		
+
 		dp.attachEvent("insertCallback", scheduler._update_callback);
 		dp.attachEvent("updateCallback", scheduler._update_callback);
 		dp.attachEvent("deleteCallback", function(upd, id) {
 			this.obj.setUserData(id, this.action_param, "true_deleted");
 			this.obj.deleteEvent(id);
-		});	
+		});
 	};
 
 	(function() {
@@ -70,7 +73,7 @@ scheduler.attachEvent("onTemplatesReady",function(){
                 temp[key] = _cloneObj(obj[key]);
             return temp;
         };
-        
+
 		scheduler._dataprocessors = [];
 		scheduler._layers_zindex = {};
 		for(var i=0; i<scheduler.layers.length; i++) {
@@ -88,37 +91,37 @@ scheduler.attachEvent("onTemplatesReady",function(){
 		}
 	})();
 
-	
+
 	scheduler.showLayer = function(tlayer) {
 		this.toggleLayer(tlayer, true);
 	};
-	
+
 	scheduler.hideLayer = function(tlayer) {
 		this.toggleLayer(tlayer, false);
 	};
-	
+
 	scheduler.toggleLayer = function(tlayer, visible) { // visible is optional
 		var layer = this.getLayer(tlayer);
-		
+
 		if(typeof visible != 'undefined')
 			layer.visible = !!visible;
 		else
 			layer.visible = !layer.visible;
-			
+
 		this.setCurrentView(this._date, this._mode);
 	};
-	
+
 	scheduler.getLayer = function(tlayer) { // either string with layer name or event with layer property
 		var layer,
 			layer_name;
-		if(typeof tlayer == 'string') 
+		if(typeof tlayer == 'string')
 			layer_name = tlayer;
-		if(typeof tlayer == 'object') 
+		if(typeof tlayer == 'object')
 			layer_name = tlayer.layer;
 		for (var i=0; i<scheduler.layers.length; i++) {
 			if(scheduler.layers[i].name == layer_name)
 				layer = scheduler.layers[i];
-		}	
+		}
 		return layer;
 	};
 
@@ -132,8 +135,8 @@ scheduler.attachEvent("onTemplatesReady",function(){
 	scheduler.attachEvent("onClick", function (event_id, native_event_object){
 		var ev = scheduler.getEvent(event_id);
         return !scheduler.getLayer(ev.layer).noMenu;
-	});	
-	
+	});
+
 	scheduler.attachEvent('onEventCollision', function(ev, evs) {
 		var layer = this.getLayer(ev);
 		if(!layer.checkCollision)
@@ -145,7 +148,7 @@ scheduler.attachEvent("onTemplatesReady",function(){
 		}
 		return (count >= scheduler.config.collision_limit);
 	});
-	
+
 	scheduler.addEvent=function(start_date,end_date,text,id,extra_data){
 		var ev=start_date;
 		if (arguments.length!=1){
@@ -158,8 +161,8 @@ scheduler.attachEvent("onTemplatesReady",function(){
 		}
 		ev.id = ev.id||scheduler.uid();
 		ev.text = ev.text||"";
-		
-		
+
+
 		if (typeof ev.start_date == "string")  ev.start_date=this.templates.api_date(ev.start_date);
 		if (typeof ev.end_date == "string")  ev.end_date=this.templates.api_date(ev.end_date);
 		ev._timed=this.isOneDayEvent(ev);
@@ -169,20 +172,20 @@ scheduler.attachEvent("onTemplatesReady",function(){
 		this.event_updated(ev);
 		if (!this._loading)
 			this.callEvent(is_new?"onEventAdded":"onEventChanged",[ev.id,ev]);
-	};		
-	
+	};
+
 	this._evs_layer = {};
 	for (var i = 0; i < this.layers.length; i++) { // array in object for each layer
 		this._evs_layer[this.layers[i].name] = [];
-	}		
-	
+	}
+
 	scheduler.addEventNow=function(start,end,e){
 		var base = {};
 		if (typeof start == "object"){
 			base = start;
 			start = null;
 		}
-		
+
 		var d = (this.config.event_duration||this.config.time_step)*60000;
 		if (!start) start = Math.round((scheduler._currentDate()).valueOf()/d)*d;
 		var start_date = new Date(start);
@@ -194,32 +197,32 @@ scheduler.attachEvent("onTemplatesReady",function(){
 			}
 			end = start+d;
 		}
-		
-		
+
+
 		base.start_date = base.start_date||start_date;
 		base.end_date =  base.end_date||new Date(end);
 		base.text = base.text||this.locale.labels.new_event;
 		base.id = this._drag_id = this.uid();
 		base.layer = this.defaultLayer;
 		this._drag_mode="new-size";
-		
+
 		this._loading=true;
 		this.addEvent(base);
 		this.callEvent("onEventCreated",[this._drag_id,e]);
 		this._loading=false;
-		
+
 		this._drag_event={}; //dummy , to trigger correct event updating logic
-		this._on_mouse_up(e);	
+		this._on_mouse_up(e);
 	};
-	
+
 	scheduler._t_render_view_data = function(events) { // helper
 		if (this.config.multi_day && !this._table_view) {
 			var tvs = [];
 			var tvd = [];
 			for (var k = 0; k < events.length; k++) {
-				if (events[k]._timed) 
+				if (events[k]._timed)
 					tvs.push(events[k]);
-				else 
+				else
 					tvd.push(events[k]);
 			}
 			this._table_view = true;
@@ -227,34 +230,34 @@ scheduler.attachEvent("onTemplatesReady",function(){
 			this._table_view = false;
 			this.render_data(tvs);
 		}
-		else 
-			this.render_data(events);		
+		else
+			this.render_data(events);
 	};
-	
+
 	scheduler.render_view_data = function(){
 		if (this._not_render) {
 			this._render_wait = true;
 			return;
 		}
 		this._render_wait = false;
-		
+
 		this.clear_view();
 
 		this._evs_layer = {};
 		for (var i = 0; i < this.layers.length; i++) { // array in object for each layer
 			this._evs_layer[this.layers[i].name] = [];
-		}		
-		
+		}
+
 		var evs = this.get_visible_events();
 		for (var i = 0; i < evs.length; i++) { // filling layer arrays with events
 			if(this._evs_layer[evs[i].layer])
 				this._evs_layer[evs[i].layer].push(evs[i]);
-		}			
+		}
 
 		if(this._mode == 'month') { // old logic is used
 			var tevs = [];
 			for (var i = 0; i < this.layers.length; i++) {
-				if (this.layers[i].visible) 
+				if (this.layers[i].visible)
 					tevs = tevs.concat(this._evs_layer[this.layers[i].name]);
 			}
 			this._t_render_view_data(tevs);
@@ -268,17 +271,16 @@ scheduler.attachEvent("onTemplatesReady",function(){
 			}
 		}
 	};
-	
+
 	scheduler._render_v_bar=function(ev,x,y,w,h,style,contentA,contentB,bottom){
 		var id = ev.id;
+
 		if(contentA.indexOf('<div class=') == -1)
 			contentA = (scheduler.templates['event_header_'+ev.layer])?scheduler.templates['event_header_'+ev.layer](ev.start_date,ev.end_date,ev):contentA;
-		if(contentB.indexOf('<div class=') == -1)	
+		if(contentB.indexOf('<div class=') == -1)
 		contentB = (scheduler.templates['event_text_'+ev.layer])?scheduler.templates['event_text_'+ev.layer](ev.start_date,ev.end_date,ev):contentB;
-		
+
 		var d=document.createElement("div");
-		
-		
 		var cs = "dhx_cal_event";
 		var cse = (scheduler.templates['event_class_'+ev.layer])?scheduler.templates['event_class_'+ev.layer](ev.start_date,ev.end_date,ev):scheduler.templates.event_class(ev.start_date,ev.end_date,ev);
 		if (cse) cs=cs+" "+cse;
@@ -298,12 +300,12 @@ scheduler.attachEvent("onTemplatesReady",function(){
 		html+='<div class="dhx_title">'+contentA+'</div>';
 		html+='<div class="dhx_body" style=" width:'+bodyWidth+'px; height:'+bodyHeight+'px;">'+contentB+'</div>';
 		html+='<div class="dhx_footer" style=" width:'+footerWidth+'px;'+(bottom?' margin-top:-1px;':'')+'" ></div></div>';
-		
+
 		d.innerHTML=html;
 		d.style.zIndex = 100;
 		return d.firstChild;
-	};	
-	
+	};
+
 	scheduler.render_event_bar=function(ev){
 		var parent=this._els["dhx_cal_data"][0];
 
@@ -311,57 +313,57 @@ scheduler.attachEvent("onTemplatesReady",function(){
 		var x2=this._colsS[ev._eday];
 		if (x2==x) x2=this._colsS[ev._eday+1];
 		var hb = this.xy.bar_height;
-		
-		var y=this._colsS.heights[ev._sweek]+(this._colsS.height?(this.xy.month_scale_height+2):2)+ev._sorder*hb; 
-				
+
+		var y=this._colsS.heights[ev._sweek]+(this._colsS.height?(this.xy.month_scale_height+2):2)+ev._sorder*hb;
+
 		var d=document.createElement("div");
 		var cs = ev._timed?"dhx_cal_event_clear":"dhx_cal_event_line";
 		var cse = (scheduler.templates['event_class_'+ev.layer])?scheduler.templates['event_class_'+ev.layer](ev.start_date,ev.end_date,ev):scheduler.templates.event_class(ev.start_date,ev.end_date,ev);
-		if (cse) cs=cs+" "+cse; 
-		
+		if (cse) cs=cs+" "+cse;
+
 		var html='<div event_id="'+ev.id+'" class="'+cs+'" style="position:absolute; top:'+y+'px; left:'+x+'px; width:'+(x2-x-15)+'px;'+(ev._text_style||"")+'">';
-			
+
 		if (ev._timed)
 			html+=(scheduler.templates['event_bar_date_'+ev.layer])?scheduler.templates['event_bar_date_'+ev.layer](ev.start_date,ev.end_date,ev):scheduler.templates.event_bar_date(ev.start_date,ev.end_date,ev);
 		html+=( (scheduler.templates['event_bar_text_'+ev.layer])?scheduler.templates['event_bar_text_'+ev.layer](ev.start_date,ev.end_date,ev):scheduler.templates.event_bar_text(ev.start_date,ev.end_date,ev) + '</div>)');
 		html+='</div>';
-		
+
 		d.innerHTML=html;
-		
+
 		this._rendered.push(d.firstChild);
 		parent.appendChild(d.firstChild);
-	};	
+	};
 
 	scheduler.render_event=function(ev){
 		var menu = scheduler.xy.menu_width;
-		if(scheduler.getLayer(ev.layer).noMenu) 
+		if(scheduler.getLayer(ev.layer).noMenu)
 			menu = 0;
-		
+
 		if (ev._sday<0) return; //can occur in case of recurring event during time shift
-		var parent=scheduler.locate_holder(ev._sday);	
+		var parent=scheduler.locate_holder(ev._sday);
 		if (!parent) return; //attempt to render non-visible event
 		var sm = ev.start_date.getHours()*60+ev.start_date.getMinutes();
 		var em = (ev.end_date.getHours()*60+ev.end_date.getMinutes())||(scheduler.config.last_hour*60);
-		
+
 		var top = (Math.round((sm*60*1000-this.config.first_hour*60*60*1000)*this.config.hour_size_px/(60*60*1000)))%(this.config.hour_size_px*24)+1; //42px/hour
 		var height = Math.max(scheduler.xy.min_event_height,(em-sm)*this.config.hour_size_px/60)+1; //42px/hour
 		//var height = Math.max(25,Math.round((ev.end_date.valueOf()-ev.start_date.valueOf())*(this.config.hour_size_px+(this._quirks?1:0))/(60*60*1000))); //42px/hour
 		var width=Math.floor((parent.clientWidth-menu)/ev._count);
 		var left=ev._sorder*width+1;
 		if (!ev._inner) width=width*(ev._count-ev._sorder);
-		
-		
-		
+
+
+
 		var d=this._render_v_bar(ev.id,menu+left,top,width,height,ev._text_style,scheduler.templates.event_header(ev.start_date,ev.end_date,ev),scheduler.templates.event_text(ev.start_date,ev.end_date,ev));
-			
+
 		this._rendered.push(d);
 		parent.appendChild(d);
-		
+
 		left=left+parseInt(parent.style.left,10)+menu;
-		
+
 		top+=this._dy_shift; //corrupt top, to include possible multi-day shift
 		d.style.zIndex = this._layers_zindex[ev.layer];
-		
+
 		if (this._edit_id==ev.id){
 			d.style.zIndex = parseInt(d.style.zIndex)+1; //fix overlapping issue
 			var new_zIndex = d.style.zIndex;
@@ -374,21 +376,21 @@ scheduler.attachEvent("onTemplatesReady",function(){
 			var d2=document.createElement("div");
 			this.set_xy(d2,width-6,height-26);
 			d2.style.cssText+=";margin:2px 2px 2px 2px;overflow:hidden;";
-			
-			
+
+
 			d2.style.zIndex = new_zIndex;
 			d.appendChild(d2);
 			this._els["dhx_cal_data"][0].appendChild(d);
 			this._rendered.push(d);
-		
+
 			d2.innerHTML="<textarea class='dhx_cal_editor'>"+ev.text+"</textarea>";
 			if (this._quirks7) d2.firstChild.style.height=height-12+"px"; //IEFIX
 			this._editor=d2.firstChild;
-			this._editor.onkeypress=function(e){ 
+			this._editor.onkeypress=function(e){
 				if ((e||event).shiftKey) return true;
-				var code=(e||event).keyCode; 
-				if (code==scheduler.keys.edit_save) scheduler.editStop(true); 
-				if (code==scheduler.keys.edit_cancel) scheduler.editStop(false); 
+				var code=(e||event).keyCode;
+				if (code==scheduler.keys.edit_save) scheduler.editStop(true);
+				if (code==scheduler.keys.edit_cancel) scheduler.editStop(false);
 			};
 			this._editor.onselectstart=function(e){ (e||event).cancelBubble=true; return true; };
 			d2.firstChild.focus();
@@ -408,11 +410,14 @@ scheduler.attachEvent("onTemplatesReady",function(){
 			this._els["dhx_cal_data"][0].appendChild(obj);
 			this._rendered.push(obj);
 		}
-		
+
 	};
 
     scheduler.filter_agenda = function(id, event) {
         var layer = scheduler.getLayer(event.layer);
         return (layer && layer.visible);
     };
+});
+
+
 });

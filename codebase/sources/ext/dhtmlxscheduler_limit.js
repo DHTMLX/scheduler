@@ -1,11 +1,14 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
+Scheduler.plugin(function(scheduler){
+
 scheduler.config.limit_start = null;
 scheduler.config.limit_end   = null;
 scheduler.config.limit_view  = false;
@@ -24,7 +27,7 @@ scheduler._temp_limit_scope = function(){
 		} else {
 			options.days = days;
 			options.zones = zones;
-		}	
+		}
 		return options;
 	};
 	var get_resulting_options = function(days, zones, sections) {
@@ -58,7 +61,7 @@ scheduler._temp_limit_scope = function(){
 		}
 
 		if (scheduler.config.limit_view){
-			nd = nd||od; nm = nm||om;		
+			nd = nd||od; nm = nm||om;
 			if (isBlocked(nd, nm) && !(od.valueOf() == nd.valueOf())){
 				setTimeout(function(){
 					var resetDate = !isBlocked(od, nm) ? od : scheduler.config.limit_start;
@@ -483,7 +486,7 @@ scheduler._temp_limit_scope = function(){
 						temp_configs.push(t_config);
 					}
 				}
-			}	
+			}
 		} else {
 			temp_configs.push(config);
 		}
@@ -503,7 +506,7 @@ scheduler._temp_limit_scope = function(){
 					delete t_config.start_date;
 					delete t_config.end_date;
 					t_config.days = t_sd.valueOf();
-					var zone_start = (start_date > t_sd) ? scheduler._get_zone_minutes(start_date) : min; 
+					var zone_start = (start_date > t_sd) ? scheduler._get_zone_minutes(start_date) : min;
 					var zone_end = ( end_date>t_ed || end_date.getDate() != t_sd.getDate() ) ? max : scheduler._get_zone_minutes(end_date);
 					t_config.zones = [zone_start, zone_end];
 					r_configs.push(t_config);
@@ -875,7 +878,7 @@ scheduler._temp_limit_scope = function(){
 					var is_modified = false;
 					if (c_zone_start >= zone_start && c_zone_end <= zone_end) {
 						resulting_zones.splice(i, 2);
-					}				
+					}
 					if (c_zone_start < zone_start) {
 						resulting_zones.splice(i, 2, c_zone_start, zone_start);
 						is_modified = true;
@@ -1089,3 +1092,6 @@ scheduler._temp_limit_scope = function(){
 
 };
 scheduler._temp_limit_scope();
+
+
+});

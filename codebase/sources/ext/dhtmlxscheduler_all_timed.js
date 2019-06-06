@@ -1,11 +1,14 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
+Scheduler.plugin(function(scheduler){
+
 (function(){
 
 	scheduler.config.all_timed = "short";
@@ -149,7 +152,7 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 	var old_get_visible_events = scheduler.get_visible_events;
 	scheduler.get_visible_events = function(only_timed){
 		if (!(this.config.all_timed && this.config.multi_day))
-			return old_get_visible_events.call(this, only_timed);	
+			return old_get_visible_events.call(this, only_timed);
 		return old_get_visible_events.call(this, false); // only timed = false
 	};
 	scheduler.attachEvent("onBeforeViewChange", function (old_mode, old_date, mode, date) {
@@ -185,3 +188,5 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 		}
 	};
 })();
+
+});

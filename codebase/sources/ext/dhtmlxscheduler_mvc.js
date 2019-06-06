@@ -1,11 +1,14 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
+Scheduler.plugin(function(scheduler){
+
 (function(){
 
 	var cfg = {
@@ -41,14 +44,14 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 	}
 	function _finish_ext_load(cal){
 		cal._not_render = false;
-		if (cal._render_wait) 
+		if (cal._render_wait)
 			cal.render_view_data();
 		cal._loading = false;
 
 		cal.callEvent("onXLE", []);
 	}
 
-	
+
 	function _get_id(model){
 		return cfg.use_id ? model.id : model.cid;
 	}
@@ -78,12 +81,12 @@ scheduler.backbone = function(events, config){
 		}
 	}
 
-	events.bind("add", function(model, changes){ 
+	events.bind("add", function(model, changes){
 		var cid = _get_id(model);
 		if (!scheduler._events[cid]){
 			var ev =  model.toJSON();
 			ev.id = cid;
-			scheduler._init_event(ev); 
+			scheduler._init_event(ev);
 
 			queue.push(ev);
 			if (queue.length == 1)
@@ -146,3 +149,5 @@ scheduler.backbone = function(events, config){
 };
 
 })();
+
+});

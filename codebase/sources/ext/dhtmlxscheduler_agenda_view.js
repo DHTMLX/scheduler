@@ -1,17 +1,20 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
+Scheduler.plugin(function(scheduler){
+
 scheduler.date.add_agenda = function(date){
 	return scheduler.date.add(date, 1, "year");
 };
 
 scheduler.templates.agenda_time = function(start,end,ev){
-	if (ev._timed) 
+	if (ev._timed)
 		return this.day_date(ev.start_date, ev.end_date, ev)+" "+this.event_date(start);
 	else
 		return scheduler.templates.day_date(start)+" &ndash; "+scheduler.templates.day_date(end);
@@ -34,7 +37,8 @@ scheduler.attachEvent("onTemplatesReady",function() {
 				return old_dblclick_dhx_cal_data.apply(this, arguments);
 		}
 	};
-	
+
+
 	var old = scheduler.render_data;
 	scheduler.render_data=function(evs){
 		if (this._mode == "agenda")
@@ -42,7 +46,7 @@ scheduler.attachEvent("onTemplatesReady",function() {
 		else
 			return old.apply(this,arguments);
 	};
-	
+
 	var old_render_view_data = scheduler.render_view_data;
 	scheduler.render_view_data = function(){
 		if(this._mode == "agenda") {
@@ -74,7 +78,7 @@ scheduler.attachEvent("onTemplatesReady",function() {
 		//get current date
 		var date = scheduler._date;
 		//select events for which data need to be printed
-		
+
 		var events = scheduler.get_visible_events();
 		events.sort(function(a,b){ return a.start_date>b.start_date?1:-1;});
 
@@ -96,7 +100,7 @@ scheduler.attachEvent("onTemplatesReady",function() {
 			html+="<span>"+scheduler.templates.agenda_text(ev.start_date, ev.end_date, ev)+"</span></div>";
 		}
 		html+="<div class='dhx_v_border'></div></div>";
-			
+
 		//render html
 		scheduler._els["dhx_cal_data"][0].innerHTML = html;
 		scheduler._els["dhx_cal_data"][0].childNodes[0].scrollTop = scheduler._agendaScrollTop||0;
@@ -105,14 +109,14 @@ scheduler.attachEvent("onTemplatesReady",function() {
 		var agenda_area = scheduler._els["dhx_cal_data"][0].childNodes[0];
 		var v_border = agenda_area.childNodes[agenda_area.childNodes.length-1];
 		v_border.style.height = (agenda_area.offsetHeight < scheduler._els["dhx_cal_data"][0].offsetHeight) ? "100%" : (agenda_area.offsetHeight+"px");
-		
+
 		var t=scheduler._els["dhx_cal_data"][0].firstChild.childNodes;
 		scheduler._els["dhx_cal_date"][0].innerHTML=scheduler.templates.agenda_date(scheduler._min_date, scheduler._max_date, scheduler._mode);
-		
+
 		scheduler._rendered=[];
 		for (var i=0; i < t.length-1; i++)
 			scheduler._rendered[i]=t[i];
-		
+
 	}
 
 	scheduler.agenda_view=function(mode){
@@ -131,4 +135,7 @@ scheduler.attachEvent("onTemplatesReady",function() {
 			//agenda tab de-activated
 		}
 	};
+});
+
+
 });

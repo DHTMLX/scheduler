@@ -1,11 +1,14 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
+Scheduler.plugin(function(scheduler){
+
 scheduler.config.icons_select = ["icon_details", "icon_delete"];
 scheduler.config.details_on_create = true;
 scheduler.config.show_quick_info = true;
@@ -43,7 +46,7 @@ scheduler.showQuickInfo = function(id){
 	this.hideQuickInfo(true);
 
 	var pos = this._get_event_counter_part(id);
-	
+
 	if (pos){
 		this._quick_info_box = this._init_quick_info(pos);
 		this._fill_quick_data(id);
@@ -141,14 +144,14 @@ scheduler._show_quick_info = function(pos){
 		if (pos.dx == 1){
 			qi.style.right = "auto";
 			qi.style.left = -width + "px";
-			
+
 			setTimeout(function(){
 				qi.style.left = "-10px";
 			},1);
 		} else {
 			qi.style.left = "auto";
 			qi.style.right = -width + "px";
-			
+
 			setTimeout(function(){
 				qi.style.right = "-10px";
 			},1);
@@ -265,3 +268,6 @@ scheduler._fill_quick_data  = function(id){
 	var main = qi.firstChild.nextSibling;
 	main.innerHTML = scheduler.templates.quick_info_content(ev.start_date, ev.end_date, ev);
 };
+
+
+});

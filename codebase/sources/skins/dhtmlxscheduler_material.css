@@ -1,13 +1,14 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,600);
 /* key nav */
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,600);
 .dhtmlx_message_area {
   position: fixed;
   right: 5px;
@@ -22,10 +23,10 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
   overflow: hidden;
   margin: 5px;
   margin-bottom: 10px;
-  -webkit-transition: all .5s ease;
-  -moz-transition: all .5s ease;
-  -o-transition: all .5s ease;
-  transition: all .5s ease;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
 }
 .dhtmlx-info.hidden {
   height: 0px;
@@ -41,9 +42,9 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
   min-width: 300px;
   width: 341px;
   text-align: center;
-  background: #ffffff;
+  background: #fff;
   background: -webkit-linear-gradient(top, #ffffff 1%, #ffffff 99%);
-  box-shadow: 0px 0px 14px #888888;
+  box-shadow: 0px 0px 14px #888;
   border: none;
   z-index: 18;
   border-radius: 2px;
@@ -86,7 +87,7 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
   display: inline-block;
   margin: 0 5px;
   border-radius: 2px;
-  color: #0288d1;
+  color: #0288D1;
   border: 1px solid transparent;
   box-shadow: none;
 }
@@ -96,7 +97,7 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 }
 .dhtmlx_button input,
 .dhtmlx_popup_button div {
-  border: 1px solid #ffffff;
+  border: 1px solid #FFF;
   background: #ffffff;
   background-image: none;
   border-radius: 2px;
@@ -104,7 +105,7 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   text-shadow: none;
-  color: #0288d1;
+  color: #0288D1;
   font-weight: 500;
   padding: 0px;
   margin: 0px;
@@ -113,24 +114,24 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
   line-height: 28px;
 }
 .dhtmlx_popup_button.dhtmlx_ok_button div {
-  background: #ff584c;
-  border: 1px solid #ff584c;
-  color: #ffffff;
+  background: #FF584C;
+  border: 1px solid #FF584C;
+  color: white;
   text-shadow: none;
   outline: none;
 }
 .dhtmlx_popup_button.dhtmlx_ok_button {
-  border: 1px solid #ff584c;
-  background-color: #ff584c;
+  border: 1px solid #FF584C;
+  background-color: #FF584C;
   outline: none;
 }
 .dhtmlx_button input:focus,
 .dhtmlx_button input:active,
 .dhtmlx_popup_button div:active,
 .dhtmlx_popup_button div:focus {
-  background: #ff584c;
+  background: #FF584C;
   background-image: none;
-  color: #0288d1;
+  color: #0288D1;
   box-shadow: none;
   outline: none;
 }
@@ -176,16 +177,16 @@ div.dhx_modal_cover {
 .dhtmlx-info,
 .dhtmlx-error {
   font-size: 14px;
-  color: #000000;
+  color: #000;
   box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2), 0 1px 6px 0 rgba(0, 0, 0, 0.2);
   padding: 0px;
-  background-color: #ffffff;
+  background-color: #FFF;
   border-radius: 2px;
   border: none;
 }
 .dhtmlx-info div {
   padding: 11px !important;
-  background-color: #ffffff;
+  background-color: #FFF;
   border-radius: 3px;
   border: 1px solid #ffffff;
 }
@@ -208,9 +209,9 @@ div.dhx_modal_cover {
 .dhx_cal_event .dhx_title,
 .dhx_cal_event .dhx_body,
 .dhx_cal_event .dhx_footer {
-  background-color: #0288d1;
+  background-color: #0288D1;
   border: 1px solid transparent;
-  color: #ffffff;
+  color: #FFFFFF;
   overflow: hidden;
   width: 100%;
 }
@@ -247,9 +248,9 @@ div.dhx_modal_cover {
   line-height: 20px;
 }
 .dhx_cal_event.dhx_cal_select_menu {
-  -webkit-box-shadow: 0 0 1px #ffffff;
-  -moz-box-shadow: 0 0 1px #ffffff;
-  box-shadow: 0 0 1px #ffffff;
+  -webkit-box-shadow: 0 0 1px #FFF;
+  -moz-box-shadow: 0 0 1px #FFF;
+  box-shadow: 0 0 1px #FFF;
 }
 .dhx_resize_denied,
 .dhx_resize_denied .dhx_event_resize {
@@ -272,7 +273,7 @@ div.dhx_modal_cover {
   height: 0;
 }
 .dhx_cal_event_line {
-  background-color: #0288d1;
+  background-color: #0288D1;
   border: 1px solid transparent;
   border-radius: 2px;
   font-family: "Roboto", Arial;
@@ -281,7 +282,7 @@ div.dhx_modal_cover {
   line-height: 17px;
   height: 17px;
   padding: 0 0 1px 10px;
-  color: #ffffff;
+  color: #FFFFFF;
   cursor: pointer;
   overflow: hidden;
 }
@@ -296,7 +297,7 @@ div.dhx_modal_cover {
 .dhx_cal_event_clear {
   height: 19px;
   padding: 1px 0 0 11px;
-  color: #0288d1;
+  color: #0288D1;
   font-family: "Roboto", Arial;
   font-size: 14px;
   line-height: 19px;
@@ -369,7 +370,7 @@ div.icon_delete {
   font-family: "Roboto", Arial;
 }
 .dhx_month_link a {
-  color: #1b5dfb;
+  color: #1B5DFB;
 }
 .dhx_month_link a:hover {
   text-decoration: underline;
@@ -405,10 +406,10 @@ div.icon_delete {
 }
 .dhx_cal_light {
   -webkit-tap-highlight-color: transparent;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   border-radius: 2px;
   border: 0 solid transparent;
-  color: #2e2e2e;
+  color: #2E2E2E;
   font-family: "Roboto", Arial;
   font-size: 14px;
   box-shadow: none;
@@ -420,8 +421,8 @@ div.icon_delete {
   padding: 3px 15px 1px 15px;
   height: 35px;
   line-height: 35px;
-  border-bottom: 1px solid #0288d1;
-  background: #0288d1;
+  border-bottom: 1px solid #0288D1;
+  background: #0288D1;
   margin: 0 0 20px 0;
   border-radius: 2px 2px 0 0;
   overflow: hidden;
@@ -446,7 +447,7 @@ div.icon_delete {
 .dhx_mark {
   position: relative;
   top: 3px;
-  background-image: url('imgs/controls.gif');
+  background-image: url('./imgs/controls.gif');
   background-position: 0px -43px;
   padding-left: 10px;
 }
@@ -470,7 +471,7 @@ div.icon_delete {
 }
 .dhx_cal_larea {
   border: none;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   overflow: hidden;
 }
 .dhx_cal_light_wide .dhx_cal_larea {
@@ -481,7 +482,7 @@ div.icon_delete {
   border-top: 0;
   border-bottom: none;
   position: relative;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   overflow: hidden;
   padding: 0px;
   margin: 0 0 16px 0;
@@ -533,7 +534,7 @@ div.icon_delete {
   height: 15px;
 }
 .dhx_cal_ltext textarea {
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   overflow: auto;
   color: rgba(0, 0, 0, 0.8);
   height: 100%;
@@ -568,7 +569,7 @@ div.icon_delete {
   font-weight: 500;
   border-radius: 2px;
   text-transform: uppercase;
-  color: #0288d1;
+  color: #0288D1;
 }
 .dhx_right_btn_set {
   margin-right: 16px;
@@ -584,38 +585,38 @@ div.icon_delete {
 .dhx_btn_set,
 .dhx_cancel_btn_set {
   border: 1px solid #ffffff;
-  background-color: #ffffff;
-  color: #0288d1;
+  background-color: #FFFFFF;
+  color: #0288D1;
   float: right;
   float: left;
 }
 .dhx_save_btn {
-  background-image: url('imgs/controls.gif');
+  background-image: url('./imgs/controls.gif');
   background-position: -84px 0px;
   width: 21px;
 }
 .dhx_cancel_btn {
-  background-image: url('imgs/controls.gif');
+  background-image: url('./imgs/controls.gif');
   background-position: -63px 0px;
   width: 20px;
 }
 .dhx_delete_btn {
-  background-image: url('imgs/controls.gif');
+  background-image: url('./imgs/controls.gif');
   background-position: -42px 0px;
   width: 20px;
 }
 .dhx_delete_btn_set {
   border: 1px solid #ffffff;
-  background-color: #ffffff;
-  color: #ff584c;
+  background-color: #FFFFFF;
+  color: #FF584C;
   text-shadow: none;
   margin: 0px 20px 0 20px;
 }
 .dhx_save_btn_set {
-  border: 1px solid #0288d1;
-  color: #ffffff;
+  border: 1px solid #0288D1;
+  color: #FFFFFF;
   text-shadow: none;
-  background-color: #0288d1;
+  background-color: #0288D1;
 }
 .dhx_cal_cover {
   width: 100%;
@@ -710,7 +711,7 @@ div.icon_delete {
   position: absolute;
   top: 0px;
   right: 0px;
-  background-image: url(imgs/collapse_expand_icon.gif);
+  background-image: url(./imgs/collapse_expand_icon.gif);
   width: 18px;
   height: 18px;
   cursor: pointer;
@@ -758,7 +759,7 @@ div.icon_delete {
 .dhx_agenda_line .dhx_event_icon {
   width: 20px;
   border-width: 0px;
-  background: url(imgs/icon.png) no-repeat;
+  background: url(./imgs/icon.png) no-repeat;
   background-position: 5px 4px;
   cursor: pointer;
 }
@@ -793,8 +794,8 @@ div.icon_delete {
   overflow: hidden;
 }
 .dhx_month_head.dhx_year_event {
-  background-color: #0288d1;
-  color: #ffffff;
+  background-color: #0288D1;
+  color: #FFF;
 }
 .dhx_year_body .dhx_before .dhx_month_head,
 .dhx_year_body .dhx_after .dhx_month_head {
@@ -823,7 +824,7 @@ div.icon_delete {
   float: left;
   border-width: 0px;
   position: relative;
-  background: url(imgs/icon.png) no-repeat;
+  background: url(./imgs/icon.png) no-repeat;
   background-position: 5px 4px;
   cursor: pointer;
 }
@@ -834,7 +835,7 @@ div.icon_delete {
   text-align: center;
 }
 .dhx_text_disabled {
-  color: #2e2e2e;
+  color: #2E2E2E;
   font-family: "Roboto", Arial;
   font-size: 14px;
 }
@@ -850,7 +851,7 @@ div.icon_delete {
   cursor: pointer;
 }
 .dhx_mini_calendar .dhx_calendar_click {
-  background-color: #0288d1;
+  background-color: #0288D1;
 }
 .dhx_cal_navline div.dhx_minical_icon {
   width: 18px;
@@ -858,7 +859,7 @@ div.icon_delete {
   left: 190px;
   top: 1px;
   cursor: pointer;
-  background: url(imgs_dhx_material/calendar.svg) no-repeat;
+  background: url(./imgs_dhx_material/calendar.svg) no-repeat;
 }
 .dhx_matrix_scell,
 .dhx_timeline_scale_header {
@@ -903,7 +904,7 @@ div.icon_delete {
 .dhx_cal_event_line .dhx_event_resize {
   cursor: w-resize;
   cursor: ew-resize;
-  background: url(imgs_dhx_material/drag-vertical.svg) no-repeat center center;
+  background: url(./imgs_dhx_material/drag-vertical.svg) no-repeat center center;
   position: absolute;
   top: 0;
   width: 4px;
@@ -918,7 +919,7 @@ div.icon_delete {
 /* Tree view */
 .dhx_matrix_scell.folder,
 .dhx_data_table.folder .dhx_matrix_cell {
-  background-color: #ebeced;
+  background-color: #EBECED;
   cursor: pointer;
 }
 .dhx_matrix_scell .dhx_scell_level0 {
@@ -950,7 +951,7 @@ div.icon_delete {
 .dhx_matrix_scell.folder .dhx_scell_name {
   float: left;
   width: auto;
-  color: #0288d1;
+  color: #0288D1;
   text-transform: uppercase;
   font-weight: 500;
 }
@@ -975,12 +976,12 @@ div.icon_delete {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  background-image: url(imgs/databg.png);
+  background-image: url(./imgs/databg.png);
 }
 .dhx_map_line .dhx_event_icon {
   width: 20px;
   border-width: 0px;
-  background: url(imgs/icon.png) no-repeat;
+  background: url(./imgs/icon.png) no-repeat;
   background-position: 5px 4px;
   cursor: pointer;
 }
@@ -1208,7 +1209,7 @@ div.icon_delete {
   border: none !important;
   top: 5px;
   background-repeat: no-repeat;
-  background-image: url(imgs/images.png);
+  background-image: url(./imgs/images.png);
 }
 /* end grid */
 /* marked timespans */
@@ -1261,7 +1262,7 @@ div.icon_delete {
   z-index: 8;
   font-family: "Roboto", Arial;
   font-size: 14px;
-  background-color: #ffffff;
+  background-color: #fff;
   padding: 0;
   width: 300px;
   transition: left 0.5s ease, right 0.5s;
@@ -1280,7 +1281,7 @@ div.icon_delete {
 }
 .dhx_cal_qi_title {
   padding: 10px 0px 10px 10px;
-  color: #ffffff;
+  color: #FFF;
   letter-spacing: unset;
 }
 .dhx_cal_qi_tdate {
@@ -1311,7 +1312,7 @@ div.icon_delete {
   border-right: none;
   border-radius: 2px;
   line-height: 20px;
-  color: #0288d1;
+  color: #0288D1;
   vertical-align: middle;
   cursor: pointer;
   float: left;
@@ -1346,6 +1347,22 @@ div.icon_delete {
   outline-style: solid;
   /*not visible focus outline in ie11*/
   outline-style: auto;
+}
+/* key nav end*/
+.dhx_no_select {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.dhx_drag_placeholder {
+  z-index: 10;
+  opacity: 0.8;
+}
+.dhx_drag_placeholder .dhx_cal_select_menu {
+  display: none;
 }
 /* key nav end*/
 /* timeline scroll */
@@ -1509,7 +1526,7 @@ div.icon_delete {
   text-align: center;
   font-size: 14px;
   font-weight: 500;
-  color: #0288d1;
+  color: #0288D1;
   right: 57px;
   background-color: none;
   background-image: none;
@@ -1545,8 +1562,8 @@ div.icon_delete {
   padding-top: 1px;
   border-radius: 0;
   cursor: pointer;
-  border: 1px solid #0288d1;
-  color: #0288d1;
+  border: 1px solid #0288D1;
+  color: #0288D1;
   font-size: inherit;
 }
 .dhx_cal_tab:hover {
@@ -1557,10 +1574,10 @@ div.icon_delete {
   cursor: default;
   font-weight: 500;
   font-size: inherit;
-  color: #ffffff;
-  border: 1px solid #0288d1;
+  color: #FFFFFF;
+  border: 1px solid #0288D1;
   border-bottom: 1;
-  background-color: #0288d1;
+  background-color: #0288D1;
   z-index: 25;
 }
 .dhx_cal_tab_first {
@@ -1581,7 +1598,7 @@ div.icon_delete {
   position: absolute;
   overflow: hidden;
   left: 10px;
-  background: #ffffff;
+  background: #FFFFFF;
   border-top: 1px solid transparent;
   border-right: 1px solid transparent;
   z-index: 2;
@@ -1605,7 +1622,7 @@ div.icon_delete {
 .dhx_scale_bar {
   position: absolute;
   text-align: center;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   padding: 2px 0 0 0;
   border-left: 1px solid #e0e0e0;
   font-size: 14px;
@@ -1637,7 +1654,7 @@ div.icon_delete {
 }
 .dhx_scale_hour {
   border-bottom: 1px solid #e0e0e0;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   text-align: center;
   line-height: 44px;
   color: rgba(0, 0, 0, 0.54);
@@ -1653,16 +1670,16 @@ div.icon_delete {
   line-height: 21px;
   color: rgba(0, 0, 0, 0.54);
   border-right: 1px solid #e0e0e0;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   text-align: right;
 }
 .dhx_after .dhx_month_head,
 .dhx_before .dhx_month_head {
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   color: rgba(0, 0, 0, 0.38);
 }
 .dhx_now .dhx_month_head {
-  background-color: #fff3a1;
+  background-color: #FFF3A1;
   font-weight: normal;
 }
 .dhx_scale_hour_border {
@@ -1671,17 +1688,17 @@ div.icon_delete {
 .dhx_month_body {
   border-right: 1px solid #e0e0e0;
   border-bottom: 1px solid #e0e0e0;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
 }
 .dhx_after .dhx_month_body,
 .dhx_before .dhx_month_body {
-  background-color: #ffffff;
+  background-color: #FFFFFF;
 }
 .dhx_now .dhx_month_body {
-  background-color: #f7f7f7;
+  background-color: #F7F7F7;
 }
 .dhx_now .dhx_month_head {
-  background-color: #f7f7f7;
+  background-color: #F7F7F7;
 }
 .dhx_scale_ignore {
   display: none;
@@ -1703,7 +1720,7 @@ div.icon_delete {
 }
 .dhx_multi_day_icon,
 .dhx_multi_day {
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   border-right: 1px solid transparent;
 }
 .dhx_multi_day {
@@ -2021,8 +2038,8 @@ input.dhx_repeat_checkbox {
   background-color: #edf8ff;
 }
 .dhx_cal_tab.active:hover {
-  color: #ffffff;
-  background-color: #0288d1;
+  color: #FFFFFF;
+  background-color: #0288D1;
 }
 /*============================================================================================
                             3.	Event and It's Elements 
@@ -2075,7 +2092,7 @@ div.dhx_menu_icon {
 }
 .dhx_cal_event.dhx_cal_editor {
   box-shadow: none;
-  background-color: #0288d1;
+  background-color: #0288D1;
   min-height: 24px;
   box-shadow: 1px 1px 0 0 rgba(255, 255, 255, 0.47);
 }
@@ -2131,7 +2148,7 @@ div.dhx_menu_icon {
   background-position: 3px center;
 }
 .dhx_row_folder .dhx_data_table .dhx_matrix_cell {
-  background-color: #ebeced;
+  background-color: #EBECED;
   cursor: pointer;
 }
 .dhx_row_folder .dhx_matrix_scell,
@@ -2258,7 +2275,7 @@ td .dhx_month_head a:hover,
   margin-right: 10px;
 }
 .dhtmlx_popup_button.dhtmlx_ok_button:active div {
-  color: #ffffff;
+  color: white;
 }
 .dhtmlx_message_area .dhtmlx-error {
   box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.2), 0 1px 6px 0 rgba(0, 0, 0, 0.2);
@@ -2369,11 +2386,11 @@ td .dhx_month_head a:hover,
 }
 .dhx_mini_calendar div.dhx_month_head.dhx_year_event {
   background-color: rgba(2, 136, 209, 0.2);
-  color: #0288d1;
+  color: #0288D1;
 }
 .dhx_mini_calendar div.dhx_month_head.dhx_year_event.dhx_calendar_click {
   background-color: #e5e5e5;
-  color: #0288d1;
+  color: #0288D1;
 }
 /*tr.selected-week-row {
 	td {
@@ -2395,12 +2412,12 @@ td .dhx_month_head a:hover,
   text-align: center;
   text-transform: uppercase;
   padding: 0 16px;
-  border: 1px solid #0288d1;
-  background-color: #0288d1;
+  border: 1px solid #0288D1;
+  background-color: #0288D1;
 }
 .dhtmlx_modal_box.dhtmlx-alert .dhtmlx_edit_series_button div {
-  border: 1px solid #0288d1;
-  background-color: #0288d1;
+  border: 1px solid #0288D1;
+  background-color: #0288D1;
   color: #ffffff;
 }
 .dhtmlx_modal_box.dhtmlx-alert .dhtmlx_edit_series_button:hover {
@@ -2419,29 +2436,29 @@ td .dhx_month_head a:hover,
   text-align: center;
   text-transform: uppercase;
   padding: 0 16px;
-  border: 1px solid #ffffff;
-  background-color: #ffffff;
+  border: 1px solid #fff;
+  background-color: #fff;
 }
 .dhtmlx_modal_box.dhtmlx-alert .dhtmlx_edit_occurrence_button div {
   border: 1px solid #fff;
   background-color: #fff;
-  color: #0288d1;
+  color: #0288D1;
 }
 .dhtmlx_modal_box.dhtmlx-alert .dhtmlx_edit_occurrence_button:hover {
-  background-color: #d9edf8;
+  background-color: #D9EDF8;
   transition: all 0.1s ease-in-out;
-  border: 1px solid #d9edf8;
+  border: 1px solid #D9EDF8;
 }
 .dhtmlx_modal_box.dhtmlx-alert .dhtmlx_edit_occurrence_button:hover div {
-  background-color: #d9edf8;
+  background-color: #D9EDF8;
   transition: all 0.1s ease-in-out;
-  border: 1px solid #d9edf8;
+  border: 1px solid #D9EDF8;
 }
 .dhx_cal_quick_info {
   box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.1);
 }
 .dhx_cal_qi_title {
-  background-color: #0288d1;
+  background-color: #0288D1;
 }
 .dhx_cal_qi_tdate {
   margin-top: 4px;
@@ -2455,7 +2472,7 @@ td .dhx_month_head a:hover,
 }
 .dhx_qi_big_icon:hover {
   border: 1px solid rgba(255, 88, 76, 0.01);
-  background-color: #d9edf8;
+  background-color: #D9EDF8;
   transition: all 0.1s ease-in-out;
 }
 .dhx_qi_big_icon.icon_delete:hover {
@@ -2463,7 +2480,7 @@ td .dhx_month_head a:hover,
   background-color: rgba(255, 88, 76, 0.3);
 }
 .dhx_qi_big_icon.icon_delete {
-  color: #ff584c;
+  color: #FF584C;
 }
 .dhx_cal_qi_controls div {
   float: unset;
@@ -2614,8 +2631,8 @@ textarea.dhx_cal_editor {
   color: #ffffff;
 }
 .dhx_in_move {
-  background-color: #0288d1;
-  color: #ffffff;
+  background-color: #0288D1;
+  color: #fff;
 }
 .dhx_cal_light select {
   box-sizing: border-box;
@@ -2708,9 +2725,9 @@ textarea.dhx_cal_editor {
   display: table;
 }
 .dhx_cancel_btn_set:hover {
-  background-color: #d9edf8;
+  background-color: #D9EDF8;
   transition: all 0.1s ease-in-out;
-  border: 1px solid #d9edf8;
+  border: 1px solid #D9EDF8;
 }
 .dhx_delete_btn_set {
   float: left;
@@ -2720,9 +2737,9 @@ textarea.dhx_cal_editor {
   background-color: rgba(255, 88, 76, 0.3);
 }
 .dhx_custom_btn_info_set:hover {
-  background-color: #d9edf8;
+  background-color: #D9EDF8;
   transition: all 0.1s ease-in-out;
-  border: 1px solid #d9edf8;
+  border: 1px solid #D9EDF8;
 }
 .dhx_cal_ltext.dhx_cal_radio br {
   display: none;
@@ -2801,12 +2818,12 @@ textarea.dhx_cal_editor {
 }
 .dhtmlx_cancel_button:hover {
   /*border-color:	@modal-popup-button-hov-border;*/
-  background-color: #d9edf8;
+  background-color: #D9EDF8;
   transition: all 0.1s ease-in-out;
 }
 .dhtmlx_cancel_button:hover div {
-  background-color: #d9edf8;
-  border-color: #d9edf8;
+  background-color: #D9EDF8;
+  border-color: #D9EDF8;
   transition: all 0.1s ease-in-out;
 }
 .dhtmlx_popup_button.dhtmlx_ok_button:hover {
@@ -2954,7 +2971,7 @@ input.dhx_repeat_text {
 }
 .dhx_cal_lsection div.dhx_custom_button {
   padding: 0;
-  color: #0288d1;
+  color: #0288D1;
   font-family: "Roboto", Arial;
   font-size: 14px;
   background-color: rgba(255, 255, 255, 0);
@@ -2983,7 +3000,7 @@ input.dhx_repeat_text {
                             7.	YEAR CALENDAR and It's Elements
 ==============================================================================================*/
 .dhx_year_box .dhx_year_month {
-  color: #0288d1;
+  color: #0288D1;
   font-family: "Roboto", Arial;
   font-size: 14px;
   font-weight: 500;
@@ -3100,7 +3117,7 @@ input.dhx_repeat_text {
 }
 .dhx_year_box .dhx_year_grid .dhx_year_body table tbody td .dhx_month_head.dhx_year_event,
 .dhx_year_box .dhx_year_grid .dhx_year_body table tbody .dhx_before .dhx_month_head.dhx_year_event {
-  background-color: #0288d1;
+  background-color: #0288D1;
   color: #ffffff;
   font-weight: 500;
   cursor: pointer;
@@ -3130,7 +3147,7 @@ div.dhx_year_tooltip .dhx_tooltip_line {
   padding: 0 0 0 48px;
 }
 div.dhx_year_tooltip .dhx_tooltip_line .dhx_event_icon.icon_details {
-  background: url(imgs_dhx_material/agenda-calendar.svg) no-repeat center center;
+  background: url(./imgs_dhx_material/agenda-calendar.svg) no-repeat center center;
   width: 40px;
   height: 40px;
   position: absolute;
@@ -3184,7 +3201,7 @@ div.dhx_year_tooltip .dhx_tooltip_line .dhx_tooltip_date {
 .dhx_grid_area tr.dhx_grid_event:nth-child(even),
 .dhx_map_area div[role="row"]:nth-child(even),
 .dhx_agenda_area div[role="row"]:nth-child(even) {
-  background-color: #ededed;
+  background-color: #EDEDED;
 }
 .dhx_grid_area tr.dhx_grid_event:nth-child(odd),
 .dhx_map_area div[role="row"]:nth-child(odd),
@@ -3200,7 +3217,7 @@ div.dhx_year_tooltip .dhx_tooltip_line .dhx_tooltip_date {
 }
 .dhx_map_area .dhx_map_line .dhx_event_icon,
 .dhx_agenda_area .dhx_agenda_line .dhx_event_icon {
-  background: url(imgs_dhx_material/agenda-calendar.svg) no-repeat center center;
+  background: url(./imgs_dhx_material/agenda-calendar.svg) no-repeat center center;
   height: 33px;
   width: 33px;
   margin: 2px 0 0 3px;
@@ -3235,7 +3252,7 @@ div.dhx_year_tooltip .dhx_tooltip_line .dhx_tooltip_date {
   color: inherit;
   border-top: 1px solid #e0e0e0;
   border-bottom: 1px solid #e0e0e0;
-  background-color: #ededed;
+  background-color: #EDEDED;
   padding-left: 7px;
 }
 .dhx_scheduler_week_agenda .dhx_wa_ev_body {
@@ -3246,12 +3263,12 @@ div.dhx_year_tooltip .dhx_tooltip_line .dhx_tooltip_date {
   border-left: 1px solid #e0e0e0;
 }
 .dhx_scheduler_week_agenda .dhx_cal_event_selected {
-  background-color: #0288d1;
+  background-color: #0288D1;
   color: white;
 }
 .dhx_cal_ltitle {
   text-overflow: ellipsis;
 }
 .dhx_expand_icon {
-  background-image: url("imgs_dhx_material/collapse_expand_icon.png");
+  background-image: url("./imgs_dhx_material/collapse_expand_icon.png");
 }

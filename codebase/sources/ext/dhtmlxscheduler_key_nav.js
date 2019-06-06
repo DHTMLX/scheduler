@@ -1,16 +1,17 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
 (function(){
-	function setupKeyNav(scheduler){
+
+function setupKeyNav(scheduler){
 		scheduler.config.key_nav = true;
 		scheduler.config.key_nav_step = 30;
-
 		scheduler.addShortcut = function(shortcut, handler, scope){
 			var scopeObject = getScope(scope);
 			if(scopeObject){
@@ -2353,6 +2354,26 @@ scheduler.$keyboardNavigation.dispatcher = {
 	activeNode: null,
 	globalNode: new scheduler.$keyboardNavigation.SchedulerNode(),
 
+	keepScrollPosition: function (callback) {
+		var top, left;
+
+		var scrollable = scheduler.$container.querySelector(".dhx_timeline_scrollable_data");
+		if(!scrollable){
+			scrollable = scheduler.$container.querySelector(".dhx_cal_data");
+		}
+
+		if(scrollable){
+			top = scrollable.scrollTop;
+			left = scrollable.scrollLeft;
+		}
+
+		callback();
+
+		if(scrollable){
+			scrollable.scrollTop = top;
+			scrollable.scrollLeft = left;
+		}
+	},
 	enable: function(){
 		if(!scheduler.$container){
 			// do nothing if not initialized
@@ -2360,8 +2381,11 @@ scheduler.$keyboardNavigation.dispatcher = {
 		}
 
 		this.isActive = true;
-		this.globalNode.enable();
-		this.setActiveNode(this.getActiveNode());
+		var self = this;
+		this.keepScrollPosition(function () {
+			self.globalNode.enable();
+			self.setActiveNode(self.getActiveNode());
+		});
 	},
 
 	disable: function(){
@@ -2452,7 +2476,7 @@ scheduler.$keyboardNavigation.dispatcher = {
 			return;
 
 		e = e || window.event;
-		
+
 		var schedulerNode = this.globalNode;
 
 		var command = scheduler.$keyboardNavigation.shortcuts.getCommandFromEvent(e);
@@ -2641,7 +2665,6 @@ scheduler._temp_key_scope();
 
 
 		(function(){
-
 scheduler.$keyboardNavigation.attachSchedulerHandlers = function(){
 	var dispatcher = scheduler.$keyboardNavigation.dispatcher;
 
@@ -2651,8 +2674,10 @@ scheduler.$keyboardNavigation.attachSchedulerHandlers = function(){
 		return dispatcher.keyDownHandler(e);
 	};
 
-	var focusHandler = function(){
-		dispatcher.focusGlobalNode();
+	var focusHandler = function () {
+		dispatcher.keepScrollPosition(function () {
+			dispatcher.focusGlobalNode();
+		});
 	};
 
 	var waitCall;
@@ -2680,28 +2705,12 @@ scheduler.$keyboardNavigation.attachSchedulerHandlers = function(){
 			activeNode = activeNode.fallback();
 		}
 
-		if(activeNode instanceof scheduler.$keyboardNavigation.MinicalButton || activeNode instanceof scheduler.$keyboardNavigation.MinicalCell)
+		if(!activeNode || activeNode instanceof scheduler.$keyboardNavigation.MinicalButton || activeNode instanceof scheduler.$keyboardNavigation.MinicalCell)
 			return;
 
-		var top, left;
-
-		var scrollable = scheduler.$container.querySelector(".dhx_timeline_scrollable_data");
-		if(!scrollable){
-			scrollable = scheduler.$container.querySelector(".dhx_cal_data");
-		}
-
-		if(scrollable){
-			top = scrollable.scrollTop;
-			left = scrollable.scrollLeft;
-
-		}
-
-		activeNode.focus(true);
-
-		if(scrollable){
-			scrollable.scrollTop = top;
-			scrollable.scrollLeft = left;
-		}
+		dispatcher.keepScrollPosition(function () {
+			activeNode.focus(true);
+		});
 	};
 
 	scheduler.attachEvent("onSchedulerReady", function(){
@@ -3042,10 +3051,11 @@ scheduler.$keyboardNavigation.patchMinicalendar = function(){
 
 	}
 
+if(window.Scheduler){
+	window.Scheduler.plugin(setupKeyNav);
+}else{
+	setupKeyNav(window.scheduler);
+}
 
-	if(window.Scheduler){
-		window.Scheduler.plugin(setupKeyNav);
-	}else{
-		setupKeyNav(window.scheduler);
-	}
+
 })();

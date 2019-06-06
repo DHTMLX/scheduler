@@ -1,11 +1,14 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
+Scheduler.plugin(function(scheduler){
+
 (function() {
 
 	scheduler.config.container_autoresize = true;
@@ -315,3 +318,5 @@ This software is covered by GPL license. You also can obtain Commercial or Enter
 		return true;
 	});
 })();
+
+});

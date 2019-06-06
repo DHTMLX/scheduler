@@ -1,11 +1,14 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
+Scheduler.plugin(function(scheduler){
+
 scheduler.config.year_x = 4;
 scheduler.config.year_y = 3;
 scheduler.xy.year_top = 0;
@@ -36,7 +39,7 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 			}
 
 			if(monthNode){
-				var start = this.templates.xml_date(monthNode.getAttribute("date"));
+				var start = this._helpers.parseDate(monthNode.getAttribute("date"));
 				start.setDate(parseInt(t.innerHTML, 10));
 				var end = this.date.add(start, 1, "day");
 				if (!this.config.readonly && this.config.dblclick_create)
@@ -266,7 +269,7 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 				d = document.createElement("div");
 				d.className = "dhx_year_box";
 				d.style.cssText = "position:absolute;";
-				d.setAttribute("date", this.templates.xml_format(sd));
+				d.setAttribute("date", this._helpers.formatDate(sd));
 				d.innerHTML = "<div class='dhx_year_month'></div><div class='dhx_year_grid'><div class='dhx_year_week'>" + week_template.innerHTML + "</div><div class='dhx_year_body'></div></div>";
 
 				var header = d.querySelector(".dhx_year_month");
@@ -417,3 +420,6 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 
 
 })();
+
+
+});

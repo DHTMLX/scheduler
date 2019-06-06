@@ -1,11 +1,14 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
+Scheduler.plugin(function(scheduler){
+
 scheduler.templates.calendar_month = scheduler.date.date_to_str("%F %Y");
 scheduler.templates.calendar_scale_date = scheduler.date.date_to_str("%D");
 scheduler.templates.calendar_date = scheduler.date.date_to_str("%d");
@@ -46,7 +49,7 @@ scheduler.renderCalendar = function(obj, _prev, is_refresh) {
 			if (src.className.indexOf("dhx_month_head") != -1) {
 				var pname = src.parentNode.className;
 				if (pname.indexOf("dhx_after") == -1 && pname.indexOf("dhx_before") == -1) {
-					var newdate = scheduler.templates.xml_date(this.getAttribute("date"));
+					var newdate = scheduler._helpers.parseDate(this.getAttribute("date"));
 					newdate.setDate(parseInt(src.innerHTML, 10));
 					scheduler.unmarkCalendar(this);
 					scheduler.markCalendar(this, newdate, "dhx_calendar_click");
@@ -201,7 +204,7 @@ scheduler._render_calendar = function(obj, sd, conf, previous) {
 		d = document.createElement("div");
 		d.className = "dhx_cal_container dhx_mini_calendar";
 	}
-	d.setAttribute("date", this.templates.xml_format(sd));
+	d.setAttribute("date", this._helpers.formatDate(sd));
 	d.innerHTML = "<div class='dhx_year_month'></div>" +
 		"<div class='dhx_year_grid'>" +
 			"<div class='dhx_year_week'>"+(week_template ? week_template.innerHTML : "")+"</div>" +
@@ -540,4 +543,6 @@ scheduler._markCalendarCurrentDate = function(calendar) {
 
 scheduler.attachEvent("onEventCancel", function(){
 	scheduler.destroyCalendar(null, true);
+});
+
 });

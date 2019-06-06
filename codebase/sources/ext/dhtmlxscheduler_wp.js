@@ -1,11 +1,14 @@
 /*
 @license
-dhtmlxScheduler v.5.1.6 Stardard
 
+dhtmlxScheduler v.5.2.0 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
+
 */
+Scheduler.plugin(function(scheduler){
+
 scheduler.attachEvent("onLightBox",function(){
 	if (this._cover){
 		try{
@@ -19,3 +22,5 @@ scheduler.form_blocks.select.set_value=function(node,value,ev){
 		value = (node.firstChild.options[0]||{}).value;
 	node.firstChild.value=value||"";
 };
+
+});
