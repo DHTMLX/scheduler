@@ -1,7 +1,7 @@
 /*
 @license
 
-dhtmlxScheduler v.5.2.0 Stardard
+dhtmlxScheduler v.5.2.1 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
@@ -1938,7 +1938,7 @@ Scheduler.plugin = function (code) {
 };
 Scheduler._schedulerPlugins = [];
 Scheduler.getSchedulerInstance = function () {
-	var scheduler = { version: "5.2.0" };
+	var scheduler = { version: "5.2.1" };
 
 dhtmlxEventable(scheduler);
 
@@ -4981,16 +4981,13 @@ scheduler.is_visible_events = function(ev) {
 	}
 };
 scheduler.isOneDayEvent = function(ev) {
-	var delta = ev.end_date.getDate() - ev.start_date.getDate();
-
-	if (!delta)
-		return ev.start_date.getMonth() == ev.end_date.getMonth() && ev.start_date.getFullYear() == ev.end_date.getFullYear();
-	else {
-		if (delta < 0)  delta = Math.ceil((ev.end_date.valueOf() - ev.start_date.valueOf()) / (24 * 60 * 60 * 1000));
-		return (delta == 1 && !ev.end_date.getHours() && !ev.end_date.getMinutes() && (ev.start_date.getHours() || ev.start_date.getMinutes() ));
-	}
-
+	return (
+		ev.start_date.getFullYear() === ev.end_date.getFullYear() &&
+		ev.start_date.getMonth() === ev.end_date.getMonth() &&
+		ev.start_date.getDate() === ev.end_date.getDate()
+	);
 };
+
 scheduler.get_visible_events = function(only_timed) {
 	//not the best strategy for sure
 	var stack = [];
@@ -5694,8 +5691,8 @@ scheduler.render_event = function(ev, buffer, parentWidth) {
 		this._rendered.push(d);
 
 		d2.innerHTML = "<textarea class='dhx_cal_editor'>" + ev.text + "</textarea>";
-		if (this._quirks7) d2.firstChild.style.height = height - 12 + "px"; //IEFIX
-		this._editor = d2.firstChild;
+		this._editor = d2.querySelector("textarea");
+		if (this._quirks7) this._editor.style.height = height - 12 + "px"; //IEFIX
 		this._editor.onkeydown = function(e) {
 			if ((e || event).shiftKey) return true;
 			var code = (e || event).keyCode;
@@ -5711,7 +5708,7 @@ scheduler.render_event = function(ev, buffer, parentWidth) {
 			(e || event).cancelBubble = true;
 			return true;
 		};
-		scheduler._focus(d2.firstChild, true);
+		scheduler._focus(this._editor, true);
 		//IE and opera can add x-scroll during focusing
 		this._els["dhx_cal_data"][0].scrollLeft = 0;
 	}
@@ -6044,9 +6041,25 @@ scheduler.showEvent = function(id, mode) {
 	scheduler.config.preserve_scroll = preserve_scroll;
 
 	if (scheduler.matrix && scheduler.matrix[mode]) {
-		var rendered_event = scheduler.getRenderedEvent(ev.id);
-		if(rendered_event)
-			scheduler._els.dhx_cal_data[0].scrollTop = scheduler.$domHelpers.getAbsoluteTop(rendered_event) - scheduler.$domHelpers.getAbsoluteTop(scheduler._els.dhx_cal_data[0]) - 20;
+		var timeline = scheduler.getView();
+		var property = timeline.y_property;
+
+		var event = scheduler.getRenderedEvent(ev.id);
+		if(!event){
+			event = scheduler.getEvent(ev.id);
+		}
+		
+		if(event){
+			var top = timeline.posFromSection(event[property]);
+			var left = timeline.posFromDate(event.start_date);
+			var container = scheduler.$container.querySelector(".dhx_timeline_data_wrapper");
+			left = left - (container.offsetWidth - timeline.dx) / 2;
+			top = top - container.offsetHeight / 2 + timeline.dy/2;
+			timeline.scrollTo({
+				left: left,
+				top: top
+			});
+		}
 	}
 
 	scheduler.callEvent("onAfterEventDisplay", [ev, mode]);
@@ -6150,10 +6163,11 @@ scheduler._parsers = {};
 
 scheduler._parsers.xml = {
 	canParse: function(data, xhr){
-		if(xhr.responseXML){
+		// IE returns non-empty responseXML type regardless of actual data type
+		if(xhr.responseXML && xhr.responseXML.firstChild){
 			return true;
 		}
-	
+
 		try{
 			var xmlDoc = scheduler.$ajax.parse(xhr.responseText);
 			var topElement = scheduler.$ajax.xmltop("data", xmlDoc);

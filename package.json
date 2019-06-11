@@ -1,6 +1,6 @@
 {
   "name": "dhtmlx-scheduler",
-  "version": "5.2.0",
+  "version": "5.2.1",
   "description": "JavaScript event calendar. Allows to manage events and appointments in different views",
   "main": "codebase/dhtmlxscheduler.js",
   "repository": {

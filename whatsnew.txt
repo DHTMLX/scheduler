@@ -1,3 +1,11 @@
+5.2.1
+	Fix the issue with scheduler.load data type detection in IE11
+	Fix timeline.scrollTo method in timeline without horizontal scrollbar
+	Fix not working scheduler.showEvent method in the Timeline view
+	Fix incorrect behavior of vertical scroll in scrollable timeline with smart_rendering:false
+	Fix incorrect event position in the multiday units view with the multisection extension when the step option is specified
+	Fix incorrect size of some events in Daily Timeline
+
 5.2.0
 	Custom HTML content for timeline cells (PRO version)
 	Drag-n-drop of events by the body
