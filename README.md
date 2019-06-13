@@ -72,8 +72,7 @@ scheduler.parse([
 License
 ----------
 
-This software is allowed to use under GPL or you need to obtain Commercial or Enterise License
-to use it in non-GPL project. Please contact sales@dhtmlx.com for details
+This version of dhtmlxScheduler is distributed under GPL 2.0 license and can be legally used in GPL projects. To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
 (c) Dinamenta UAB
 
