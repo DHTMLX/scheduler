@@ -1,7 +1,7 @@
 /*
 @license
 
-dhtmlxScheduler v.5.2.1 Stardard
+dhtmlxScheduler v.5.2.2 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
@@ -162,30 +162,39 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 	};
 
 	scheduler._year_marked_cells = {};
-	scheduler._mark_year_date = function(d, ev) {
-		var date = to_attr(d);
-		var c = this._get_year_cell(d);
-		var ev_class = this.templates.event_class(ev.start_date, ev.end_date, ev);
-		if (!scheduler._year_marked_cells[date]) {
-			c.className = "dhx_month_head dhx_year_event";
-			c.setAttribute("date", date);
-			scheduler._year_marked_cells[date] = c;
+	scheduler._mark_year_date = function(date, event) {
+		var dateString = to_attr(date);
+		var cell = this._get_year_cell(date);
+		if (!cell) {
+			return;
 		}
-		c.className += (ev_class) ? (" "+ev_class) : "";
+		var ev_class = this.templates.event_class(event.start_date, event.end_date, event);
+		if (!scheduler._year_marked_cells[dateString]) {
+			cell.className = "dhx_month_head dhx_year_event";
+			cell.setAttribute("date", dateString);
+			scheduler._year_marked_cells[dateString] = cell;
+		}
+		cell.className += (ev_class) ? (" "+ev_class) : "";
 	};
-	scheduler._unmark_year_date = function(d) {
-		this._get_year_cell(d).className = "dhx_month_head";
+	scheduler._unmark_year_date = function(date) {
+		var cell = this._get_year_cell(date);
+		if (!cell) {
+			return;
+		}
+		cell.className = "dhx_month_head";
 	};
-	scheduler._year_render_event = function(ev) {
-		var d = ev.start_date;
-		if (d.valueOf() < this._min_date.valueOf())
-			d = this._min_date;
-		else d = this.date.date_part(new Date(d));
+	scheduler._year_render_event = function(event) {
+		var date = event.start_date;
+		if (date.valueOf() < this._min_date.valueOf()){
+			date = this._min_date;
+		} else {
+			date = this.date.date_part(new Date(date));
+		}
 
-		while (d < ev.end_date) {
-			this._mark_year_date(d, ev);
-			d = this.date.add(d, 1, "day");
-			if (d.valueOf() >= this._max_date.valueOf())
+		while (date < event.end_date) {
+			this._mark_year_date(date, event);
+			date = this.date.add(date, 1, "day");
+			if (date.valueOf() >= this._max_date.valueOf())
 				return;
 		}
 	};

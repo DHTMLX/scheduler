@@ -1,7 +1,7 @@
 /*
 @license
 
-dhtmlxScheduler v.5.2.1 Stardard
+dhtmlxScheduler v.5.2.2 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
@@ -132,24 +132,13 @@ scheduler.attachEvent("onTemplatesReady", function() {
 			this.setLightboxSize();
 			n.onclick = function(e) {
 				var src = e ? e.target : event.srcElement;
+				var buttonElement = scheduler.$domHelpers.closest(src, ".dhx_btn_set");
 
-				if (!src.className) src=src.previousSibling;
-
-				if(src && src.className && scheduler._getClassName(src).indexOf("dhx_btn_set") > -1){
-					// assistive software (e.g. jaws) can dispatch event on the top element of a button
-					src = src.querySelector("[dhx_button]");
-					if(!src) return;
-				}
-
-				if (!scheduler._getClassName(src)) src = src.previousSibling;
-				if (src && scheduler._getClassName(src))
-					switch (scheduler._getClassName(src)) {
-						case "dhx_cancel_btn":
-							scheduler.callEvent("onEventCancel", [scheduler._lightbox_id]);
-							scheduler._edit_stop_event(scheduler.getEvent(scheduler._lightbox_id), false);
-							scheduler.hide_lightbox();
-							break;
+				if (buttonElement){
+					if(buttonElement.querySelector(".dhx_cancel_btn")){
+						scheduler.cancel_lightbox();
 					}
+				}
 			};
 
 			n.onkeydown=function(e){

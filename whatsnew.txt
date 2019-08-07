@@ -1,3 +1,9 @@
+5.2.2
+	Add more helpful error messages for common misconfigurations
+	Fix the script error which was thrown from a double click on any label in a readonly form
+	Fix incorrect displaying of the Timeline view when smart_rendering:true is used together with section_autoheight:false
+	Fix the script error which was thrown from the Year view when days containing events were hidden using the scheduler.ignore_year method
+
 5.2.1
 	Fix the issue with scheduler.load data type detection in IE11
 	Fix timeline.scrollTo method in timeline without horizontal scrollbar

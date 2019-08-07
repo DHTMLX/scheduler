@@ -1,7 +1,7 @@
 /*
 @license
 
-dhtmlxScheduler v.5.2.1 Stardard
+dhtmlxScheduler v.5.2.2 Stardard
 This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
 
 (c) Dinamenta, UAB.
@@ -1938,7 +1938,75 @@ Scheduler.plugin = function (code) {
 };
 Scheduler._schedulerPlugins = [];
 Scheduler.getSchedulerInstance = function () {
-	var scheduler = { version: "5.2.1" };
+	var scheduler = { version: "5.2.2" };
+
+var commonViews = {
+	agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html",
+	grid: "https://docs.dhtmlx.com/scheduler/grid_view.html",
+	map: "https://docs.dhtmlx.com/scheduler/map_view.html",
+	unit: "https://docs.dhtmlx.com/scheduler/units_view.html",
+	timeline: "https://docs.dhtmlx.com/scheduler/timeline_view.html",
+	week_agenda: "https://docs.dhtmlx.com/scheduler/weekagenda_view.html",
+	year: "https://docs.dhtmlx.com/scheduler/year_view.html",
+	anythingElse: "https://docs.dhtmlx.com/scheduler/views.html"
+};
+
+var requiredExtensions = {
+	agenda: "ext/dhtmlxscheduler_agenda_view.js",
+	grid: "ext/dhtmlxscheduler_grid_view.js",
+	map: "ext/dhtmlxscheduler_map_view.js",
+	unit: "ext/dhtmlxscheduler_units.js",
+	timeline: "ext/dhtmlxscheduler_timeline.js, ext/dhtmlxscheduler_treetimeline.js, ext/dhtmlxscheduler_daytimeline.js",
+	week_agenda: "ext/dhtmlxscheduler_week_agenda.js",
+	year: "ext/dhtmlxscheduler_year_view.js",
+	limit: "ext/dhtmlxscheduler_limit.js",
+};
+
+scheduler._commonErrorMessages = {
+	unknownView: function(view){
+		var relatedDoc = "Related docs: " + commonViews[view] || commonViews.anythingElse; 
+		var relatedExtension = requiredExtensions[view] ? ("You're probably missing " + requiredExtensions[view] + ".") : "";
+		return (
+			"`"+view+"` view is not defined. \n" +
+			"Please check parameters you pass to `scheduler.init` or `scheduler.setCurrentView` in your code and ensure you've imported appropriate extensions. \n" + 
+			relatedDoc + "\n" + (relatedExtension ? (relatedExtension + "\n") : ""));
+	},
+	collapsedContainer: function(div){
+		return "Scheduler container height is set to *100%* but the rendered height is zero and the scheduler is not visible. \n"+
+		"Make sure that the container has some initial height or use different units. For example:\n" +
+		"<div id='scheduler_here' class='dhx_cal_container' style='width:100%; height:600px;'> \n";
+	}
+};
+
+scheduler.createTimelineView = function() {
+	throw new Error("scheduler.createTimelineView is not implemented. Be sure to add the required extension: " + requiredExtensions.timeline + 
+	"\n" +
+	"Related docs: " + commonViews.timeline);
+};
+
+scheduler.createUnitsView = function() {
+	throw new Error("scheduler.createUnitsView is not implemented. Be sure to add the required extension: " + requiredExtensions.unit + 
+	"\n" +
+	"Related docs: " + commonViews.unit);
+};
+
+scheduler.createGridView = function() {
+	throw new Error("scheduler.createGridView is not implemented. Be sure to add the required extension: " + requiredExtensions.grid + 
+	"\n" +
+	"Related docs: " + commonViews.grid);
+};
+
+scheduler.addMarkedTimespan = function() {
+	throw new Error("scheduler.addMarkedTimespan is not implemented. Be sure to add the required extension: ext/dhtmlxscheduler_limit.js" + 
+	"\n" +
+	"Related docs: https://docs.dhtmlx.com/scheduler/limits.html");
+};
+
+scheduler.renderCalendar = function() {
+	throw new Error("scheduler.renderCalendar is not implemented. Be sure to add the required extension: ext/dhtmlxscheduler_minical.js" + 
+	"\n" +
+	"https://docs.dhtmlx.com/scheduler/minicalendar.html");
+};
 
 dhtmlxEventable(scheduler);
 
@@ -2010,6 +2078,12 @@ scheduler.init=function(id,date,mode){
 
 	this._obj=(typeof id == "string")?document.getElementById(id):id;
 	this.$container = this._obj;
+
+	if(!this.$container.offsetHeight && this.$container.offsetWidth && this.$container.style.height === "100%"){
+		// scheduler container has zero height and non-zero width
+		window.console.error(scheduler._commonErrorMessages.collapsedContainer(), this.$container);
+	}
+
 	if(this.config.wai_aria_attributes && this.config.wai_aria_application_role){
 		this.$container.setAttribute("role", "application");
 	}
@@ -4161,9 +4235,34 @@ scheduler.$domHelpers = {
 		} else {
 			return this.getOffsetSum(elem);
 		}
+	},
+
+	closest: function(element, selector){
+		if(!element || !selector){
+			return null;
+		}
+		return closest(element, selector);
 	}
 };
 
+var closest;
+if(Element.prototype.closest){
+	closest = function(element, selector){
+		return element.closest(selector);
+	};
+}else{
+	var matches = Element.prototype.matches || Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
+	closest = function(element, selector) {
+		var el = element;
+		do {
+			if (matches.call(el, selector)){
+				return el;
+			}
+			el = el.parentElement || el.parentNode;
+		} while (el !== null && el.nodeType === 1);
+		return null;
+	};
+}
 
 scheduler.$env = {
 	isIE: (navigator.userAgent.indexOf("MSIE") >= 0 || navigator.userAgent.indexOf("Trident") >= 0),
@@ -5033,6 +5132,11 @@ scheduler.render_view_data = function(evs, hold) {
 				tvs.push(evs[i]); 
 			else
 				tvd.push(evs[i]);
+		}
+
+		if(!this._els['dhx_multi_day']){
+			var message = scheduler._commonErrorMessages.unknownView(this._mode);
+			throw new Error(message);
 		}
 
 		// multiday events
