@@ -1,10 +1,10 @@
 /*
+
 @license
+dhtmlxScheduler v.5.2.3 Stardard
+To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
-dhtmlxScheduler v.5.2.2 Stardard
-This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
-
-(c) Dinamenta, UAB.
+(c) XB Software Ltd.
 
 */
 (function () {
@@ -1938,7 +1938,7 @@ Scheduler.plugin = function (code) {
 };
 Scheduler._schedulerPlugins = [];
 Scheduler.getSchedulerInstance = function () {
-	var scheduler = { version: "5.2.2" };
+	var scheduler = { version: "5.2.3" };
 
 var commonViews = {
 	agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html",
@@ -5080,11 +5080,15 @@ scheduler.is_visible_events = function(ev) {
 	}
 };
 scheduler.isOneDayEvent = function(ev) {
+	// decrease by one ms so events that ends on midnight on the next day were still considered one day events 
+	// e.g. (09-02-2018 19:00 - 10-02-2018 00:00)
+	// events >= 24h long are considered multiday
+	var checkEndDate = new Date(ev.end_date.valueOf() - 1);
 	return (
-		ev.start_date.getFullYear() === ev.end_date.getFullYear() &&
-		ev.start_date.getMonth() === ev.end_date.getMonth() &&
-		ev.start_date.getDate() === ev.end_date.getDate()
-	);
+		ev.start_date.getFullYear() === checkEndDate.getFullYear() &&
+		ev.start_date.getMonth() === checkEndDate.getMonth() &&
+		ev.start_date.getDate() === checkEndDate.getDate()
+	) && ((ev.end_date.valueOf() - ev.start_date.valueOf()) < (1000 * 60 * 60 * 24));
 };
 
 scheduler.get_visible_events = function(only_timed) {
@@ -6148,10 +6152,7 @@ scheduler.showEvent = function(id, mode) {
 		var timeline = scheduler.getView();
 		var property = timeline.y_property;
 
-		var event = scheduler.getRenderedEvent(ev.id);
-		if(!event){
-			event = scheduler.getEvent(ev.id);
-		}
+		var event = scheduler.getEvent(ev.id);
 		
 		if(event){
 			var top = timeline.posFromSection(event[property]);

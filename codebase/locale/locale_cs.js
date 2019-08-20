@@ -1,10 +1,10 @@
 /*
+
 @license
+dhtmlxScheduler v.5.2.3 Stardard
+To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
-dhtmlxScheduler v.5.2.2 Stardard
-This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
-
-(c) Dinamenta, UAB.
+(c) XB Software Ltd.
 
 */
 Scheduler.plugin(function(e){e.locale={date:{month_full:["Leden","Únor","Březen","Duben","Květen","Červen","Červenec","Srpen","Září","Říjen","Listopad","Prosinec"],month_short:["Led","Ún","Bře","Dub","Kvě","Čer","Čec","Srp","Září","Říj","List","Pro"],day_full:["Neděle","Pondělí","Úterý","Středa","Čtvrtek","Pátek","Sobota"],day_short:["Ne","Po","Út","St","Čt","Pá","So"]},labels:{dhx_cal_today_button:"Dnes",day_tab:"Den",week_tab:"Týden",month_tab:"Měsíc",new_event:"Nová událost",

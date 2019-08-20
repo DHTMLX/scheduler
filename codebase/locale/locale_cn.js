@@ -1,10 +1,10 @@
 /*
+
 @license
+dhtmlxScheduler v.5.2.3 Stardard
+To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
-dhtmlxScheduler v.5.2.2 Stardard
-This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
-
-(c) Dinamenta, UAB.
+(c) XB Software Ltd.
 
 */
 Scheduler.plugin(function(e){e.config.day_date="%M %d日 %D",e.config.default_date="%Y年 %M %d日",e.config.month_date="%Y年 %M",e.locale={date:{month_full:["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],month_short:["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],day_full:["星期日","星期一","星期二","星期三","星期四","星期五","星期六"],day_short:["日","一","二","三","四","五","六"]},labels:{dhx_cal_today_button:"今天",day_tab:"日",week_tab:"周",month_tab:"月",new_event:"新建日程",icon_save:"保存",

@@ -1,10 +1,10 @@
 /*
+
 @license
+dhtmlxScheduler v.5.2.3 Stardard
+To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
-dhtmlxScheduler v.5.2.2 Stardard
-This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
-
-(c) Dinamenta, UAB.
+(c) XB Software Ltd.
 
 */
 Scheduler.plugin(function(e){function t(t,a){for(var i=e.$ajax.xpath("//data/item",t.xmlDoc),n={},r=0;r<i.length;r++)n[i[r].getAttribute(a.map_to)]=!0;return n}function a(e,t){try{for(var a=JSON.parse(e.xmlDoc.responseText),i={},n=0;n<a.length;n++){var r=a[n];i[r.value||r.key||r.id]=!0}return i}catch(e){return null}}e.form_blocks.multiselect={render:function(e){var t="dhx_multi_select_control dhx_multi_select_"+e.name;e.vertical&&(t+=" dhx_multi_select_control_vertical")

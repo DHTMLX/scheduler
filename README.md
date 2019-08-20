@@ -1,7 +1,5 @@
-dhtmlxScheduler v.5.2
+dhtmlxScheduler v.5.2.3
 =====================
-
-[![Join the chat at https://gitter.im/dhtmlx/dhtmlx](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dhtmlx/dhtmlx) 
 
 dhtmlxScheduler is a JavaScript event calendar that allows you to add a Google-like scheduler to your web app or website. 
 
@@ -68,13 +66,13 @@ scheduler.parse([
 
 [https://docs.dhtmlx.com/scheduler/howtostart_guides.html](https://docs.dhtmlx.com/scheduler/howtostart_guides.html)
 
-
 License
 ----------
 
-This version of dhtmlxScheduler is distributed under GPL 2.0 license and can be legally used in GPL projects. To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
+dhtmlxScheduler v.5.2.3 Stardard
+To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
-(c) Dinamenta UAB
+(c) XB Software Ltd.
 
 
 Useful links

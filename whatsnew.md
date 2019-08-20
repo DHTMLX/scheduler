@@ -1,0 +1,218 @@
+### 5.2.3
+
+- Fix incorrect animation of event bars in the scrollable Timeline during drag and drop
+- Fix the issue in Day View / Week View which caused event to jump to the multiday section when moved to the end of a day
+- Fix a regression in scroll_position setting of the scrollable Timeline
+- Fix the issue which caused chunks of multi-section events to obtain incorrect position after the mouse click
+- Fix the script error fired from the tooltip in cell mode of the Timeline view when scheduler.ignore_timeline is used
+
+### 5.2.2
+
+- Add more helpful error messages for common misconfigurations
+- Fix the script error which was thrown from a double click on any label in a readonly form
+- Fix incorrect displaying of the Timeline view when smart_rendering:true is used together with section_autoheight:false
+- Fix the script error which was thrown from the Year view when days containing events were hidden using the scheduler.ignore_year method
+
+### 5.2.1
+
+- Fix the issue with scheduler.load data type detection in IE11
+- Fix timeline.scrollTo method in timeline without horizontal scrollbar
+- Fix not working scheduler.showEvent method in the Timeline view
+- Fix incorrect behavior of vertical scroll in scrollable timeline with smart_rendering:false
+- Fix incorrect event position in the multiday units view with the multisection extension when the step option is specified
+- Fix incorrect size of some events in Daily Timeline
+
+### 5.2.0
+
+- Custom HTML content for timeline cells (PRO version)
+- Drag-n-drop of events by the body
+- The data format parameter of load and parse became optional, scheduler now detects format automatically
+- Date-to-string functions can now auto-detect the date strings format, if it doesn't match the provided one
+- dhtmlxConnector library is no longer shipped with the dhtmlxScheduler package
+- dhtmlxScheduler package samples no longer require a php/apache server to work
+- New methods for the timeline object
+- The Multiselect control allows loading options in the JSON format
+- onLoadStart, onBeforeParse, onParse, onLoadEnd are introduced instead of the deprecated - onXLS and onXLE events
+- Fix incorrect behavior which happened when clearAll was called before scheduler.endLightbox(false) while creating a new event
+- Fix flickering issue with timeline horizontal scroll on iPad
+- Fix various display issues with scrollable timeline
+- The Units view {unitsName}_scale_text now provides a section date in arguments
+- Fix script error which was thrown from the Units view during an event creation if no sections are loaded
+- The Multiselect control now expects only boolean values for vertical property vertical:false - string values as in vertical:"false" will be interpreted as boolean true
+
+### 5.1.6
+
+- Fix incorrect position of events scheduled on Sat-Sun with start_on_monday = false in Month view
+- Fix script error in a scrollable timeline with the current time marker
+- Fix incorrect argument value of the `onYScaleClick` handler in a scrollable timeline after horizontal scrolling
+- Fix the bug that caused a scrollable timeline to be rendered empty until the next refresh after reloading sections
+- Fix the bug with a scrollable timeline which caused some cells of Tree timeline folders not being rendered after horizontal scrolling
+- Fix unexpected behavior of event resize with the 'all_timed' extension, only the last event chunk should be resizeable
+- Fix event disappearing during resize in the all_timed="short" mode
+
+### 5.1.1
+
+- Fix keyboard navigation focus not being highlighted in the timeline
+- Fix incorrect initial height of timeline_scale_header if second_scale specified
+- Fix bug with event_min_dy not affecting section height if only one event is located inside a section
+- Fix bug with quick info popup self-closing if the same event is clicked multiple times
+- Fix script error which fired after deleting event in year view
+- Fix incorrect initial display of scrolled timeline if no events loaded into the scheduler
+- Fix ability to enable smart rendering for non-scrollable timelines
+- Fix issue with scroll position resetting on date change when key_nav extension is enabled in the timeline
+- Fix incorrect value 'olddate' argument of onBeforeViewChange event in some cases
+- Fix incorrect display of a scrollable timeline with ignored time cells
+- Fix incorrect behavior if scrolling happened during drag-create of new events
+- Fix onAfterSchedulerResize event not firing in Timeline view
+- Performance improvement for event rendering in week view
+
+### 5.1
+
+- Horizontal scroll in the Timeline view
+- Smart rendering and performance update for the Timeline view
+- New API of the Timeline object
+- Autoscroll in the Timeline view
+- Ability to add a label into the header of the column with sections
+- Fix false-positive onEventCollision trigger on editing of recurring events
+- Fix bug when mousewheel canceled creation of new event via click and drag
+- Fix incorrect placement of multi-day events in multi-day units view
+
+### 5.0
+
+- New Material skin
+- Classic and Glossy skins are removed
+- Major css overhaul
+- Updated REST api integration options and documentation
+- Updated touch support for Microsoft devices
+- Fix compatibility issues with es6/ts imports
+- Add Hebrew locale for recurring form
+- Fixes in keyboard navigation support
+- Add onLoadError for network and server errors
+- Minor bugfixes
+
+### 4.4.0
+
+- High contrast color themes
+- Full-featured keyboard navigation
+- WAI-ARIA support
+- Add initial support of Content Security Policy
+- Various bugfixes
+
+- Ability to enable markTimespan for the Month view
+- Ability to remove recurring marker from a specific date added
+- Ability to skip days in the Year view added
+- Delimiter option of the Multiselect control
+- Compatibility of external drag-n-drop with the latest dhtmlxSuite updated
+- Merge CSP-improvements request from public repo
+
+- Fix return value of addEventNow method
+- Fix dataprocessor state after scheduler.clearAll
+- JS errors in event handlers from SVG elements fixed
+- Various bugs with Tooltip extension fixed
+- Various issues with container_autosize extension fixed
+- Multiple minor fixes
+
+### 4.3.0
+
+- "Days" mode for Timeline view was added
+- Ability to present units for multiple days in the Units view
+- Add ability to link events using URL extension
+- Several new API events and settings
+- Fixes for DST issues
+- Fixed bug with creating new events on touch devices in Timeline
+
+- Week Agenda, Grid View, Timeline view, Units View, Multisection events are available in Commercial and Enterprise editions only
+
+### 4.2.0
+
+- Ability to customize the layout of recurring form
+- Updated dhtmlxDataProcessor - REST mode and support of JSON response format
+- Updated D'n'D of the multisection events
+- Add API events for handling Ajax and server errors
+- Improved performance of the Timeline view
+- Add config option for delayed rendering mode
+- Improved data export to iCal and Excel
+- Fixed compatibility with DHTMLX Suite 4.0
+- Multiple minor fixes
+
+### 4.1.0
+
+- New 'Flat' skin
+- Highlight event position on the time scale during D'n'D
+- Support for multisection events in Units and Timeline views
+- Ability to resize events in Month view
+- Ability to D'n'D between schedulers, and drag event outside the scheduler (PRO version only)
+- New PDF/PNG online export service
+- Updated configuration of a Grid view
+- Updated touch support, fixed multiple issues with Windows touch devices
+
+### 4.0.1
+
+- Minor regression, which was introduced in 4.0, are fixed
+
+### 4.0
+
+- Flexible time scales - some days, hours can be removed from time scale
+- Ability to show "more events" links in month view
+- jQuery integration
+- Backbone Integration
+- Default skin changed to "terrace", multi-day events are visible by default
+- Alternative start-date logic for recurring events
+- Documentation greatly improved
+
+### 3.7
+
+- Touch support ( tablets and touch monitors )
+- Romanian locale added
+
+### 3.6
+
+- Windows8 edition added
+- Extended date format configuration for lightbox form
+- Sub-day navigation in timeline view
+- Ability to define custom sorting in timeline view
+- Multi-page export to PDF
+
+### 3.5
+
+- Ability to show multiple scheduler's per page (PRO version only)
+- Supports loading JSON directly from Connectors
+- Custom events rendering
+- Timeline view improved (support for drag, resize, event height control)
+- New 'dhx_terrace' skin
+- New options for blocking dates
+- Marking time intervals
+- Highlighting time intervals
+- New API methods: updateView, showEvent, getRenderedEvent, getActionData
+- JSMessage included
+- Grid view
+- New configuration options
+- Simplified access to lightbox section objects
+
+### 3.0
+
+- Version of scheduler for touch phones 
+- WeekAgenda view 
+- Netbook friendly lightbox form 
+- Cascade event display 
+- Simple way to define a color for event
+- Drag and drop of the details form
+- Custom buttons for the details form 
+- Current time marker in day and week view
+- Multiline header for timeline view
+- Configurable work-time bounds 
+- API to access lightbox values 
+
+### 2.3 
+
+- Map view was added 
+- Cell mode for Timeline view was added 
+- Tree mode for Timeline view was added 
+- Tooltips for all views were added
+- Abbility to create new events by double click or by drag-and-drop in Timeline mode
+- Abbility to move events by drop-and-drag in Timeline mode
+- Abbility to create new events by external drag and drop 
+- Multiselect section for details form 
+- Checkbox, combo, radio - sections for details form 
+- Api of mini-calendar extension extended 
+- Custom form implementation simplified

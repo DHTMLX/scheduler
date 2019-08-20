@@ -1,10 +1,10 @@
 /*
+
 @license
+dhtmlxScheduler v.5.2.3 Stardard
+To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
-dhtmlxScheduler v.5.2.2 Stardard
-This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
-
-(c) Dinamenta, UAB.
+(c) XB Software Ltd.
 
 */
 Scheduler.plugin(function(e){e.config.icons_select=["icon_details","icon_delete"],e.config.details_on_create=!0,e.config.show_quick_info=!0,e.xy.menu_width=0,e.attachEvent("onClick",function(t){return e.showQuickInfo(t),!0}),function(){for(var t=["onEmptyClick","onViewChange","onLightbox","onBeforeEventDelete","onBeforeDrag"],a=function(){return e.hideQuickInfo(!0),!0},n=0;n<t.length;n++)e.attachEvent(t[n],a)}(),e.templates.quick_info_title=function(e,t,a){return a.text.substr(0,50)},

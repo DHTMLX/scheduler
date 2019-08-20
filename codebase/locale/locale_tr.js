@@ -1,10 +1,10 @@
 /*
+
 @license
+dhtmlxScheduler v.5.2.3 Stardard
+To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
-dhtmlxScheduler v.5.2.2 Stardard
-This software is covered by GPL license. You also can obtain Commercial or Enterprise license to use it in non-GPL project - please contact sales@dhtmlx.com. Usage without proper license is prohibited.
-
-(c) Dinamenta, UAB.
+(c) XB Software Ltd.
 
 */
 Scheduler.plugin(function(e){e.locale={date:{month_full:["Ocak","Þubat","Mart","Nisan","Mayýs","Haziran","Temmuz","Aðustos","Eylül","Ekim","Kasým","Aralýk"],month_short:["Oca","Þub","Mar","Nis","May","Haz","Tem","Aðu","Eyl","Eki","Kas","Ara"],day_full:["Pazar","Pazartes,","Salý","Çarþamba","Perþembe","Cuma","Cumartesi"],day_short:["Paz","Pts","Sal","Çar","Per","Cum","Cts"]},labels:{dhx_cal_today_button:"Bugün",day_tab:"Gün",week_tab:"Hafta",month_tab:"Ay",new_event:"Uygun",icon_save:"Kaydet",
