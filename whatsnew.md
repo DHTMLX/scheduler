@@ -1,3 +1,8 @@
+### 5.2.4
+
+- Fix the issue with the readonly form which didn't allow changing the configuration of the lightbox after initialization of Scheduler
+- Fix the issue with Angular 8 compatibility
+
 ### 5.2.3
 
 - Fix incorrect animation of event bars in the scrollable Timeline during drag and drop

@@ -1,7 +1,8 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.3 Stardard
+dhtmlxScheduler v.5.2.4 Stardard
+
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
 (c) XB Software Ltd.
@@ -9,7 +10,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
 */
 (function () {
 	if (!window.dhtmlx) {
-	dhtmlx = function(obj){
+	window.dhtmlx = function(obj){
 		for (var a in obj) dhtmlx[a]=obj[a];
 		return dhtmlx; //simple singleton
 	};
@@ -42,7 +43,8 @@ dhtmlx.extend_api=function(name,map,ext){
         dhtmlXHeir(window[name].prototype,ext);
 };
 
-dhtmlxAjax={
+// TODO: remove
+window.dhtmlxAjax={
     get:function(url,callback){
         var t=new dtmlXMLLoaderObject(true);
         t.async=(arguments.length<3);
@@ -65,6 +67,8 @@ dhtmlxAjax={
     }
 };
 
+
+// TODO: remove
 /**
  *     @desc: xmlLoader object
  *     @type: private
@@ -531,15 +535,15 @@ dhtmlDragAndDropObject.prototype.initFrameRoute=function(win, mode){
     }
 };
 
-_isFF = false;
-_isIE = false;
-_isOpera = false;
-_isKHTML = false;
-_isMacOS = false;
-_isChrome = false;
-_FFrv = false;
-_KHTMLrv = false;
-_OperaRv = false;
+var _isFF = false;
+var _isIE = false;
+var _isOpera = false;
+var _isKHTML = false;
+var _isMacOS = false;
+var _isChrome = false;
+var _FFrv = false;
+var _KHTMLrv = false;
+var _OperaRv = false;
 
 if (navigator.userAgent.indexOf('Macintosh') != -1)
     _isMacOS=true;
@@ -820,7 +824,7 @@ dtmlXMLLoaderObject.prototype.doSerialization=function(xmlDoc){
  *   @desc:
  *   @type: private
  */
-dhtmlxEventable=function(obj){
+window.dhtmlxEventable=function(obj){
     obj.attachEvent=function(name, catcher, callObj){
         name='ev_'+name.toLowerCase();
         if (!this[name])
@@ -1938,7 +1942,7 @@ Scheduler.plugin = function (code) {
 };
 Scheduler._schedulerPlugins = [];
 Scheduler.getSchedulerInstance = function () {
-	var scheduler = { version: "5.2.3" };
+	var scheduler = { version: "5.2.4" };
 
 var commonViews = {
 	agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html",
