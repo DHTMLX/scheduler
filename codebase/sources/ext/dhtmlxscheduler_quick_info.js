@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.4 Stardard
+dhtmlxScheduler v.5.2.5 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -126,7 +126,7 @@ scheduler.hideQuickInfo = function(forced){
 
 })();
 
-dhtmlxEvent(window, "keydown", function(e){
+scheduler.event(window, "keydown", function(e){
 	if (e.keyCode == 27)
 		scheduler.hideQuickInfo();
 });
@@ -201,13 +201,13 @@ scheduler._init_quick_info = function(){
 		html += "</div>";
 
 		qi.innerHTML = html;
-		dhtmlxEvent(qi, "click", function(ev){
+		scheduler.event(qi, "click", function(ev){
 			ev = ev || event;
 			scheduler._qi_button_click(ev.target || ev.srcElement);
 		});
 		if (scheduler.config.quick_info_detached){
 			scheduler._detachDomEvent(scheduler._els["dhx_cal_data"][0], "scroll", scheduler._quick_info_onscroll_handler);
-			dhtmlxEvent(scheduler._els["dhx_cal_data"][0], "scroll", scheduler._quick_info_onscroll_handler);
+			scheduler.event(scheduler._els["dhx_cal_data"][0], "scroll", scheduler._quick_info_onscroll_handler);
 		}
 	}
 

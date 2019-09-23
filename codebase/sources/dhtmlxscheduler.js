@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.4 Stardard
+dhtmlxScheduler v.5.2.5 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -10,87 +10,88 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
 */
 (function () {
 	if (!window.dhtmlx) {
-	window.dhtmlx = function(obj){
-		for (var a in obj) dhtmlx[a]=obj[a];
+	window.dhtmlx = function (obj) {
+		for (var a in obj) dhtmlx[a] = obj[a];
 		return dhtmlx; //simple singleton
 	};
 }
-dhtmlx.extend_api=function(name,map,ext){
-    var t = window[name];
-    if (!t) return; //component not defined
-    window[name]=function(obj){
-        var that;
 
-        if (obj && typeof obj == "object" && !obj.tagName){
-            that = t.apply(this,(map._init?map._init(obj):arguments));
-            //global settings
-            for (var a in dhtmlx)
-                if (map[a]) this[map[a]](dhtmlx[a]);
-            //local settings
-            for (var a in obj){
-                if (map[a]) this[map[a]](obj[a]);
-                else if (a.indexOf("on")===0){
-                    this.attachEvent(a,obj[a]);
-                }
-            }
-        } else
-            that = t.apply(this,arguments);
-        if (map._patch) map._patch(this);
-        return that||this;
-    };
-    window[name].prototype=t.prototype;
-    if (ext)
-        dhtmlXHeir(window[name].prototype,ext);
+dhtmlx.extend_api = function (name, map, ext) {
+	var t = window[name];
+	if (!t) return; //component not defined
+	window[name] = function (obj) {
+		var that;
+
+		if (obj && typeof obj == "object" && !obj.tagName) {
+			that = t.apply(this, (map._init ? map._init(obj) : arguments));
+			//global settings
+			for (var a in dhtmlx)
+				if (map[a]) this[map[a]](dhtmlx[a]);
+			//local settings
+			for (var a in obj) {
+				if (map[a]) this[map[a]](obj[a]);
+				else if (a.indexOf("on") === 0) {
+					this.attachEvent(a, obj[a]);
+				}
+			}
+		} else
+			that = t.apply(this, arguments);
+		if (map._patch) map._patch(this);
+		return that || this;
+	};
+	window[name].prototype = t.prototype;
+	if (ext)
+		dhtmlXHeir(window[name].prototype, ext);
 };
 
 // TODO: remove
-window.dhtmlxAjax={
-    get:function(url,callback){
-        var t=new dtmlXMLLoaderObject(true);
-        t.async=(arguments.length<3);
-        t.waitCall=callback;
-        t.loadXML(url);
-        return t;
-    },
-    post:function(url,post,callback){
-        var t=new dtmlXMLLoaderObject(true);
-        t.async=(arguments.length<4);
-        t.waitCall=callback;
-        t.loadXML(url,true,post);
-        return t;
-    },
-    getSync:function(url){
-        return this.get(url,null,true);
-    },
-    postSync:function(url,post){
-        return this.post(url,post,null,true);
-    }
+window.dhtmlxAjax = {
+	get: function (url, callback) {
+		var t = new dtmlXMLLoaderObject(true);
+		t.async = (arguments.length < 3);
+		t.waitCall = callback;
+		t.loadXML(url);
+		return t;
+	},
+	post: function (url, post, callback) {
+		var t = new dtmlXMLLoaderObject(true);
+		t.async = (arguments.length < 4);
+		t.waitCall = callback;
+		t.loadXML(url, true, post);
+		return t;
+	},
+	getSync: function (url) {
+		return this.get(url, null, true);
+	},
+	postSync: function (url, post) {
+		return this.post(url, post, null, true);
+	}
 };
 
 
 // TODO: remove
 /**
- *     @desc: xmlLoader object
- *     @type: private
- *     @param: funcObject - xml parser function
- *     @param: object - jsControl object
- *     @param: async - sync/async mode (async by default)
- *     @param: rSeed - enable/disable random seed ( prevent IE caching)
- *     @topic: 0
- */
-function dtmlXMLLoaderObject(funcObject, dhtmlObject, async, rSeed){
-    this.xmlDoc="";
+ *	 @desc: xmlLoader object
+	*	 @type: private
+	*	 @param: funcObject - xml parser function
+	*	 @param: object - jsControl object
+	*	 @param: async - sync/async mode (async by default)
+	*	 @param: rSeed - enable/disable random seed ( prevent IE caching)
+	*	 @topic: 0
+	*/
+function dtmlXMLLoaderObject(funcObject, dhtmlObject, async, rSeed) {
+	this.xmlDoc = "";
 
-    if (typeof (async) != "undefined")
-        this.async=async;
-    else
-        this.async=true;
+	if (typeof (async) != "undefined")
+		this.async = async;
+	else
+		this.async = true;
 
-    this.onloadAction=funcObject||null;
-    this.mainObject=dhtmlObject||null;
-    this.waitCall=null;
-    this.rSeed=rSeed||false;
-    return this;
+	this.onloadAction = funcObject || null;
+	this.mainObject = dhtmlObject || null;
+	this.waitCall = null;
+	this.rSeed = rSeed || false;
+	return this;
 }
 
 window.dtmlXMLLoaderObject = dtmlXMLLoaderObject;
@@ -98,441 +99,441 @@ window.dtmlXMLLoaderObject = dtmlXMLLoaderObject;
 dtmlXMLLoaderObject.count = 0;
 
 /**
- *     @desc: xml loading handler
- *     @type: private
- *     @param: dtmlObject - xmlLoader object
- *     @topic: 0
- */
-dtmlXMLLoaderObject.prototype.waitLoadFunction=function(dhtmlObject){
-    var once = true;
-    this.check=function (){
-        if ((dhtmlObject)&&(dhtmlObject.onloadAction)){
-            if ((!dhtmlObject.xmlDoc.readyState)||(dhtmlObject.xmlDoc.readyState == 4)){
-                if (!once)
-                    return;
+ *	 @desc: xml loading handler
+	*	 @type: private
+	*	 @param: dtmlObject - xmlLoader object
+	*	 @topic: 0
+	*/
+dtmlXMLLoaderObject.prototype.waitLoadFunction = function (dhtmlObject) {
+	var once = true;
+	this.check = function () {
+		if ((dhtmlObject) && (dhtmlObject.onloadAction)) {
+			if ((!dhtmlObject.xmlDoc.readyState) || (dhtmlObject.xmlDoc.readyState == 4)) {
+				if (!once)
+					return;
 
-                once=false; //IE 5 fix
-                dtmlXMLLoaderObject.count++;
-                if (typeof dhtmlObject.onloadAction == "function")
-                    dhtmlObject.onloadAction(dhtmlObject.mainObject, null, null, null, dhtmlObject);
+				once = false; //IE 5 fix
+				dtmlXMLLoaderObject.count++;
+				if (typeof dhtmlObject.onloadAction == "function")
+					dhtmlObject.onloadAction(dhtmlObject.mainObject, null, null, null, dhtmlObject);
 
-                if (dhtmlObject.waitCall){
-                    dhtmlObject.waitCall.call(this,dhtmlObject);
-                    dhtmlObject.waitCall=null;
-                }
-            }
-        }
-    };
-    return this.check;
+				if (dhtmlObject.waitCall) {
+					dhtmlObject.waitCall.call(this, dhtmlObject);
+					dhtmlObject.waitCall = null;
+				}
+			}
+		}
+	};
+	return this.check;
 };
 
 /**
- *     @desc: return XML top node
- *     @param: tagName - top XML node tag name (not used in IE, required for Safari and Mozilla)
- *     @type: private
- *     @returns: top XML node
- *     @topic: 0
- */
-dtmlXMLLoaderObject.prototype.getXMLTopNode=function(tagName, oldObj){
-    var z;
+ *	 @desc: return XML top node
+	*	 @param: tagName - top XML node tag name (not used in IE, required for Safari and Mozilla)
+	*	 @type: private
+	*	 @returns: top XML node
+	*	 @topic: 0
+	*/
+dtmlXMLLoaderObject.prototype.getXMLTopNode = function (tagName, oldObj) {
+	var z;
 
-    if (this.xmlDoc.responseXML){
-        var temp = this.xmlDoc.responseXML.getElementsByTagName(tagName);
-        if(temp.length === 0 && tagName.indexOf(":")!=-1)
-            var temp = this.xmlDoc.responseXML.getElementsByTagName((tagName.split(":"))[1]);
-        z = temp[0];
-    } else
-        z = this.xmlDoc.documentElement;
+	if (this.xmlDoc.responseXML) {
+		var temp = this.xmlDoc.responseXML.getElementsByTagName(tagName);
+		if (temp.length === 0 && tagName.indexOf(":") != -1)
+			var temp = this.xmlDoc.responseXML.getElementsByTagName((tagName.split(":"))[1]);
+		z = temp[0];
+	} else
+		z = this.xmlDoc.documentElement;
 
-    if (z){
-        this._retry=false;
-        return z;
-    }
+	if (z) {
+		this._retry = false;
+		return z;
+	}
 
-    if (!this._retry&&_isIE){
-        this._retry=true;
-        var oldObj = this.xmlDoc;
-        this.loadXMLString(this.xmlDoc.responseText.replace(/^[\s]+/,""), true);
-        return this.getXMLTopNode(tagName, oldObj);
-    }
+	if (!this._retry && _isIE) {
+		this._retry = true;
+		var oldObj = this.xmlDoc;
+		this.loadXMLString(this.xmlDoc.responseText.replace(/^[\s]+/, ""), true);
+		return this.getXMLTopNode(tagName, oldObj);
+	}
 
-    dhtmlxError.throwError("LoadXML", "Incorrect XML", [
-        (oldObj||this.xmlDoc),
-        this.mainObject
-    ]);
+	dhtmlxError.throwError("LoadXML", "Incorrect XML", [
+		(oldObj || this.xmlDoc),
+		this.mainObject
+	]);
 
-    return document.createElement("div");
+	return document.createElement("div");
 };
 
 /**
- *     @desc: load XML from string
- *     @type: private
- *     @param: xmlString - xml string
- *     @topic: 0
- */
-dtmlXMLLoaderObject.prototype.loadXMLString=function(xmlString, silent){
+ *	 @desc: load XML from string
+	*	 @type: private
+	*	 @param: xmlString - xml string
+	*	 @topic: 0
+	*/
+dtmlXMLLoaderObject.prototype.loadXMLString = function (xmlString, silent) {
 
-    if (!_isIE){
-        var parser = new DOMParser();
-        this.xmlDoc=parser.parseFromString(xmlString, "text/xml");
-    } else {
-        this.xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
-        this.xmlDoc.async=this.async;
-        this.xmlDoc.onreadystatechange = function(){};
-        this.xmlDoc["loadXM"+"L"](xmlString);
-    }
+	if (!_isIE) {
+		var parser = new DOMParser();
+		this.xmlDoc = parser.parseFromString(xmlString, "text/xml");
+	} else {
+		this.xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+		this.xmlDoc.async = this.async;
+		this.xmlDoc.onreadystatechange = function () { };
+		this.xmlDoc["loadXM" + "L"](xmlString);
+	}
 
-    if (silent)
-        return;
+	if (silent)
+		return;
 
-    if (this.onloadAction)
-        this.onloadAction(this.mainObject, null, null, null, this);
+	if (this.onloadAction)
+		this.onloadAction(this.mainObject, null, null, null, this);
 
-    if (this.waitCall){
-        this.waitCall();
-        this.waitCall=null;
-    }
+	if (this.waitCall) {
+		this.waitCall();
+		this.waitCall = null;
+	}
 };
 /**
- *     @desc: load XML
- *     @type: private
- *     @param: filePath - xml file path
- *     @param: postMode - send POST request
- *     @param: postVars - list of vars for post request
- *     @topic: 0
- */
-dtmlXMLLoaderObject.prototype.loadXML=function(filePath, postMode, postVars, rpc){
-    if (this.rSeed)
-        filePath+=((filePath.indexOf("?") != -1) ? "&" : "?")+"a_dhx_rSeed="+(new Date()).valueOf();
-    this.filePath=filePath;
+ *	 @desc: load XML
+	*	 @type: private
+	*	 @param: filePath - xml file path
+	*	 @param: postMode - send POST request
+	*	 @param: postVars - list of vars for post request
+	*	 @topic: 0
+	*/
+dtmlXMLLoaderObject.prototype.loadXML = function (filePath, postMode, postVars, rpc) {
+	if (this.rSeed)
+		filePath += ((filePath.indexOf("?") != -1) ? "&" : "?") + "a_dhx_rSeed=" + (new Date()).valueOf();
+	this.filePath = filePath;
 
-    if ((!_isIE)&&(window.XMLHttpRequest))
-        this.xmlDoc=new XMLHttpRequest();
-    else {
-        this.xmlDoc=new ActiveXObject("Microsoft.XMLHTTP");
-    }
+	if ((!_isIE) && (window.XMLHttpRequest))
+		this.xmlDoc = new XMLHttpRequest();
+	else {
+		this.xmlDoc = new ActiveXObject("Microsoft.XMLHTTP");
+	}
 
-    if (this.async)
-        this.xmlDoc.onreadystatechange=new this.waitLoadFunction(this);
-    if (typeof postMode == "string")
-        this.xmlDoc.open(postMode, filePath, this.async);
-    else
-        this.xmlDoc.open(postMode ? "POST" : "GET", filePath, this.async);
+	if (this.async)
+		this.xmlDoc.onreadystatechange = new this.waitLoadFunction(this);
+	if (typeof postMode == "string")
+		this.xmlDoc.open(postMode, filePath, this.async);
+	else
+		this.xmlDoc.open(postMode ? "POST" : "GET", filePath, this.async);
 
-    if (rpc){
-        this.xmlDoc.setRequestHeader("User-Agent", "dhtmlxRPC v0.1 ("+navigator.userAgent+")");
-        this.xmlDoc.setRequestHeader("Content-type", "text/xml");
-    }
+	if (rpc) {
+		this.xmlDoc.setRequestHeader("User-Agent", "dhtmlxRPC v0.1 (" + navigator.userAgent + ")");
+		this.xmlDoc.setRequestHeader("Content-type", "text/xml");
+	}
 
-    else if (postMode)
-        this.xmlDoc.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	else if (postMode)
+		this.xmlDoc.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
-    this.xmlDoc.setRequestHeader("X-Requested-With","XMLHttpRequest");
-    this.xmlDoc.send(null||postVars);
+	this.xmlDoc.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+	this.xmlDoc.send(null || postVars);
 
-    if (!this.async)
-        (new this.waitLoadFunction(this))();
+	if (!this.async)
+		(new this.waitLoadFunction(this))();
 };
 /**
- *     @desc: destructor, cleans used memory
- *     @type: private
- *     @topic: 0
- */
-dtmlXMLLoaderObject.prototype.destructor=function(){
-    this._filterXPath = null;
-    this._getAllNamedChilds = null;
-    this._retry = null;
-    this.async = null;
-    this.rSeed = null;
-    this.filePath = null;
-    this.onloadAction = null;
-    this.mainObject = null;
-    this.xmlDoc = null;
-    this.doXPath = null;
-    this.doXPathOpera = null;
-    this.doXSLTransToObject = null;
-    this.doXSLTransToString = null;
-    this.loadXML = null;
-    this.loadXMLString = null;
-    // this.waitLoadFunction = null;
-    this.doSerialization = null;
-    this.xmlNodeToJSON = null;
-    this.getXMLTopNode = null;
-    this.setXSLParamValue = null;
-    return null;
+ *	 @desc: destructor, cleans used memory
+	*	 @type: private
+	*	 @topic: 0
+	*/
+dtmlXMLLoaderObject.prototype.destructor = function () {
+	this._filterXPath = null;
+	this._getAllNamedChilds = null;
+	this._retry = null;
+	this.async = null;
+	this.rSeed = null;
+	this.filePath = null;
+	this.onloadAction = null;
+	this.mainObject = null;
+	this.xmlDoc = null;
+	this.doXPath = null;
+	this.doXPathOpera = null;
+	this.doXSLTransToObject = null;
+	this.doXSLTransToString = null;
+	this.loadXML = null;
+	this.loadXMLString = null;
+	// this.waitLoadFunction = null;
+	this.doSerialization = null;
+	this.xmlNodeToJSON = null;
+	this.getXMLTopNode = null;
+	this.setXSLParamValue = null;
+	return null;
 };
 
-dtmlXMLLoaderObject.prototype.xmlNodeToJSON = function(node){
-    var t={};
-    for (var i=0; i<node.attributes.length; i++)
-        t[node.attributes[i].name]=node.attributes[i].value;
-    t["_tagvalue"]=node.firstChild?node.firstChild.nodeValue:"";
-    for (var i=0; i<node.childNodes.length; i++){
-        var name=node.childNodes[i].tagName;
-        if (name){
-            if (!t[name]) t[name]=[];
-            t[name].push(this.xmlNodeToJSON(node.childNodes[i]));
-        }
-    }
-    return t;
+dtmlXMLLoaderObject.prototype.xmlNodeToJSON = function (node) {
+	var t = {};
+	for (var i = 0; i < node.attributes.length; i++)
+		t[node.attributes[i].name] = node.attributes[i].value;
+	t["_tagvalue"] = node.firstChild ? node.firstChild.nodeValue : "";
+	for (var i = 0; i < node.childNodes.length; i++) {
+		var name = node.childNodes[i].tagName;
+		if (name) {
+			if (!t[name]) t[name] = [];
+			t[name].push(this.xmlNodeToJSON(node.childNodes[i]));
+		}
+	}
+	return t;
 };
 
-function dhtmlDragAndDropObject(){
-    if (window.dhtmlDragAndDrop)
-        return window.dhtmlDragAndDrop;
+function dhtmlDragAndDropObject() {
+	if (window.dhtmlDragAndDrop)
+		return window.dhtmlDragAndDrop;
 
-    this.lastLanding=0;
-    this.dragNode=0;
-    this.dragStartNode=0;
-    this.dragStartObject=0;
-    this.tempDOMU=null;
-    this.tempDOMM=null;
-    this.waitDrag=0;
-    window.dhtmlDragAndDrop=this;
+	this.lastLanding = 0;
+	this.dragNode = 0;
+	this.dragStartNode = 0;
+	this.dragStartObject = 0;
+	this.tempDOMU = null;
+	this.tempDOMM = null;
+	this.waitDrag = 0;
+	window.dhtmlDragAndDrop = this;
 
-    return this;
+	return this;
 }
 
 window.dhtmlDragAndDropObject = dhtmlDragAndDropObject;
 
-dhtmlDragAndDropObject.prototype.removeDraggableItem=function(htmlNode){
-    htmlNode.onmousedown=null;
-    htmlNode.dragStarter=null;
-    htmlNode.dragLanding=null;
+dhtmlDragAndDropObject.prototype.removeDraggableItem = function (htmlNode) {
+	htmlNode.onmousedown = null;
+	htmlNode.dragStarter = null;
+	htmlNode.dragLanding = null;
 };
 
-dhtmlDragAndDropObject.prototype.addDraggableItem=function(htmlNode, dhtmlObject){
-    htmlNode.onmousedown=this.preCreateDragCopy;
-    htmlNode.dragStarter=dhtmlObject;
-    this.addDragLanding(htmlNode, dhtmlObject);
+dhtmlDragAndDropObject.prototype.addDraggableItem = function (htmlNode, dhtmlObject) {
+	htmlNode.onmousedown = this.preCreateDragCopy;
+	htmlNode.dragStarter = dhtmlObject;
+	this.addDragLanding(htmlNode, dhtmlObject);
 };
 
-dhtmlDragAndDropObject.prototype.addDragLanding=function(htmlNode, dhtmlObject){
-    htmlNode.dragLanding=dhtmlObject;
+dhtmlDragAndDropObject.prototype.addDragLanding = function (htmlNode, dhtmlObject) {
+	htmlNode.dragLanding = dhtmlObject;
 };
 
-dhtmlDragAndDropObject.prototype.preCreateDragCopy=function(e){
-    if ((e||window.event) && (e||event).button == 2)
-        return;
+dhtmlDragAndDropObject.prototype.preCreateDragCopy = function (e) {
+	if ((e || window.event) && (e || event).button == 2)
+		return;
 
-    if (window.dhtmlDragAndDrop.waitDrag){
-        window.dhtmlDragAndDrop.waitDrag=0;
-        document.body.onmouseup=window.dhtmlDragAndDrop.tempDOMU;
-        document.body.onmousemove=window.dhtmlDragAndDrop.tempDOMM;
-        return false;
-    }
+	if (window.dhtmlDragAndDrop.waitDrag) {
+		window.dhtmlDragAndDrop.waitDrag = 0;
+		document.body.onmouseup = window.dhtmlDragAndDrop.tempDOMU;
+		document.body.onmousemove = window.dhtmlDragAndDrop.tempDOMM;
+		return false;
+	}
 
-    if (window.dhtmlDragAndDrop.dragNode)
-        window.dhtmlDragAndDrop.stopDrag(e);
+	if (window.dhtmlDragAndDrop.dragNode)
+		window.dhtmlDragAndDrop.stopDrag(e);
 
-    window.dhtmlDragAndDrop.waitDrag=1;
-    window.dhtmlDragAndDrop.tempDOMU=document.body.onmouseup;
-    window.dhtmlDragAndDrop.tempDOMM=document.body.onmousemove;
-    window.dhtmlDragAndDrop.dragStartNode=this;
-    window.dhtmlDragAndDrop.dragStartObject=this.dragStarter;
-    document.body.onmouseup=window.dhtmlDragAndDrop.preCreateDragCopy;
-    document.body.onmousemove=window.dhtmlDragAndDrop.callDrag;
-    window.dhtmlDragAndDrop.downtime = new Date().valueOf();
+	window.dhtmlDragAndDrop.waitDrag = 1;
+	window.dhtmlDragAndDrop.tempDOMU = document.body.onmouseup;
+	window.dhtmlDragAndDrop.tempDOMM = document.body.onmousemove;
+	window.dhtmlDragAndDrop.dragStartNode = this;
+	window.dhtmlDragAndDrop.dragStartObject = this.dragStarter;
+	document.body.onmouseup = window.dhtmlDragAndDrop.preCreateDragCopy;
+	document.body.onmousemove = window.dhtmlDragAndDrop.callDrag;
+	window.dhtmlDragAndDrop.downtime = new Date().valueOf();
 
 
-    if ((e)&&(e.preventDefault)){
-        e.preventDefault();
-        return false;
-    }
-    return false;
+	if ((e) && (e.preventDefault)) {
+		e.preventDefault();
+		return false;
+	}
+	return false;
 };
 
-dhtmlDragAndDropObject.prototype.callDrag=function(e){
-    if (!e)
-        e=window.event;
-    var dragger=window.dhtmlDragAndDrop;
-    if ((new Date()).valueOf()-dragger.downtime<100) return;
+dhtmlDragAndDropObject.prototype.callDrag = function (e) {
+	if (!e)
+		e = window.event;
+	var dragger = window.dhtmlDragAndDrop;
+	if ((new Date()).valueOf() - dragger.downtime < 100) return;
 
-    //if ((e.button == 0)&&(_isIE))
-    //	return dragger.stopDrag();
+	//if ((e.button == 0)&&(_isIE))
+	//	return dragger.stopDrag();
 
-    if (!dragger.dragNode){
-        if (dragger.waitDrag){
-            dragger.dragNode=dragger.dragStartObject._createDragNode(dragger.dragStartNode, e);
+	if (!dragger.dragNode) {
+		if (dragger.waitDrag) {
+			dragger.dragNode = dragger.dragStartObject._createDragNode(dragger.dragStartNode, e);
 
-            if (!dragger.dragNode)
-                return dragger.stopDrag();
+			if (!dragger.dragNode)
+				return dragger.stopDrag();
 
-            dragger.dragNode.onselectstart=function(){return false;};
-            dragger.gldragNode=dragger.dragNode;
-            document.body.appendChild(dragger.dragNode);
-            document.body.onmouseup=dragger.stopDrag;
-            dragger.waitDrag=0;
-            dragger.dragNode.pWindow=window;
-            dragger.initFrameRoute();
-        }
-        else return dragger.stopDrag(e, true);
-    }
+			dragger.dragNode.onselectstart = function () { return false; };
+			dragger.gldragNode = dragger.dragNode;
+			document.body.appendChild(dragger.dragNode);
+			document.body.onmouseup = dragger.stopDrag;
+			dragger.waitDrag = 0;
+			dragger.dragNode.pWindow = window;
+			dragger.initFrameRoute();
+		}
+		else return dragger.stopDrag(e, true);
+	}
 
-    if (dragger.dragNode.parentNode != window.document.body && dragger.gldragNode){
-        var grd = dragger.gldragNode;
+	if (dragger.dragNode.parentNode != window.document.body && dragger.gldragNode) {
+		var grd = dragger.gldragNode;
 
-        if (dragger.gldragNode.old)
-            grd=dragger.gldragNode.old;
+		if (dragger.gldragNode.old)
+			grd = dragger.gldragNode.old;
 
-        //if (!document.all) dragger.calculateFramePosition();
-        grd.parentNode.removeChild(grd);
-        var oldBody = dragger.dragNode.pWindow;
+		//if (!document.all) dragger.calculateFramePosition();
+		grd.parentNode.removeChild(grd);
+		var oldBody = dragger.dragNode.pWindow;
 
-        if (grd.pWindow &&	grd.pWindow.dhtmlDragAndDrop.lastLanding)
-            grd.pWindow.dhtmlDragAndDrop.lastLanding.dragLanding._dragOut(grd.pWindow.dhtmlDragAndDrop.lastLanding);
+		if (grd.pWindow && grd.pWindow.dhtmlDragAndDrop.lastLanding)
+			grd.pWindow.dhtmlDragAndDrop.lastLanding.dragLanding._dragOut(grd.pWindow.dhtmlDragAndDrop.lastLanding);
 
-        //		var oldp=dragger.dragNode.parentObject;
-        if (_isIE){
-            var div = document.createElement("div");
-            div.innerHTML=dragger.dragNode.outerHTML;
-            dragger.dragNode=div.childNodes[0];
-        } else
-            dragger.dragNode=dragger.dragNode.cloneNode(true);
+		//		var oldp=dragger.dragNode.parentObject;
+		if (_isIE) {
+			var div = document.createElement("div");
+			div.innerHTML = dragger.dragNode.outerHTML;
+			dragger.dragNode = div.childNodes[0];
+		} else
+			dragger.dragNode = dragger.dragNode.cloneNode(true);
 
-        dragger.dragNode.pWindow=window;
-        //		dragger.dragNode.parentObject=oldp;
+		dragger.dragNode.pWindow = window;
+		//		dragger.dragNode.parentObject=oldp;
 
-        dragger.gldragNode.old=dragger.dragNode;
-        document.body.appendChild(dragger.dragNode);
-        oldBody.dhtmlDragAndDrop.dragNode=dragger.dragNode;
-    }
+		dragger.gldragNode.old = dragger.dragNode;
+		document.body.appendChild(dragger.dragNode);
+		oldBody.dhtmlDragAndDrop.dragNode = dragger.dragNode;
+	}
 
-    dragger.dragNode.style.left=e.clientX+15 +
-        (dragger.fx ? dragger.fx*(-1) : 0) +
-        (document.body.scrollLeft||document.documentElement.scrollLeft)+"px";
-    dragger.dragNode.style.top=e.clientY+3+
-        (dragger.fy ? dragger.fy*(-1) : 0) +
-        (document.body.scrollTop||document.documentElement.scrollTop)+"px";
+	dragger.dragNode.style.left = e.clientX + 15 +
+		(dragger.fx ? dragger.fx * (-1) : 0) +
+		(document.body.scrollLeft || document.documentElement.scrollLeft) + "px";
+	dragger.dragNode.style.top = e.clientY + 3 +
+		(dragger.fy ? dragger.fy * (-1) : 0) +
+		(document.body.scrollTop || document.documentElement.scrollTop) + "px";
 
-    var z;
-    if (!e.srcElement)
-        z = e.target;
-    else
-        z=e.srcElement;
-    dragger.checkLanding(z, e);
+	var z;
+	if (!e.srcElement)
+		z = e.target;
+	else
+		z = e.srcElement;
+	dragger.checkLanding(z, e);
 };
 
-dhtmlDragAndDropObject.prototype.calculateFramePosition=function(n){
-    //this.fx = 0, this.fy = 0;
-    if (window.name){
-        var el = parent.frames[window.name].frameElement.offsetParent;
-        var fx = 0;
-        var fy = 0;
+dhtmlDragAndDropObject.prototype.calculateFramePosition = function (n) {
+	//this.fx = 0, this.fy = 0;
+	if (window.name) {
+		var el = parent.frames[window.name].frameElement.offsetParent;
+		var fx = 0;
+		var fy = 0;
 
-        while (el){
-            fx+=el.offsetLeft;
-            fy+=el.offsetTop;
-            el=el.offsetParent;
-        }
+		while (el) {
+			fx += el.offsetLeft;
+			fy += el.offsetTop;
+			el = el.offsetParent;
+		}
 
-        if ((parent.dhtmlDragAndDrop)){
-            var ls = parent.dhtmlDragAndDrop.calculateFramePosition(1);
-            fx+=ls.split('_')[0]*1;
-            fy+=ls.split('_')[1]*1;
-        }
+		if ((parent.dhtmlDragAndDrop)) {
+			var ls = parent.dhtmlDragAndDrop.calculateFramePosition(1);
+			fx += ls.split('_')[0] * 1;
+			fy += ls.split('_')[1] * 1;
+		}
 
-        if (n)
-            return fx+"_"+fy;
-        else
-            this.fx=fx;
-        this.fy=fy;
-    }
-    return "0_0";
+		if (n)
+			return fx + "_" + fy;
+		else
+			this.fx = fx;
+		this.fy = fy;
+	}
+	return "0_0";
 };
 
-dhtmlDragAndDropObject.prototype.checkLanding=function(htmlObject, e){
-    if ((htmlObject)&&(htmlObject.dragLanding)){
-        if (this.lastLanding)
-            this.lastLanding.dragLanding._dragOut(this.lastLanding);
-        this.lastLanding=htmlObject;
-        this.lastLanding=this.lastLanding.dragLanding._dragIn(this.lastLanding, this.dragStartNode, e.clientX,
-            e.clientY, e);
-        this.lastLanding_scr=(_isIE ? e.srcElement : e.target);
-    } else {
-        if ((htmlObject)&&(htmlObject.tagName != "BODY"))
-            this.checkLanding(htmlObject.parentNode, e);
-        else {
-            if (this.lastLanding)
-                this.lastLanding.dragLanding._dragOut(this.lastLanding, e.clientX, e.clientY, e);
-            this.lastLanding=0;
+dhtmlDragAndDropObject.prototype.checkLanding = function (htmlObject, e) {
+	if ((htmlObject) && (htmlObject.dragLanding)) {
+		if (this.lastLanding)
+			this.lastLanding.dragLanding._dragOut(this.lastLanding);
+		this.lastLanding = htmlObject;
+		this.lastLanding = this.lastLanding.dragLanding._dragIn(this.lastLanding, this.dragStartNode, e.clientX,
+			e.clientY, e);
+		this.lastLanding_scr = (_isIE ? e.srcElement : e.target);
+	} else {
+		if ((htmlObject) && (htmlObject.tagName != "BODY"))
+			this.checkLanding(htmlObject.parentNode, e);
+		else {
+			if (this.lastLanding)
+				this.lastLanding.dragLanding._dragOut(this.lastLanding, e.clientX, e.clientY, e);
+			this.lastLanding = 0;
 
-            if (this._onNotFound)
-                this._onNotFound();
-        }
-    }
+			if (this._onNotFound)
+				this._onNotFound();
+		}
+	}
 };
 
-dhtmlDragAndDropObject.prototype.stopDrag=function(e, mode){
-    var dragger=window.dhtmlDragAndDrop;
+dhtmlDragAndDropObject.prototype.stopDrag = function (e, mode) {
+	var dragger = window.dhtmlDragAndDrop;
 
-    if (!mode){
-        dragger.stopFrameRoute();
-        var temp = dragger.lastLanding;
-        dragger.lastLanding=null;
+	if (!mode) {
+		dragger.stopFrameRoute();
+		var temp = dragger.lastLanding;
+		dragger.lastLanding = null;
 
-        if (temp)
-            temp.dragLanding._drag(dragger.dragStartNode, dragger.dragStartObject, temp,
-                (_isIE ? event.srcElement : e.target));
-    }
-    dragger.lastLanding=null;
+		if (temp)
+			temp.dragLanding._drag(dragger.dragStartNode, dragger.dragStartObject, temp,
+				(_isIE ? event.srcElement : e.target));
+	}
+	dragger.lastLanding = null;
 
-    if ((dragger.dragNode)&&(dragger.dragNode.parentNode == document.body))
-        dragger.dragNode.parentNode.removeChild(dragger.dragNode);
-    dragger.dragNode=0;
-    dragger.gldragNode=0;
-    dragger.fx=0;
-    dragger.fy=0;
-    dragger.dragStartNode=0;
-    dragger.dragStartObject=0;
-    document.body.onmouseup=dragger.tempDOMU;
-    document.body.onmousemove=dragger.tempDOMM;
-    dragger.tempDOMU=null;
-    dragger.tempDOMM=null;
-    dragger.waitDrag=0;
+	if ((dragger.dragNode) && (dragger.dragNode.parentNode == document.body))
+		dragger.dragNode.parentNode.removeChild(dragger.dragNode);
+	dragger.dragNode = 0;
+	dragger.gldragNode = 0;
+	dragger.fx = 0;
+	dragger.fy = 0;
+	dragger.dragStartNode = 0;
+	dragger.dragStartObject = 0;
+	document.body.onmouseup = dragger.tempDOMU;
+	document.body.onmousemove = dragger.tempDOMM;
+	dragger.tempDOMU = null;
+	dragger.tempDOMM = null;
+	dragger.waitDrag = 0;
 };
 
-dhtmlDragAndDropObject.prototype.stopFrameRoute=function(win){
-    if (win)
-        window.dhtmlDragAndDrop.stopDrag(1, 1);
+dhtmlDragAndDropObject.prototype.stopFrameRoute = function (win) {
+	if (win)
+		window.dhtmlDragAndDrop.stopDrag(1, 1);
 
-    for (var i = 0; i < window.frames.length; i++){
-        try{
-            if ((window.frames[i] != win)&&(window.frames[i].dhtmlDragAndDrop))
-                window.frames[i].dhtmlDragAndDrop.stopFrameRoute(window);
-        } catch(e){}
-    }
+	for (var i = 0; i < window.frames.length; i++) {
+		try {
+			if ((window.frames[i] != win) && (window.frames[i].dhtmlDragAndDrop))
+				window.frames[i].dhtmlDragAndDrop.stopFrameRoute(window);
+		} catch (e) { }
+	}
 
-    try{
-        if ((parent.dhtmlDragAndDrop)&&(parent != window)&&(parent != win))
-            parent.dhtmlDragAndDrop.stopFrameRoute(window);
-    } catch(e){}
+	try {
+		if ((parent.dhtmlDragAndDrop) && (parent != window) && (parent != win))
+			parent.dhtmlDragAndDrop.stopFrameRoute(window);
+	} catch (e) { }
 };
 
-dhtmlDragAndDropObject.prototype.initFrameRoute=function(win, mode){
-    if (win){
-        window.dhtmlDragAndDrop.preCreateDragCopy();
-        window.dhtmlDragAndDrop.dragStartNode=win.dhtmlDragAndDrop.dragStartNode;
-        window.dhtmlDragAndDrop.dragStartObject=win.dhtmlDragAndDrop.dragStartObject;
-        window.dhtmlDragAndDrop.dragNode=win.dhtmlDragAndDrop.dragNode;
-        window.dhtmlDragAndDrop.gldragNode=win.dhtmlDragAndDrop.dragNode;
-        window.document.body.onmouseup=window.dhtmlDragAndDrop.stopDrag;
-        window.waitDrag=0;
+dhtmlDragAndDropObject.prototype.initFrameRoute = function (win, mode) {
+	if (win) {
+		window.dhtmlDragAndDrop.preCreateDragCopy();
+		window.dhtmlDragAndDrop.dragStartNode = win.dhtmlDragAndDrop.dragStartNode;
+		window.dhtmlDragAndDrop.dragStartObject = win.dhtmlDragAndDrop.dragStartObject;
+		window.dhtmlDragAndDrop.dragNode = win.dhtmlDragAndDrop.dragNode;
+		window.dhtmlDragAndDrop.gldragNode = win.dhtmlDragAndDrop.dragNode;
+		window.document.body.onmouseup = window.dhtmlDragAndDrop.stopDrag;
+		window.waitDrag = 0;
 
-        if (((!_isIE)&&(mode))&&((!_isFF)||(_FFrv < 1.8)))
-            window.dhtmlDragAndDrop.calculateFramePosition();
-    }
-    try{
-        if ((parent.dhtmlDragAndDrop)&&(parent != window)&&(parent != win))
-            parent.dhtmlDragAndDrop.initFrameRoute(window);
-    }catch(e){}
+		if (((!_isIE) && (mode)) && ((!_isFF) || (_FFrv < 1.8)))
+			window.dhtmlDragAndDrop.calculateFramePosition();
+	}
+	try {
+		if ((parent.dhtmlDragAndDrop) && (parent != window) && (parent != win))
+			parent.dhtmlDragAndDrop.initFrameRoute(window);
+	} catch (e) { }
 
-    for (var i = 0; i < window.frames.length; i++){
-        try{
-            if ((window.frames[i] != win)&&(window.frames[i].dhtmlDragAndDrop))
-                window.frames[i].dhtmlDragAndDrop.initFrameRoute(window, ((!win||mode) ? 1 : 0));
-        } catch(e){}
-    }
+	for (var i = 0; i < window.frames.length; i++) {
+		try {
+			if ((window.frames[i] != win) && (window.frames[i].dhtmlDragAndDrop))
+				window.frames[i].dhtmlDragAndDrop.initFrameRoute(window, ((!win || mode) ? 1 : 0));
+		} catch (e) { }
+	}
 };
 
 var _isFF = false;
@@ -546,340 +547,340 @@ var _KHTMLrv = false;
 var _OperaRv = false;
 
 if (navigator.userAgent.indexOf('Macintosh') != -1)
-    _isMacOS=true;
+	_isMacOS = true;
 
 
-if (navigator.userAgent.toLowerCase().indexOf('chrome')>-1)
-    _isChrome=true;
+if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1)
+	_isChrome = true;
 
-if ((navigator.userAgent.indexOf('Safari') != -1)||(navigator.userAgent.indexOf('Konqueror') != -1)){
-    _KHTMLrv = parseFloat(navigator.userAgent.substr(navigator.userAgent.indexOf('Safari')+7, 5));
+if ((navigator.userAgent.indexOf('Safari') != -1) || (navigator.userAgent.indexOf('Konqueror') != -1)) {
+	_KHTMLrv = parseFloat(navigator.userAgent.substr(navigator.userAgent.indexOf('Safari') + 7, 5));
 
-    if (_KHTMLrv > 525){ //mimic FF behavior for Safari 3.1+
-        _isFF=true;
-        _FFrv = 1.9;
-    } else
-        _isKHTML=true;
-} else if (navigator.userAgent.indexOf('Opera') != -1){
-    _isOpera=true;
-    _OperaRv=parseFloat(navigator.userAgent.substr(navigator.userAgent.indexOf('Opera')+6, 3));
+	if (_KHTMLrv > 525) { //mimic FF behavior for Safari 3.1+
+		_isFF = true;
+		_FFrv = 1.9;
+	} else
+		_isKHTML = true;
+} else if (navigator.userAgent.indexOf('Opera') != -1) {
+	_isOpera = true;
+	_OperaRv = parseFloat(navigator.userAgent.substr(navigator.userAgent.indexOf('Opera') + 6, 3));
 }
 
 
-else if (navigator.appName.indexOf("Microsoft") != -1){
-    _isIE=true;
-    if ((navigator.appVersion.indexOf("MSIE 8.0")!= -1 || navigator.appVersion.indexOf("MSIE 9.0")!= -1 || navigator.appVersion.indexOf("MSIE 10.0")!= -1 ) && document.compatMode != "BackCompat"){
-        _isIE=8;
-    }
-} else if (navigator.appName  == 'Netscape' && navigator.userAgent.indexOf("Trident") != -1){
+else if (navigator.appName.indexOf("Microsoft") != -1) {
+	_isIE = true;
+	if ((navigator.appVersion.indexOf("MSIE 8.0") != -1 || navigator.appVersion.indexOf("MSIE 9.0") != -1 || navigator.appVersion.indexOf("MSIE 10.0") != -1) && document.compatMode != "BackCompat") {
+		_isIE = 8;
+	}
+} else if (navigator.appName == 'Netscape' && navigator.userAgent.indexOf("Trident") != -1) {
 	//ie11
-	_isIE=8;
+	_isIE = 8;
 } else {
-    _isFF=true;
-    _FFrv = parseFloat(navigator.userAgent.split("rv:")[1]);
+	_isFF = true;
+	_FFrv = parseFloat(navigator.userAgent.split("rv:")[1]);
 }
 
 
 //multibrowser Xpath processor
-dtmlXMLLoaderObject.prototype.doXPath=function(xpathExp, docObj, namespace, result_type){
-    if (_isKHTML || (!_isIE && !window.XPathResult))
-        return this.doXPathOpera(xpathExp, docObj);
+dtmlXMLLoaderObject.prototype.doXPath = function (xpathExp, docObj, namespace, result_type) {
+	if (_isKHTML || (!_isIE && !window.XPathResult))
+		return this.doXPathOpera(xpathExp, docObj);
 
-    if (_isIE){ //IE
-        if (!docObj)
-            if (!this.xmlDoc.nodeName)
-                docObj=this.xmlDoc.responseXML;
-            else
-                docObj=this.xmlDoc;
+	if (_isIE) { //IE
+		if (!docObj)
+			if (!this.xmlDoc.nodeName)
+				docObj = this.xmlDoc.responseXML;
+			else
+				docObj = this.xmlDoc;
 
-        if (!docObj)
-            dhtmlxError.throwError("LoadXML", "Incorrect XML", [
-                (docObj||this.xmlDoc),
-                this.mainObject
-            ]);
+		if (!docObj)
+			dhtmlxError.throwError("LoadXML", "Incorrect XML", [
+				(docObj || this.xmlDoc),
+				this.mainObject
+			]);
 
-        if (namespace)
-            docObj.setProperty("SelectionNamespaces", "xmlns:xsl='"+namespace+"'"); //
+		if (namespace)
+			docObj.setProperty("SelectionNamespaces", "xmlns:xsl='" + namespace + "'"); //
 
-        if (result_type == 'single'){
-            return docObj.selectSingleNode(xpathExp);
-        }
-        else {
-            return docObj.selectNodes(xpathExp)||new Array(0);
-        }
-    } else { //Mozilla
-        var nodeObj = docObj;
+		if (result_type == 'single') {
+			return docObj.selectSingleNode(xpathExp);
+		}
+		else {
+			return docObj.selectNodes(xpathExp) || new Array(0);
+		}
+	} else { //Mozilla
+		var nodeObj = docObj;
 
-        if (!docObj){
-            if (!this.xmlDoc.nodeName){
-                docObj=this.xmlDoc.responseXML;
-            }
-            else {
-                docObj=this.xmlDoc;
-            }
-        }
+		if (!docObj) {
+			if (!this.xmlDoc.nodeName) {
+				docObj = this.xmlDoc.responseXML;
+			}
+			else {
+				docObj = this.xmlDoc;
+			}
+		}
 
-        if (!docObj)
-            dhtmlxError.throwError("LoadXML", "Incorrect XML", [
-                (docObj||this.xmlDoc),
-                this.mainObject
-            ]);
+		if (!docObj)
+			dhtmlxError.throwError("LoadXML", "Incorrect XML", [
+				(docObj || this.xmlDoc),
+				this.mainObject
+			]);
 
-        if (docObj.nodeName.indexOf("document") != -1){
-            nodeObj=docObj;
-        }
-        else {
-            nodeObj=docObj;
-            docObj=docObj.ownerDocument;
-        }
-        var retType = XPathResult.ANY_TYPE;
+		if (docObj.nodeName.indexOf("document") != -1) {
+			nodeObj = docObj;
+		}
+		else {
+			nodeObj = docObj;
+			docObj = docObj.ownerDocument;
+		}
+		var retType = XPathResult.ANY_TYPE;
 
-        if (result_type == 'single')
-            retType=XPathResult.FIRST_ORDERED_NODE_TYPE;
-        var rowsCol = [];
-        var col = docObj.evaluate(xpathExp, nodeObj, function(pref){
-            return namespace;
-        }, retType, null);
+		if (result_type == 'single')
+			retType = XPathResult.FIRST_ORDERED_NODE_TYPE;
+		var rowsCol = [];
+		var col = docObj.evaluate(xpathExp, nodeObj, function (pref) {
+			return namespace;
+		}, retType, null);
 
-        if (retType == XPathResult.FIRST_ORDERED_NODE_TYPE){
-            return col.singleNodeValue;
-        }
-        var thisColMemb = col.iterateNext();
+		if (retType == XPathResult.FIRST_ORDERED_NODE_TYPE) {
+			return col.singleNodeValue;
+		}
+		var thisColMemb = col.iterateNext();
 
-        while (thisColMemb){
-            rowsCol[rowsCol.length]=thisColMemb;
-            thisColMemb=col.iterateNext();
-        }
-        return rowsCol;
-    }
+		while (thisColMemb) {
+			rowsCol[rowsCol.length] = thisColMemb;
+			thisColMemb = col.iterateNext();
+		}
+		return rowsCol;
+	}
 };
 
-function _dhtmlxError(type, name, params){
-    if (!this.catches)
-        this.catches=[];
+function _dhtmlxError(type, name, params) {
+	if (!this.catches)
+		this.catches = [];
 
-    return this;
+	return this;
 }
 
-_dhtmlxError.prototype.catchError=function(type, func_name){
-    this.catches[type]=func_name;
+_dhtmlxError.prototype.catchError = function (type, func_name) {
+	this.catches[type] = func_name;
 };
 
-_dhtmlxError.prototype.throwError=function(type, name, params){
-    if (this.catches[type])
-        return this.catches[type](type, name, params);
+_dhtmlxError.prototype.throwError = function (type, name, params) {
+	if (this.catches[type])
+		return this.catches[type](type, name, params);
 
-    if (this.catches["ALL"])
-        return this.catches["ALL"](type, name, params);
+	if (this.catches["ALL"])
+		return this.catches["ALL"](type, name, params);
 
-    window.alert("Error type: "+arguments[0]+"\nDescription: "+arguments[1]);
-    return null;
+	window.alert("Error type: " + arguments[0] + "\nDescription: " + arguments[1]);
+	return null;
 };
 
-window.dhtmlxError=new _dhtmlxError();
+window.dhtmlxError = new _dhtmlxError();
 
 
 //opera fake, while 9.0 not released
 //multibrowser Xpath processor
-dtmlXMLLoaderObject.prototype.doXPathOpera=function(xpathExp, docObj){
-    //this is fake for Opera
-    var z = xpathExp.replace(/[\/]+/gi, "/").split('/');
-    var obj = null;
-    var i = 1;
+dtmlXMLLoaderObject.prototype.doXPathOpera = function (xpathExp, docObj) {
+	//this is fake for Opera
+	var z = xpathExp.replace(/[\/]+/gi, "/").split('/');
+	var obj = null;
+	var i = 1;
 
-    if (!z.length)
-        return [];
+	if (!z.length)
+		return [];
 
-    if (z[0] == ".")
-        obj=[docObj]; else if (z[0] === ""){
-        obj=(this.xmlDoc.responseXML||this.xmlDoc).getElementsByTagName(z[i].replace(/\[[^\]]*\]/g, ""));
-        i++;
-    } else
-        return [];
+	if (z[0] == ".")
+		obj = [docObj]; else if (z[0] === "") {
+			obj = (this.xmlDoc.responseXML || this.xmlDoc).getElementsByTagName(z[i].replace(/\[[^\]]*\]/g, ""));
+			i++;
+		} else
+		return [];
 
-    for (i; i < z.length; i++)obj=this._getAllNamedChilds(obj, z[i]);
+	for (i; i < z.length; i++)obj = this._getAllNamedChilds(obj, z[i]);
 
-    if (z[i-1].indexOf("[") != -1)
-        obj=this._filterXPath(obj, z[i-1]);
-    return obj;
+	if (z[i - 1].indexOf("[") != -1)
+		obj = this._filterXPath(obj, z[i - 1]);
+	return obj;
 };
 
-dtmlXMLLoaderObject.prototype._filterXPath=function(a, b){
-    var c = [];
-    var b = b.replace(/[^\[]*\[\@/g, "").replace(/[\[\]\@]*/g, "");
+dtmlXMLLoaderObject.prototype._filterXPath = function (a, b) {
+	var c = [];
+	var b = b.replace(/[^\[]*\[\@/g, "").replace(/[\[\]\@]*/g, "");
 
-    for (var i = 0; i < a.length; i++)
-        if (a[i].getAttribute(b))
-            c[c.length]=a[i];
+	for (var i = 0; i < a.length; i++)
+		if (a[i].getAttribute(b))
+			c[c.length] = a[i];
 
-    return c;
+	return c;
 };
 
-dtmlXMLLoaderObject.prototype._getAllNamedChilds=function(a, b){
-    var c = [];
+dtmlXMLLoaderObject.prototype._getAllNamedChilds = function (a, b) {
+	var c = [];
 
-    if (_isKHTML)
-        b=b.toUpperCase();
+	if (_isKHTML)
+		b = b.toUpperCase();
 
-    for (var i = 0; i < a.length; i++)for (var j = 0; j < a[i].childNodes.length; j++){
-        if (_isKHTML){
-            if (a[i].childNodes[j].tagName&&a[i].childNodes[j].tagName.toUpperCase() == b)
-                c[c.length]=a[i].childNodes[j];
-        }
+	for (var i = 0; i < a.length; i++)for (var j = 0; j < a[i].childNodes.length; j++) {
+		if (_isKHTML) {
+			if (a[i].childNodes[j].tagName && a[i].childNodes[j].tagName.toUpperCase() == b)
+				c[c.length] = a[i].childNodes[j];
+		}
 
-        else if (a[i].childNodes[j].tagName == b)
-            c[c.length]=a[i].childNodes[j];
-    }
+		else if (a[i].childNodes[j].tagName == b)
+			c[c.length] = a[i].childNodes[j];
+	}
 
-    return c;
+	return c;
 };
 
-function dhtmlXHeir(a, b){
-    for (var c in b)
-        if (typeof (b[c]) == "function")
-            a[c]=b[c];
-    return a;
+function dhtmlXHeir(a, b) {
+	for (var c in b)
+		if (typeof (b[c]) == "function")
+			a[c] = b[c];
+	return a;
 }
 
-if(typeof (window.dhtmlxEvent) == 'undefined'){
-    window.dhtmlxEvent = function dhtmlxEvent(el, event, handler){
-        if (el.addEventListener)
-            el.addEventListener(event, handler, false);
+if (typeof (window.dhtmlxEvent) == 'undefined') {
+	window.dhtmlxEvent = function dhtmlxEvent(el, event, handler) {
+		if (el.addEventListener)
+			el.addEventListener(event, handler, false);
 
-        else if (el.attachEvent)
-            el.attachEvent("on"+event, handler);
-    };
+		else if (el.attachEvent)
+			el.attachEvent("on" + event, handler);
+	};
 }
 
 //============= XSL Extension ===================================
 
-dtmlXMLLoaderObject.prototype.xslDoc=null;
-dtmlXMLLoaderObject.prototype.setXSLParamValue=function(paramName, paramValue, xslDoc){
-    if (!xslDoc)
-        xslDoc=this.xslDoc;
+dtmlXMLLoaderObject.prototype.xslDoc = null;
+dtmlXMLLoaderObject.prototype.setXSLParamValue = function (paramName, paramValue, xslDoc) {
+	if (!xslDoc)
+		xslDoc = this.xslDoc;
 
-    if (xslDoc.responseXML)
-        xslDoc=xslDoc.responseXML;
-    var item =
-        this.doXPath("/xsl:stylesheet/xsl:variable[@name='"+paramName+"']", xslDoc,
-            "http:/\/www.w3.org/1999/XSL/Transform", "single");
+	if (xslDoc.responseXML)
+		xslDoc = xslDoc.responseXML;
+	var item =
+		this.doXPath("/xsl:stylesheet/xsl:variable[@name='" + paramName + "']", xslDoc,
+			"http:/\/www.w3.org/1999/XSL/Transform", "single");
 
-    if (item)
-        item.firstChild.nodeValue=paramValue;
+	if (item)
+		item.firstChild.nodeValue = paramValue;
 };
 
-dtmlXMLLoaderObject.prototype.doXSLTransToObject=function(xslDoc, xmlDoc){
-    if (!xslDoc)
-        xslDoc=this.xslDoc;
+dtmlXMLLoaderObject.prototype.doXSLTransToObject = function (xslDoc, xmlDoc) {
+	if (!xslDoc)
+		xslDoc = this.xslDoc;
 
-    if (xslDoc.responseXML)
-        xslDoc=xslDoc.responseXML;
+	if (xslDoc.responseXML)
+		xslDoc = xslDoc.responseXML;
 
-    if (!xmlDoc)
-        xmlDoc=this.xmlDoc;
+	if (!xmlDoc)
+		xmlDoc = this.xmlDoc;
 
-    if (xmlDoc.responseXML)
-        xmlDoc=xmlDoc.responseXML;
+	if (xmlDoc.responseXML)
+		xmlDoc = xmlDoc.responseXML;
 
 
-    var result;
-    //Mozilla
-    if (!_isIE){
-        if (!this.XSLProcessor){
-            this.XSLProcessor=new XSLTProcessor();
-            this.XSLProcessor.importStylesheet(xslDoc);
-        }
-        result = this.XSLProcessor.transformToDocument(xmlDoc);
-    } else {
-        result = new ActiveXObject("Msxml2.DOMDocument.3.0");
-        try{
-            xmlDoc.transformNodeToObject(xslDoc, result);
-        }catch(e){
-            result = xmlDoc.transformNode(xslDoc);
-        }
-    }
-    return result;
+	var result;
+	//Mozilla
+	if (!_isIE) {
+		if (!this.XSLProcessor) {
+			this.XSLProcessor = new XSLTProcessor();
+			this.XSLProcessor.importStylesheet(xslDoc);
+		}
+		result = this.XSLProcessor.transformToDocument(xmlDoc);
+	} else {
+		result = new ActiveXObject("Msxml2.DOMDocument.3.0");
+		try {
+			xmlDoc.transformNodeToObject(xslDoc, result);
+		} catch (e) {
+			result = xmlDoc.transformNode(xslDoc);
+		}
+	}
+	return result;
 };
 
-dtmlXMLLoaderObject.prototype.doXSLTransToString=function(xslDoc, xmlDoc){
-    var res = this.doXSLTransToObject(xslDoc, xmlDoc);
-    if(typeof(res)=="string")
-        return res;
-    return this.doSerialization(res);
+dtmlXMLLoaderObject.prototype.doXSLTransToString = function (xslDoc, xmlDoc) {
+	var res = this.doXSLTransToObject(xslDoc, xmlDoc);
+	if (typeof (res) == "string")
+		return res;
+	return this.doSerialization(res);
 };
 
-dtmlXMLLoaderObject.prototype.doSerialization=function(xmlDoc){
-    if (!xmlDoc)
-        xmlDoc=this.xmlDoc;
-    if (xmlDoc.responseXML)
-        xmlDoc=xmlDoc.responseXML;
-    if (!_isIE){
-        var xmlSerializer = new XMLSerializer();
-        return xmlSerializer.serializeToString(xmlDoc);
-    } else
-        return xmlDoc.xml;
+dtmlXMLLoaderObject.prototype.doSerialization = function (xmlDoc) {
+	if (!xmlDoc)
+		xmlDoc = this.xmlDoc;
+	if (xmlDoc.responseXML)
+		xmlDoc = xmlDoc.responseXML;
+	if (!_isIE) {
+		var xmlSerializer = new XMLSerializer();
+		return xmlSerializer.serializeToString(xmlDoc);
+	} else
+		return xmlDoc.xml;
 };
 
 /**
  *   @desc:
  *   @type: private
  */
-window.dhtmlxEventable=function(obj){
-    obj.attachEvent=function(name, catcher, callObj){
-        name='ev_'+name.toLowerCase();
-        if (!this[name])
-            this[name]=new this.eventCatcher(callObj||this);
+window.dhtmlxEventable = function (obj) {
+	obj.attachEvent = function (name, catcher, callObj) {
+		name = 'ev_' + name.toLowerCase();
+		if (!this[name])
+			this[name] = new this.eventCatcher(callObj || this);
 
-        return(name+':'+this[name].addEvent(catcher)); //return ID (event name & event ID)
-    };
-    obj.callEvent=function(name, arg0){
-        name='ev_'+name.toLowerCase();
-        if (this[name])
-            return this[name].apply(this, arg0);
-        return true;
-    };
-    obj.checkEvent=function(name){
-        return (!!this['ev_'+name.toLowerCase()]);
-    };
-    obj.eventCatcher=function(obj){
-        var dhx_catch = [];
-        var z = function(){
-            var res = true;
-            for (var i = 0; i < dhx_catch.length; i++){
-                if (dhx_catch[i]){
-                    var zr = dhx_catch[i].apply(obj, arguments);
-                    res=res&&zr;
-                }
-            }
-            return res;
-        };
-        z.addEvent=function(ev){
-            if (typeof (ev) != "function")
-                ev=eval(ev);
-            if (ev)
-                return dhx_catch.push(ev)-1;
-            return false;
-        };
-        z.removeEvent=function(id){
-            dhx_catch[id]=null;
-        };
-        return z;
-    };
-    obj.detachEvent=function(id){
-        if (id){
-            var list = id.split(':');           //get EventName and ID
-            this[list[0]].removeEvent(list[1]); //remove event
-        }
-    };
-    obj.detachAllEvents = function(){
-        for (var name in this){
-            if (name.indexOf("ev_")===0){
-                this.detachEvent(name);
-                this[name] = null;
-            }
-        }
-    };
-    obj = null;
+		return (name + ':' + this[name].addEvent(catcher)); //return ID (event name & event ID)
+	};
+	obj.callEvent = function (name, arg0) {
+		name = 'ev_' + name.toLowerCase();
+		if (this[name])
+			return this[name].apply(this, arg0);
+		return true;
+	};
+	obj.checkEvent = function (name) {
+		return (!!this['ev_' + name.toLowerCase()]);
+	};
+	obj.eventCatcher = function (obj) {
+		var dhx_catch = [];
+		var z = function () {
+			var res = true;
+			for (var i = 0; i < dhx_catch.length; i++) {
+				if (dhx_catch[i]) {
+					var zr = dhx_catch[i].apply(obj, arguments);
+					res = res && zr;
+				}
+			}
+			return res;
+		};
+		z.addEvent = function (ev) {
+			if (typeof (ev) != "function")
+				ev = eval(ev);
+			if (ev)
+				return dhx_catch.push(ev) - 1;
+			return false;
+		};
+		z.removeEvent = function (id) {
+			dhx_catch[id] = null;
+		};
+		return z;
+	};
+	obj.detachEvent = function (id) {
+		if (id) {
+			var list = id.split(':');//get EventName and ID
+			this[list[0]].removeEvent(list[1]); //remove event
+		}
+	};
+	obj.detachAllEvents = function () {
+		for (var name in this) {
+			if (name.indexOf("ev_") === 0) {
+				this.detachEvent(name);
+				this[name] = null;
+			}
+		}
+	};
+	obj = null;
 };
 if(!window.dhtmlx)
 	window.dhtmlx = {};
@@ -1831,12 +1832,6 @@ dataProcessor.prototype = {
 			return false;
 		else
 			this._update_busy = true;
-
-		//this._loader = this._loader || new dtmlXMLLoaderObject(true);
-
-		//this._loader.async=true;
-		//this._loader.waitCall=callback;
-		//this._loader.loadXML(url);
 		ajax.get(url, callback);
 
 	},
@@ -1942,7 +1937,7 @@ Scheduler.plugin = function (code) {
 };
 Scheduler._schedulerPlugins = [];
 Scheduler.getSchedulerInstance = function () {
-	var scheduler = { version: "5.2.4" };
+	var scheduler = { version: "5.2.5" };
 
 var commonViews = {
 	agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html",
@@ -2026,7 +2021,7 @@ scheduler._detachDomEvent = function(el, event, handler){
 scheduler._init_once = function(){
 
 	var oldSize = getWindowSize();
-	dhtmlxEvent(window,"resize",function() {
+	scheduler.event(window,"resize",function() {
 		if (!isAttachedNode(scheduler._obj))
 			return;
 
@@ -2101,8 +2096,8 @@ scheduler.init=function(id,date,mode){
 
 	this._els=[];
 	this._scroll=true;
-	this._quirks=(_isIE && document.compatMode == "BackCompat");
-	this._quirks7=(_isIE && navigator.appVersion.indexOf("MSIE 8")==-1);
+	this._quirks=(this.$env.isIE && document.compatMode == "BackCompat");
+	this._quirks7=(this.$env.isIE && navigator.appVersion.indexOf("MSIE 8")==-1);
 
 	this.get_elements();
 	this.init_templates();
@@ -2475,7 +2470,7 @@ scheduler._mouse_coords=function(ev){
 	var pos;
 	var b=document.body;
 	var d = document.documentElement;
-	if (!_isIE && (ev.pageX || ev.pageY))
+	if (!this.$env.isIE && (ev.pageX || ev.pageY))
 	    pos={x:ev.pageX, y:ev.pageY};
 	else pos={
 	    x:ev.clientX + (b.scrollLeft||d.scrollLeft||0) - b.clientLeft,
@@ -3710,7 +3705,13 @@ scheduler._getClassName = function(node){
 
 	return className || "";
 };
-scheduler.event = window.dhtmlxEvent;
+scheduler.event = function dhtmlxEvent(el, event, handler){
+	if (el.addEventListener)
+		el.addEventListener(event, handler, false);
+
+	else if (el.attachEvent)
+		el.attachEvent("on"+event, handler);
+};
 
 scheduler.eventRemove = function(el, event, handler){
 	if (el.removeEventListener)
@@ -7281,8 +7282,8 @@ scheduler.setLightboxSize=function(){
 };
 
 scheduler._init_dnd_events = function(){
-	dhtmlxEvent(document.body, "mousemove", scheduler._move_while_dnd);
-	dhtmlxEvent(document.body, "mouseup", scheduler._finish_dnd);
+	scheduler.event(document.body, "mousemove", scheduler._move_while_dnd);
+	scheduler.event(document.body, "mouseup", scheduler._finish_dnd);
 	scheduler._init_dnd_events = function(){};
 };
 scheduler._move_while_dnd = function(e){
@@ -7770,7 +7771,7 @@ scheduler._touch_events = function(names, accessor, ignore){
 		}
 	});
 
-	dhtmlxEvent(document.body, names[2], drag_cancel);
+	scheduler.event(document.body, names[2], drag_cancel);
 };
 
 scheduler._show_global_tip = function(){

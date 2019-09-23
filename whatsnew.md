@@ -1,3 +1,7 @@
+### 5.2.5
+
+- Fix regression of ext/dhtmlxscheduler_tooltip.js introduced in 5.2.4
+
 ### 5.2.4
 
 - Fix the issue with the readonly form which didn't allow changing the configuration of the lightbox after initialization of Scheduler

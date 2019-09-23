@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.4 Stardard
+dhtmlxScheduler v.5.2.5 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -2512,11 +2512,11 @@ scheduler._temp_key_scope = function (){
 	var pos = {};
 
 	if(!document.body){
-		dhtmlxEvent(window, "load", function(){
-			dhtmlxEvent(document.body, "mousemove", trackMousePosition);
+		scheduler.event(window, "load", function(){
+			scheduler.event(document.body, "mousemove", trackMousePosition);
 		});
 	}else{
-		dhtmlxEvent(document.body, "mousemove", trackMousePosition);
+		scheduler.event(document.body, "mousemove", trackMousePosition);
 	}
 
 	function trackMousePosition(event){

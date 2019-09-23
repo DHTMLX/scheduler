@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.4 Stardard
+dhtmlxScheduler v.5.2.5 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -14,5 +14,6 @@ Scheduler.plugin(function(e){!function(){window.dhtmlXTooltip=e.dhtmlXTooltip=e.
 e._waiAria.tooltipVisibleAttr(this.tooltip),r.visibility="visible",this.tooltip.onmouseleave=function(t){t=t||window.event;for(var a=e.dhtmlXTooltip,n=t.relatedTarget;n!=e._obj&&n;)n=n.parentNode;n!=e._obj&&a.delay(a.hide,a,[],a.config.timeout_to_hide)},e.callEvent("onTooltipDisplayed",[this.tooltip,this.tooltip.event_id])}}},dhtmlXTooltip._clearTimeout=function(){this.tooltip._timeout_id&&window.clearTimeout(this.tooltip._timeout_id)},dhtmlXTooltip.hide=function(){if(this.tooltip.parentNode){
 e._waiAria.tooltipHiddenAttr(this.tooltip);var t=this.tooltip.event_id;this.tooltip.event_id=null,this.tooltip.onmouseleave=null,this.tooltip.parentNode.removeChild(this.tooltip),e.callEvent("onAfterTooltip",[t])}this._clearTimeout()},dhtmlXTooltip.delay=function(e,t,a,n){this._clearTimeout(),this.tooltip._timeout_id=setTimeout(function(){var n=e.apply(t,a);return e=t=a=null,n},n||this.config.timeout_to_display)},dhtmlXTooltip.isTooltip=function(e){
 for(var t=!1;e&&!t;)t=e.className==this.tooltip.className,e=e.parentNode;return t},dhtmlXTooltip.position=function(e){return e=e||window.event,{x:e.clientX,y:e.clientY}},e.attachEvent("onMouseMove",function(t,a){var n=window.event||a,i=n.target||n.srcElement,r=dhtmlXTooltip,o=r.isTooltip(i),l=r.isTooltipTarget&&r.isTooltipTarget(i);if(t&&e.getState().editor_id!=t||o||l){var d;if(t||r.tooltip.event_id){var _=e.getEvent(t)||e.getEvent(r.tooltip.event_id);if(!_)return;if(r.tooltip.event_id=_.id,
-!(d=e.templates.tooltip_text(_.start_date,_.end_date,_)))return r.hide()}l&&(d="");var s;if(_isIE){s={pageX:void 0,pageY:void 0,clientX:void 0,clientY:void 0,target:void 0,srcElement:void 0};for(var c in s)s[c]=n[c]}if(!e.callEvent("onBeforeTooltip",[t])||!d)return;r.delay(r.show,r,[s||n,d])}else r.delay(r.hide,r,[],r.config.timeout_to_hide)}),e.attachEvent("onBeforeDrag",function(){return dhtmlXTooltip.hide(),!0}),e.attachEvent("onEventDeleted",function(){return dhtmlXTooltip.hide(),!0})}()});
+!(d=e.templates.tooltip_text(_.start_date,_.end_date,_)))return r.hide()}l&&(d="");var s;if(e.$env.isIE){s={pageX:void 0,pageY:void 0,clientX:void 0,clientY:void 0,target:void 0,srcElement:void 0};for(var c in s)s[c]=n[c]}if(!e.callEvent("onBeforeTooltip",[t])||!d)return;r.delay(r.show,r,[s||n,d])}else r.delay(r.hide,r,[],r.config.timeout_to_hide)}),e.attachEvent("onBeforeDrag",function(){return dhtmlXTooltip.hide(),!0}),e.attachEvent("onEventDeleted",function(){return dhtmlXTooltip.hide(),!0})
+}()});
 //# sourceMappingURL=../sources/ext/dhtmlxscheduler_tooltip.js.map

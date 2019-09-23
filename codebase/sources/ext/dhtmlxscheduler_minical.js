@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.4 Stardard
+dhtmlxScheduler v.5.2.5 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -322,7 +322,7 @@ scheduler.isCalendarVisible = function() {
 };
 
 scheduler._attach_minical_events = function(){
-	dhtmlxEvent(document.body, "click", function() { scheduler.destroyCalendar(); });
+	scheduler.event(document.body, "click", function() { scheduler.destroyCalendar(); });
 	scheduler._attach_minical_events = function(){};
 };
 
