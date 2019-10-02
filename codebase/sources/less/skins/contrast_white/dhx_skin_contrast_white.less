@@ -109,7 +109,7 @@ div.dhx_menu_head {
 	border: 1px solid @eventBorderColor;
 	background-color: @mainColor;
 	color: @fontColor;
-	height: 17px;
+	height: 19px;
 	line-height: 17px;
 	-webkit-border-radius: 2px;
 	-moz-border-radius: 2px;
@@ -163,6 +163,11 @@ div.dhx_menu_head {
 	background-image: url(imgs_contrast_white/databg.png);
 	background-color: @nowDate;
 	border-right: 1px solid @borderColor;
+}
+
+.dhx_cal_container_rtl .dhx_scale_holder_now{
+	border-right: 0;
+	border-left: 1px solid @borderColor;
 }
 
 .dhx_scale_hour {
@@ -372,7 +377,7 @@ div.dhx_menu_head {
 .dhx_cal_event_clear {
 	color: @fontColor;
 	font-size: @fontSize;
-	height: 16px;
+	height: 19px;
 }
 
 /* month view end */
@@ -394,6 +399,11 @@ div.dhx_menu_head {
 
 .dhx_cal_light_wide .dhx_cal_larea {
 	margin-left: 3px;
+}
+
+.dhx_cal_light_rtl .dhx_cal_larea {
+	margin-right: 3px;
+	margin-left: 0;
 }
 
 .dhx_cal_light_wide .dhx_wrap_section {
@@ -490,6 +500,11 @@ div.dhx_menu_head {
 
 .dhx_cal_ltitle span {
 	float: left;
+}
+.dhx_cal_light_rtl{
+	.dhx_cal_ltitle span{
+		float: none;
+	}
 }
 
 .dhx_cal_light .dhx_title {
@@ -670,6 +685,7 @@ div.dhx_menu_head {
 	border: 1px solid @foreColor;
 	font-size: 16px;
 	color: @fontColor;
+	width: 100px;
 }
 
 .dhx_cal_light_wide .dhx_custom_button {
@@ -685,6 +701,12 @@ div.dhx_menu_head {
 /* agenda */
 .dhx_v_border, .dhx_agenda_line div {
 	border-right: 1px solid @lightBorderColor;
+}
+
+.dhx_cal_container_rtl .dhx_v_border,
+.dhx_cal_container_rtl .dhx_agenda_line div{
+	border-left: 1px solid @lightBorderColor;
+	border-right: 0;
 }
 
 .dhx_agenda_area, .dhx_scheduler_agenda .dhx_cal_data {
@@ -797,6 +819,10 @@ div.dhx_menu_head {
 
 .dhx_map_line .headline_date {
 	border-right: 1px solid @borderColor;
+}
+
+.dhx_cal_container_rtl .dhx_map_line .headline_date {
+	border-left: 1px solid @borderColor;
 }
 
 /* map view end */
@@ -981,4 +1007,11 @@ div.dhx_menu_head {
 .dhx_year_body .dhx_month_head.dhx_year_event,
 .dhx_year_body .dhx_month_head.dhx_calendar_click {
 	color: @foreColor;
+}
+
+@media only screen and (max-width: 1023px) {
+	.dhx_cal_light_responsive .dhx_repeat_text {
+	border: 1px solid #7e7e7e;
+	background-color: #FFF;
+	}
 }

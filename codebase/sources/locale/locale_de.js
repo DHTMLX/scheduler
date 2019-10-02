@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -68,7 +68,34 @@ Scheduler.plugin(function(scheduler){scheduler.locale = {
 		month: "Month",
 		day: "Day",
 		hour:"Hour",
-		minute: "Minute"
+		minute: "Minute",
+
+		/* recurring event components */
+		repeat_radio_day: "Täglich",
+		repeat_radio_week: "Wöchentlich",
+		repeat_radio_month: "Monatlich",
+		repeat_radio_year: "Jährlich",
+		repeat_radio_day_type: "jeden",
+		repeat_text_day_count: "Tag",
+		repeat_radio_day_type2: "an jedem Arbeitstag",
+		repeat_week: " Wiederholt sich jede",
+		repeat_text_week_count: "Woche am:",
+		repeat_radio_month_type: "an jedem",
+		repeat_radio_month_start: "am",
+		repeat_text_month_day: "Tag eines jeden",
+		repeat_text_month_count: "Monats",
+		repeat_text_month_count2_before: "jeden",
+		repeat_text_month_count2_after: "Monats",
+		repeat_year_label: "am",
+		select_year_day2: "im",
+		repeat_text_year_day: "Tag im",
+		select_year_month: "",
+		repeat_radio_end: "kein Enddatum",
+		repeat_text_occurences_count: "Ereignissen",
+		repeat_radio_end3: "Schluß",
+		repeat_radio_end2: "nach",
+		month_for_recurring: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+		day_for_recurring: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"]
 	}
 };
 

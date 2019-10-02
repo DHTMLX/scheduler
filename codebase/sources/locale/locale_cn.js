@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -75,7 +75,34 @@ scheduler.locale={
 		month: "Month",
 		day: "Day",
 		hour:"Hour",
-		minute: "Minute"
+		minute: "Minute",
+
+		/* recurring event components */
+		repeat_radio_day: "按天",
+		repeat_radio_week: "按周",
+		repeat_radio_month: "按月",
+		repeat_radio_year: "按年",
+		repeat_radio_day_type: "每",
+		repeat_text_day_count: "天",
+		repeat_radio_day_type2: "每个工作日",
+		repeat_week: " 重复 每",
+		repeat_text_week_count: "星期的:",
+		repeat_radio_month_type: "重复",
+		repeat_radio_month_start: "在",
+		repeat_text_month_day: "日 每",
+		repeat_text_month_count: "月",
+		repeat_text_month_count2_before: "每",
+		repeat_text_month_count2_after: "月",
+		repeat_year_label: "在",
+		select_year_day2: "的",
+		repeat_text_year_day: "日",
+		select_year_month: "月",
+		repeat_radio_end: "无结束日期",
+		repeat_text_occurences_count: "次结束",
+		repeat_radio_end2: "重复",
+		repeat_radio_end3: "结束于",
+		month_for_recurring: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+		day_for_recurring: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"]
 	}
 };
 

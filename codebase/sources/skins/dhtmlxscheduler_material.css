@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -240,6 +240,10 @@ div.dhx_modal_cover {
   padding: 4px 0 0 8px;
   cursor: pointer;
 }
+.dhx_cal_container_rtl .dhx_cal_event .dhx_title {
+  text-align: right;
+  padding: 4px 8px 0 0;
+}
 .dhx_cal_event .dhx_body,
 .dhx_cal_event.dhx_cal_select_menu .dhx_body {
   border-width: 0 1px 1px 1px;
@@ -247,6 +251,9 @@ div.dhx_modal_cover {
   border-radius: 0 0 0 0;
   font-weight: 500;
   line-height: 20px;
+}
+.dhx_cal_container_rtl .dhx_cal_event .dhx_body {
+  padding: 2px 8px 8px 5px;
 }
 .dhx_cal_event.dhx_cal_select_menu {
   -webkit-box-shadow: 0 0 1px #FFF;
@@ -281,13 +288,20 @@ div.dhx_modal_cover {
   font-size: 14px;
   font-weight: 500;
   line-height: 17px;
-  height: 17px;
+  height: 20px;
   padding: 0 0 1px 10px;
   color: #FFFFFF;
   cursor: pointer;
   overflow: hidden;
 }
+.dhx_cal_container_rtl .dhx_cal_event_line {
+  padding: 0 9px 0 0;
+}
 .dhx_cal_event_line_start {
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+.dhx_cal_container_rtl .dhx_cal_event_line_start {
   border-top-left-radius: 2px;
   border-bottom-left-radius: 2px;
 }
@@ -295,8 +309,20 @@ div.dhx_modal_cover {
   border-top-right-radius: 2px;
   border-bottom-right-radius: 2px;
 }
+.dhx_cal_container_rtl .dhx_cal_event_line_end {
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+.dhx_cal_container_rtl .dhx_cal_event_line_start {
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+.dhx_cal_container_rtl .dhx_cal_event_line_end {
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
 .dhx_cal_event_clear {
-  height: 19px;
+  height: 20px;
   padding: 1px 0 0 11px;
   color: #0288D1;
   font-family: "Roboto", Arial;
@@ -335,14 +361,22 @@ div.dhx_menu_head {
   border: none;
   cursor: default;
 }
+.dhx_cal_container_rtl div.dhx_menu_head {
+  margin-left: 5px;
+  margin-right: 0;
+}
 div.dhx_menu_icon {
   background-image: url(imgs_dhx_material/controls.png);
   width: 20px;
   height: 20px;
-  margin-left: -5px;
+  margin-left: 0;
   margin-top: 0px;
   border: none;
   cursor: pointer;
+}
+.dhx_cal_container_rtl div.dhx_menu_icon {
+  margin-left: 0;
+  margin-right: 1px;
 }
 div.icon_details {
   background-position: 0px 0px;
@@ -399,6 +433,20 @@ div.icon_delete {
     -moz-user-select: none;
   }
 }
+.dhx_cal_data div.dhx_cal_event_clear,
+.dhx_multi_day div.dhx_cal_event_clear,
+.dhx_cal_data div.dhx_cal_event_line,
+.dhx_multi_day div.dhx_cal_event_line {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+@media only screen and (max-width: 550px) {
+  .dhx_cal_event_clear,
+  .dhx_cal_event_line {
+    padding-left: 2px;
+  }
+}
 .dhx_unselectable,
 .dhx_unselectable div {
   -webkit-user-select: none;
@@ -417,6 +465,9 @@ div.icon_delete {
   position: absolute;
   z-index: 15;
   width: 580px;
+}
+.dhx_cal_light_rtl {
+  box-shadow: none;
 }
 .dhx_cal_ltitle {
   padding: 3px 15px 1px 15px;
@@ -441,6 +492,9 @@ div.icon_delete {
   font-size: 14px;
   display: inline-block;
   margin: 0;
+}
+.dhx_cal_light_rtl .dhx_time {
+  padding: 0 0 0 0;
 }
 .dhx_cal_light_wide {
   width: 650px;
@@ -477,7 +531,10 @@ div.icon_delete {
 }
 .dhx_cal_light_wide .dhx_cal_larea {
   border-top-width: 0px;
-  margin: 0;
+  margin: 0 0 0 0;
+}
+.dhx_cal_light_rtl .dhx_cal_larea {
+  margin: 0 0 0 0;
 }
 .dhx_cal_light_wide .dhx_wrap_section {
   border-top: 0;
@@ -529,7 +586,7 @@ div.icon_delete {
   float: none;
   width: auto;
   height: auto;
-  padding: 4px 0 0 4px;
+  padding: 4px 0px 0px 4px;
 }
 .dhx_readonly {
   height: 15px;
@@ -590,6 +647,10 @@ div.icon_delete {
   color: #0288D1;
   float: right;
   float: left;
+}
+.dhx_cal_light_rtl .dhx_btn_set,
+.dhx_cal_light_rtl .dhx_cancel_btn_set {
+  float: right;
 }
 .dhx_save_btn {
   background-image: url('./imgs/controls.gif');
@@ -668,6 +729,9 @@ div.icon_delete {
   margin-top: 8px;
   margin-left: 14px;
 }
+.dhx_cal_light_rtl .dhx_wrap_section .dhx_cal_wide_checkbox input[type="checkbox"] {
+  margin: 8px 14px 0 0;
+}
 .dhx_cal_light input {
   font-family: "Roboto", Arial;
   font-size: 8pt;
@@ -696,6 +760,298 @@ div.icon_delete {
 }
 .dhx_cal_light_wide .dhx_repeat_right {
   margin-right: 55px;
+}
+.dhx_cal_light_rtl {
+  direction: rtl;
+}
+.dhx_cal_light_rtl .dhx_cal_ltitle {
+  padding: 3px 15px 1px 15px;
+}
+.dhx_cal_light_rtl .dhx_mark {
+  padding: 0 10px 0 0;
+}
+.dhx_cal_light_rtl .dhx_title {
+  padding: 0 13px 0 0;
+}
+.dhx_cal_light_rtl .dhx_wrap_section {
+  padding: 0px;
+}
+.dhx_cal_light_rtl .dhx_wrap_section .dhx_cal_ltext.dhx_cal_template {
+  direction: ltr;
+  float: right;
+  margin-right: 15px !important;
+}
+.dhx_cal_light_rtl .dhx_cal_lsection {
+  float: right;
+  text-align: left;
+  margin: 0 20px 0 0;
+}
+.dhx_cal_light_rtl .dhx_cal_ltext {
+  padding: 4px 4px 0px 0px;
+}
+.dhx_cal_light_rtl .dhx_cal_ltext textarea {
+  padding: 4px 8px 0 0;
+}
+.dhx_cal_light_rtl .dhx_section_time {
+  padding: 2px 117px 0 0 !important;
+}
+.dhx_cal_light_rtl select {
+  padding: 2px 8px 2px 2px;
+  margin: 0 0 16px 8px;
+}
+.dhx_cal_light_rtl .dhx_custom_button {
+  left: 15px;
+  right: auto;
+  right: unset;
+}
+@media only screen and (max-width: 1023px) {
+  .dhx_cal_overflow_container {
+    overflow: auto !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive {
+    width: 98vw !important;
+    height: auto !important;
+    left: 1% !important;
+    top: 1.953vw !important;
+    font-size: 3.906vw !important;
+    line-height: 3.906vw !important;
+    padding-bottom: 2vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_btn_set {
+    margin-bottom: 1.953vw !important;
+    font-size: 3.906vw;
+    height: auto !important;
+    padding: 1.953vw 1.563vw 1.953vw 1.563vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_btn_set div {
+    height: 2.93vw;
+    line-height: 2.93vw;
+    padding: 0 1.563vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_larea {
+    width: auto !important;
+    margin-left: 0 !important;
+    height: 100% !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_lsection {
+    font-size: 3.906vw !important;
+    width: 23.438vw !important;
+    margin-left: 3vw;
+    line-height: 3.906vw !important;
+    margin-right: 0;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_lsection .dhx_custom_button {
+    padding: 0.977vw;
+    min-width: 25.391vw !important;
+    min-height: 5.371vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_ltitle {
+    height: 2rem !important;
+    line-height: 2rem !important;
+    margin-bottom: 0.5rem;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_ltitle span {
+    font-size: 3.906vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive textarea,
+  .dhx_cal_light.dhx_cal_light_responsive select,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time select,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_lsection div.dhx_custom_button,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_template,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_radio {
+    font-size: 3.5vw;
+    line-height: 3.5vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive textarea label,
+  .dhx_cal_light.dhx_cal_light_responsive select label,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time select label,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_lsection div.dhx_custom_button label,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_template label,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_radio label {
+    margin: 1vw 3vw 1vw 0.5vw;
+    vertical-align: top;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive select,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_section_time select {
+    min-height: 5.859vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_ltext {
+    margin-left: 26.5vw !important;
+    height: 100% !important;
+    min-height: 4.883vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_repeat_center,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_repeat_left,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_repeat_divider,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_repeat_right {
+    height: 11.23vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time {
+    padding-left: 26.5vw !important;
+    width: 70vw !important;
+    min-height: 19.531vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time select {
+    float: left;
+    margin: 1.465vw 0.977vw 1.465vw 0.977vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time .dhx_lightbox_time_select {
+    width: 18.555vw;
+    padding-left: 5.859vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time .dhx_lightbox_day_select {
+    min-width: 7.813vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time .dhx_lightbox_year_select {
+    min-width: 12.695vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time .dhx_lightbox_month_select {
+    width: 17.578vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_wide_checkbox {
+    height: 100% !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_multi_select_control {
+    height: 100% !important;
+    vertical-align: middle;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_multi_select_control input {
+    vertical-align: middle;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive input {
+    width: 4.883vw;
+    height: 4.883vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_custom_button div {
+    height: 3.125vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_custom_button .dhx_custom_button_recurring {
+    background-size: 7.813vw !important;
+    width: 6.836vw !important;
+    height: 6.836vw !important;
+    background-repeat: no-repeat !important;
+    background-position: -25px -1px !important;
+    padding-top: 0 !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section {
+    min-height: 7.813vw !important;
+    max-width: 92.773vw !important;
+    margin: 0.977vw 0;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat {
+    margin: 6.836vw 0 0 23.438vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat form {
+    height: 48.828vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat div {
+    width: 75vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_left br {
+    content: ' ';
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat input {
+    top: 1.465vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat select {
+    width: 14.648vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat label {
+    padding-right: 0;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat form,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat form select,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_date,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_text,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat label {
+    font-size: 2.93vw !important;
+    line-height: 2.93vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_center {
+    height: auto !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_text {
+    width: 6.836vw !important;
+    height: 5.859vw !important;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background-color: #FFFFFF;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_checkbox {
+    width: 2.93vw !important;
+    height: 2.93vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_days label {
+    font-size: 2.441vw !important;
+    line-height: 2.5vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_right {
+    height: auto !important;
+    float: left;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_right .dhx_repeat_date {
+    width: 19.531vw !important;
+    height: 7.813vw !important;
+    padding-left: 1.465vw !important;
+    margin-top: 1.465vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_divider {
+    border-top: 1px solid #CECECE;
+    border-left: 0;
+    width: 70vw;
+    height: 1px;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_custom_button div {
+    /*padding-top: @ligthbox-responsive-recurring-btn-div-padding;*/
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_cal_larea {
+    margin-right: 0 !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_cal_lsection {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_cal_ltext {
+    margin-right: 23.438vw !important;
+    margin-left: 0 !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_wrap_section .dhx_cal_wide_checkbox input[type="checkbox"] {
+    margin: 0.781vw 1.367vw 0 0;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time {
+    padding-right: 23.438vw !important;
+    padding-left: 0 !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time select {
+    float: right;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time .dhx_lightbox_time_select {
+    padding-right: 5.859vw !important;
+    padding-left: 0 !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time span {
+    display: none;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_form_repeat {
+    margin: 6.836vw 23.438vw 0 0 !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_form_repeat label {
+    padding-left: 0;
+    padding-right: 0 !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_right {
+    float: left;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_right .dhx_repeat_date {
+    padding-right: 1.465vw !important;
+    padding-left: 0 !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_multi_select_control.dhx_multi_select_control_vertical {
+    float: right;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_multi_select_control {
+    float: auto;
+    float: unset;
+  }
 }
 .dhx_minical_popup {
   position: absolute;
@@ -740,11 +1096,24 @@ div.icon_delete {
   line-height: 21px;
   overflow: hidden;
 }
+.dhx_cal_container_rtl .dhx_agenda_line div {
+  float: right;
+}
+.dhx_cal_container_rtl .dhx_agenda_line .description_header {
+  padding-right: 15px;
+  float: right;
+}
 .dhx_cal_header div.dhx_map_line,
 .dhx_cal_header div.dhx_agenda_line div,
 .dhx_cal_header div.dhx_agenda_line span {
   font-weight: 500;
   color: rgba(0, 0, 0, 0.54);
+}
+.dhx_cal_container_rtl .dhx_cal_header div.dhx_map_line {
+  float: right;
+}
+.dhx_cal_container_rtl .dhx_agenda_area .dhx_agenda_line div {
+  border-left: 0px dotted #000;
 }
 .dhx_agenda_area .dhx_agenda_line div {
   border-right: 0px dotted #000;
@@ -757,6 +1126,10 @@ div.icon_delete {
   width: 1px;
   height: 100%;
 }
+.dhx_cal_container_rtl .dhx_v_border {
+  right: 186px;
+  left: unset;
+}
 .dhx_agenda_line .dhx_event_icon {
   width: 20px;
   border-width: 0px;
@@ -764,9 +1137,16 @@ div.icon_delete {
   background-position: 5px 4px;
   cursor: pointer;
 }
+.dhx_cal_container_rtl .dhx_agenda_line .dhx_event_icon {
+  background-position-x: 2px;
+}
 .dhx_agenda_line span {
   padding-left: 5px;
   line-height: 21px;
+}
+.dhx_cal_container_rtl .dhx_agenda_line span {
+  padding-left: 0;
+  padding-right: 5px;
 }
 .dhx_year_body {
   border-left: 1px solid #e0e0e0;
@@ -776,6 +1156,13 @@ div.icon_delete {
 }
 .dhx_scale_bar_last {
   border-right: 1px solid #e0e0e0;
+}
+.dhx_cal_container_rtl .dhx_year_body {
+  border-left: 0;
+  border-right: 1px solid #e0e0e0;
+}
+.dhx_cal_container_rtl .dhx_year_box .dhx_scale_bar_last {
+  border-left: 1px solid #e0e0e0;
 }
 .dhx_year_month {
   height: 18px;
@@ -862,6 +1249,9 @@ div.icon_delete {
   cursor: pointer;
   background: url(./imgs_dhx_material/calendar.svg) no-repeat;
 }
+.dhx_grid_rtl {
+  direction: rtl;
+}
 .dhx_matrix_scell,
 .dhx_timeline_scale_header {
   height: 100%;
@@ -878,8 +1268,17 @@ div.icon_delete {
   border-bottom: 1px solid #e0e0e0;
   border-right: 1px solid #e0e0e0;
 }
+.dhx_cal_container_rtl .dhx_matrix_cell,
+.dhx_cal_container_rtl .dhx_matrix_scell {
+  border-right: unset;
+  border-left: 1px solid #e0e0e0;
+}
 .dhx_timeline_scale_header {
   border-right: 1px solid #e0e0e0;
+}
+.dhx_cal_container_rtl .dhx_timeline_scale_header {
+  border-right: unset;
+  border-left: 1px solid #e0e0e0;
 }
 .dhx_cal_data .dhx_timeline_table_wrapper div {
   box-sizing: border-box;
@@ -914,8 +1313,18 @@ div.icon_delete {
 .dhx_event_resize_start {
   left: 0;
 }
+.dhx_cal_container_rtl .dhx_event_resize_start {
+  left: auto;
+  left: unset;
+  right: 0;
+}
 .dhx_event_resize_end {
   right: 0;
+}
+.dhx_cal_container_rtl .dhx_event_resize_end {
+  right: auto;
+  right: unset;
+  left: 0;
 }
 /* Tree view */
 .dhx_matrix_scell.folder,
@@ -960,6 +1369,39 @@ div.icon_delete {
   padding-left: 15px;
   text-align: left;
 }
+.dhx_cal_container_rtl .dhx_matrix_scell .dhx_scell_level0 {
+  padding-left: 0;
+  padding-right: 5px;
+}
+.dhx_cal_container_rtl .dhx_matrix_scell .dhx_scell_level1 {
+  padding-left: 0;
+  padding-right: 20px;
+}
+.dhx_cal_container_rtl .dhx_matrix_scell .dhx_scell_level2 {
+  padding-left: 0;
+  padding-right: 35px;
+}
+.dhx_cal_container_rtl .dhx_matrix_scell .dhx_scell_level3 {
+  padding-left: 0;
+  padding-right: 50px;
+}
+.dhx_cal_container_rtl .dhx_matrix_scell .dhx_scell_level4 {
+  padding-left: 0;
+  padding-right: 65px;
+}
+.dhx_cal_container_rtl .dhx_matrix_scell.folder .dhx_scell_expand {
+  float: right;
+  padding-right: 0;
+  padding-left: 3px;
+}
+.dhx_cal_container_rtl .dhx_matrix_scell.folder .dhx_scell_name {
+  float: right;
+}
+.dhx_cal_container_rtl .dhx_matrix_scell.item .dhx_scell_name {
+  padding-left: 0;
+  padding-right: 15px;
+  text-align: right;
+}
 .dhx_data_table.folder .dhx_matrix_cell {
   border-right: 0;
 }
@@ -985,6 +1427,9 @@ div.icon_delete {
   background: url(./imgs/icon.png) no-repeat;
   background-position: 5px 4px;
   cursor: pointer;
+}
+.dhx_cal_container_rtl .dhx_map_line .dhx_event_icon {
+  margin-right: 3px;
 }
 .dhx_map_line {
   height: 21px;
@@ -1019,6 +1464,15 @@ div.icon_delete {
 .dhx_map_line .headline_description {
   border-left: 0;
 }
+.dhx_cal_container_rtl .dhx_map_line div {
+  float: right;
+}
+.dhx_cal_container_rtl .dhx_map_line .headline_date,
+.dhx_cal_container_rtl .dhx_map_line .headline_description {
+  float: right;
+  border-left: 1px solid #e0e0e0;
+  border-right: 0;
+}
 .dhx_map_line .line_description {
   float: left;
   border-right: 1px dotted #8894A3;
@@ -1026,6 +1480,11 @@ div.icon_delete {
   padding-left: 5px;
   line-height: 21px;
   overflow: hidden;
+}
+.dhx_cal_container_rtl .dhx_map_line .line_description {
+  float: right;
+  text-align: right;
+  padding-left: unset;
 }
 .dhx_map_line.highlight {
   background-color: #C4C5CC;
@@ -1048,6 +1507,24 @@ div.icon_delete {
   z-index: 9;
   opacity: 1;
   font-family: "Roboto", Arial;
+}
+.dhtmlXTooltip_rtl {
+  direction: rtl;
+}
+.dhx_tooltip_rtl {
+  direction: rtl;
+}
+.dhx_tooltip_rtl .dhx_tooltip_date {
+  float: right;
+  padding: 0 5px 0 0;
+}
+.dhx_tooltip_rtl .dhx_tooltip_line {
+  margin: 0 0 0 12px;
+  padding: 0 4px 0 0;
+}
+.dhx_tooltip_rtl .dhx_tooltip_line .dhx_event_icon.icon_details {
+  float: right;
+  padding: 0 0 0 10px;
 }
 /* dhtmlXTooltip end */
 /* Lightbox checkbox section */
@@ -1088,8 +1565,14 @@ div.icon_delete {
 .dhx_wa_column {
   float: left;
 }
+.dhx_cal_container_rtl .dhx_wa_column {
+  float: right;
+}
 .dhx_wa_column_last .dhx_wa_day_cont {
   border-left: 1px solid #e0e0e0;
+}
+.dhx_cal_container_rtl .dhx_wa_column_last .dhx_wa_day_cont {
+  border-right: 1px solid #e0e0e0;
 }
 .dhx_wa_scale_bar {
   font-family: "Roboto", Arial;
@@ -1097,6 +1580,10 @@ div.icon_delete {
   font-size: 11px;
   border-top: 1px solid #e0e0e0;
   border-bottom: 1px solid #e0e0e0;
+}
+.dhx_cal_container_rtl .dhx_wa_scale_bar {
+  padding-left: 0;
+  padding-right: 10px;
 }
 .dhx_wa_day_data {
   background-color: #FCFEFC;
@@ -1106,6 +1593,12 @@ div.icon_delete {
   border-bottom: 1px solid #e0e0e0;
   font-size: 14px;
   padding: 5px 0 5px 7px;
+}
+.dhx_cal_container_rtl .dhx_wa_ev_body {
+  padding: 5px 7px 5px 0;
+}
+.dhx_wa_ev_body_rtl {
+  direction: rtl;
 }
 .dhx_wa_dnd {
   font-family: "Roboto", Arial;
@@ -1129,6 +1622,10 @@ div.icon_delete {
 /* grid view */
 .dhx_cal_header div.dhx_grid_line div {
   border-left: 1px solid #e0e0e0;
+}
+.dhx_cal_container_rtl .dhx_cal_header div.dhx_grid_line div {
+  border-right: 1px solid #e0e0e0;
+  border-left: 0;
 }
 .dhx_grid_area {
   width: 100%;
@@ -1160,6 +1657,9 @@ div.icon_delete {
   line-height: 21px;
   overflow: hidden;
 }
+.dhx_cal_container_rtl .dhx_grid_line div {
+  float: right;
+}
 .dhx_grid_area td,
 .dhx_grid_line div {
   padding-left: 8px;
@@ -1173,6 +1673,15 @@ div.icon_delete {
 .dhx_grid_area tr.dhx_grid_event td {
   /*borders for old ies*/
   border-bottom: 1px solid #ECEEF4;
+}
+.dhx_cal_container_rtl .dhx_grid_area tr.dhx_grid_event td {
+  /*borders for old ies*/
+  border-bottom: 1px solid #ECEEF4;
+  direction: ltr;
+}
+.dhx_cal_container_rtl .dhx_map_line div.dhx_map_event_time {
+  float: right;
+  direction: ltr;
 }
 .dhx_grid_area tr.dhx_grid_event:nth-child(2n+1) td,
 .dhx_grid_area tr.dhx_grid_event:nth-child(2n) td {
@@ -1192,6 +1701,10 @@ div.icon_delete {
   border-right: 1px solid #A4BED4;
   width: 1px;
   height: 100%;
+}
+.dhx_cal_container_rtl .dhx_grid_v_border {
+  border-left: 1px solid #A4BED4;
+  border-right: 0;
 }
 .dhx_grid_event_selected {
   background-color: #9cc1db !important;
@@ -1280,10 +1793,17 @@ div.icon_delete {
 .dhx_cal_quick_info.dhx_qi_left .dhx_qi_big_icon {
   float: right;
 }
+.dhx_quick_info_rtl.dhx_cal_quick_info.dhx_qi_left .dhx_qi_big_icon {
+  float: left;
+}
 .dhx_cal_qi_title {
   padding: 10px 0px 10px 10px;
   color: #FFF;
   letter-spacing: unset;
+}
+.dhx_cal_container_rtl .dhx_cal_qi_title {
+  padding: 10px 18px 10px 0px;
+  text-align: right;
 }
 .dhx_cal_qi_tdate {
   font-size: 14px;
@@ -1304,6 +1824,10 @@ div.icon_delete {
   width: 275px;
   overflow: hidden;
 }
+.dhx_quick_info_rtl .dhx_cal_qi_content {
+  padding: 24px 10px 16px 8px;
+  direction: rtl;
+}
 .dhx_qi_big_icon {
   min-width: 60px;
   padding: 5px 10px 5px 9px;
@@ -1318,14 +1842,27 @@ div.icon_delete {
   cursor: pointer;
   float: left;
 }
+.dhx_quick_info_rtl .dhx_qi_big_icon {
+  padding: 5px 5px 9px 10px;
+  margin: 5px 0px 5px 9px;
+}
 .dhx_cal_qi_controls div {
   float: left;
   height: 20px;
   text-align: center;
   line-height: 20px;
 }
+.dhx_quick_info_rtl .dhx_cal_qi_controls div {
+  float: right;
+}
+.dhx_quick_info_rtl.dhx_qi_right .dhx_cal_qi_controls {
+  padding-right: 15px;
+}
 .dhx_qi_big_icon .dhx_menu_icon {
   margin: 0 8px 0 0px;
+}
+.dhx_quick_info_rtl .dhx_qi_big_icon .dhx_menu_icon {
+  margin: 0 0 0 8px;
 }
 .dhx_drag_marker {
   width: 100%;
@@ -1458,11 +1995,17 @@ div.icon_delete {
 .dhx_cal_light .dhx_cal_radio input[type="radio"] {
   margin: 0px 0px 0px 5px;
 }
+.dhx_cal_light_rtl .dhx_cal_radio input[type="radio"] {
+  margin: 0px 5px 0px 0px;
+}
 .dhx_cal_light .dhx_cal_radio label {
   display: inline-block;
   margin: 3px 30px 0px 5px;
   position: relative;
   top: -2px;
+}
+.dhx_cal_light_rtl .dhx_cal_radio label {
+  margin: 3px 5px 0px 30px;
 }
 .dhx_cal_event div {
   line-height: normal;
@@ -1604,6 +2147,9 @@ div.icon_delete {
   border-right: 1px solid transparent;
   z-index: 2;
 }
+.dhx_cal_container_rtl .dhx_cal_header {
+  left: unset;
+}
 .dhx_cal_data {
   -webkit-tap-highlight-color: transparent;
   border-top: 1px solid transparent;
@@ -1612,6 +2158,9 @@ div.icon_delete {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+}
+.dhx_cal_container_rtl .dhx_cal_data {
+  direction: rtl;
 }
 .dhx_cal_data,
 .dhx_cal_event,
@@ -1640,9 +2189,28 @@ div.icon_delete {
   image-rendering: crisp-edges;
   image-rendering: pixelated;
 }
+.dhx_cal_container_rtl .dhx_scale_holder {
+  border-left: 1px solid #e0e0e0;
+  border-right: 0;
+}
+.dhx_cal_container_rtl .dhx_cal_header {
+  border-right: 0;
+  border-left: 1px solid transparent;
+}
+.dhx_cal_container_rtl .dhx_scale_bar {
+  border-left: 0;
+  border-right: 1px solid #e0e0e0;
+}
+.dhx_cal_container_rtl .dhx_month_head {
+  border-right: 0;
+  border-left: 1px solid #e0e0e0;
+}
+.dhx_cal_container_rtl .dhx_month_body {
+  border-right: 0;
+  border-left: 1px solid #e0e0e0;
+}
 .dhx_scale_holder_now {
   position: absolute;
-  border-right: 1px solid #e0e0e0;
   -ms-interpolation-mode: nearest-neighbor;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
@@ -1652,6 +2220,10 @@ div.icon_delete {
   position: absolute;
   border-right: 1px solid #e0e0e0;
   background-image: url(imgs_dhx_material/databg.png);
+}
+.dhx_cal_container_rtl .dhx_scale_holder_now {
+  border-right: 0;
+  border-left: 1px solid #e0e0e0;
 }
 .dhx_scale_hour {
   border-bottom: 1px solid #e0e0e0;
@@ -1673,6 +2245,10 @@ div.icon_delete {
   border-right: 1px solid #e0e0e0;
   background-color: #FFFFFF;
   text-align: right;
+}
+.dhx_cal_container_rtl .dhx_month_head {
+  text-align: left;
+  padding: 0 0 0 8px;
 }
 .dhx_after .dhx_month_head,
 .dhx_before .dhx_month_head {
@@ -1731,6 +2307,9 @@ div.icon_delete {
   border-right: none;
   box-shadow: none;
 }
+.dhx_cal_container_rtl .dhx_multi_day {
+  direction: rtl;
+}
 .dhx_multi_day_icon,
 .dhx_multi_day_icon_small {
   background-color: transparent;
@@ -1738,6 +2317,11 @@ div.icon_delete {
   border-bottom: 1px solid transparent;
   border-right: 1px solid transparent;
   background-repeat: no-repeat;
+}
+.dhx_cal_container_rtl .dhx_multi_day_icon,
+.dhx_cal_container_rtl .dhx_multi_day_icon_small {
+  border-right: 0;
+  border-left: 1px solid transparent;
 }
 .dhx_multi_day_icon {
   background-image: url(imgs_dhx_material/clock_big.png);
@@ -1772,6 +2356,137 @@ div.icon_delete {
   background-image: url('imgs/export_ical.png');
 }
 /* export to PDF and iCal buttons end */
+.dhx_cal_navline.dhx_cal_navline_flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 1vw;
+  box-sizing: border-box;
+  /*.dhx_cal_tab_standalone{
+		margin-left: 14px;
+	}*/
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab {
+  box-sizing: border-box;
+  height: 32px;
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab_last {
+  margin-right: 14px;
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab {
+  border-left-style: none;
+  box-shadow: -1px 0 0 #0288D1;
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_date {
+  width: auto;
+  flex-grow: 1;
+}
+.dhx_cal_navline.dhx_cal_navline_flex div {
+  position: static;
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_navbar_row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0 1vw;
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_next_button {
+  border-left-style: none;
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_navbar_rows_container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  box-sizing: border-box;
+  flex-grow: 1;
+  height: 100%;
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_line_break,
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_line_spacer {
+  display: block;
+  width: auto;
+  flex-grow: 1;
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_today_button,
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab_standalone {
+  margin: 0 7px;
+}
+@media only screen and (max-width: 1023px) {
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab.active,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_today_button {
+    min-width: 4vw;
+    font-size: 1.3vw;
+    box-sizing: content-box;
+    padding: 0 0.5vw;
+    width: auto;
+  }
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab.active,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_today_button,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_prev_button,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_next_button {
+    height: 2.5vw;
+    line-height: 2.5vw;
+  }
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab_last {
+    margin-right: 2vw;
+  }
+}
+@media only screen and (max-width: 840px) {
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab.active,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_today_button {
+    min-width: 4vw;
+    font-size: 1.5vw;
+    box-sizing: content-box;
+    padding: 0 0.5vw;
+    width: auto;
+  }
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab.active,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_today_button,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_prev_button,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_next_button {
+    height: 4vw;
+    line-height: 4vw;
+  }
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab_last {
+    margin-right: 1vw;
+  }
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_date {
+    font-size: 2.5vw;
+  }
+}
+@media only screen and (max-width: 480px) {
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab.active,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_today_button {
+    font-size: 0.8rem;
+    padding: 0 2vw;
+  }
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab.active,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_today_button,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_prev_button,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_next_button {
+    height: 6vw;
+    line-height: 6vw;
+  }
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_prev_button,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_next_button {
+    width: 2rem;
+  }
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_date {
+    font-size: 4vw;
+  }
+}
 /*All*/
 .dhx_form_repeat,
 .dhx_form_repeat input {
@@ -1822,6 +2537,17 @@ div.icon_delete {
   width: 173px;
   padding: 17px 3px 0px 10px;
 }
+.dhx_cal_light_rtl .dhx_repeat_center,
+.dhx_cal_light_rtl .dhx_repeat_left,
+.dhx_cal_light_rtl .dhx_repeat_divider,
+.dhx_cal_light_rtl .dhx_repeat_right {
+  float: none;
+  display: inline-block;
+  vertical-align: top;
+}
+.dhx_cal_light_rtl .dhx_repeat_right {
+  margin-right: 0;
+}
 input.dhx_repeat_text {
   height: 16px;
   width: 27px;
@@ -1829,11 +2555,17 @@ input.dhx_repeat_text {
   line-height: 18px;
   padding: 0 0 0 2px;
 }
+.dhx_cal_light_rtl input.dhx_repeat_text {
+  padding: 0 2px 0 0;
+}
 .dhx_form_repeat select {
   height: 20px;
   width: 87px;
   padding: 0 0 0 2px;
   margin: 0 4px 0 4px;
+}
+.dhx_cal_light_rtl .dhx_form_repeat select {
+  padding: 0 2px 0 0;
 }
 input.dhx_repeat_date {
   height: 18px;
@@ -1845,11 +2577,17 @@ input.dhx_repeat_date {
   border: 1px #7f9db9 solid;
   line-height: 18px;
 }
+.dhx_cal_light_rtl input.dhx_repeat_date {
+  padding: 0 2px 0 0;
+}
 input[type="radio"].dhx_repeat_radio {
   margin: 5px 4px 0 0;
   display: inline-block;
   position: relative;
   top: 2px;
+}
+.dhx_cal_light_rtl input[type="radio"].dhx_repeat_radio {
+  margin: 5px 0 0 4px;
 }
 input.dhx_repeat_checkbox {
   margin: 4px 4px 0 0;
@@ -2042,6 +2780,10 @@ input.dhx_repeat_checkbox {
   color: #FFFFFF;
   background-color: #0288D1;
 }
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_today_button,
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab_standalone {
+  margin: 0;
+}
 /*============================================================================================
                             3.	Event and It's Elements 
 ==============================================================================================*/
@@ -2117,6 +2859,12 @@ div.dhx_menu_icon {
   border-left-style: solid;
   border-left-color: #e0e0e0;
 }
+.dhx_cal_container_rtl .dhx_cal_header div.dhx_bottom_scale_container .dhx_scale_bar,
+.dhx_cal_container_rtl .dhx_cal_header div.dhx_second_cal_header .dhx_scale_bar {
+  border-left: 0;
+  border-right-style: solid;
+  border-right-color: #e0e0e0;
+}
 .dhx_scale_bar.dhx_second_scale_bar {
   border-bottom: 0px;
   border-bottom-style: solid;
@@ -2162,9 +2910,6 @@ div.dhx_menu_icon {
   border-top: 1px solid #e0e0e0;
   padding: 1px 0 0 0;
 }
-.dhx_cal_header .dhx_scale_bar {
-  border-left-color: #ffffff;
-}
 .dhx_cal_header div .dhx_scale_bar {
   border-top: 1px solid transparent;
 }
@@ -2173,13 +2918,29 @@ div.dhx_menu_icon {
   border-bottom: 1px solid transparent;
   border-left: 1px solid #e0e0e0;
 }
+.dhx_cal_container_rtl .dhx_cal_header.dhx_second_cal_header .dhx_scale_bar.dhx_second_scale_bar {
+  border-left: unset;
+  border-right: 1px solid #e0e0e0;
+}
 .dhx_cal_container .dhx_cal_header.dhx_second_cal_header .dhx_scale_bar {
   border-left: 1px solid #e0e0e0;
+}
+.dhx_cal_container_rtl .dhx_cal_header.dhx_second_cal_header .dhx_scale_bar {
+  border-left: unset;
+  border-right: 1px solid #e0e0e0;
 }
 .dhx_cal_header.dhx_second_cal_header {
   border-right: 1px solid #e0e0e0;
 }
+.dhx_cal_container_rtl .dhx_cal_header.dhx_second_cal_header {
+  border-right: unset;
+  border-left: 1px solid #e0e0e0;
+}
 .dhx_cal_header .dhx_scale_bar.dhx_second_scale_bar:last-child {
+  border-right: 1px solid #e0e0e0;
+}
+.dhx_cal_container_rtl .dhx_cal_header .dhx_scale_bar.dhx_second_scale_bar:last-child {
+  border-left: unset;
   border-right: 1px solid #e0e0e0;
 }
 .dhx_scale_bar.undefined:last-child {
@@ -2486,6 +3247,9 @@ td .dhx_month_head a:hover,
 .dhx_cal_qi_controls div {
   float: unset;
 }
+.dhx_quick_info_rtl .dhx_cal_qi_controls div {
+  float: left;
+}
 .dhx_cal_qi_controls div.dhx_qi_big_icon {
   display: inline-block;
 }
@@ -2556,11 +3320,20 @@ td .dhx_month_head a:hover,
 .dhx_cal_header .dhx_scale_bar {
   border-left-color: transparent;
 }
+.dhx_cal_container_rtl .dhx_cal_header .dhx_scale_bar {
+  border-right-color: transparent;
+}
 .dhx_timeline_scale_header {
   border-right-color: transparent;
 }
+.dhx_cal_container_rtl .dhx_timeline_scale_header {
+  border-left-color: transparent;
+}
 .dhx_timeline_scale_header.dhx_timeline_second_scale {
   border-right-color: #e0e0e0;
+}
+.dhx_cal_container_rtl .dhx_timeline_scale_header.dhx_timeline_second_scale {
+  border-left-color: #e0e0e0;
 }
 textarea.dhx_cal_editor {
   box-sizing: border-box;
@@ -2598,6 +3371,14 @@ textarea.dhx_cal_editor {
   background: url(imgs_dhx_material/menu-down.svg) no-repeat 100% 3px;
   box-sizing: border-box;
 }
+.dhx_cal_light_rtl .dhx_section_time select.dhx_lightbox_day_select,
+.dhx_cal_light_rtl .dhx_section_time select.dhx_lightbox_month_select,
+.dhx_cal_light_rtl .dhx_section_time select.dhx_lightbox_year_select {
+  background-position-x: left;
+}
+.dhx_cal_light_rtl .dhx_section_time select.dhx_lightbox_time_select {
+  background: url(imgs_dhx_material/time.svg) no-repeat 75px 5px, url(imgs_dhx_material/menu-down.svg) no-repeat left !important;
+}
 .dhx_section_time select.dhx_lightbox_month_select {
   width: 98px!important;
   background: url(imgs_dhx_material/menu-down.svg) no-repeat 100% 3px;
@@ -2611,8 +3392,15 @@ textarea.dhx_cal_editor {
 .dhx_section_time select:nth-child(6) {
   margin: 0 0px 16px 4px;
 }
+.dhx_cal_light_rtl .dhx_section_time select:nth-child(1),
+.dhx_cal_light_rtl .dhx_section_time select:nth-child(6) {
+  margin: 0 4px 16px 0;
+}
 .dhx_section_time select:last-child {
   margin: 0 0px 16px 6px;
+}
+.dhx_cal_light_rtl .dhx_section_time select:last-child {
+  margin: 0 6px 16px 0;
 }
 .dhx_section_time {
   color: #ffffff;
@@ -2627,6 +3415,14 @@ textarea.dhx_cal_editor {
   appearance: none;
   position: relative;
   padding: 0 0 0 4px!important;
+}
+.dhx_cal_light_rtl .dhx_section_time select {
+  float: right;
+  margin: 0 6px 16px 0;
+  padding: 0 4px 0 0!important;
+}
+.dhx_cal_light_rtl select.dhx_lightbox_time_select {
+  padding: 0 34px 0 0!important;
 }
 .dhx_time {
   color: #ffffff;
@@ -2644,13 +3440,24 @@ textarea.dhx_cal_editor {
   background: url(imgs_dhx_material/menu-down.svg) no-repeat 100% 3px;
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
+.dhx_cal_light.dhx_cal_light_rtl select {
+  background: url(imgs_dhx_material/menu-down.svg) no-repeat left;
+}
 .dhx_multi_select_control {
   padding-top: 3px;
   padding-left: 15px;
   line-height: 32px;
 }
+.dhx_cal_light_rtl .dhx_multi_select_control {
+  padding: 3px 15px 0 0;
+  float: right;
+}
 .dhx_multi_select_control label {
   margin-right: 12px;
+}
+.dhx_cal_light_rtl .dhx_multi_select_control label {
+  margin: 0 0 0 12px;
+  float: right;
 }
 .dhx_multi_select_control.dhx_multi_select_control_vertical {
   padding-top: 6px;
@@ -2697,6 +3504,9 @@ textarea.dhx_cal_editor {
 .dhx_cal_light_wide .dhx_wrap_section {
   padding-right: 15px;
 }
+.dhx_cal_light_rtl .dhx_wrap_section {
+  padding: 0 0 0 15px;
+}
 /*.dhx_cal_light_wide .dhx_wrap_section:nth-child(2){
 	height: @lightbox-area-second-wrap-height;
 }*/
@@ -2725,6 +3535,12 @@ textarea.dhx_cal_editor {
   clear: both;
   display: table;
 }
+.dhx_cal_light_rtl .dhx_wrap_section .dhx_section_time {
+  line-height: 0;
+}
+.dhx_cal_light_rtl .dhx_section_time {
+  white-space: normal;
+}
 .dhx_cancel_btn_set:hover {
   background-color: #D9EDF8;
   transition: all 0.1s ease-in-out;
@@ -2737,13 +3553,13 @@ textarea.dhx_cal_editor {
   border: 1px solid rgba(255, 88, 76, 0.01);
   background-color: rgba(255, 88, 76, 0.3);
 }
+.dhx_cal_light_rtl .dhx_delete_btn_set {
+  float: right;
+}
 .dhx_custom_btn_info_set:hover {
   background-color: #D9EDF8;
   transition: all 0.1s ease-in-out;
   border: 1px solid #D9EDF8;
-}
-.dhx_cal_ltext.dhx_cal_radio br {
-  display: none;
 }
 .dhx_cal_ltext {
   min-height: 32px!important;
@@ -2762,6 +3578,9 @@ textarea.dhx_cal_editor {
 }
 .dhx_cal_light_wide .dhx_cal_ltext {
   margin: 0 0 0 117px;
+}
+.dhx_cal_light_rtl .dhx_cal_ltext {
+  margin: 0 117px 0 0;
 }
 .dhx_multi_select_custom {
   min-height: 52px!important;
@@ -2800,6 +3619,17 @@ textarea.dhx_cal_editor {
 }
 .dhx_form_repeat form label input[type="checkbox"] {
   margin: 0 5px 0 0;
+}
+.dhx_cal_light_rtl .dhx_form_repeat {
+  margin: 30px 117px 0 0;
+  padding-left: unset;
+  padding-right: 0;
+}
+.dhx_cal_light_rtl .dhx_form_repeat form {
+  padding: 0 5px 0 0;
+}
+.dhx_cal_light_rtl .dhx_form_repeat form label input[type="checkbox"] {
+  margin: 0 0 0 5px;
 }
 .dhx_section_time input.dhx_readonly {
   height: 26px;
@@ -2862,6 +3692,7 @@ textarea.dhx_cal_editor {
 }
 .dhx_cal_ltext.dhx_cal_radio {
   padding: 4px 0 0 0;
+  overflow: auto;
 }
 .dhx_cal_light .dhx_wrap_section .dhx_cal_ltext.dhx_cal_ltext_large {
   /*height: 98px!important;*/
@@ -2910,10 +3741,10 @@ textarea.dhx_cal_editor {
   position: relative;
   top: 2px;
 }
-.dhx_repeat_center #dhx_repeat_month label {
+.dhx_repeat_center .dhx_repeat_month_label {
   width: 65px!important;
 }
-.dhx_repeat_center #dhx_repeat_year label {
+.dhx_repeat_center .dhx_repeat_year_label {
   width: 60px!important;
 }
 .dhx_repeat_left {
@@ -2935,9 +3766,17 @@ textarea.dhx_cal_editor {
   font-family: "Roboto", Arial;
   border-color: rgba(0, 0, 0, 0.08) !important;
 }
+.dhx_cal_light_rtl .dhx_repeat_right input.dhx_repeat_date {
+  margin-left: 0px;
+  margin-right: 10px;
+}
 .dhx_cal_light_wide .dhx_repeat_right {
   margin-right: 15px!important;
 }
+.dhx_cal_light_rtl .dhx_repeat_right {
+  margin-right: 0 !important;
+}
+.dhx_cal_light_rtl .dhx_repeat_divider,
 .dhx_repeat_divider {
   display: none;
 }
@@ -2953,6 +3792,9 @@ input.dhx_repeat_text {
   box-sizing: border-box !important;
   border-color: rgba(0, 0, 0, 0.08) !important;
 }
+.dhx_cal_light_rtl input.dhx_repeat_text {
+  margin: 0 4px 5px 6px!important;
+}
 .dhx_repeat_center .dhx_repeat_month select {
   margin: 0 6px 0 0;
   box-sizing: border-box;
@@ -2965,6 +3807,9 @@ input.dhx_repeat_text {
   margin-top: 8px;
   margin-left: 19px;
   vertical-align: middle;
+}
+.dhx_cal_light_rtl .dhx_wrap_section .dhx_cal_wide_checkbox input[type="checkbox"] {
+  margin: 8px 19px 0 0;
 }
 .dhx_cal_light .dhx_cal_radio input[type="radio"] {
   position: relative;
@@ -2996,6 +3841,85 @@ input.dhx_repeat_text {
   text-transform: uppercase;
   padding: 0px 16px 0px 16px;
   border-radius: 2px;
+}
+@media only screen and (max-width: 1023px) {
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_wrap_section .dhx_cal_wide_checkbox input[type="checkbox"] {
+    margin: 0.781vw 1.855vw 0 0;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_cal_lsection {
+    min-height: 2.441vw !important;
+    line-height: 1.758vw;
+    padding-top: 0.977vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time {
+    line-height: 3.125vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_cal_wide_checkbox input[type="checkbox"] {
+    margin-top: 0.781vw;
+    margin-left: 1.855vw;
+    vertical-align: middle;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive select,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_section_time select.dhx_lightbox_time_select {
+    background-position-y: 0.977vw !important;
+    background-size: 3.906vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_section_time select.dhx_lightbox_time_select {
+    padding-left: 3.32vw !important;
+    background: url(imgs_dhx_material/time.svg) no-repeat 0.781vw 0.488vw, url(imgs_dhx_material/menu-down.svg) no-repeat 100% 0.293vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_template {
+    padding-top: 0.977vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_radio {
+    min-height: 5.859vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive select {
+    height: 3.125vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_lsection div.dhx_custom_button {
+    height: 3.125vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_custom_button .dhx_custom_button_recurring + div {
+    height: 100%;
+    line-height: 5vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_multi_select_control {
+    padding-top: 0.293vw;
+    padding-left: 1.465vw;
+    line-height: 3.125vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_multi_select_control.dhx_multi_select_control_vertical {
+    padding-top: 0.586vw;
+    line-height: 2.441vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_left {
+    height: 14.766vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_left label {
+    width: 23% !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_center .dhx_repeat_month_label {
+    width: auto !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_center label {
+    margin-right: 0.488vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_center .dhx_repeat_year_label {
+    width: 13.672vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_right label:nth-child(3) {
+    width: 13.672vw !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_section_time select.dhx_lightbox_time_select {
+    background: url(imgs_dhx_material/time.svg) no-repeat 135px 25px, url(imgs_dhx_material/menu-down.svg) no-repeat left !important;
+    background-position-y: 0.977vw !important;
+    background-size: 3.906vw !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_center label {
+    margin-left: 0.488vw !important;
+    margin-right: 0 !important;
+  }
 }
 /*============================================================================================
                             7.	YEAR CALENDAR and It's Elements
@@ -3169,6 +4093,17 @@ div.dhx_year_tooltip .dhx_tooltip_line .dhx_event_icon.icon_details {
 div.dhx_year_tooltip .dhx_tooltip_line .dhx_tooltip_date {
   float: right;
 }
+div.dhx_tooltip_rtl .dhx_tooltip_line {
+  margin: 14px 0 14px 12px;
+  padding: 0 48px 0 0;
+}
+div.dhx_tooltip_rtl .dhx_tooltip_line .dhx_tooltip_date {
+  float: left;
+}
+div.dhx_tooltip_rtl .dhx_tooltip_line .dhx_event_icon.icon_details {
+  left: 0;
+  right: 4px;
+}
 /*============================================================================================
                             8.	Agenda and It's Elements
 ==============================================================================================*/
@@ -3178,6 +4113,9 @@ div.dhx_year_tooltip .dhx_tooltip_line .dhx_tooltip_date {
 .dhx_cal_header div.dhx_agenda_line div,
 .dhx_cal_header div.dhx_agenda_line span {
   border-color: transparent;
+}
+.dhx_cal_container_rtl .dhx_cal_header div.dhx_grid_line div {
+  border-right-color: transparent;
 }
 .dhx_scheduler_agenda .dhx_cal_data {
   border-top: 1px solid #fff;
@@ -3202,6 +4140,11 @@ div.dhx_year_tooltip .dhx_tooltip_line .dhx_tooltip_date {
 .dhx_agenda_area .dhx_v_border {
   border-right: 1px solid #e0e0e0;
 }
+.dhx_cal_container_rtl .dhx_map_area .dhx_v_border,
+.dhx_cal_container_rtl .dhx_grid_v_border {
+  border-left: 1px solid #e0e0e0;
+  border-right: unset;
+}
 .dhx_grid_area tr.dhx_grid_event:nth-child(even),
 .dhx_map_area div[role="row"]:nth-child(even),
 .dhx_agenda_area div[role="row"]:nth-child(even) {
@@ -3219,6 +4162,13 @@ div.dhx_year_tooltip .dhx_tooltip_line .dhx_tooltip_date {
   height: 36px;
   color: rgba(0, 0, 0, 0.75);
 }
+.dhx_cal_container_rtl .dhx_map_line div.dhx_map_event_time {
+  float: right;
+  direction: ltr;
+}
+.dhx_cal_container_rtl .dhx_agenda_event_time {
+  direction: ltr;
+}
 .dhx_map_area .dhx_map_line .dhx_event_icon,
 .dhx_agenda_area .dhx_agenda_line .dhx_event_icon {
   background: url(./imgs_dhx_material/agenda-calendar.svg) no-repeat center center;
@@ -3227,6 +4177,10 @@ div.dhx_year_tooltip .dhx_tooltip_line .dhx_tooltip_date {
   margin: 2px 0 0 3px;
   background-size: 20px 20px;
   border-radius: 50%;
+}
+.dhx_cal_container_rtl .dhx_map_area .dhx_map_line .dhx_event_icon {
+  margin: 2px 3px 0 0;
+  float: right;
 }
 .dhx_map_area .dhx_map_line .dhx_event_icon:hover,
 .dhx_agenda_area .dhx_agenda_line .dhx_event_icon:hover {
@@ -3244,6 +4198,9 @@ div.dhx_year_tooltip .dhx_tooltip_line .dhx_tooltip_date {
   height: 100%;
   color: rgba(0, 0, 0, 0.75);
 }
+.dhx_cal_container_rtl .dhx_agenda_line span {
+  padding: 0;
+}
 .dhx_scheduler_week_agenda .dhx_wa_column {
   font-family: "Roboto", Arial;
   font-size: 14px;
@@ -3259,9 +4216,15 @@ div.dhx_year_tooltip .dhx_tooltip_line .dhx_tooltip_date {
   background-color: #EDEDED;
   padding-left: 7px;
 }
+.dhx_cal_container_rtl.dhx_scheduler_week_agenda .dhx_wa_scale_bar {
+  padding-right: 7px;
+}
 .dhx_scheduler_week_agenda .dhx_wa_ev_body {
   border-bottom: 1px solid #e0e0e0;
   padding: 5px 0 5px 7px;
+}
+.dhx_cal_container_rtl.dhx_scheduler_week_agenda .dhx_wa_ev_body {
+  padding: 5px 7px 5px 0;
 }
 .dhx_wa_column.dhx_wa_column_last .dhx_wa_day_cont {
   border-left: 1px solid #e0e0e0;
@@ -3275,4 +4238,15 @@ div.dhx_year_tooltip .dhx_tooltip_line .dhx_tooltip_date {
 }
 .dhx_expand_icon {
   background-image: url("./imgs_dhx_material/collapse_expand_icon.png");
+}
+@media only screen and (max-width: 550px) {
+  .dhx_cal_event .dhx_title,
+  .dhx_cal_event .dhx_body,
+  .dhx_cal_event.dhx_cal_select_menu .dhx_body {
+    padding-left: 2px;
+  }
+  .dhx_cal_container_rtl .dhx_cal_event .dhx_title,
+  .dhx_cal_container_rtl .dhx_cal_event .dhx_body {
+    padding-right: 2px;
+  }
 }

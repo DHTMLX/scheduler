@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -95,6 +95,7 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 		} else {
 			var t = this._tooltip = document.createElement("div");
 			t.className = "dhx_year_tooltip";
+			if (this.config.rtl) t.className += " dhx_tooltip_rtl";
 			document.body.appendChild(t);
 			t.onclick = scheduler._click.dhx_cal_data;
 		}

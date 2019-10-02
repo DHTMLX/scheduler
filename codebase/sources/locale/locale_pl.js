@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -69,7 +69,34 @@ Scheduler.plugin(function(scheduler){scheduler.locale = {
 		month: "Month",
 		day: "Day",
 		hour:"Hour",
-		minute: "Minute"
+		minute: "Minute",
+
+		/* recurring event components */
+		repeat_radio_day: "Codziennie",
+		repeat_radio_week: "Co tydzie",
+		repeat_radio_month: "Co miesic",
+		repeat_radio_year: "Co rok",
+		repeat_radio_day_type: "Kadego",
+		repeat_text_day_count: "dnia",
+		repeat_radio_day_type2: "Kadego dnia roboczego",
+		repeat_week: " Powtarzaj kadego",
+		repeat_text_week_count: "tygodnia w dni:",
+		repeat_radio_month_type: "Powtrz",
+		repeat_radio_month_start: "W",
+		repeat_text_month_day: "dnia kadego",
+		repeat_text_month_count: "miesica",
+		repeat_text_month_count2_before: "kadego",
+		repeat_text_month_count2_after: "miesica",
+		repeat_year_label: "W",
+		select_year_day2: "miesica",
+		repeat_text_year_day: "dnia miesica",
+		select_year_month: "",
+		repeat_radio_end: "Bez daty kocowej",
+		repeat_text_occurences_count: "wystpieniu/ach",
+		repeat_radio_end3: "Zakocz w",
+		repeat_radio_end2: "Po",
+		month_for_recurring: ["Stycznia", "Lutego", "Marca", "Kwietnia", "Maja", "Czerwca", "Lipca", "Sierpnia", "Wrzenia", "Padziernka", "Listopada", "Grudnia"],
+		day_for_recurring: ["Niedziela", "Poniedziaek", "Wtorek", "roda", "Czwartek", "Pitek", "Sobota"]
 	}
 };
 

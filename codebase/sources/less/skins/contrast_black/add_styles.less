@@ -41,6 +41,11 @@
 	border-right: 1px solid @default-borderColor;
 }
 
+.dhx_cal_container_rtl  .dhx_v_border, .dhx_agenda_line div {
+	border-left: 1px solid @default-borderColor;
+	border-right: 0;
+}
+
 .dhx_agenda_line {
 	font-size: @default-font-size;
 	height:22px
@@ -130,6 +135,10 @@
 	border-right: 1px solid @default-borderColor;
 }
 
+.dhx_cal_container_rtl .dhx_map_line .headline_date {
+	border-left: 1px solid @default-borderColor;
+}
+
 /* map view end */
 
 /* tooltip start */
@@ -202,6 +211,10 @@
 /* grid view start */
 .dhx_grid_v_border {
 	border-right-color: @default-borderColor;
+}
+
+.dhx_cal_container_rtl .dhx_grid_v_border {
+	border-left-color: @default-borderColor;
 }
 
 .dhx_grid_area {
@@ -487,7 +500,7 @@ div.dhx_agenda_line span {
 }
 
 .dhx_cal_event_line {
-	height: 17px;
+	height: 19px;
 }
 
 .dhx_cal_event_clear {

@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -508,7 +508,7 @@ scheduler._temp_limit_scope = function(){
 					delete t_config.end_date;
 					t_config.days = t_sd.valueOf();
 					var zone_start = (start_date > t_sd) ? scheduler._get_zone_minutes(start_date) : min;
-					var zone_end = ( end_date>t_ed || end_date.getDate() != t_sd.getDate() ) ? max : scheduler._get_zone_minutes(end_date);
+					var zone_end = ( end_date > t_ed || end_date.getDate() != t_sd.getDate() ) ? max : scheduler._get_zone_minutes(end_date);
 					t_config.zones = [zone_start, zone_end];
 					r_configs.push(t_config);
 
@@ -616,16 +616,17 @@ scheduler._temp_limit_scope = function(){
 
 				if(this._ignores[sday]) continue;
 
+				var columnNumber = this.config.rtl ? this._colsS.col_length - 1  - sday : sday;
+
 				var block_proto = scheduler._get_block_by_config(options),
 					height = Math.max(area.offsetHeight - 1, 0), // 1 for bottom border
 					width = Math.max(area.offsetWidth - 1, 0), // 1 for left border
-					left = this._colsS[sday],
+					left = this._colsS[columnNumber],
 					top = this._colsS.heights[sweek]+(this._colsS.height?(this.xy.month_scale_height+2):2)-1;
-
 				block_proto.className = css_classes;
 				block_proto.style.top = top + "px";
 				block_proto.style.lineHeight = block_proto.style.height = height + "px";
-
+				
 				for (var k=0; k < zones.length; k+=2) {
 					var start = zones[i];
 					var end = zones[i+1];
@@ -686,7 +687,6 @@ scheduler._temp_limit_scope = function(){
 				blocks.push(block);
 			}
 		}
-
 		return blocks;
 	};
 
@@ -810,7 +810,6 @@ scheduler._temp_limit_scope = function(){
 			if(!scheduler._marked_timespans_types[type])
 				scheduler._marked_timespans_types[type] = true;
 
-
 			var day_configs = timespans[global][day][type];
 			config._array = day_configs;
 			day_configs.push(config);
@@ -823,12 +822,10 @@ scheduler._temp_limit_scope = function(){
 	// adds marked timespan to collections, persistent
 	scheduler.addMarkedTimespan = function(configuration) {
 		var configs = scheduler._prepare_timespan_options(configuration);
-
 		if (!configs.length)
 			return; // options are incorrect, nothing to mark
 
 		var id = configs[0].id;
-
 		for (var i=0; i<configs.length; i++) {
 			scheduler._addMarkerTimespanConfig(configs[i]);
 		}

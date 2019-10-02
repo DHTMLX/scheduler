@@ -39,6 +39,15 @@
 
 }
 
+.dhx_cal_container_rtl .dhx_agenda_line div{
+	float:right; 
+}
+
+.dhx_cal_container_rtl .dhx_agenda_line .description_header{
+	padding-right: 15px;
+	float:right;
+}
+
 .dhx_cal_header div.dhx_map_line,
 .dhx_cal_header div.dhx_agenda_line div,
 .dhx_cal_header div.dhx_agenda_line span {
@@ -46,6 +55,13 @@
 	color: @agenda-topline-font-color;
 }
 
+.dhx_cal_container_rtl .dhx_cal_header div.dhx_map_line {
+	float: right;
+}
+
+.dhx_cal_container_rtl .dhx_agenda_area .dhx_agenda_line div{
+	border-left:0px dotted #000;
+}
 .dhx_agenda_area .dhx_agenda_line div{
 	border-right:0px dotted #000;
 }
@@ -57,6 +73,12 @@
 	width:1px;
 	height:100%;
 }
+
+.dhx_cal_container_rtl .dhx_v_border{
+	right:186px;
+	left: unset;
+}
+
 .dhx_agenda_line .dhx_event_icon{
 	width:20px;
 	border-width:0px;
@@ -64,9 +86,19 @@
 	background-position: 5px 4px;
 	cursor:pointer;
 }
+
+.dhx_cal_container_rtl .dhx_agenda_line .dhx_event_icon{
+	background-position-x: 2px;
+}
+
 .dhx_agenda_line span{
 	padding-left:5px;
 	line-height:21px;
+}
+
+.dhx_cal_container_rtl .dhx_agenda_line span{
+	padding-left:0;
+	padding-right: 5px;
 }
 
 .dhx_year_body{
@@ -77,7 +109,16 @@
 }
 .dhx_scale_bar_last{
   border-right:1px solid @default-border-color;
-}   
+}
+
+.dhx_cal_container_rtl .dhx_year_body{
+  border-left:0;
+  border-right:1px solid @default-border-color;;
+}
+.dhx_cal_container_rtl .dhx_year_box .dhx_scale_bar_last{
+  border-left:1px solid @default-border-color;
+}
+
 .dhx_year_month{
   height:18px;
   padding-top:3px;
@@ -165,6 +206,10 @@
 	background: @calendar-open-icon  no-repeat;
 }
 
+.dhx_grid_rtl {
+	direction: rtl;
+}
+
 .dhx_matrix_scell,
 .dhx_timeline_scale_header {
 	height: 100%;
@@ -181,8 +226,17 @@
 	border-bottom: @grid-border-bottom;
 	border-right: @grid-border-right;	
 }
+.dhx_cal_container_rtl .dhx_matrix_cell, 
+.dhx_cal_container_rtl .dhx_matrix_scell{
+	border-right: unset;
+	border-left: @grid-border-right;	
+}
 .dhx_timeline_scale_header{
 	border-right: @col-header-cell-border-left;	
+}
+.dhx_cal_container_rtl .dhx_timeline_scale_header{
+	border-right: unset;
+	border-left: @col-header-cell-border-left;	
 }
 .dhx_cal_data .dhx_timeline_table_wrapper div{ 
 	box-sizing: border-box;
@@ -221,9 +275,19 @@
 .dhx_event_resize_start {
 	left: 0;
 }
+.dhx_cal_container_rtl .dhx_event_resize_start {
+	left:auto;
+	left:unset;
+	right: 0;
+}
 
 .dhx_event_resize_end {
 	right: 0;
+}
+.dhx_cal_container_rtl .dhx_event_resize_end {
+	right: auto;
+	right: unset;
+	left: 0;
 }
 
 /* Tree view */
@@ -278,6 +342,51 @@
 	text-align: left;
 }
 
+.dhx_cal_container_rtl {
+	.dhx_matrix_scell .dhx_scell_level0{
+		padding-left: 0;
+		padding-right: 5px;
+	}
+	
+	.dhx_matrix_scell .dhx_scell_level1{
+		padding-left: 0;
+		padding-right: 20px;
+	}
+	
+	.dhx_matrix_scell .dhx_scell_level2{
+		padding-left: 0;
+		padding-right: 35px;
+	}
+	
+	.dhx_matrix_scell .dhx_scell_level3{
+		padding-left: 0;
+		padding-right: 50px;
+	}
+	
+	.dhx_matrix_scell .dhx_scell_level4{
+		padding-left: 0;
+		padding-right: 65px;
+	}
+
+	
+	.dhx_matrix_scell.folder .dhx_scell_expand{
+		float: right;
+		padding-right:0;
+		padding-left:3px;
+	}
+	
+	.dhx_matrix_scell.folder .dhx_scell_name{
+		float: right;
+	}
+	
+	.dhx_matrix_scell.item .dhx_scell_name{
+		padding-left:0;
+		padding-right:15px;
+		text-align: right;
+	}
+	
+}
+
 .dhx_data_table.folder .dhx_matrix_cell{
     border-right: 0;
 }
@@ -310,6 +419,10 @@
 	background:url(./imgs/icon.png) no-repeat;
 	background-position: 5px 4px;
 	cursor:pointer;
+}
+
+.dhx_cal_container_rtl .dhx_map_line .dhx_event_icon {
+	margin-right: 3px;
 }
 
 .dhx_map_line{
@@ -351,6 +464,17 @@
 	border-left: 0;
 }
 
+.dhx_cal_container_rtl .dhx_map_line div{
+	float:right; 
+}
+
+.dhx_cal_container_rtl .dhx_map_line .headline_date, 
+.dhx_cal_container_rtl .dhx_map_line .headline_description {
+	float: right;
+	border-left: 1px solid @default-border-color;
+	border-right: 0;
+}
+
 .dhx_map_line .line_description {
 	float:left; 
 	border-right:1px dotted #8894A3;
@@ -358,6 +482,13 @@
 	padding-left:5px;
 	line-height:21px;
 	overflow:hidden;
+}
+
+.dhx_cal_container_rtl .dhx_map_line .line_description {
+	float:right; 
+	text-align:right;
+	// padding-right:5px;
+	padding-left:unset;
 }
 
 .dhx_map_line.highlight{
@@ -389,9 +520,28 @@
 	opacity: 1;
 	font-family: @default-font-family;
 }
+
+.dhtmlXTooltip_rtl{
+	direction: rtl;
+}
+
+.dhx_tooltip_rtl {
+	direction: rtl;
+	.dhx_tooltip_date{
+		float: right;
+		padding: 0 5px 0 0;
+	}
+  	.dhx_tooltip_line {
+		margin: 0 0 0 12px;
+		padding: 0 4px 0 0;
+
+	  	.dhx_event_icon.icon_details {
+			float: right;
+			padding: 0 0 0 10px;
+	  	}
+  	}
+}
 /* dhtmlXTooltip end */
-
-
 
 /* Lightbox checkbox section */
 
@@ -447,8 +597,16 @@
     float: left;
 }
 
+.dhx_cal_container_rtl .dhx_wa_column {
+    float: right;
+}
+
 .dhx_wa_column_last .dhx_wa_day_cont{
     border-left: 1px solid @default-border-color;
+}
+
+.dhx_cal_container_rtl .dhx_wa_column_last .dhx_wa_day_cont{
+    border-right: 1px solid @default-border-color;
 }
 
 .dhx_wa_scale_bar {
@@ -457,6 +615,12 @@
     font-size: 11px;
 	border-top: 1px solid @default-border-color;
 	border-bottom: 1px solid @default-border-color;
+}
+
+.dhx_cal_container_rtl .dhx_wa_scale_bar{
+	padding-left: 0;
+	padding-right: 10px;
+
 }
 
 .dhx_wa_day_data {
@@ -468,6 +632,14 @@
     border-bottom: 1px solid @default-border-color;
     font-size: @default-font-size;
     padding: 5px 0 5px 7px;
+}
+
+.dhx_cal_container_rtl .dhx_wa_ev_body{
+	padding: 5px 7px 5px 0;
+}
+
+.dhx_wa_ev_body_rtl {
+    direction: rtl;
 }
 
 .dhx_wa_dnd {
@@ -500,6 +672,11 @@
 
 .dhx_cal_header div.dhx_grid_line div{
     border-left: @grid-border-right;
+}
+
+.dhx_cal_container_rtl  .dhx_cal_header div.dhx_grid_line div {
+	border-right: @grid-border-right;
+	border-left: 0;
 }
 
 .dhx_grid_area{
@@ -537,6 +714,10 @@
 	overflow:hidden;
 }
 
+.dhx_cal_container_rtl .dhx_grid_line div{
+	float:right;
+}
+
 .dhx_grid_area td, .dhx_grid_line div{
     padding-left:8px;
     padding-right:8px;
@@ -552,6 +733,17 @@
 .dhx_grid_area tr.dhx_grid_event td{
     /*borders for old ies*/
     border-bottom:1px solid #ECEEF4;
+}
+
+.dhx_cal_container_rtl .dhx_grid_area tr.dhx_grid_event td{
+    /*borders for old ies*/
+	border-bottom:1px solid #ECEEF4;
+	direction: ltr;
+}
+
+.dhx_cal_container_rtl .dhx_map_line div.dhx_map_event_time {
+	float:right;
+	direction: ltr;
 }
 
 .dhx_grid_area tr.dhx_grid_event:nth-child(2n+1) td, .dhx_grid_area tr.dhx_grid_event:nth-child(2n) td{
@@ -574,6 +766,11 @@
 	border-right:1px solid #A4BED4;
 	width:1px;
 	height:100%;
+}
+
+.dhx_cal_container_rtl .dhx_grid_v_border{
+	border-left:1px solid #A4BED4;
+	border-right: 0;
 }
 
 .dhx_grid_event_selected{
@@ -681,10 +878,19 @@
 	float:right;
 }
 
+.dhx_quick_info_rtl.dhx_cal_quick_info.dhx_qi_left .dhx_qi_big_icon{
+	float:left;
+}
+
 .dhx_cal_qi_title{
 	padding: @infobox-title-padding;
 	color: @infobox-font-color;
 	letter-spacing: @infobox-letter-spacing;
+}
+
+.dhx_cal_container_rtl .dhx_cal_qi_title{
+	padding: @infobox-title-padding-rtl;
+	text-align: right;
 }
 
 .dhx_cal_qi_tdate{
@@ -711,6 +917,11 @@
 	overflow: hidden;
 }
 
+.dhx_quick_info_rtl .dhx_cal_qi_content {
+	padding: @infobox-content-padding-rtl;
+	direction: rtl;
+}
+
 .dhx_qi_big_icon {
 	min-width: @infobox-control-btn-min-width;
 	padding: @infobox-control-btn-padding;
@@ -726,6 +937,11 @@
 	float:left;
 }
 
+.dhx_quick_info_rtl .dhx_qi_big_icon {
+	padding: @infobox-control-btn-padding-rtl;
+	margin: @infobox-control-btn-margin-rtl;
+}
+
 .dhx_cal_qi_controls div{
 	float: left;
 	height: @infobox-control-btn-height;
@@ -733,8 +949,25 @@
 	line-height: @infobox-control-btn-lheight;
 }
 
+.dhx_quick_info_rtl .dhx_cal_qi_controls div{
+	float: right;
+}
+
+.dhx_quick_info_rtl.dhx_qi_right .dhx_cal_qi_controls {
+	padding-right: 15px;
+}
+
+// .dhx_quick_info_rtl .dhx_cal_qi_controls{
+// 	direction: unset;
+// 	float: left;
+// }
+
 .dhx_qi_big_icon .dhx_menu_icon{
 	margin: 0 8px 0 0px; 
+}
+
+.dhx_quick_info_rtl .dhx_qi_big_icon .dhx_menu_icon{
+	margin: 0 0 0 8px; 
 }
 
 .dhx_drag_marker{

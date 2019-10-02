@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -68,7 +68,34 @@ Scheduler.plugin(function(scheduler){scheduler.locale = {
 		month: "Month",
 		day: "Day",
 		hour:"Hour",
-		minute: "Minute"
+		minute: "Minute",
+
+		/* recurring event components */
+		repeat_radio_day: "Daglig",
+		repeat_radio_week: "Ugenlig",
+		repeat_radio_month: "Månedlig",
+		repeat_radio_year: "Årlig",
+		repeat_radio_day_type: "Hver",
+		repeat_text_day_count: "dag",
+		repeat_radio_day_type2: "På hver arbejdsdag",
+		repeat_week: " Gentager sig hver",
+		repeat_text_week_count: "uge på følgende dage:",
+		repeat_radio_month_type: "Hver den",
+		repeat_radio_month_start: "Den",
+		repeat_text_month_day: " i hver",
+		repeat_text_month_count: "måned",
+		repeat_text_month_count2_before: "hver",
+		repeat_text_month_count2_after: "måned",
+		repeat_year_label: "Den",
+		select_year_day2: "i",
+		repeat_text_year_day: "dag i",
+		select_year_month: "",
+		repeat_radio_end: "Ingen slutdato",
+		repeat_text_occurences_count: "gentagelse",
+		repeat_radio_end2: "Efter",
+		repeat_radio_end3: "Slut",
+		month_for_recurring: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+		day_for_recurring: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"]
 	}
 };
 

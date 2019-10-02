@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -68,7 +68,7 @@ scheduler.attachEvent("onTemplatesReady",function() {
 
 			scheduler._els["dhx_cal_header"][0].innerHTML="<div "+rowAttr+" class='dhx_agenda_line'>" +
 				"<div "+dateHeader+">"+l.date+"</div>" +
-				"<span style='padding-left:25px' "+descriptionHeader+">"+l.description+"</span>" +
+				"<span class = 'description_header' style='padding-left:25px' "+descriptionHeader+">"+l.description+"</span>" +
 				"</div>";
 			scheduler._table_view=true;
 			scheduler.set_sizes();
@@ -96,7 +96,11 @@ scheduler.attachEvent("onTemplatesReady",function() {
 			agendaEventAttrString = scheduler._waiAria.agendaEventAttrString(ev);
 			var agendaDetailsButtonAttr = scheduler._waiAria.agendaDetailsBtnString();
 
-			html+="<div "+agendaEventAttrString+" class='dhx_agenda_line"+(ev_class?' '+ev_class:'')+"' event_id='"+ev.id+"' style='"+color+""+bg_color+""+(ev._text_style||"")+"'><div class='dhx_agenda_event_time'>"+scheduler.templates.agenda_time(ev.start_date, ev.end_date,ev)+"</div>";
+			html+="<div "+agendaEventAttrString+" class='dhx_agenda_line"+(ev_class?' '+ev_class:'')+
+					"' event_id='"+ev.id+"' style='"+color+""+bg_color+""+
+					(ev._text_style||"")+"'><div class='dhx_agenda_event_time'>"+
+					(scheduler.config.rtl ? scheduler.templates.agenda_time(ev.end_date,ev.start_date, ev):scheduler.templates.agenda_time(ev.start_date, ev.end_date,ev))+
+					"</div>";
 			html+="<div "+agendaDetailsButtonAttr+" class='dhx_event_icon icon_details'>&nbsp;</div>";
 			html+="<span>"+scheduler.templates.agenda_text(ev.start_date, ev.end_date, ev)+"</span></div>";
 		}

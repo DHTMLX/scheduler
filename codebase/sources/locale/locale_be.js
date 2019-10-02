@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -71,6 +71,34 @@ scheduler.locale = {
 		month: "Month",
 		day: "Day",
 		hour:"Hour",
-		minute: "Minute"
+		minute: "Minute",
+
+		/* recurring event components */
+		repeat_radio_day: "Дзень",
+		repeat_radio_week: "Тыдзень",
+		repeat_radio_month: "Месяц",
+		repeat_radio_year: "Год",
+		repeat_radio_day_type: "Кожны",
+		repeat_text_day_count: "дзень",
+		repeat_radio_day_type2: "Кожны працоўны дзень",
+		repeat_week: " Паўтараць кожны",
+		repeat_text_week_count: "тыдзень",
+		repeat_radio_month_type: "Паўтараць",
+		repeat_radio_month_start: "",
+		repeat_text_month_day: " чысла кожнага",
+		repeat_text_month_count: "месяцу",
+		repeat_text_month_count2_before: "кожны ",
+		repeat_text_month_count2_after: "месяц",
+		repeat_year_label: "",
+		select_year_day2: "",
+		repeat_text_year_day: "день",
+		select_year_month: "",
+		repeat_radio_end: "Без даты заканчэння",
+		repeat_text_occurences_count: "паўтораў",
+		repeat_radio_end2: "",
+		repeat_radio_end3: "Да ",
+		month_for_recurring: ["Студзеня", "Лютага", "Сакавіка", "Красавіка", "Мая", "Чэрвеня", "Ліпeня", "Жніўня", "Верасня", "Кастрычніка", "Лістапада", "Снежня"],
+		day_for_recurring: ["Нядзелю", "Панядзелак", "Аўторак", "Сераду", "Чацвер", "Пятніцу", "Суботу"]
 	}
-};});
+};
+});

@@ -77,6 +77,7 @@
         @nav-tab-text-align:                center;
         @nav-tab-text-decor:                none;
         @nav-tab-padding:                   0;
+        @nav-tab-border-color:              #CECECE;
         @nav-tab-border:                    1px solid #CECECE;
         @nav-tab-border-radius:                   0;
         @nav-tab-font-color:                rgb(116, 116, 115);
@@ -175,8 +176,8 @@
 @event-line-font-size:              @default-font-size;
 @event-line-line-height:            17px;;
 @event-line-font-color:             #FFFFFF;
-@event-line-height:                  17px;
-@event-line-padiing:                0 0 0 10px;
+@event-line-height:                 20px;
+@event-line-padding:                0 0 0 10px;
 @event-line-topleft-border-radius:        9px;
 @event-line-topright-border-radius:       9px;
 @event-line-bottomleft-border-radius:     9px;
@@ -230,7 +231,13 @@
         @daybox-title-font-size:                @default-font-size;
         @daybox-title-line-height:              21px;
         @daybox-title-text-align:               right;
-        @daybox-title-padding:                  0 5px 0 0; 
+        @daybox-title-text-align-rtl:           left;
+        @daybox-title-padding-top:              0;
+        @daybox-title-padding-right:            5px;
+        @daybox-title-padding-bottom:           0;
+        @daybox-title-padding-left:             0;
+        @daybox-title-padding:                  @daybox-title-padding-top @daybox-title-padding-right @daybox-title-padding-bottom @daybox-title-padding-left;   
+        @daybox-title-padding-rtl:              @daybox-title-padding-top @daybox-title-padding-left @daybox-title-padding-bottom @daybox-title-padding-right; 
         @daybox-title-height:                   21px;
         @daybox-title-color:                    #362d26;
         @daybox-title-background:               #FFFFFF;
@@ -265,7 +272,7 @@
 
     // ** Day box Content
 
-        @daybox-content-height:                 13px;
+        @daybox-content-height:                 20px;
         @daybox-content-padding:                0 0 0 2px;
         @daybox-content-font-color:             #0E64A0;
         @daybox-content-font-family:            @secondary-font-family;
@@ -294,11 +301,14 @@
         @event-title-font-size:                 @default-font-size;
         @event-title-font-weight:               bold;
         @event-title-text-align:                center;
-        @event-title-padding:                   1px 0 0 0;
-
+        @event-title-padding-top:               1px;
+        @event-title-padding-right:             0;
+        @event-title-padding-bottom:            0;
+        @event-title-padding-left:              0;
+        @event-title-padding:                   @event-title-padding-top @event-title-padding-right @event-title-padding-bottom @event-title-padding-left;
+        @event-title-padding-rtl:               @event-title-padding-top @event-title-padding-left @event-title-padding-bottom @event-title-padding-right;
 
         @event-body-border-radius:                    0 0 4px 4px;
-        @event-body-padding:                    5px 5px 8px 5px;
         
         
         @event-background:                      #1796b0;
@@ -424,7 +434,13 @@
 
 
     // ** Quick inFo Title
-    @infobox-title-padding:             5px 0px 10px 5px;
+    @infobox-title-padding-top:         5px;
+    @infobox-title-padding-right:       0px;
+    @infobox-title-padding-bottom:      10px;
+    @infobox-title-padding-left:        5px;
+    @infobox-title-padding-right-rtl:   18px;
+    @infobox-title-padding:             @infobox-title-padding-top @infobox-title-padding-right @infobox-title-padding-bottom @infobox-title-padding-left;
+    @infobox-title-padding-rtl:         @infobox-title-padding-top @infobox-title-padding-right-rtl @infobox-title-padding-bottom @infobox-title-padding-right;
     @infobox-font-color:                #FFF;
     @infobox-letter-spacing:            1px;
     @infobox-title-cont-font-size:      18px;
@@ -433,7 +449,10 @@
 
     // ** Quick inFo Content
     @infobox-content-width:             275px;
-    @infobox-content-padding:           16px 8px;
+    @infobox-content-padding-top-bottom:16px;
+    @infobox-content-padding-right-left:8px;
+    @infobox-content-padding:           @infobox-content-padding-top-bottom @infobox-content-padding-right-left;
+    @infobox-content-padding-rtl:       @infobox-content-padding-top-bottom @infobox-content-padding-right-left;
     @infobox-content-background:        #fefefe;
     @infobox-content-border:            1px solid #888;
     @infobox-content-font-color:        #444;
@@ -442,8 +461,18 @@
     // ** Quick inFo Controls
     @infobox-control-btn-height:        20px;
     @infobox-control-btn-min-width:     60px;
-    @infobox-control-btn-padding:       5px 10px 5px 5px;
-    @infobox-control-btn-margin:        5px 9px 5px 0px;
+    @infobox-control-btn-padding-top:   5px;
+    @infobox-control-btn-padding-right: 10px;
+    @infobox-control-btn-padding-bottom:5px;
+    @infobox-control-btn-padding-left:  5px;
+    @infobox-control-btn-padding:       @infobox-control-btn-padding-top @infobox-control-btn-padding-right @infobox-control-btn-padding-bottom @infobox-control-btn-padding-left;
+    @infobox-control-btn-padding-rtl:   @infobox-control-btn-padding-top @infobox-control-btn-padding-bottom @infobox-control-btn-padding-left @infobox-control-btn-padding-right;
+    @infobox-control-btn-margin-top:    5px;
+    @infobox-control-btn-margin-right:  9px;
+    @infobox-control-btn-margin-bottom: 5px;
+    @infobox-control-btn-margin-left:   0px;
+    @infobox-control-btn-margin:        @infobox-control-btn-margin-top @infobox-control-btn-margin-right @infobox-control-btn-margin-bottom @infobox-control-btn-margin-left;
+    @infobox-control-btn-margin-rtl:    @infobox-control-btn-margin-top @infobox-control-btn-margin-left @infobox-control-btn-margin-bottom @infobox-control-btn-margin-right;
     @infobox-control-btn-bg-color:      #1796b0;
     @infobox-control-btn-border-bottom: 1px solid #666;
     @infobox-control-btn-border-right:  1px solid #666;
@@ -464,7 +493,12 @@
 @lightbox-font-color:   #2E2E2E;
 @lightbox-font-family:  @secondary-font-family;
 @lightbox-font-size:    8pt;
-@lightbox-shadow:       5px 5px 5px #888;
+@lightbox-shadow-x:     5px;
+@lightbox-shadow-y:     5px;
+@lightbox-shadow-radius:5px;
+@lightbox-shadow-color: #888;
+@lightbox-shadow:       @lightbox-shadow-x @lightbox-shadow-y @lightbox-shadow-radius @lightbox-shadow-color;
+@lightbox-shadow-rtl:   -@lightbox-shadow-x @lightbox-shadow-y @lightbox-shadow-radius @lightbox-shadow-color;
 @lightbox-wrapper-opacity: 0.1;
 
 
@@ -477,14 +511,25 @@
 
     @lightbox-title-time-font-weight:       bold;
     @lightbox-title-time-padding:           0 0 0 10px;
-    @lightbox-title-name-padding:           0 0 0 13px;
+    @lightbox-title-time-padding-rtl:       0 10px 0 0;
+    @lightbox-title-name-padding-top:       0;
+    @lightbox-title-name-padding-right:     0;
+    @lightbox-title-name-padding-bottom:    0;
+    @lightbox-title-name-padding-left:      13px;
+    @lightbox-title-name-padding:           @lightbox-title-name-padding-top @lightbox-title-name-padding-right @lightbox-title-name-padding-bottom @lightbox-title-name-padding-left;
+    @lightbox-title-name-padding-rtl:       @lightbox-title-name-padding-top @lightbox-title-name-padding-left @lightbox-title-name-padding-bottom @lightbox-title-name-padding-right;
 
     // ** LightBox Main Area
 
     @lightbox-area-border:                  1px solid transparent;
     @lightbox-area-border-top:              0px;
     @lightbox-area-background-color:        #FFFFFF;
-    @lightbox-area-margin:                  0 0 0 3px;
+    @lightbox-area-margin-top:              0;
+    @lightbox-area-margin-right:            0;
+    @lightbox-area-margin-bottom:           0;
+    @lightbox-area-margin-left:             3px;
+    @lightbox-area-margin:                  @lightbox-area-margin-top @lightbox-area-margin-right @lightbox-area-margin-bottom @lightbox-area-margin-left;
+    @lightbox-area-margin-rtl:              @lightbox-area-margin-top @lightbox-area-margin-left @lightbox-area-margin-bottom @lightbox-area-margin-right;
     @lightbox-area-width:                   730px;
 
     // ** LightBox Main Area Wrap
@@ -538,12 +583,27 @@
     @lightbox-area-rs-select-font-family:   @secondary-font-family;
     @lightbox-area-rs-select-font-size:     8pt;
     @lightbox-area-rs-select-color:         #2E2E2E;
-    @lightbox-area-rs-select-padding:       2px;
-    @lightbox-area-rs-select-margin:        0px;
+    @lightbox-area-rs-select-padding-top:   2px;
+    @lightbox-area-rs-select-padding-right: 2px;
+    @lightbox-area-rs-select-padding-bottom:2px;
+    @lightbox-area-rs-select-padding-left:  2px;
+    @lightbox-area-rs-select-padding:       @lightbox-area-rs-select-padding-top @lightbox-area-rs-select-padding-right @lightbox-area-rs-select-padding-bottom @lightbox-area-rs-select-padding-left;
+    @lightbox-area-rs-select-padding-rtl:   @lightbox-area-rs-select-padding-top @lightbox-area-rs-select-padding-left @lightbox-area-rs-select-padding-bottom @lightbox-area-rs-select-padding-right;
+    @lightbox-area-rs-select-margin-top:    0px;
+    @lightbox-area-rs-select-margin-right:  0px;
+    @lightbox-area-rs-select-margin-bottom: 0px;
+    @lightbox-area-rs-select-margin-left:   0px;
+    @lightbox-area-rs-select-margin:        @lightbox-area-rs-select-margin-top @lightbox-area-rs-select-margin-right @lightbox-area-rs-select-margin-bottom @lightbox-area-rs-select-margin-left;
+    @lightbox-area-rs-select-margin-rtl:    @lightbox-area-rs-select-margin-top @lightbox-area-rs-select-margin-left @lightbox-area-rs-select-margin-bottom @lightbox-area-rs-select-margin-right;
 
     // ** LightBox Main Area - Right Side / Input[radio]
 
-    @lightbox-input-radio-margin:           3px 3px 0px 5px;
+    @lightbox-input-radio-margin-top:       3px;
+    @lightbox-input-radio-margin-right:     3px;
+    @lightbox-input-radio-margin-bottom:    0px;
+    @lightbox-input-radio-margin-left:      5px;
+    @lightbox-input-radio-margin:           @lightbox-input-radio-margin-top @lightbox-input-radio-margin-right @lightbox-input-radio-margin-bottom @lightbox-input-radio-margin-left;
+    @lightbox-input-radio-margin-rtl:       @lightbox-input-radio-margin-top @lightbox-input-radio-margin-left @lightbox-input-radio-margin-bottom @lightbox-input-radio-margin-right;
     @lightbox-input-label-display:          inline-block;
     @lightbox-input-label-position:         relative;
     @lightbox-input-label-top:              -3px;
@@ -553,7 +613,12 @@
     // ** LightBox Main Area - Time block
 
     @lightbox-area-time-block-bg:           transparent;            // #DBCF8C;
-    @lightbox-area-time-block-padding:      2px 0 0 0 ~'!important';
+    @lightbox-area-time-block-padding-top:  2px;
+    @lightbox-area-time-block-padding-right:0;
+    @lightbox-area-time-block-padding-bottom:0;
+    @lightbox-area-time-block-padding-left:  0;
+    @lightbox-area-time-block-padding:      @lightbox-area-time-block-padding-top @lightbox-area-time-block-padding-right @lightbox-area-time-block-padding-bottom @lightbox-area-time-block-padding-left ~'!important';
+    @lightbox-area-time-block-padding-rtl:  @lightbox-area-time-block-padding-top @lightbox-area-time-block-padding-left @lightbox-area-time-block-padding-bottom @lightbox-area-time-block-padding-right ~'!important';
     @lightbox-area-time-block-height:       20px ~'!important';
     @lightbox-area-time-block-textaligment: center;
 
@@ -570,7 +635,6 @@
     @lightbox-btn-margin:                   12px 0 0 20px;
     @lightbox-btn-font-size:                12px;
     @lightbox-btn-font-weight:              bold;
-    @lightbox-btn-float:                    left;
     @lightbox-btn-font-color:               #454544;
 
     @lightbox-del-btn-border:               1px solid #FF8831;

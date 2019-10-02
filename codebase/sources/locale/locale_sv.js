@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -69,6 +69,34 @@ Scheduler.plugin(function(scheduler){scheduler.locale = {
 		month: "Month",
 		day: "Day",
 		hour:"Hour",
-		minute: "Minute"
+		minute: "Minute",
+
+		/* recurring event components */
+		repeat_radio_day: "Dagligen",
+		repeat_radio_week: "Veckovis",
+		repeat_radio_month: "Månadsvis",
+		repeat_radio_year: "Årligen",
+		repeat_radio_day_type: "Var",
+		repeat_text_day_count: "dag",
+		repeat_radio_day_type2: "Varje arbetsdag",
+		repeat_week: " Upprepa var",
+		repeat_text_week_count: "vecka dessa dagar:",
+		repeat_radio_month_type: "Upprepa",
+		repeat_radio_month_start: "Den",
+		repeat_text_month_day: "dagen var",
+		repeat_text_month_count: "månad",
+		repeat_text_month_count2_before: "var",
+		repeat_text_month_count2_after: "månad",
+		repeat_year_label: "Den",
+		select_year_day2: "i",
+		repeat_text_year_day: "dag i",
+		select_year_month: "månad",
+		repeat_radio_end: "Inget slutdatum",
+		repeat_text_occurences_count: "upprepningar",
+		repeat_radio_end3: "Sluta efter",
+		repeat_radio_end2: "Efter",
+		month_for_recurring: ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"],
+		day_for_recurring: ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"]
 	}
-};});
+};
+});

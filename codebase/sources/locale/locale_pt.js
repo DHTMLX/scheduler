@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -78,7 +78,34 @@ scheduler.locale = {
 		month: "Month",
 		day: "Day",
 		hour:"Hour",
-		minute: "Minute"
+		minute: "Minute",
+
+		/* recurring event components */
+		repeat_radio_day: "Diário",
+		repeat_radio_week: "Semanal",
+		repeat_radio_month: "Mensal",
+		repeat_radio_year: "Anual",
+		repeat_radio_day_type: "Cada",
+		repeat_text_day_count: "dia(s)",
+		repeat_radio_day_type2: "Cada trabalho diário",
+		repeat_week: " Repita cada",
+		repeat_text_week_count: "semana:",
+		repeat_radio_month_type: "Repetir",
+		repeat_radio_month_start: "Em",
+		repeat_text_month_day: "todo dia",
+		repeat_text_month_count: "mês",
+		repeat_text_month_count2_before: "todo",
+		repeat_text_month_count2_after: "mês",
+		repeat_year_label: "Em",
+		select_year_day2: "of",
+		repeat_text_year_day: "dia",
+		select_year_month: "mês",
+		repeat_radio_end: "Sem data final",
+		repeat_text_occurences_count: "ocorrências",
+		repeat_radio_end3: "Fim",
+		repeat_radio_end2: "Depois",
+		month_for_recurring: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+		day_for_recurring: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"]
 	}
 };
 

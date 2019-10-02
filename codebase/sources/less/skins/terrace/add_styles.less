@@ -68,6 +68,12 @@ div.dhx_menu_head, div.dhx_menu_icon {
 	float: left;
 }
 
+.dhx_cal_light_rtl{
+	.dhx_cal_ltitle span{
+		float: none;
+	}
+}
+
 .dhx_mark {
 	display: none;
 }
@@ -166,6 +172,12 @@ div.dhx_menu_head, div.dhx_menu_icon {
 .dhx_v_border, .dhx_agenda_line div {
 	border-right: 1px solid #CECECE;
 }
+
+.dhx_cal_container_rtl .dhx_v_border, .dhx_cal_container_rtl .dhx_agenda_line div{
+	border-right: 0;
+	border-left: 1px solid #CECECE;
+}
+
 /* agenda end */
 
 
@@ -279,6 +291,10 @@ div.dhx_menu_head, div.dhx_menu_icon {
 /* grid view start */
 .dhx_grid_v_border{
 	border-right-color:#CECECE;
+}
+
+.dhx_cal_container_rtl .dhx_grid_v_border{
+	border-left-color:#CECECE;
 }
 /* grid view end*/
 

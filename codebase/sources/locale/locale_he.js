@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -68,7 +68,34 @@ Scheduler.plugin(function(scheduler){scheduler.locale = {
 		month: "חודש",
 		day: "יום",
 		hour:"שעה",
-		minute: "דקה"
+		minute: "דקה",
+
+		/* recurring event components */
+		repeat_radio_day: "יומי",
+		repeat_radio_week: "שבועי",
+		repeat_radio_month: "חודשי",
+		repeat_radio_year: "שנתי",
+		repeat_radio_day_type: "חזור כל",
+		repeat_text_day_count: "ימים",
+		repeat_radio_day_type2: "חזור כל יום עבודה",
+		repeat_week: " חזור כל",
+		repeat_text_week_count: "שבוע לפי ימים:",
+		repeat_radio_month_type: "חזור כל",
+		repeat_radio_month_start: "כל",
+		repeat_text_month_day: "ימים כל",
+		repeat_text_month_count: "חודשים",
+		repeat_text_month_count2_before: "חזור כל",
+		repeat_text_month_count2_after: "חודש",
+		repeat_year_label: "כל",
+		select_year_day2: "בחודש",
+		repeat_text_year_day: "ימים",
+		select_year_month: "חודש",
+		repeat_radio_end: "לעולם לא מסתיים",
+		repeat_text_occurences_count: "אירועים",
+		repeat_radio_end3: "מסתיים ב",
+		repeat_radio_end2: "אחרי",
+		month_for_recurring: ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"],
+		day_for_recurring: ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"]
 	}
 };
 

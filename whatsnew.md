@@ -1,3 +1,19 @@
+### 5.3.1
+
+- Disable responsive lightbox by default
+
+### 5.3.0
+
+- RTL support
+- Improved mobile responsiveness
+- Integration with DHTMLX Suite 6 Layout
+- The year range setting is added to the Date/Time lightbox control
+- Changing Scheduler dates by horizontal swipe is disabled by default
+- Add a way to set scheduler header from config rather than from the markup
+- The render method is added as a more intuitive alias for setCurrentView() and updateView()
+- The hideLightbox method is added to the public API
+- Fix vertical config of multiselect control, which didn't work in the Material skin
+
 ### 5.2.5
 
 - Fix regression of ext/dhtmlxscheduler_tooltip.js introduced in 5.2.4

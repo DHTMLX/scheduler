@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -36,10 +36,15 @@ scheduler.attachEvent("onClick", function(id){
 scheduler.templates.quick_info_title = function(start, end, ev){ return ev.text.substr(0,50); };
 scheduler.templates.quick_info_content = function(start, end, ev){ return ev.details || ev.text; };
 scheduler.templates.quick_info_date = function(start, end, ev){
-	if (scheduler.isOneDayEvent(ev))
+	if (scheduler.isOneDayEvent(ev) && scheduler.config.rtl){
+		return scheduler.templates.day_date(start, end, ev) + " " +scheduler.templates.event_header(end, start, ev);
+	} else if (scheduler.isOneDayEvent(ev)) {
 		return scheduler.templates.day_date(start, end, ev) + " " +scheduler.templates.event_header(start, end, ev);
-	else
+	} else if (scheduler.config.rtl) {
+		return scheduler.templates.week_date(end, start, ev);
+	} else {
 		return scheduler.templates.week_date(start, end, ev);
+	}
 };
 
 scheduler.showQuickInfo = function(id){
@@ -138,7 +143,14 @@ scheduler._show_quick_info = function(pos){
 	var height = qi.offsetHeight;
 
 	if (scheduler.config.quick_info_detached){
-		qi.style.left = pos.left - pos.dx*(width - pos.width) + "px";
+		var left = pos.left - pos.dx*(width - pos.width);
+		var right = left + width;
+		if(right > window.innerWidth){
+			left = window.innerWidth - width;
+		}
+		left = Math.max(0, left);
+
+		qi.style.left = left + "px";
 		qi.style.top = pos.top - (pos.dy?height:-pos.height) + "px";
 	} else {
 		qi.style.top = this.xy.scale_height+this.xy.nav_height + 20 + "px";
@@ -184,6 +196,7 @@ scheduler._init_quick_info = function(){
 		qi.className = "dhx_cal_quick_info";
 		if (scheduler.$testmode)
 			qi.className += " dhx_no_animate";
+		if (scheduler.config.rtl) qi.className += " dhx_quick_info_rtl";
 	//title
 		var ariaAttr = this._waiAria.quickInfoHeaderAttrString();
 		var html = "<div class=\"dhx_cal_qi_title\" style=\"height:"+sizes.quick_info_title+"px\" "+ariaAttr+">" +
@@ -194,10 +207,11 @@ scheduler._init_quick_info = function(){
 	//buttons
 		html += "<div class=\"dhx_cal_qi_controls\" style=\"height:"+sizes.quick_info_buttons+"px\">";
 		var buttons = scheduler.config.icons_select;
-		for (var i = 0; i < buttons.length; i++) {
-			var ariaAttr = this._waiAria.quickInfoButtonAttrString(this.locale.labels[buttons[i]]);
-			html += "<div "+ariaAttr+" class=\"dhx_qi_big_icon " + buttons[i] + "\" title=\"" + scheduler.locale.labels[buttons[i]] + "\"><div class='dhx_menu_icon " + buttons[i] + "'></div><div>" + scheduler.locale.labels[buttons[i]] + "</div></div>";
-		}
+			for (var i = 0; i < buttons.length; i++) {
+				var ariaAttr = this._waiAria.quickInfoButtonAttrString(this.locale.labels[buttons[i]]);
+				html += "<div "+ariaAttr+" class=\"dhx_qi_big_icon " + buttons[i] + "\" title=\"" + scheduler.locale.labels[buttons[i]] + "\"><div class='dhx_menu_icon " + buttons[i] + "'></div><div>" + scheduler.locale.labels[buttons[i]] + "</div></div>";
+			}
+		// }
 		html += "</div>";
 
 		qi.innerHTML = html;

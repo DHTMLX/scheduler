@@ -58,6 +58,21 @@
     padding:17px 3px 0px 10px;
 }
 
+.dhx_cal_light_rtl{
+    .dhx_repeat_center,
+    .dhx_repeat_left,
+    .dhx_repeat_divider,
+    .dhx_repeat_right{
+        float:none;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .dhx_repeat_right{
+        margin-right:0;
+    }
+}
+
 input.dhx_repeat_text {
     height:16px;
     width: 27px;
@@ -66,11 +81,19 @@ input.dhx_repeat_text {
     padding: 0 0 0 2px;
 }
 
+.dhx_cal_light_rtl input.dhx_repeat_text {
+    padding: 0 2px 0 0;
+}
+
 .dhx_form_repeat select {
     height: 20px;
     width: 87px;
     padding:0 0 0 2px;
     margin: 0 4px 0 4px;
+}
+
+.dhx_cal_light_rtl .dhx_form_repeat select {
+    padding:0 2px 0 0;
 }
 
 input.dhx_repeat_date{
@@ -84,11 +107,19 @@ input.dhx_repeat_date{
     line-height:18px;
 }
 
+.dhx_cal_light_rtl input.dhx_repeat_date{
+    padding:0 2px 0 0;
+}
+
 input[type="radio"].dhx_repeat_radio {
     margin:5px 4px 0 0;
     display: inline-block;
     position: relative;
     top: 2px;
+}
+
+.dhx_cal_light_rtl input[type="radio"].dhx_repeat_radio {
+    margin:5px 0 0 4px;
 }
 
 input.dhx_repeat_checkbox {

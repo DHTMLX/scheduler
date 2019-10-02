@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -68,7 +68,34 @@ Scheduler.plugin(function(scheduler){scheduler.locale = {
 		month: "Month",
 		day: "Day",
 		hour:"Hour",
-		minute: "Minute"
+		minute: "Minute",
+
+		/* recurring event components */
+		repeat_radio_day: "Quotidiano",
+		repeat_radio_week: "Settimanale",
+		repeat_radio_month: "Mensile",
+		repeat_radio_year: "Annuale",
+		repeat_radio_day_type: "Ogni",
+		repeat_text_day_count: "giorno",
+		repeat_radio_day_type2: "Ogni giornata lavorativa",
+		repeat_week: " Ripetere ogni",
+		repeat_text_week_count: "settimana:",
+		repeat_radio_month_type: "Ripetere",
+		repeat_radio_month_start: "Il",
+		repeat_text_month_day: "giorno ogni",
+		repeat_text_month_count: "mese",
+		repeat_text_month_count2_before: "ogni",
+		repeat_text_month_count2_after: "mese",
+		repeat_year_label: "Il",
+		select_year_day2: "del",
+		repeat_text_year_day: "giorno",
+		select_year_month: "mese",
+		repeat_radio_end: "Senza data finale",
+		repeat_text_occurences_count: "occorenze",
+		repeat_radio_end3: "Fine",
+		repeat_radio_end2: "Dopo",
+		month_for_recurring: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Jiugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
+		day_for_recurring: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Jovedì", "Venerdì", "Sabato"]
 	}
 };
 });

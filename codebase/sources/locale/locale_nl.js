@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -68,7 +68,34 @@ Scheduler.plugin(function(scheduler){scheduler.locale = {
 		month: "Month",
 		day: "Day",
 		hour:"Hour",
-		minute: "Minute"
+		minute: "Minute",
+
+		/* recurring event components */
+		repeat_radio_day: "Dagelijks",
+		repeat_radio_week: "Wekelijks",
+		repeat_radio_month: "Maandelijks",
+		repeat_radio_year: "Jaarlijks",
+		repeat_radio_day_type: "Elke",
+		repeat_text_day_count: "dag(en)",
+		repeat_radio_day_type2: "Elke werkdag",
+		repeat_week: " Herhaal elke",
+		repeat_text_week_count: "week op de volgende dagen:",
+		repeat_radio_month_type: "Herhaal",
+		repeat_radio_month_start: "Op",
+		repeat_text_month_day: "dag iedere",
+		repeat_text_month_count: "maanden",
+		repeat_text_month_count2_before: "iedere",
+		repeat_text_month_count2_after: "maanden",
+		repeat_year_label: "Op",
+		select_year_day2: "van",
+		repeat_text_year_day: "dag",
+		select_year_month: "maand",
+		repeat_radio_end: "Geen eind datum",
+		repeat_text_occurences_count: "keren",
+		repeat_radio_end3: "Eindigd per",
+		repeat_radio_end2: "Na",
+		month_for_recurring: ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"],
+		day_for_recurring: ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"]
 	}
 };
 

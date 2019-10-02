@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -42,10 +42,13 @@ scheduler.dblclick_dhx_map_area = function() {
 		});
 };
 scheduler.templates.map_time = function(start, end, ev) {
-	if (ev._timed)
+	if (scheduler.config.rtl && !ev._timed) {
+		return scheduler.templates.day_date(end) + " &ndash; " + scheduler.templates.day_date(start);
+	} else if (ev._timed) {
 		return this.day_date(ev.start_date, ev.end_date, ev) + " " + this.event_date(start);
-	else
+	} else {
 		return scheduler.templates.day_date(start) + " &ndash; " + scheduler.templates.day_date(end);
+	}
 };
 scheduler.templates.map_text = function(start, end, ev) {
 	return ev.text;
@@ -180,7 +183,12 @@ scheduler.attachEvent("onSchedulerReady", function() {
 	function set_full_view(mode) {
 		if (mode) {
 			var l = scheduler.locale.labels;
-			scheduler._els["dhx_cal_header"][0].innerHTML = "<div class='dhx_map_line' style='width: " + (scheduler.xy.map_date_width + scheduler.xy.map_description_width + 2) + "px;' ><div class='headline_date' style='width: " + scheduler.xy.map_date_width + "px;'>" + l.date + "</div><div class='headline_description' style='width: " + scheduler.xy.map_description_width + "px;'>" + l.description + "</div></div>";
+			scheduler._els["dhx_cal_header"][0].innerHTML = "<div class='dhx_map_line' style='width: " + 
+																(scheduler.xy.map_date_width + scheduler.xy.map_description_width + 2) + 
+																"px;' ><div class='headline_date' style='width: " + 
+																scheduler.xy.map_date_width + "px;'>" + l.date + 
+																"</div><div class='headline_description' style='width: " + 
+																scheduler.xy.map_description_width + "px;'>" + l.description + "</div></div>";
 			scheduler._table_view = true;
 			scheduler.set_sizes();
 		}
@@ -226,7 +234,7 @@ scheduler.attachEvent("onSchedulerReady", function() {
 			html += "<div "+ariaButtonAttr+" class='dhx_event_icon icon_details'>&nbsp;</div>";
 			html += "<div class='line_description' style='width:" + (scheduler.xy.map_description_width - scheduler.xy.map_icon_width) + "px;'>" + scheduler.templates.map_text(ev.start_date, ev.end_date, ev) + "</div></div>"; // -25 = icon size 20 and padding 5
 		}
-		html += "<div class='dhx_v_border' style='left: " + (scheduler.xy.map_date_width - 2) + "px;'></div><div class='dhx_v_border_description'></div></div>";
+		html += "<div class='dhx_v_border' style="+(scheduler.config.rtl ? "'right: " : "'left: ") + (scheduler.xy.map_date_width - 2) + "px;'></div><div class='dhx_v_border_description'></div></div>";
 
 		//render html
 		scheduler._els["dhx_cal_data"][0].scrollTop = 0; //fix flickering in FF
@@ -234,7 +242,7 @@ scheduler.attachEvent("onSchedulerReady", function() {
 		scheduler._els["dhx_cal_data"][0].style.width = (scheduler.xy.map_date_width + scheduler.xy.map_description_width + 1) + 'px';
 
 		var t = scheduler._els["dhx_cal_data"][0].firstChild.childNodes;
-		scheduler._els["dhx_cal_date"][0].innerHTML = scheduler.templates[scheduler._mode + "_date"](scheduler._min_date, scheduler._max_date, scheduler._mode);
+			scheduler._els["dhx_cal_date"][0].innerHTML = scheduler.templates[scheduler._mode + "_date"](scheduler._min_date, scheduler._max_date, scheduler._mode);
 
 		scheduler._rendered = [];
 		for (var i = 0; i < t.length - 2; i++) {
@@ -252,7 +260,11 @@ scheduler.attachEvent("onSchedulerReady", function() {
 			width = 0;
 		map.style.height = height + 'px';
 		map.style.width = width + 'px';
-		map.style.marginLeft = (scheduler.xy.map_date_width + scheduler.xy.map_description_width + 1) + 'px';
+		if (scheduler.config.rtl) {
+			map.style.marginRight = (scheduler.xy.map_date_width + scheduler.xy.map_description_width + 1) + 'px';
+		} else {
+			map.style.marginLeft = (scheduler.xy.map_date_width + scheduler.xy.map_description_width + 1) + 'px';
+		}
 		map.style.marginTop = (scheduler.xy.nav_height + 2) + 'px';
 	}
 

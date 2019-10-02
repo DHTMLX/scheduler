@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -1937,7 +1937,7 @@ Scheduler.plugin = function (code) {
 };
 Scheduler._schedulerPlugins = [];
 Scheduler.getSchedulerInstance = function () {
-	var scheduler = { version: "5.2.5" };
+	var scheduler = { version: "5.3.1" };
 
 var commonViews = {
 	agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html",
@@ -2009,6 +2009,211 @@ scheduler.renderCalendar = function() {
 
 dhtmlxEventable(scheduler);
 
+function div(className){
+	var element = document.createElement("div");
+	var classes = (className || "").split(" ");
+	classes.forEach(function(cssClass){
+		element.classList.add(cssClass);
+	});
+	return element;
+}
+var itemTypes = {
+	rows_container: function(){
+		return div("dhx_cal_navbar_rows_container");
+	},
+	row: function(){
+		return div("dhx_cal_navbar_row");
+	},
+	view: function (config) {
+		var element = div("dhx_cal_tab");
+		element.setAttribute("name", config.view + "_tab");
+		element.setAttribute("data-viewname", config.view );
+		if(scheduler.config.fix_tab_position){
+			if(config.view === "day") {
+				element.classList.add("dhx_cal_tab_first");
+			}else if(config.view === "month") {
+				element.classList.add("dhx_cal_tab_last");
+			} else if(config.view !== "week") {
+				element.classList.add("dhx_cal_tab_standalone");
+			}
+		}
+		return element;
+	},
+	date: function () {
+		return div("dhx_cal_date");
+	},
+	button: function (config) {
+		return div("dhx_cal_nav_button dhx_cal_nav_button_custom dhx_cal_tab");
+	},
+	builtInButton: function (config){
+		return div("dhx_cal_" + config.view + "_button dhx_cal_nav_button");
+	},
+	spacer: function () {
+		return div("dhx_cal_line_spacer");
+	},
+	html_element: function (config) {
+		return div("dhx_cal_nav_content");
+	}
+};
+
+function findRenderer(config) {
+	var renderer;
+	if (config.view) {
+		switch (config.view){
+			case "today":
+			case "next":
+			case "prev":
+				renderer = itemTypes.builtInButton;
+				break;
+			case "date":
+				renderer = itemTypes.date;
+				break;
+			case "spacer":
+				renderer = itemTypes.spacer;
+				break;
+			case "button":
+				renderer = itemTypes.button;
+				break;
+			default:
+				renderer = itemTypes.view;
+				break;
+		}
+	} else if(config.rows) {
+		renderer = itemTypes.rows_container;
+	} else if(config.cols) {
+		renderer = itemTypes.row;
+	}
+	return renderer;
+}
+
+function renderElement(config){
+	var renderer = findRenderer(config);
+	if(!renderer){
+		return;
+	}
+	var element = renderer(config);
+	if(config.css){
+		element.classList.add(config.css);
+	}
+	if(config.width){
+		var value = config.width;
+		if(value === value * 1){
+			value += "px";
+		}
+		element.style.width = value;
+	}
+	if(config.height){
+		var value = config.height;
+		if(value === value * 1){
+			value += "px";
+		}
+		element.style.height = value;
+	}
+	if (config.click) {
+		element.addEventListener("click", config.click);
+	}
+	if (config.html) {
+		element.innerHTML = config.html;
+	}
+
+	if (config.align) {
+		var value = "";
+		if (config.align == "right") {
+			value = "flex-end";
+		} else if(config.align == "left") {
+			value = "flex-start";
+		}
+		element.style.justifyContent = value;
+	}
+	return element;
+}
+
+function prepareConfig(config) {
+	if (typeof config === "string") {
+		config = {
+			view: config
+		};
+	}
+	if (!config.view && !config.rows && !config.cols) {
+		config.view = "button";
+	}
+	return config;
+}
+
+function renderLayout(config) {
+	var fragment = document.createDocumentFragment();
+	var items;
+	if(Array.isArray(config)){
+		items = config;
+	}else{
+		items = [config];
+	}
+	for (var i = 0; i < items.length; i++) {
+		var view = prepareConfig(items[i]);
+		var element = renderElement(view);
+
+		fragment.appendChild(element);
+		if(view.cols || view.rows){
+			element.appendChild(renderLayout(view.cols || view.rows));
+		}
+	}
+	return fragment;
+}
+
+scheduler._init_nav_bar = function (items) {
+	var navBar = this.$container.querySelector(".dhx_cal_navline");
+	if (!navBar){
+		navBar = document.createElement("div");
+		navBar.className = "dhx_cal_navline dhx_cal_navline_flex";
+		scheduler._update_nav_bar(items, navBar);
+		return navBar;
+	}
+	return navBar;
+};
+
+var previousNavbar = null;
+var previousHeight = null;
+scheduler._update_nav_bar = function (config, container) {
+
+	if(!config){
+		return;
+	}
+	var heightChanged = false;
+	var configChanged = false;
+
+	var newHeight = config.height || scheduler.xy.nav_height;
+
+	if(previousHeight === null || 
+			(previousHeight !== newHeight)){
+		heightChanged = true;
+	}
+	if(!previousNavbar || JSON.stringify(config) !== previousNavbar){
+		configChanged = true;
+	}
+
+	if(heightChanged){
+		scheduler.xy.nav_height = newHeight;
+	}
+	if(configChanged){
+		container.innerHTML = "";
+		container.appendChild(renderLayout(config));
+	}
+
+	if(heightChanged || configChanged){
+		scheduler._els = [];
+		scheduler.get_elements();
+		scheduler.set_actions();
+	}
+
+	if(newHeight === 0){
+		container.style.display = "none";
+	}else{
+		container.style.display = "";
+	}
+
+	previousHeight = newHeight;
+};
+
 scheduler._detachDomEvent = function(el, event, handler){
 	if (el.removeEventListener){
 		el.removeEventListener(event, handler, false);
@@ -2067,6 +2272,34 @@ scheduler._init_once = function(){
 
 	scheduler._init_once = function(){};
 };
+
+var layout = {
+	"navbar": {
+		render: function (config) {
+			return scheduler._init_nav_bar(config);
+		}
+	},
+	"header": {
+		render: function (config) {
+			var element = document.createElement("div");
+			element.className = "dhx_cal_header";
+			return element;
+		}
+	},
+	"dataArea": {
+		render: function (config) {
+			var element = document.createElement("div");
+			element.className = "dhx_cal_data";
+			return element;
+		}
+	},
+	"html_element": {
+		render: function (config) {
+			return config.html;
+		}
+	},
+};
+
 scheduler.init=function(id,date,mode){
 	date=date||(scheduler._currentDate());
 	mode=mode||"week";
@@ -2087,18 +2320,30 @@ scheduler.init=function(id,date,mode){
 		this.$container.setAttribute("role", "application");
 	}
 
+	if (this.config.header) {
+		this.$container.innerHTML = "";
+		this.$container.classList.add("dhx_cal_container");
+		if(this.config.header.height){
+			this.xy.nav_height = this.config.header.height;
+		}
+		this.$container.appendChild(layout.navbar.render(this.config.header));
+		this.$container.appendChild(layout.header.render());
+		this.$container.appendChild(layout.dataArea.render());
+	}
+
+	if (this.config.rtl) this.$container.className += " dhx_cal_container_rtl";
+
 	//hook for terrace skin
 	if (this._skin_init)
 		scheduler._skin_init();
 
 	scheduler.date.init();
 
-
-	this._els=[];
 	this._scroll=true;
 	this._quirks=(this.$env.isIE && document.compatMode == "BackCompat");
 	this._quirks7=(this.$env.isIE && navigator.appVersion.indexOf("MSIE 8")==-1);
 
+	this._els=[];
 	this.get_elements();
 	this.init_templates();
 	this.set_actions();
@@ -2153,11 +2398,19 @@ scheduler.set_sizes=function(){
 			this.$container.insertBefore(materialScalePlaceholder, this._els["dhx_cal_header"][0]);
 		}
 		materialScalePlaceholder.style.display = "block";
+
 		this.set_xy(materialScalePlaceholder,w,this.xy.scale_height + 1,0,this.xy.nav_height+(this._quirks?-1:1));
 
 	}else{
 		if(materialScalePlaceholder){
 			materialScalePlaceholder.parentNode.removeChild(materialScalePlaceholder);
+		}
+	}
+
+	if (this._lightbox) {
+		if (scheduler.$container.offsetWidth  < 1200) {
+		} else {
+			this._setLbPosition(document.querySelector(".dhx_cal_light"));
 		}
 	}
 
@@ -2171,10 +2424,12 @@ scheduler.set_sizes=function(){
 	this.set_xy(this._els["dhx_cal_data"][0],w,h-(data_y+2),0,data_y+2);
 };
 scheduler.set_xy=function(node,w,h,x,y){
+	var direction = 'left';
 	node.style.width=Math.max(0,w)+"px";
 	node.style.height=Math.max(0,h)+"px";
 	if (arguments.length>3){
-		node.style.left=x+"px";
+		if (this.config.rtl) direction = 'right';
+		node.style[direction]=x+"px";
 		node.style.top=y+"px";
 	}
 };
@@ -2308,8 +2563,13 @@ scheduler._click={
 		scheduler._click.dhx_cal_next_button(0,-1);
 	},
 	dhx_cal_next_button:function(dummy,step){
+		var def_step = 1;
+		if (scheduler.config.rtl){
+			step = -step;
+			def_step = -def_step;
+		}
 		scheduler.setCurrentView(scheduler.date.add( //next line changes scheduler._date , but seems it has not side-effects
-			scheduler.date[scheduler._mode+"_start"](new Date(scheduler._date)),(step||1),scheduler._mode));
+			scheduler.date[scheduler._mode+"_start"](new Date(scheduler._date)),(step||def_step),scheduler._mode));
 	},
 	dhx_cal_today_button:function(){
 		if (scheduler.callEvent("onBeforeTodayDisplayed", [])) {
@@ -2369,13 +2629,11 @@ scheduler.addEventNow=function(start,end,e){
 	// scheduler.addEventNow(new Date(), new Date()) + collision though get_visible events defect (such event was not retrieved)
 	if(start_date.valueOf() == end_date.valueOf())
 		end_date.setTime(end_date.valueOf()+d);
-
 	base.start_date = base.start_date||start_date;
 	base.end_date =  base.end_date||end_date;
 	base.text = base.text||this.locale.labels.new_event;
 	base.id = this._drag_id = base.id || this.uid();
 	this._drag_mode="new-size";
-
 	this._loading=true;
 	var eventId = this.addEvent(base);
 	this.callEvent("onEventCreated",[this._drag_id,e]);
@@ -2429,19 +2687,15 @@ scheduler._on_dbl_click=function(e,src){
 scheduler._get_column_index = function(x_pos){
 	var column = 0;
 	if (this._cols){
-
 		var width = 0;
-
 		var i = 0;
 		while (width + this._cols[i] < x_pos && i < this._cols.length){
 			width += this._cols[i];
 			i++;
 		}
-
 		column = i + (this._cols[i] ? ((x_pos - width)/ this._cols[i]) : 0);
 
 		if (this._ignores){
-
 			if(column >= this._cols.length){
 				while(column >= 1 && this._ignores[Math.floor(column)]){
 					column--;
@@ -2452,6 +2706,7 @@ scheduler._get_column_index = function(x_pos){
 	}
 	return column;
 };
+
 //transform mouse coordinates to day-time indexes of week based view
 scheduler._week_indexes_from_pos = function(pos){
 	//"get position" can be invoked before columns are loaded into the units view(e.g. by onMouseMove handler in key_nav.js)
@@ -2459,8 +2714,8 @@ scheduler._week_indexes_from_pos = function(pos){
 		return pos;
 	}else{
 		var column = this._get_column_index(pos.x);
+		
 		pos.x=Math.min(this._cols.length-1, Math.max(0,Math.ceil(column)-1));
-
 		pos.y=Math.max(0,Math.ceil(pos.y*60/(this.config.time_step*this.config.hour_size_px))-1)+this.config.first_hour*(60/this.config.time_step);
 		return pos;
 	}
@@ -2471,17 +2726,22 @@ scheduler._mouse_coords=function(ev){
 	var b=document.body;
 	var d = document.documentElement;
 	if (!this.$env.isIE && (ev.pageX || ev.pageY))
-	    pos={x:ev.pageX, y:ev.pageY};
+		pos={x:ev.pageX, y:ev.pageY};
 	else pos={
-	    x:ev.clientX + (b.scrollLeft||d.scrollLeft||0) - b.clientLeft,
-	    y:ev.clientY + (b.scrollTop||d.scrollTop||0) - b.clientTop
+		x:ev.clientX + (b.scrollLeft||d.scrollLeft||0) - b.clientLeft,
+		y:ev.clientY + (b.scrollTop||d.scrollTop||0) - b.clientTop
 	};
-
 	//apply layout
-	pos.x-=this.$domHelpers.getAbsoluteLeft(this._obj)+(this._table_view?0:this.xy.scale_width);
+	if (this.config.rtl && this._colsS) {
+		pos.x = this.$container.querySelector(".dhx_cal_data").offsetWidth - pos.x;
+		if (this._mode !== "month") {
+			pos.x -= this.xy.scale_width;
+		}
+	} else {
+		pos.x-=this.$domHelpers.getAbsoluteLeft(this._obj)+(this._table_view?0:this.xy.scale_width);
+	}
 	pos.y-=this.$domHelpers.getAbsoluteTop(this._obj)+this.xy.nav_height+(this._dy_shift||0)+this.xy.scale_height-this._els["dhx_cal_data"][0].scrollTop;
 	pos.ev = ev;
-
 	var handler = this["mouse_"+this._mode];
 	if (handler){
 		pos = handler.call(this,pos);
@@ -2515,9 +2775,7 @@ scheduler._mouse_coords=function(ev){
 			pos.x=0;
 		}
 	}
-
 	pos.timestamp = +new Date();
-
 	return pos;
 };
 scheduler._close_not_saved=function(){
@@ -2990,6 +3248,9 @@ scheduler._trigger_dyn_loading = function(){
 };
 scheduler.update_view=function(){
 	this._reset_ignores();
+	this._update_nav_bar(
+		this.config.header, 
+		this.$container.querySelector(".dhx_cal_navline"));
 
 	var view = this[this._mode + "_view"];
 	if(view){
@@ -3018,8 +3279,6 @@ scheduler._set_aria_buttons_attrs = function(){
 			var label = this.locale.labels[buttonGroups[i]];
 			if(name){
 				label = this.locale.labels[name] || label;
-
-
 			}
 			if(buttonGroups[i] == "dhx_cal_next_button"){
 				label = this.locale.labels.next;
@@ -3072,6 +3331,8 @@ scheduler.updateView = function(date, mode) {
 
 	this._dy_shift = 0;//correction for multiday section in week/day views
 
+	//show new view
+	this.update_view();
 
 	this._set_aria_buttons_attrs();
 
@@ -3080,20 +3341,15 @@ scheduler.updateView = function(date, mode) {
 		for (var i = 0; i < tabs.length; i++) {
 			var tab = tabs[i];
 
-			var name = tab.className;
-			name = name.replace(/ active/g, "");
 			if (tab.getAttribute("name") == this._mode + "_tab"){
-				name = name + " active";
+				tab.classList.add("active");
 				this._waiAria.headerToggleState(tab, true);
 			}else{
+				tab.classList.remove("active");
 				this._waiAria.headerToggleState(tab, false);
 			}
-
-			tab.className = name;
 		}
 	}
-	//show new view
-	this.update_view();
 
 	if (typeof prev_scroll == "number") // if we are updating or working with the same view scrollTop should be saved
 		this._els[dhx_cal_data][0].scrollTop = prev_scroll; // restoring original scroll
@@ -3108,6 +3364,11 @@ scheduler.setCurrentView = function(date, mode) {
 	this.updateView(date, mode);
 	this.callEvent("onViewChange", [this._mode, this._date]);
 };
+
+scheduler.render = function(date, mode){
+	scheduler.setCurrentView(date, mode);
+};
+
 scheduler._render_x_header = function(i,left,d,h, offset_top){
 	offset_top = offset_top || 0;
 	//header scale
@@ -3158,14 +3419,15 @@ scheduler._get_view_end = function(){
 	}
 	return ed;
 };
-scheduler._calc_scale_sizes = function(width, from, to){
+scheduler._calc_scale_sizes = function(width, from, to){//
 	//calculates number of displayed columns(days/units/month view cols) and their widths
+	var rtl = this.config.rtl;
 	var summ = width; //border delta
 	var count = this._get_columns_num(from, to);
-
+	//if (this.config.rtl) this._process_ignores(scheduler.date.add(to, -1, "day"), count, "day", -1);
+	//else 
 	this._process_ignores(from, count, "day", 1);
 	var realcount = count - this._ignores_detected;
-
 	for (var i=0; i<count; i++){
 		if (this._ignores[i]){
 			this._cols[i] = 0;
@@ -3174,12 +3436,14 @@ scheduler._calc_scale_sizes = function(width, from, to){
 			this._cols[i]=Math.floor(summ/(realcount-i));
 		}
 		summ-=this._cols[i];
-		this._colsS[i]=(this._cols[i-1]||0)+(this._colsS[i-1]||(this._table_view?0:this.xy.scale_width+2));
+		this._colsS[i]=(this._cols[i-1]||0)+(this._colsS[i-1]||(this._table_view?0:(rtl ? this.xy.scroll_width : this.xy.scale_width)+2));
+		//this._colsS[j]=(this._cols[rtl ? j+1 : (i-1)]||0)+(this._colsS[rtl ? j+1 : (i-1)]||(this._table_view?0:(rtl?this.xy.scroll_width:this.xy.scale_width)+2));
 	}
 	this._colsS['col_length'] = count;
-
 	this._colsS[count] = (this._cols[count-1]+this._colsS[count-1]) || 0;
+	//this._colsS[count] = (this._cols[rtl ? 0 : count-1]+this._colsS[rtl ? 0 : count-1]) || 0;
 };
+
 scheduler._set_scale_col_size = function(div, width, left){
 	var c = this.config;
 	this.set_xy(div, width-1, c.hour_size_px*(c.last_hour-c.first_hour), left+this.xy.scale_width+1, 0);//-1 for border
@@ -3193,6 +3457,9 @@ scheduler._render_scales = function(header, data_area){
 
 	var summ = parseInt(header.style.width,10); //border delta
 	var d = new Date(this._min_date);
+	// if (this.config.rtl) {
+	// 	d = new Date(scheduler.date.add(this._max_date, -1, "day"));
+	// }
 	var count = this._get_columns_num(sd, ed);
 	this._calc_scale_sizes(summ, sd, ed);
 	var left=0;
@@ -3207,6 +3474,7 @@ scheduler._render_scales = function(header, data_area){
 			var cls = "dhx_scale_holder";
 			if (d.valueOf() == today.valueOf()) cls = "dhx_scale_holder_now";
 
+			scales.setAttribute("data-column-index", i);
 			if (this._ignores_detected && this._ignores[i]){
 				cls += " dhx_scale_ignore";
 			}
@@ -3218,8 +3486,9 @@ scheduler._render_scales = function(header, data_area){
 			data_area.appendChild(scales);
 			this.callEvent("onScaleAdd",[scales, d]);
 		}
-
 		left+=this._cols[i];
+		//if (this.config.rtl) d=this.date.add(d,-1,"day"); 
+		//else 
 		d=this.date.add(d,1,"day");
 		d = this.date.day_start(d);
 	}
@@ -3283,7 +3552,10 @@ scheduler._reset_scale=function(){
 			var c1 = document.createElement("div");
 			c1.className = dhx_multi_day;
 			c1.style.visibility="hidden";
-			this.set_xy(c1, Math.max(this._colsS[this._colsS.col_length]+this.xy.scroll_width - 2, 0), 0, 0, top); // 2 extra borders, dhx_header has -1 bottom margin
+			var totalWidth = this._colsS[this._colsS.col_length];
+			var offset = c.rtl ? this.xy.scale_width : this.xy.scroll_width;
+			var hiddenWidth = Math.max(totalWidth + offset - 2, 0);
+			this.set_xy(c1, hiddenWidth, 0, 0, top); // 2 extra borders, dhx_header has -1 bottom margin
 			data_area.parentNode.insertBefore(c1,data_area);
 
 			var c2 = c1.cloneNode(true);
@@ -3339,7 +3611,6 @@ scheduler._reset_ignores = function(){
 scheduler._process_ignores = function(sd, n, mode, step, preserve){
 	this._reset_ignores();
 	var ignore = scheduler["ignore_"+this._mode];
-
 	if (ignore){
 		var ign_date = new Date(sd);
 		for (var i=0; i<n; i++){
@@ -3568,6 +3839,7 @@ scheduler._lame_copy = function(target, source) {
 };
 scheduler._get_date_from_pos = function(pos) {
 	var start=this._min_date.valueOf()+(pos.y*this.config.time_step+(this._table_view?0:pos.x)*24*60)*60000;
+	//if (this.config.rtl) start=scheduler.date.add(this._max_date, -1, "day").valueOf()+(pos.y*this.config.time_step-(this._table_view?0:pos.x)*24*60)*60000;
 	return new Date(this._correct_shift(start));
 };
 // n_ev - native event
@@ -4165,6 +4437,84 @@ scheduler._isObject = function(obj){
 
 
 })();
+// iframe-safe array type check instead of using instanceof
+function isArray(obj){
+	if(Array.isArray){
+		return Array.isArray(obj);
+	}else{
+		// close enough
+		return (obj && obj.length !== undefined && obj.pop && obj.push);
+	}
+}
+
+// non-primitive string object, e.g. new String("abc")
+function isStringObject(obj){
+	return obj && typeof obj === "object" && 
+		Function.prototype.toString.call(obj.constructor) === "function String() { [native code] }";
+}
+
+// non-primitive number object, e.g. new Number(5)
+function isNumberObject(obj){
+	return obj && typeof obj === "object" && 
+		Function.prototype.toString.call(obj.constructor) === "function Number() { [native code] }";
+}
+
+// non-primitive number object, e.g. new Boolean(true)
+function isBooleanObject(obj){
+	return obj && typeof obj === "object" &&
+		Function.prototype.toString.call(obj.constructor) === "function Boolean() { [native code] }";
+}
+
+function isDate(obj) {
+	if (obj && typeof obj === "object") {
+		return !!(obj.getFullYear && obj.getMonth && obj.getDate);
+	} else {
+		return false;
+	}
+}
+
+scheduler.utils = {
+	mixin: function mixin (target, source, force){
+		for (var f in source)
+			if (((target[f] === undefined) || force)) target[f]=source[f];
+		return target;
+	},
+	copy: function copy(object) {
+		var i, result; // iterator, types array, result
+	
+		if (object && typeof object == "object") {
+	
+			switch (true){
+				case (isDate(object)):
+					result = new Date(object);
+					break;
+				case (isArray(object)):
+					result = new Array(object.length);
+					for(i = 0; i < object.length; i++){
+						result[i] = copy(object[i]);
+					}
+					break;
+				case (isStringObject(object)):
+					result = new String(object);// jshint ignore:line
+					break;
+				case (isNumberObject(object)):
+					result = new Number(object);// jshint ignore:line
+					break;
+				case (isBooleanObject(object)):
+					result = new Boolean(object);// jshint ignore:line
+					break;
+				default:
+					result = {};
+					for (i in object) {
+						if (Object.prototype.hasOwnProperty.apply(object, [i]))
+							result[i] = copy(object[i]);
+					}
+				break;
+			}
+		}
+		return result || object;
+	}
+};
 scheduler.$domHelpers = {
 	/**
 	 *     @desc: Calculate absolute position of html object
@@ -4247,6 +4597,13 @@ scheduler.$domHelpers = {
 			return null;
 		}
 		return closest(element, selector);
+	},
+	insertAfter: function(newNode, referenceNode){
+		if(referenceNode.nextSibling){
+			referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+		}else{
+			referenceNode.parentNode.appendChild(newNode);
+		}
 	}
 };
 
@@ -4752,7 +5109,34 @@ scheduler.locale = {
 		month: "Month",
 		day: "Day",
 		hour:"Hour",
-		minute: "Minute"
+		minute: "Minute",
+
+		/* recurring event components */
+		repeat_radio_day: "Daily",//name="repeat" value="day"
+		repeat_radio_week: "Weekly",//name="repeat" value="week
+		repeat_radio_month: "Monthly",
+		repeat_radio_year: "Yearly",
+		repeat_radio_day_type: "Every",
+		repeat_text_day_count: "day",
+		repeat_radio_day_type2: "Every workday",
+		repeat_week: " Repeat every",
+		repeat_text_week_count: "week next days:",
+		repeat_radio_month_type: "Repeat",
+		repeat_radio_month_start: "On",
+		repeat_text_month_day: "day every",
+		repeat_text_month_count: "month",
+		repeat_text_month_count2_before: "every",
+		repeat_text_month_count2_after: "month",
+		repeat_year_label: "On",
+		select_year_day2: "of",
+		repeat_text_year_day: "day",
+		select_year_month: "month",
+		repeat_radio_end: "No end date",
+		repeat_text_occurences_count: "occurrences",
+		repeat_radio_end2: "After",
+		repeat_radio_end3: "End by",
+		month_for_recurring: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+		day_for_recurring: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]//
 	}
 };
 
@@ -4799,8 +5183,13 @@ scheduler.config={
 	dblclick_create: true,
 	edit_on_create: true,
 	details_on_create: false,
+	header: null,
 	resize_month_events:false,
 	resize_month_timed:false,
+	
+	responsive_lightbox: false,
+
+	rtl:false,
 
 	cascade_event_display: false,
 	cascade_event_count: 4,
@@ -4817,6 +5206,7 @@ scheduler.config={
 	touch:true,
 	touch_tip:true,
 	touch_drag:500,
+	touch_swipe_dates: false,
 	quick_info_detached:true,
 
 	positive_closing: false,
@@ -4875,6 +5265,9 @@ scheduler.init_templates=function(){
 		day_date:d(c.default_date),
 		month_date:d(c.month_date),
 		week_date:function(d1,d2){
+			if(c.rtl) {
+				return scheduler.templates.day_date(scheduler.date.add(d2,-1,"day"))+" &ndash; "+scheduler.templates.day_date(d1);
+			} 
 			return scheduler.templates.day_date(d1)+" &ndash; "+scheduler.templates.day_date(scheduler.date.add(d2,-1,"day"));
 		},
 		day_scale_date:d(c.default_date),
@@ -4892,7 +5285,11 @@ scheduler.init_templates=function(){
 		parse_date:scheduler.date.str_to_date(c.date_format,c.server_utc),
 		api_date:scheduler.date.str_to_date(c.api_date, false, false),
 		event_header:function(start,end,ev){
+			// if (scheduler.config.rtl) {
+			// 	return scheduler.templates.event_date(end)+" - "+scheduler.templates.event_date(start);
+			// }
 			return scheduler.templates.event_date(start)+" - "+scheduler.templates.event_date(end);
+						
 		},
 		event_text:function(start,end,ev){
 			return ev.text;
@@ -4966,7 +5363,6 @@ scheduler.addEvent = function(start_date, end_date, text, id, extra_data) {
 
 	if (typeof ev.start_date == "string")  ev.start_date = this.templates.api_date(ev.start_date);
 	if (typeof ev.end_date == "string")  ev.end_date = this.templates.api_date(ev.end_date);
-
 	var d = (this.config.event_duration || this.config.time_step) * 60000;
 	if (ev.start_date.valueOf() == ev.end_date.valueOf())
 		ev.end_date.setTime(ev.end_date.valueOf() + d);
@@ -5291,11 +5687,12 @@ scheduler._pre_render_events = function(evs, hold) {
 	var h = this._colsS.heights = [0, 0, 0, 0, 0, 0, 0];
 	var data = this._els["dhx_cal_data"][0];
 
-	if (!this._table_view)
+	if (!this._table_view) {
 		evs = this._pre_render_events_line(evs, hold); //ignore long events for now
-	else
+	}
+	else {
 		evs = this._pre_render_events_table(evs, hold);
-
+	}
 	if (this._table_view) {
 		if (hold)
 			this._colsS.heights = h_old;
@@ -5390,7 +5787,6 @@ scheduler._pre_render_events = function(evs, hold) {
 			}
 		}
 	}
-
 	return evs;
 };
 scheduler._get_event_sday = function(ev) {
@@ -5429,7 +5825,6 @@ scheduler._pre_render_events_line = function(evs, hold){
 		//check scale overflow
 		var sh = sd.getHours();
 		var eh = ed.getHours();
-
 		ev._sday = this._get_event_sday(ev); // sday based on event start_date
 		if (this._ignores[ev._sday]){
 			//ignore event
@@ -5563,7 +5958,12 @@ scheduler._is_any_multiday_cell_visible = function(from, to, event){
 	var isAnyCellVisible = false;
 	var checkDate = from;
 	var noCells = true;
-	while(checkDate < to){
+	var lastDayEnd = new Date(to);
+	if(scheduler.date.day_start(new Date(to)).valueOf() != to.valueOf()){
+		lastDayEnd = scheduler.date.day_start(lastDayEnd);
+		lastDayEnd = scheduler.date.add(lastDayEnd, 1, "day");
+	}
+	while(checkDate < lastDayEnd){
 		noCells = false;
 		var cellIndex = this.locate_holder_day(checkDate, false, event);
 		var weekCellIndex = cellIndex % cols;
@@ -5617,14 +6017,12 @@ scheduler._pre_render_events_table = function(evs, hold) { // max - max height o
 
 		var locate_s = this.locate_holder_day(sd, false, ev);
 		ev._sday = locate_s % cols;
-
 		//skip single day events for ignored dates
 		if (this._ignores[ev._sday] && ev._timed) continue;
 
 		var locate_e = this.locate_holder_day(ed, true, ev) || cols;
 		ev._eday = (locate_e % cols) || cols; //cols used to fill full week, when event end on monday
 		ev._length = locate_e - locate_s;
-
 		//3600000 - compensate 1 hour during winter|summer time shift
 		ev._sweek = Math.floor((this._correct_shift(sd.valueOf(), 1) - this._min_date.valueOf()) / (60 * 60 * 1000 * 24 * cols));
 
@@ -5773,7 +6171,9 @@ scheduler.render_event = function(ev, buffer, parentWidth) {
 	this._rendered.push(d);
 	buffer.appendChild(d);
 
-	left = left + parseInt(parent.style.left, 10) + menu_offset;
+	var parentPosition = parseInt( this.config.rtl ? parent.style.right : parent.style.left, 10);
+
+	left = left + parentPosition + menu_offset;
 
 	if (this._edit_id == ev.id) {
 
@@ -5784,8 +6184,10 @@ scheduler.render_event = function(ev, buffer, parentWidth) {
 
 		this._waiAria.eventAttr(ev, d);
 
-		this.set_xy(d, width, height - 20, left, top + (scheduler.xy.event_header_height || 14));
 		d.className = "dhx_cal_event dhx_cal_editor";
+		if (this.config.rtl) left++;
+		this.set_xy(d, width, height - 20, left, top + (scheduler.xy.event_header_height || 14));
+		
 
 		if(ev.color){
 			d.style.backgroundColor = ev.color;
@@ -5881,7 +6283,11 @@ scheduler._render_v_bar = function (ev, x, y, w, h, style, contentA, contentB, b
 
 	var bodyHeight = borderBox ? (h - this.xy.event_header_height - 1) : (h-(this._quirks?20:30) + 1);
 
-	var html = '<div event_id="' + id + '" class="' + cs + '" style="position:absolute; top:' + y + 'px; left:' + x + 'px; width:' + boxWidth + 'px; height:' + h + 'px;' + (style || "") + '"></div>';
+
+	var html = '<div event_id="' + id + '" class="' + cs + 
+				'" style="position:absolute; top:' + y + 'px; ' + 
+				((this.config.rtl) ? 'right:':'left:') + x + 'px; width:' + boxWidth + 'px; height:' + h + 'px;' + 
+				(style || "") + '"></div>';
 	d.innerHTML = html;
 
 	var container = d.cloneNode(true).firstChild;
@@ -5940,29 +6346,34 @@ scheduler._get_dnd_order = function(order, ev_height, max_height){
 };
 //scheduler._get_event_bar_pos = function(sday, eday, week, drag){
 scheduler._get_event_bar_pos = function(ev){
-	var x = this._colsS[ev._sday];
-	var x2 = this._colsS[ev._eday];
-	if (x2 == x) x2 = this._colsS[ev._eday + 1];
+	var rtl = this.config.rtl;
+	var columns = this._colsS;
+	var x = columns[ev._sday];
+	var x2 = columns[ev._eday];
+	if (rtl) {
+		x = columns[columns.col_length] - columns[ev._eday] + columns[0];
+		x2 = columns[columns.col_length] - columns[ev._sday] + columns[0];
+	}
+
+	if (x2 == x) x2 = columns[ev._eday + 1];
 	var hb = this.xy.bar_height;
 
 	var order = ev._sorder;
 	if(ev.id == this._drag_id){
-		var cellHeight = this._colsS.heights[ev._sweek + 1] - this._colsS.heights[ev._sweek]- this.xy.month_head_height;//22 for month head height
+		var cellHeight = columns.heights[ev._sweek + 1] - columns.heights[ev._sweek]- this.xy.month_head_height;//22 for month head height
 		order = scheduler._get_dnd_order(order, hb, cellHeight);
 	}
 	var y_event_offset =  order * hb;
-	var y = this._colsS.heights[ev._sweek] + (this._colsS.height ? (this.xy.month_scale_height + 2) : 2 ) + y_event_offset;
+	var y = columns.heights[ev._sweek] + (columns.height ? (this.xy.month_scale_height + 2) : 2 ) + y_event_offset;
 	return {x:x, x2:x2, y:y};
 };
 
 scheduler.render_event_bar = function (ev) {
 	var parent = this._rendered_location;
 	var pos = this._get_event_bar_pos(ev);
-
 	var y = pos.y;
 	var x = pos.x;
 	var x2 = pos.x2;
-	
 	// resize for month mutliday events
 	var resize_handle = "";
 
@@ -5980,8 +6391,10 @@ scheduler.render_event_bar = function (ev) {
 	var resize_left = resizable && (ev._timed || left_chunk);
 	var resize_right = resizable && (ev._timed || right_chunk);
 
+	var timed = true;
 	var cs = "dhx_cal_event_clear";
 	if (!ev._timed || resizable) {
+		timed = false;
 		cs = "dhx_cal_event_line";
 	}
 	if(left_chunk){
@@ -6009,7 +6422,7 @@ scheduler.render_event_bar = function (ev) {
 		"position:absolute",
 		"top:" + y + "px",
 		"left:" + x + "px",
-		"width:" + (x2 - x - 15) + "px",
+		"width:" + (x2 - x - 3 - (timed ? 1 : 0)) + "px",
 		color,
 		bg_color,
 		(ev._text_style || "")
@@ -6859,9 +7272,26 @@ scheduler.form_blocks={
 						selectBoxClass = "dhx_lightbox_year_select";
 						sns._time_format_order[3] = p;
 						//year
-						var year = dt.getFullYear()-5; //maybe take from config?
-						for (var i=0; i < 10; i++)
-							options+="<option value='"+(year+i)+"'>"+(year+i)+"</option>";
+						var range;
+						var start_year;
+						var end_year;
+						if(sns.year_range){
+							if (!isNaN(sns.year_range)) {
+								range = sns.year_range;
+							} else if (sns.year_range.push) {
+								// if
+								start_year = sns.year_range[0];
+								end_year = sns.year_range[1];
+							}
+						}
+
+						range = range || 10;
+						var offset = offset || Math.floor(range / 2);
+						start_year = start_year || dt.getFullYear() - offset;
+						end_year = end_year || start_year + range;
+
+						for (var i = start_year; i < end_year; i++)
+							options += "<option value='" + (i) + "'>" + (i) + "</option>";
 						break;
 					case "%m":
 						selectBoxClass = "dhx_lightbox_month_select";
@@ -7017,27 +7447,35 @@ scheduler.form_blocks={
 		}
 	}
 };
+
+scheduler._setLbPosition = function(box) {
+	var scrollTop = window.pageYOffset||document.body.scrollTop||document.documentElement.scrollTop;
+	var scrollLeft = window.pageXOffset||document.body.scrollLeft||document.documentElement.scrollLeft;
+
+	var viewHeight = window.innerHeight||document.documentElement.clientHeight;
+
+	if(scrollTop) // if vertical scroll on window
+		box.style.top=Math.round(scrollTop+Math.max((viewHeight-box.offsetHeight)/2, 0))+"px";
+	else // vertical scroll on body
+		box.style.top=Math.round(Math.max(((viewHeight-box.offsetHeight)/2), 0) + 9)+"px"; // +9 for compatibility with auto tests
+	// not quite accurate but used for compatibility reasons
+	if(document.documentElement.scrollWidth > document.body.offsetWidth) // if horizontal scroll on the window
+		box.style.left=Math.round(scrollLeft+(document.body.offsetWidth-box.offsetWidth)/2)+"px";
+	else // horizontal scroll on the body
+		box.style.left=Math.round((document.body.offsetWidth-box.offsetWidth)/2)+"px";
+};
+
 scheduler.showCover=function(box){
 	if (box){
 		box.style.display="block";
 
-		var scroll_top = window.pageYOffset||document.body.scrollTop||document.documentElement.scrollTop;
-		var scroll_left = window.pageXOffset||document.body.scrollLeft||document.documentElement.scrollLeft;
-
-		var view_height = window.innerHeight||document.documentElement.clientHeight;
-
-		if(scroll_top) // if vertical scroll on window
-			box.style.top=Math.round(scroll_top+Math.max((view_height-box.offsetHeight)/2, 0))+"px";
-		else // vertical scroll on body
-			box.style.top=Math.round(Math.max(((view_height-box.offsetHeight)/2), 0) + 9)+"px"; // +9 for compatibility with auto tests
-
-		// not quite accurate but used for compatibility reasons
-		if(document.documentElement.scrollWidth > document.body.offsetWidth) // if horizontal scroll on the window
-			box.style.left=Math.round(scroll_left+(document.body.offsetWidth-box.offsetWidth)/2)+"px";
-		else // horizontal scroll on the body
-			box.style.left=Math.round((document.body.offsetWidth-box.offsetWidth)/2)+"px";
+		this._setLbPosition(box);
 	}
-    this.show_cover();
+	if(scheduler.config.responsive_lightbox){
+		document.documentElement.classList.add("dhx_cal_overflow_container");
+		document.body.classList.add("dhx_cal_overflow_container");
+	}
+	this.show_cover();
 };
 scheduler.showLightbox=function(id){
 	if (!id) return;
@@ -7119,24 +7557,36 @@ scheduler._empty_lightbox=function(data){
 scheduler.hide_lightbox=function(id){
 	scheduler.endLightbox(false, this.getLightbox());
 };
+scheduler.hideLightbox = scheduler.hide_lightbox;
+
 scheduler.hideCover=function(box){
 	if (box) box.style.display="none";
 	this.hide_cover();
+	if(scheduler.config.responsive_lightbox){
+		document.documentElement.classList.remove("dhx_cal_overflow_container");
+		document.body.classList.remove("dhx_cal_overflow_container");
+	}
 };
 scheduler.hide_cover=function(){
 	if (this._cover) 
 		this._cover.parentNode.removeChild(this._cover);
 	this._cover=null;
 };
-scheduler.show_cover=function(){
-	if(this._cover)
-		return;
 
-	this._cover=document.createElement("div");
-	this._cover.className="dhx_cal_cover";
+scheduler.set_cover_height = function(coverH) {
 	var _document_height = ((document.height !== undefined) ? document.height : document.body.offsetHeight);
 	var _scroll_height = ((document.documentElement) ? document.documentElement.scrollHeight : 0);
-	this._cover.style.height = Math.max(_document_height, _scroll_height) + 'px';
+	coverH = Math.max(_document_height, _scroll_height) + 'px';
+};
+
+scheduler.show_cover=function(){
+	if(this._cover) {
+		return;
+	}
+		
+	this._cover=document.createElement("div");
+	this._cover.className="dhx_cal_cover";
+	this.set_cover_height(this._cover.style.height);
 	document.body.appendChild(this._cover);
 };
 scheduler.save_lightbox=function(){
@@ -7318,6 +7768,10 @@ scheduler.getLightbox=function(){ //scheduler.config.wide_form=true;
 			d.className+=" dhx_cal_light_wide";
 		if (scheduler.form_blocks.recurring)
 			d.className+=" dhx_cal_light_rec";
+		if (scheduler.config.rtl) 
+			d.className+=" dhx_cal_light_rtl";
+		if (scheduler.config.responsive_lightbox)
+			d.className += " dhx_cal_light_responsive";
 			
 		if (/msie|MSIE 6/.test(navigator.userAgent))
 			d.className+=" dhx_ie6";
@@ -7329,13 +7783,16 @@ scheduler.getLightbox=function(){ //scheduler.config.wide_form=true;
 		var ariaAttr = "";
 		for (var i = 0; i < buttons.length; i++) {
 			ariaAttr = this._waiAria.lightboxButtonAttrString(buttons[i]);
-			html += "<div "+ariaAttr+" class='dhx_btn_set dhx_left_btn_set " + buttons[i] + "_set'><div dhx_button='1' class='" + buttons[i] + "'></div><div>" + scheduler.locale.labels[buttons[i]] + "</div></div>";
+			html += "<div "+ariaAttr+" class='dhx_btn_set dhx_"+(scheduler.config.rtl?"right":"left")+"_btn_set " + buttons[i] + "_set'><div dhx_button='1' class='" + buttons[i] + "'></div><div>" + scheduler.locale.labels[buttons[i]] + "</div></div>";
 		}
 
 		buttons = this.config.buttons_right;
+		var rtl = scheduler.config.rtl;
 		for (var i = 0; i < buttons.length; i++) {
 			ariaAttr = this._waiAria.lightboxButtonAttrString(buttons[i]);
-			html += "<div "+ariaAttr+" class='dhx_btn_set dhx_right_btn_set " + buttons[i] + "_set' style='float:right;'><div dhx_button='1' class='" + buttons[i] + "'></div><div>" + scheduler.locale.labels[buttons[i]] + "</div></div>";
+			html += "<div "+ariaAttr+" class='dhx_btn_set dhx_"+(rtl?"left":"right")+"_btn_set " + 
+						buttons[i] + "_set' style='float:"+(rtl?"left":"right")+";'><div dhx_button='1' class='" + 
+						buttons[i] + "'></div><div>" + scheduler.locale.labels[buttons[i]] + "</div></div>";
 		}
 
 		html+="</div>";
@@ -7750,8 +8207,10 @@ scheduler._touch_events = function(names, accessor, ignore){
 	attachTouchEvent(this._els["dhx_cal_data"][0], names[2], function(e){
 		if (ignore(e)) return;
 
-		if (!drag_mode && check_direction_swipe(source, tracker, 200, 100)) {
-			scheduler._block_next_stop = true;
+		if(scheduler.config.touch_swipe_dates){
+			if (!drag_mode && check_direction_swipe(source, tracker, 200, 100)) {
+				scheduler._block_next_stop = true;
+			}
 		}
 
 		if (drag_mode) {
@@ -7942,6 +8401,57 @@ scheduler._update_callback = function(upd,id){
 	if (scheduler._add_rec_marker)
 		scheduler.setCurrentView();
 };
+scheduler.getRootView = function() {
+	return {
+		view: {
+			render: function(){
+				return {
+					tag: "div",
+					type: 1,
+					attrs: {
+						style: "width:100%;height:100%;"
+					},
+					hooks: {
+						"didInsert": function(){
+							scheduler.setCurrentView();
+						}
+					},
+					body: [
+						{
+							el: this.el,
+							type: 1
+						}
+					]
+				};
+			},
+			init: function(){
+				var container = document.createElement("DIV");
+				container.id = "scheduler_"+ scheduler.uid();
+				container.style.width = "100%";
+				container.style.height = "100%";
+				container.classList.add("dhx_cal_container");
+				container.cmp = "grid";
+				container.innerHTML = '<div class="dhx_cal_navline">' +
+					'<div class="dhx_cal_prev_button">&nbsp;</div>' +
+					'<div class="dhx_cal_next_button">&nbsp;</div>' +
+					'<div class="dhx_cal_today_button"></div>' +
+					'<div class="dhx_cal_date"></div>' +
+					'<div class="dhx_cal_tab" name="day_tab"></div>' +
+					'<div class="dhx_cal_tab" name="week_tab"></div>' +
+					'<div class="dhx_cal_tab" name="month_tab"></div>' +
+					'</div>' +
+					'<div class="dhx_cal_header">' +
+					'</div>' +
+					'<div class="dhx_cal_data">' +
+					'</div>';
+				scheduler.init(container);
+
+				this.el = container;
+			}
+		},
+		type: 4
+	};
+};
 scheduler._skin_settings = {
 	fix_tab_position: [1,0],
 	use_select_menu_space: [1,0],
@@ -7998,7 +8508,7 @@ scheduler._skin_init = function(){
 			scheduler.config.buttons_right = tmp;
 		}
 		scheduler.xy.event_header_height = 18;
-		scheduler.xy.menu_width = 25;
+	//	scheduler.xy.menu_width = 25;
 		scheduler.xy.week_agenda_scale_height = 35;
 		scheduler.xy.map_icon_width = 38;
 		scheduler._lightbox_controls.defaults.textarea.height = 64;

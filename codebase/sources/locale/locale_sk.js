@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -69,7 +69,34 @@ Scheduler.plugin(function(scheduler){scheduler.locale = {
 		month: "Month",
 		day: "Day",
 		hour:"Hour",
-		minute: "Minute"
+		minute: "Minute",
+
+		/* recurring event components */
+		repeat_radio_day: "Denne",
+		repeat_radio_week: "Týždenne",
+		repeat_radio_month: "Mesaène",
+		repeat_radio_year: "Roène",
+		repeat_radio_day_type: "Každý",
+		repeat_text_day_count: "deò",
+		repeat_radio_day_type2: "Každý prac. deò",
+		repeat_week: "Opakova každý",
+		repeat_text_week_count: "týždeò v dòoch:",
+		repeat_radio_month_type: "Opakova",
+		repeat_radio_month_start: "On",
+		repeat_text_month_day: "deò každý",
+		repeat_text_month_count: "mesiac",
+		repeat_text_month_count2_before: "každý",
+		repeat_text_month_count2_after: "mesiac",
+		repeat_year_label: "On",
+		select_year_day2: "poèas",
+		repeat_text_year_day: "deò",
+		select_year_month: "mesiac",
+		repeat_radio_end: "Bez dátumu ukonèenia",
+		repeat_text_occurences_count: "udalostiach",
+		repeat_radio_end3: "Ukonèi",
+		repeat_radio_end2: "Po",
+		month_for_recurring: ["Január", "Február", "Marec", "Apríl", "Máj", "Jún", "Júl", "August", "September", "Október", "November", "December"],
+		day_for_recurring: ["Nede¾a", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"]
 	}
 };
 

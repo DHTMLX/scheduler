@@ -26,6 +26,8 @@
         @nav-btn-width:                     29px;
                     // *Prev Btn
         @nav-prev-btn-position:             155px;
+        @nav-prev-btn-resp-left-position:   20px;
+        @nav-prev-btn-resp-right-position:  auto;
         @nav-prev-btn-bg-img:               @nav-btn-background-img;
         @nav-prev-btn-bg-position:          0px 0px;
         @nav-prev-btn-border-radius:              0;
@@ -37,6 +39,8 @@
                     // *Today Btn
         @nav-today-btn-width:               75px;
         @nav-today-btn-position:            78px;
+        @nav-today-btn-resp-right-position: 0;
+        @nav-today-btn-resp-top-position:   50px !important;
         @nav-today-btn-bg-img:              @nav-btn-background-img;
         @nav-today-btn-bg-position:         -62px 0px;
         @nav-today-btn-text-decor:          underline;
@@ -55,6 +59,7 @@
         @nav-tab-text-align:                center;
         @nav-tab-text-decor:                underline;
         @nav-tab-padding:                   2px 0 0 0;
+        @nav-tab-border-color:              transparent;
         @nav-tab-border:                    none;
         @nav-tab-border-radius:                   4px 4px 0 0;
         @nav-tab-font-color:                inherit;
@@ -62,6 +67,7 @@
         @nav-tab-cursor:                    pointer;
         @nav-tab-first-border-radius:             0;
         @nav-tab-last-border-radius:              0;
+        @nav-tab-responsive-top:            50px !important;
 
 
         @nav-act-tab-text-decor:            none;
@@ -151,8 +157,14 @@
 @event-line-font-size:              @default-font-size;
 @event-line-line-height:            1;
 @event-line-font-color:             #887A2E;
-@event-line-height:                  13px;
-@event-line-padiing:                0 0 0 10px;
+@event-line-height:                 20px;
+@event-line-padding-top:            0;
+@event-line-padding-right:          0;
+@event-line-padding-bottom:         0;
+@event-line-padding-left:           10px;
+@event-line-padding-right-rtl:      9px;
+@event-line-padding:                @event-line-padding-top @event-line-padding-right @event-line-padding-bottom @event-line-padding-left;
+@event-line-padding-rtl:            @event-line-padding-top @event-line-padding-right-rtl @event-line-padding-bottom @event-line-padding-right;
 @event-line-topleft-border-radius:        9px;
 @event-line-topright-border-radius:       9px;
 @event-line-bottomleft-border-radius:     9px;
@@ -206,7 +218,13 @@
         @daybox-title-font-weight:              inherit;
         @daybox-title-line-height:              1;
         @daybox-title-text-align:               right;
-        @daybox-title-padding:                  3px 5px 0 0;   // double check if we need this 5px padding
+        @daybox-title-text-align-rtl:           left;
+        @daybox-title-padding-top:              3px;
+        @daybox-title-padding-right:            5px;
+        @daybox-title-padding-bottom:           0;
+        @daybox-title-padding-left:             0;
+        @daybox-title-padding:                  @daybox-title-padding-top @daybox-title-padding-right @daybox-title-padding-bottom @daybox-title-padding-left;   // double check if we need this 5px padding
+        @daybox-title-padding-rtl:              @daybox-title-padding-top @daybox-title-padding-left @daybox-title-padding-bottom @daybox-title-padding-right;  
         @daybox-title-height:                   18px;
         @daybox-title-color:                    #2F3A48;
         @daybox-title-background:               #EBEFF4;
@@ -243,7 +261,7 @@
         @daybox-month-link-font-color:          #00f;
         @daybox-month-link-font-size:           @daybox-content-font-size;
         @daybox-month-link-font-family:         @secondary-font-family;
-        @daybox-content-height:                 13px;
+        @daybox-content-height:                 20px;
         @daybox-content-padding:                0 0 0 2px;
         @daybox-content-font-color:             #887A2E;
         @daybox-content-line-height:            normal;
@@ -271,10 +289,21 @@
 @event-title-font-size:                 7pt;
 @event-title-font-weight:               bold;
 @event-title-text-align:                center;
-@event-title-padding:                   0 0 0 0;
+@event-title-text-align-rtl:            center;
+@event-title-padding-top:               0;
+@event-title-padding-right:             0;
+@event-title-padding-bottom:            0;
+@event-title-padding-left:              0;
+@event-title-padding:                   @event-title-padding-top @event-title-padding-right @event-title-padding-bottom @event-title-padding-left;
+@event-title-padding-rtl:               @event-title-padding-top @event-title-padding-left @event-title-padding-bottom @event-title-padding-right;
 
-@event-body-border-radius:                    0 0 0 0;
-@event-body-padding:                    5px 5px 5px 5px;
+@event-body-border-radius:              0 0 0 0;
+@event-body-padding-top:                5px;
+@event-body-padding-right:              5px;
+@event-body-padding-bottom:             8px;
+@event-body-padding-left:               5px;
+@event-body-padding:                    @event-body-padding-top @event-body-padding-right @event-body-padding-bottom @event-body-padding-left;
+@event-body-padding-rtl:                @event-body-padding-top @event-body-padding-left @event-body-padding-bottom @event-body-padding-right;
 @event-body-font-weight:                normal;
 @event-body-line-height:                normal;
 
@@ -300,6 +329,15 @@
 @event-menu-head-background-pos:        0px -43px;
 @event-menu-head-border:                none;
 @event-menu-head-cursor:                default;
+
+@event-menu-head-margin-left:           5px;
+@event-menu-head-margin-right:          0;
+@event-menu-head-margin-left-rtl:       @event-menu-head-margin-right;
+@event-menu-head-margin-right-rtl:      @event-menu-head-margin-left;
+@event-menu-icon-margin-left:           -5px;
+@event-menu-icon-margin-right:          0;
+@event-menu-icon-margin-left-rtl:       @event-menu-icon-margin-right;
+@event-menu-icon-margin-right-rtl:      @event-menu-icon-margin-left + 2px;
 
 @event-menu-icon-background-img:        url(imgs/controls.gif);
 @event-menu-detail-icon-bg-pos:         0px 0px;
@@ -394,7 +432,10 @@
 
     // ** Quick inFo Content
     @infobox-content-width:             275px;
-    @infobox-content-padding:           16px 8px;
+    @infobox-content-padding-top-bottom:16px;
+    @infobox-content-padding-right-left:8px;
+    @infobox-content-padding:           @infobox-content-padding-top-bottom @infobox-content-padding-right-left;
+    @infobox-content-padding-rtl:       @infobox-content-padding-top-bottom @infobox-content-padding-right-left;
     @infobox-content-background:        #fefefe;
     @infobox-content-border:            1px solid #888;
     @infobox-content-font-color:        #444;
@@ -403,8 +444,18 @@
     // ** Quick inFo Controls
     @infobox-control-btn-height:        20px;
     @infobox-control-btn-min-width:     60px;
-    @infobox-control-btn-padding:       5px 10px 5px 5px;
-    @infobox-control-btn-margin:        5px 9px 5px 0px;
+    @infobox-control-btn-padding-top:   5px;
+    @infobox-control-btn-padding-right: 10px;
+    @infobox-control-btn-padding-bottom:5px;
+    @infobox-control-btn-padding-left:  5px;
+    @infobox-control-btn-padding:       @infobox-control-btn-padding-top @infobox-control-btn-padding-right @infobox-control-btn-padding-bottom @infobox-control-btn-padding-left;
+    @infobox-control-btn-padding-rtl:   @infobox-control-btn-padding-top @infobox-control-btn-padding-bottom @infobox-control-btn-padding-left @infobox-control-btn-padding-right;
+    @infobox-control-btn-margin-top:    5px;
+    @infobox-control-btn-margin-right:  9px;
+    @infobox-control-btn-margin-bottom: 5px;
+    @infobox-control-btn-margin-left:   0px;
+    @infobox-control-btn-margin:        @infobox-control-btn-margin-top @infobox-control-btn-margin-right @infobox-control-btn-margin-bottom @infobox-control-btn-margin-left;
+    @infobox-control-btn-margin-rtl:    @infobox-control-btn-margin-top @infobox-control-btn-margin-left @infobox-control-btn-margin-bottom @infobox-control-btn-margin-right;
     @infobox-control-btn-bg-color:      #fefefe;
     @infobox-control-btn-border-bottom: 1px solid #666;
     @infobox-control-btn-border-right:  1px solid #666;
@@ -427,14 +478,31 @@
 @lightbox-font-color:   #887A2E;
 @lightbox-font-family:  @default-font-family;
 @lightbox-font-size:    @default-font-size;
-@lightbox-shadow:       5px 5px 5px #888;
+@lightbox-shadow-x:     5px;
+@lightbox-shadow-y:     5px;
+@lightbox-shadow-radius:5px;
+@lightbox-shadow-color: #888;
+@lightbox-shadow:       @lightbox-shadow-x @lightbox-shadow-y @lightbox-shadow-radius @lightbox-shadow-color;
+@lightbox-shadow-rtl:   -@lightbox-shadow-x @lightbox-shadow-y @lightbox-shadow-radius @lightbox-shadow-color;
+@lightbox-responsive-form-repeat-width: 70vw !important;
+@lightbox-responsive-repeat-label-padding: 1.465vw;
 
     // **LightBox title
 
-    @lightbox-title-padding:                2px 0px 2px 5px;
-    @lightbox-title-section-background: transparent;
+    @lightbox-title-padding-top:            2px;
+    @lightbox-title-padding-right:          0;
+    @lightbox-title-padding-bottom:         2px;
+    @lightbox-title-padding-left:           5px;
+    @lightbox-title-padding:                @lightbox-title-padding-top @lightbox-title-padding-right @lightbox-title-padding-bottom @lightbox-title-padding-left;
+    @lightbox-title-padding-rtl:            @lightbox-title-padding-top @lightbox-title-padding-left @lightbox-title-padding-bottom @lightbox-title-padding-right;
+    @lightbox-title-section-background:     transparent;
     @lightbox-title-time-font-weight:       bold;
-    @lightbox-title-name-padding:          0 0 0 10px;
+    @lightbox-title-name-padding-top:       0;
+    @lightbox-title-name-padding-right:     0;
+    @lightbox-title-name-padding-bottom:    0;
+    @lightbox-title-name-padding-left:      10px;
+    @lightbox-title-name-padding:           @lightbox-title-name-padding-top @lightbox-title-name-padding-right @lightbox-title-name-padding-bottom @lightbox-title-name-padding-left;
+    @lightbox-title-name-padding-rtl:       @lightbox-title-name-padding-top @lightbox-title-name-padding-left @lightbox-title-name-padding-bottom @lightbox-title-name-padding-right;
     @lightbox-title-name-margin: 0;
     @lightbox-title-time-font-size: 8pt;
     @lightbox-title-name-font-size: 8pt;
@@ -448,7 +516,12 @@
     @lightbox-area-border:                  1px solid #DCC43E;
     @lightbox-area-border-top:              0px;
     @lightbox-area-background-color:        #FFF4B5;
-    @lightbox-area-margin:                  0 0 0 3px;
+    @lightbox-area-margin-top:              0;
+    @lightbox-area-margin-right:            0;
+    @lightbox-area-margin-bottom:           0;
+    @lightbox-area-margin-left:             3px;
+    @lightbox-area-margin:                  @lightbox-area-margin-top @lightbox-area-margin-right @lightbox-area-margin-bottom @lightbox-area-margin-left;
+    @lightbox-area-margin-rtl:              @lightbox-area-margin-top @lightbox-area-margin-left @lightbox-area-margin-bottom @lightbox-area-margin-right;
     @lightbox-area-width:                   730px;
 
     // ** LightBox Main Area Wrap
@@ -469,7 +542,12 @@
     @lightbox-area-ls-font-family:          "Tahoma", sans-serif;
     @lightbox-area-ls-padding:              5px 0px 0px 10px;
     @lightbox-area-ls-width:                100px;
-    @lightbox-area-ls-margin:               0;
+    @lightbox-area-ls-margin-top:           0;
+    @lightbox-area-ls-margin-right:         0;
+    @lightbox-area-ls-margin-bottom:        0;
+    @lightbox-area-ls-margin-left:          0;
+    @lightbox-area-ls-margin:               @lightbox-area-ls-margin-top @lightbox-area-ls-margin-right @lightbox-area-ls-margin-bottom @lightbox-area-ls-margin-left;
+    @lightbox-area-ls-margin-rtl:           @lightbox-area-ls-margin-top @lightbox-area-ls-margin-left @lightbox-area-ls-margin-bottom @lightbox-area-ls-margin-right;
 
     // ** LightBox Main Area - Left Side - Full Day
 
@@ -479,12 +557,23 @@
     @lightbox-ls-fullday-font-weight:       bold;
     @lightbox-ls-fullday-line-height:       20px;
     @lightbox-ls-fullday-margin:            0;
+    @lightbox-responsive-ls-margin-right:   2.93vw;
 
 
     // ** LightBox Main Area - Right Side / Text Area
 
-    @lightbox-area-rs-padding:              2px 0px 2px 10px;
-    @lightbox-area-textarea-rs-padding:     2px;
+    @lightbox-area-rs-padding-top:          2px;
+    @lightbox-area-rs-padding-right:        0px;
+    @lightbox-area-rs-padding-bottom:       2px;
+    @lightbox-area-rs-padding-left:         10px;
+    @lightbox-area-rs-padding:              @lightbox-area-rs-padding-top @lightbox-area-rs-padding-right @lightbox-area-rs-padding-bottom @lightbox-area-rs-padding-left;
+    @lightbox-area-rs-padding-rtl:          @lightbox-area-rs-padding-top @lightbox-area-rs-padding-left @lightbox-area-rs-padding-bottom @lightbox-area-rs-padding-right;
+    @lightbox-area-textarea-rs-padding-top: 2px;
+    @lightbox-area-textarea-rs-padding-right:2px;
+    @lightbox-area-textarea-rs-padding-bottom:2px;
+    @lightbox-area-textarea-rs-padding-left:2px;
+    @lightbox-area-textarea-rs-padding:     @lightbox-area-textarea-rs-padding-top @lightbox-area-textarea-rs-padding-right @lightbox-area-textarea-rs-padding-bottom @lightbox-area-textarea-rs-padding-left;
+    @lightbox-area-textarea-rs-padding-rtl: @lightbox-area-textarea-rs-padding-top @lightbox-area-textarea-rs-padding-left @lightbox-area-textarea-rs-padding-bottom @lightbox-area-textarea-rs-padding-right;
     @lightbox-area-rs-textarea-bg:          #FFF4B5;
     @lightbox-area-rs-font-color:           #887A2E;
     @lightbox-area-rs-outline:              none !important;
@@ -492,6 +581,8 @@
     @lightbox-area-rs-float:                none;
     @lightbox-area-rs-height:               auto;
     @lightbox-area-rs-font-family:          inherit;
+    @lightbox-responsive-repeat-text-border:1px solid #CECECE;
+    @lightbox-responsive-repeat-text-back:#F9F9F9;
     // ** LightBox Main Area - Right Side / Text Area - Disabled
 
     @lightbox-rs-disabled-font-color:       #887A2E;
@@ -504,13 +595,33 @@
     @lightbox-area-rs-select-font-family:   Tahoma;
     @lightbox-area-rs-select-font-size:     8pt;
     @lightbox-area-rs-select-color:         #2E2E2E;
-    @lightbox-area-rs-select-padding:       2px;
-    @lightbox-area-rs-select-margin:        0px;
+    @lightbox-area-rs-select-padding-top:   2px;
+    @lightbox-area-rs-select-padding-right: 2px;
+    @lightbox-area-rs-select-padding-bottom:2px;
+    @lightbox-area-rs-select-padding-left:  2px;
+    @lightbox-area-rs-select-padding:       @lightbox-area-rs-select-padding-top @lightbox-area-rs-select-padding-right @lightbox-area-rs-select-padding-bottom @lightbox-area-rs-select-padding-left;
+    @lightbox-area-rs-select-padding-rtl:   @lightbox-area-rs-select-padding-top @lightbox-area-rs-select-padding-left @lightbox-area-rs-select-padding-bottom @lightbox-area-rs-select-padding-right;
+    @lightbox-area-rs-select-margin-top:    0px;
+    @lightbox-area-rs-select-margin-right:  0px;
+    @lightbox-area-rs-select-margin-bottom: 0px;
+    @lightbox-area-rs-select-margin-left:   0px;
+    @lightbox-area-rs-select-margin:        @lightbox-area-rs-select-margin-top @lightbox-area-rs-select-margin-right @lightbox-area-rs-select-margin-bottom @lightbox-area-rs-select-margin-left;
+    @lightbox-area-rs-select-margin-rtl:    @lightbox-area-rs-select-margin-top @lightbox-area-rs-select-margin-left @lightbox-area-rs-select-margin-bottom @lightbox-area-rs-select-margin-right;
     @lightbox-area-rs-width:                auto;
     // ** LightBox Main Area - Right Side / Input[radio]
 
-    @lightbox-input-radio-margin:           3px 3px 0px 5px;
-    @lightbox-input-label-margin:           0;
+    @lightbox-input-radio-margin-top:       3px;
+    @lightbox-input-radio-margin-right:     3px;
+    @lightbox-input-radio-margin-bottom:    0px;
+    @lightbox-input-radio-margin-left:      5px;
+    @lightbox-input-radio-margin:           @lightbox-input-radio-margin-top @lightbox-input-radio-margin-right @lightbox-input-radio-margin-bottom @lightbox-input-radio-margin-left;
+    @lightbox-input-radio-margin-rtl:       @lightbox-input-radio-margin-top @lightbox-input-radio-margin-left @lightbox-input-radio-margin-bottom @lightbox-input-radio-margin-right;
+    @lightbox-input-label-margin-top:       0;
+    @lightbox-input-label-margin-right:     0;
+    @lightbox-input-label-margin-bottom:    0;
+    @lightbox-input-label-margin-left:      0;
+    @lightbox-input-label-margin:           @lightbox-input-label-margin-top @lightbox-input-label-margin-right  @lightbox-input-label-margin-bottom @lightbox-input-label-margin-left;
+    @lightbox-input-label-margin-rtl:       @lightbox-input-label-margin-top @lightbox-input-label-margin-left @lightbox-input-label-margin-bottom @lightbox-input-label-margin-right;
     @lightbox-input-label-display:          inline-block;
     @lightbox-input-label-position:         relative;
     @lightbox-input-label-top:              -3px;
@@ -520,9 +631,18 @@
     // ** LightBox Main Area - Time block
 
     @lightbox-area-time-block-bg:           transparent;            // #DBCF8C;
-    @lightbox-area-time-block-padding:      2px 0 0 0 ~'!important';
+    @lightbox-area-time-block-padding-top:  2px;
+    @lightbox-area-time-block-padding-right:0;
+    @lightbox-area-time-block-padding-bottom:0;
+    @lightbox-area-time-block-padding-left:  0;
+    @lightbox-area-time-block-padding:      @lightbox-area-time-block-padding-top @lightbox-area-time-block-padding-right @lightbox-area-time-block-padding-bottom @lightbox-area-time-block-padding-left ~'!important';
+    @lightbox-area-time-block-padding-rtl:  @lightbox-area-time-block-padding-top @lightbox-area-time-block-padding-left @lightbox-area-time-block-padding-bottom @lightbox-area-time-block-padding-right ~'!important';
     @lightbox-area-time-block-height:       20px ~'!important';
     @lightbox-area-time-block-textaligment: center;
+    @lightbox-responsive-time-select-width: 14.648vw;
+    @lightbox-responsive-time-select-padding:1.953vw !important;
+    @ligthbox-responsive-month-select-width:20.508vw !important;
+    @lightbox-responsive-year-select-width: 13.672vw !important;
 
 
 
@@ -535,6 +655,7 @@
     @lightbox-btn-line-height:              21px;
     @lightbox-btn-border:                   none;
     @lightbox-btn-float:                    left;
+    @lightbox-btn-float-rtl:                right;
     @lightbox-btn-text-transform:           none;
     @lightbox-btn-text-color:               @default-font-color;
     @lightbox-btn-font-color:               @default-font-color;
@@ -547,6 +668,12 @@
     @lightbox-btn-right-margin:             20px;
 
     @lightbox-btn-recurring-bg-image: url(./imgs/but_repeat.gif);
+    @lightbox-responsive-btn-rec-padding-top:0.977vw;
+    @lightbox-responsive-btn-rec-padding-right:4.492vw;
+    @lightbox-responsive-btn-rec-padding-bottom:0.977vw;
+    @lightbox-responsive-btn-rec-padding-left:1.563vw;
+    @lightbox-responsive-btn-rec-padding:   @lightbox-responsive-btn-rec-padding-top @lightbox-responsive-btn-rec-padding-right @lightbox-responsive-btn-rec-padding-bottom @lightbox-responsive-btn-rec-padding-left;
+    @ligthbox-responsive-recurring-btn-div-padding:1.953vw !important;
 
 
 // Other

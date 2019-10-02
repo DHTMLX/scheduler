@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -207,11 +207,11 @@ scheduler._render_calendar = function(obj, sd, conf, previous) {
 	}
 	d.setAttribute("date", this._helpers.formatDate(sd));
 	d.innerHTML = "<div class='dhx_year_month'></div>" +
-		"<div class='dhx_year_grid'>" +
+			"<div class='dhx_year_grid" +
+			(scheduler.config.rtl ? " dhx_grid_rtl'>" : "'>") +
 			"<div class='dhx_year_week'>"+(week_template ? week_template.innerHTML : "")+"</div>" +
 			"<div class='dhx_year_body'></div>" +
 		"</div>";
-
 	var header = d.querySelector(".dhx_year_month");
 	var weekHeader = d.querySelector(".dhx_year_week");
 	var body = d.querySelector(".dhx_year_body");
@@ -230,13 +230,16 @@ scheduler._render_calendar = function(obj, sd, conf, previous) {
 		var css_texts = ["left:1px;top:2px;position:absolute;", "left:auto; right:1px;top:2px;position:absolute;"];
 		var diffs = [-1, 1];
 		var handler = function(diff) {
-			return function() {
+			return function() {	
 				if (conf.sync) {
 					var calendars = scheduler._synced_minicalendars;
 					for (var k = 0; k < calendars.length; k++) {
 						move_minicalendar_date(calendars[k], diff);
 					}
 				} else {
+					if (scheduler.config.rtl) {
+						diff = -diff;
+					}
 					move_minicalendar_date(d, diff);
 				}
 			};

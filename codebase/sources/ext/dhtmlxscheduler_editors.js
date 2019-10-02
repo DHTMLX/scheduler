@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -110,7 +110,7 @@ scheduler.form_blocks['combo']={
 scheduler.form_blocks['radio']={
 	render:function(sns) {
 		var res = '';
-		res += "<div class='dhx_cal_ltext dhx_cal_radio' style='height:"+sns.height+"px;' >";
+		res += "<div class='dhx_cal_ltext dhx_cal_radio"+"' style='height:"+sns.height+"px;' >";
 		for (var i=0; i<sns.options.length; i++) {
 			var id = scheduler.uid();
 			res += "<input id='"+id+"' type='radio' name='"+sns.name+"' value='"+sns.options[i].key+"'><label for='"+id+"'>"+" "+sns.options[i].label+"</label>";

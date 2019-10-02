@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -57,6 +57,10 @@ dhtmlXTooltip.show = function(event, text) { //browser event, text to display
 
 	tooltip_div_style.left = "0";
 	tooltip_div_style.top = "0";
+
+	if (scheduler.config.rtl) {
+		tooltip_div.className += " dhtmlXTooltip_rtl";
+	}
 
 	this.tooltip.innerHTML = text;
 	document.body.appendChild(this.tooltip);

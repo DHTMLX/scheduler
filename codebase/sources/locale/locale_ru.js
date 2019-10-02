@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -68,6 +68,34 @@ Scheduler.plugin(function(scheduler){scheduler.locale = {
 		month: "Month",
 		day: "Day",
 		hour:"Hour",
-		minute: "Minute"
+		minute: "Minute",
+
+		/* recurring event components */
+		repeat_radio_day: "День",
+		repeat_radio_week: "Неделя",
+		repeat_radio_month: "Месяц",
+		repeat_radio_year: "Год",
+		repeat_radio_day_type: "Каждый",
+		repeat_text_day_count: "день",
+		repeat_radio_day_type2: "Каждый рабочий день",
+		repeat_week: " Повторять каждую",
+		repeat_text_week_count: "неделю , в:",
+		repeat_radio_month_type: "Повторять",
+		repeat_radio_month_start: "",
+		repeat_text_month_day: " числа каждый ",
+		repeat_text_month_count: "месяц",
+		repeat_text_month_count2_before: "каждый ",
+		repeat_text_month_count2_after: "месяц",
+		repeat_year_label: "",
+		select_year_day2: "",
+		repeat_text_year_day: "день",
+		select_year_month: "",
+		repeat_radio_end: "Без даты окончания",
+		repeat_text_occurences_count: "повторений",
+		repeat_radio_end3: "До ",
+		repeat_radio_end2: "",
+		month_for_recurring: ["Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"],
+		day_for_recurring: ["Воскресенье", "Понедельник", "Вторник", "Среду", "Четверг", "Пятницу", "Субботу"]
 	}
-};});
+};
+});

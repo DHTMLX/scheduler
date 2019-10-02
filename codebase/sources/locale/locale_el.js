@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -69,7 +69,34 @@ Scheduler.plugin(function(scheduler){scheduler.locale = {
 		month: "Month",
 		day: "Day",
 		hour:"Hour",
-		minute: "Minute"
+		minute: "Minute",
+
+		/* recurring event components */
+		repeat_radio_day: "Ημερησίως",
+		repeat_radio_week: "Εβδομαδιαίως",
+		repeat_radio_month: "Μηνιαίως",
+		repeat_radio_year: "Ετησίως",
+		repeat_radio_day_type: "Κάθε",
+		repeat_text_day_count: "ημέρα",
+		repeat_radio_day_type2: "Κάθε εργάσιμη",
+		repeat_week: " Επανάληψη κάθε",
+		repeat_text_week_count: "εβδομάδα τις επόμενες ημέρες:",
+		repeat_radio_month_type: "Επανάληψη",
+		repeat_radio_month_start: "Την",
+		repeat_text_month_day: "ημέρα κάθε",
+		repeat_text_month_count: "μήνα",
+		repeat_text_month_count2_before: "κάθε",
+		repeat_text_month_count2_after: "μήνα",
+		repeat_year_label: "Την",
+		select_year_day2: "του",
+		repeat_text_year_day: "ημέρα",
+		select_year_month: "μήνα",
+		repeat_radio_end: "Χωρίς ημερομηνία λήξεως",
+		repeat_text_occurences_count: "επαναλήψεις",
+		repeat_radio_end3: "Λήγει την",
+		repeat_radio_end2: "Μετά από",
+		month_for_recurring: ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάϊος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"],
+		day_for_recurring: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"]
 	}
 };
 

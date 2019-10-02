@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -69,7 +69,34 @@ Scheduler.plugin(function(scheduler){scheduler.locale = {
 		month: "Month",
 		day: "Day",
 		hour:"Hour",
-		minute: "Minute"
+		minute: "Minute",
+
+		/* recurring event components */
+		repeat_radio_day: "Denně",
+		repeat_radio_week: "Týdně",
+		repeat_radio_month: "Měsíčně",
+		repeat_radio_year: "Ročně",
+		repeat_radio_day_type: "každý",
+		repeat_text_day_count: "Den",
+		repeat_radio_day_type2: "pracovní dny",
+		repeat_week: "Opakuje každých",
+		repeat_text_week_count: "Týdnů na:",
+		repeat_radio_month_type: "u každého",
+		repeat_radio_month_start: "na",
+		repeat_text_month_day: "Den každého",
+		repeat_text_month_count: "Měsíc",
+		repeat_text_month_count2_before: "každý",
+		repeat_text_month_count2_after: "Měsíc",
+		repeat_year_label: "na",
+		select_year_day2: "v",
+		repeat_text_year_day: "Den v",
+		select_year_month: "",
+		repeat_radio_end: "bez data ukončení",
+		repeat_text_occurences_count: "Události",
+		repeat_radio_end2: "po",
+		repeat_radio_end3: "Konec",
+		month_for_recurring: ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"],
+		day_for_recurring: ["Neděle ", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"]
 	}
 };
 

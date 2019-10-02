@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.2.5 Stardard
+dhtmlxScheduler v.5.3.1 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -298,6 +298,10 @@ div.dhx_modal_cover {
   padding: 1px 0 0 0;
   cursor: pointer;
 }
+.dhx_cal_container_rtl .dhx_cal_event .dhx_title {
+  text-align: center;
+  padding: 1px 0 0 0;
+}
 .dhx_cal_event .dhx_body,
 .dhx_cal_event.dhx_cal_select_menu .dhx_body {
   border-width: 0 1px 1px 1px;
@@ -305,6 +309,9 @@ div.dhx_modal_cover {
   border-radius: 0 0 4px 4px;
   font-weight: normal;
   line-height: normal;
+}
+.dhx_cal_container_rtl .dhx_cal_event .dhx_body {
+  padding: 5px 5px 8px 5px;
 }
 .dhx_cal_event.dhx_cal_select_menu {
   -webkit-box-shadow: 0 0 1px #FFF;
@@ -339,22 +346,41 @@ div.dhx_modal_cover {
   font-size: 14px;
   font-weight: normal;
   line-height: 17px;
-  height: 17px;
+  height: 20px;
   padding: 0 0 0 10px;
   color: #FFFFFF;
   cursor: pointer;
   overflow: hidden;
 }
+.dhx_cal_container_rtl .dhx_cal_event_line {
+  padding: 0 9px 0 0;
+}
 .dhx_cal_event_line_start {
   border-top-left-radius: 9px;
   border-bottom-left-radius: 9px;
+}
+.dhx_cal_container_rtl .dhx_cal_event_line_start {
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
 }
 .dhx_cal_event_line_end {
   border-top-right-radius: 9px;
   border-bottom-right-radius: 9px;
 }
+.dhx_cal_container_rtl .dhx_cal_event_line_end {
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+.dhx_cal_container_rtl .dhx_cal_event_line_start {
+  border-top-right-radius: 9px;
+  border-bottom-right-radius: 9px;
+}
+.dhx_cal_container_rtl .dhx_cal_event_line_end {
+  border-top-left-radius: 9px;
+  border-bottom-left-radius: 9px;
+}
 .dhx_cal_event_clear {
-  height: 14px;
+  height: 20px;
   padding: 0 0 0 2px;
   color: #FFF;
   font-family: "Tahoma", san-serif;
@@ -393,6 +419,10 @@ div.dhx_menu_head {
   border: none;
   cursor: default;
 }
+.dhx_cal_container_rtl div.dhx_menu_head {
+  margin-left: 0;
+  margin-right: 5px;
+}
 div.dhx_menu_icon {
   background-image: url(imgs_contrast_black/controls.png);
   width: 20px;
@@ -401,6 +431,10 @@ div.dhx_menu_icon {
   margin-top: 0px;
   border: none;
   cursor: pointer;
+}
+.dhx_cal_container_rtl div.dhx_menu_icon {
+  margin-left: 0;
+  margin-right: -3px;
 }
 div.icon_details {
   background-position: 0px 0px;
@@ -457,6 +491,20 @@ div.icon_delete {
     -moz-user-select: none;
   }
 }
+.dhx_cal_data div.dhx_cal_event_clear,
+.dhx_multi_day div.dhx_cal_event_clear,
+.dhx_cal_data div.dhx_cal_event_line,
+.dhx_multi_day div.dhx_cal_event_line {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+@media only screen and (max-width: 550px) {
+  .dhx_cal_event_clear,
+  .dhx_cal_event_line {
+    padding-left: 2px;
+  }
+}
 .dhx_unselectable,
 .dhx_unselectable div {
   -webkit-user-select: none;
@@ -475,6 +523,9 @@ div.icon_delete {
   position: absolute;
   z-index: 15;
   width: 580px;
+}
+.dhx_cal_light_rtl {
+  box-shadow: -5px 5px 5px #888;
 }
 .dhx_cal_ltitle {
   padding: 2px 0px 2px 5px;
@@ -500,6 +551,9 @@ div.icon_delete {
   display: inline-block;
   margin: 0;
 }
+.dhx_cal_light_rtl .dhx_time {
+  padding: 0 10px 0 0;
+}
 .dhx_cal_light_wide {
   width: 650px;
 }
@@ -517,8 +571,8 @@ div.icon_delete {
   font-family: "Tahoma", san-serif;
   font-size: 8pt;
   color: #2E2E2E;
-  padding: 2px;
-  margin: 0px;
+  padding: 2px 2px 2px 2px;
+  margin: 0px 0px 0px 0px;
 }
 .dhx_cal_light .dhx_title {
   padding: 0 0 0 13px;
@@ -536,6 +590,9 @@ div.icon_delete {
 .dhx_cal_light_wide .dhx_cal_larea {
   border-top-width: 0px;
   margin: 0 0 0 3px;
+}
+.dhx_cal_light_rtl .dhx_cal_larea {
+  margin: 0 3px 0 0;
 }
 .dhx_cal_light_wide .dhx_wrap_section {
   border-top: 0;
@@ -565,7 +622,7 @@ div.icon_delete {
   height: auto;
   font-size: 14px;
   padding: 5px 0px 0px 10px;
-  margin: 0;
+  margin: 0 0 0 0;
 }
 .dhx_cal_lsection .dhx_fullday {
   float: right;
@@ -605,7 +662,7 @@ div.icon_delete {
   line-height: 20px;
   font-family: inherit;
   box-sizing: border-box;
-  padding: 2px;
+  padding: 2px 2px 2px 2px;
 }
 .dhx_section_time {
   background-color: transparent;
@@ -649,6 +706,10 @@ div.icon_delete {
   color: #FFF;
   float: right;
   float: left;
+}
+.dhx_cal_light_rtl .dhx_btn_set,
+.dhx_cal_light_rtl .dhx_cancel_btn_set {
+  float: right;
 }
 .dhx_save_btn {
   background-image: url('./imgs/controls.gif');
@@ -727,6 +788,9 @@ div.icon_delete {
   margin-top: 8px;
   margin-left: 14px;
 }
+.dhx_cal_light_rtl .dhx_wrap_section .dhx_cal_wide_checkbox input[type="checkbox"] {
+  margin: 8px 14px 0 0;
+}
 .dhx_cal_light input {
   font-family: "Tahoma", san-serif;
   font-size: 8pt;
@@ -755,6 +819,298 @@ div.icon_delete {
 }
 .dhx_cal_light_wide .dhx_repeat_right {
   margin-right: 55px;
+}
+.dhx_cal_light_rtl {
+  direction: rtl;
+}
+.dhx_cal_light_rtl .dhx_cal_ltitle {
+  padding: 2px 5px 2px 0;
+}
+.dhx_cal_light_rtl .dhx_mark {
+  padding: 0 10px 0 0;
+}
+.dhx_cal_light_rtl .dhx_title {
+  padding: 0 13px 0 0;
+}
+.dhx_cal_light_rtl .dhx_wrap_section {
+  padding: 5px 0;
+}
+.dhx_cal_light_rtl .dhx_wrap_section .dhx_cal_ltext.dhx_cal_template {
+  direction: ltr;
+  float: right;
+  margin-right: 15px !important;
+}
+.dhx_cal_light_rtl .dhx_cal_lsection {
+  float: right;
+  text-align: left;
+  margin: 0 0 0 0;
+}
+.dhx_cal_light_rtl .dhx_cal_ltext {
+  padding: 2px 10px 2px 0px;
+}
+.dhx_cal_light_rtl .dhx_cal_ltext textarea {
+  padding: 2px 2px 2px 2px;
+}
+.dhx_cal_light_rtl .dhx_section_time {
+  padding: 2px 0 0 0 !important;
+}
+.dhx_cal_light_rtl select {
+  padding: 2px 2px 2px 2px;
+  margin: 0px 0px 0px 0px;
+}
+.dhx_cal_light_rtl .dhx_custom_button {
+  left: 15px;
+  right: auto;
+  right: unset;
+}
+@media only screen and (max-width: 1023px) {
+  .dhx_cal_overflow_container {
+    overflow: auto !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive {
+    width: 98vw !important;
+    height: auto !important;
+    left: 1% !important;
+    top: 1.953vw !important;
+    font-size: 3.906vw !important;
+    line-height: 3.906vw !important;
+    padding-bottom: 2vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_btn_set {
+    margin-bottom: 1.953vw !important;
+    font-size: 3.906vw;
+    height: auto !important;
+    padding: 1.953vw 1.563vw 1.953vw 1.563vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_btn_set div {
+    height: 2.93vw;
+    line-height: 2.93vw;
+    padding: 0 1.563vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_larea {
+    width: auto !important;
+    margin-left: 0 !important;
+    height: 100% !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_lsection {
+    font-size: 3.906vw !important;
+    width: 23.438vw !important;
+    margin-left: 3vw;
+    line-height: 3.906vw !important;
+    margin-right: 2.93vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_lsection .dhx_custom_button {
+    padding: 0.977vw 4.492vw 0.977vw 1.563vw;
+    min-width: 25.391vw !important;
+    min-height: 5.371vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_ltitle {
+    height: 2rem !important;
+    line-height: 2rem !important;
+    margin-bottom: 0.5rem;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_ltitle span {
+    font-size: 3.906vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive textarea,
+  .dhx_cal_light.dhx_cal_light_responsive select,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time select,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_lsection div.dhx_custom_button,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_template,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_radio {
+    font-size: 3.5vw;
+    line-height: 3.5vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive textarea label,
+  .dhx_cal_light.dhx_cal_light_responsive select label,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time select label,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_lsection div.dhx_custom_button label,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_template label,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_radio label {
+    margin: 1vw 3vw 1vw 0.5vw;
+    vertical-align: top;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive select,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_section_time select {
+    min-height: 5.859vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_ltext {
+    margin-left: 26.5vw !important;
+    height: 100% !important;
+    min-height: 4.883vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_repeat_center,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_repeat_left,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_repeat_divider,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_repeat_right {
+    height: 11.23vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time {
+    padding-left: 26.5vw !important;
+    width: 70vw !important;
+    min-height: 19.531vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time select {
+    float: left;
+    margin: 1.465vw 0.977vw 1.465vw 0.977vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time .dhx_lightbox_time_select {
+    width: 14.648vw;
+    padding-left: 1.953vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time .dhx_lightbox_day_select {
+    min-width: 7.813vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time .dhx_lightbox_year_select {
+    min-width: 13.672vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time .dhx_lightbox_month_select {
+    width: 20.508vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_wide_checkbox {
+    height: 100% !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_multi_select_control {
+    height: 100% !important;
+    vertical-align: middle;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_multi_select_control input {
+    vertical-align: middle;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive input {
+    width: 4.883vw;
+    height: 4.883vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_custom_button div {
+    height: 3.125vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_custom_button .dhx_custom_button_recurring {
+    background-size: 7.813vw !important;
+    width: 6.836vw !important;
+    height: 6.836vw !important;
+    background-repeat: no-repeat !important;
+    background-position: -25px -1px !important;
+    padding-top: 0 !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section {
+    min-height: 7.813vw !important;
+    max-width: 92.773vw !important;
+    margin: 0.977vw 0;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat {
+    margin: 6.836vw 0 0 23.438vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat form {
+    height: 48.828vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat div {
+    width: 70vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_left br {
+    content: ' ';
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat input {
+    top: 1.465vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat select {
+    width: 14.648vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat label {
+    padding-right: 1.465vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat form,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat form select,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_date,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_text,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat label {
+    font-size: 2.93vw !important;
+    line-height: 2.93vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_center {
+    height: auto !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_text {
+    width: 6.836vw !important;
+    height: 5.859vw !important;
+    border: 1px solid #CECECE;
+    background-color: #000;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_checkbox {
+    width: 2.93vw !important;
+    height: 2.93vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_days label {
+    font-size: 2.441vw !important;
+    line-height: 2.5vw !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_right {
+    height: auto !important;
+    float: left;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_right .dhx_repeat_date {
+    width: 19.531vw !important;
+    height: 7.813vw !important;
+    padding-left: 1.465vw !important;
+    margin-top: 1.465vw;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_divider {
+    border-top: 1px solid #CECECE;
+    border-left: 0;
+    width: 70vw;
+    height: 1px;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_custom_button div {
+    /*padding-top: @ligthbox-responsive-recurring-btn-div-padding;*/
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_cal_larea {
+    margin-right: 0 !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_cal_lsection {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_cal_ltext {
+    margin-right: 23.438vw !important;
+    margin-left: 0 !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_wrap_section .dhx_cal_wide_checkbox input[type="checkbox"] {
+    margin: 0.781vw 1.367vw 0 0;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time {
+    padding-right: 23.438vw !important;
+    padding-left: 0 !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time select {
+    float: right;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time .dhx_lightbox_time_select {
+    padding-right: 1.953vw !important;
+    padding-left: 0 !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time span {
+    display: none;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_form_repeat {
+    margin: 6.836vw 23.438vw 0 0 !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_form_repeat label {
+    padding-left: 1.465vw;
+    padding-right: 0 !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_right {
+    float: left;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_right .dhx_repeat_date {
+    padding-right: 1.465vw !important;
+    padding-left: 0 !important;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_multi_select_control.dhx_multi_select_control_vertical {
+    float: right;
+  }
+  .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_multi_select_control {
+    float: auto;
+    float: unset;
+  }
 }
 .dhx_minical_popup {
   position: absolute;
@@ -799,11 +1155,24 @@ div.icon_delete {
   line-height: 21px;
   overflow: hidden;
 }
+.dhx_cal_container_rtl .dhx_agenda_line div {
+  float: right;
+}
+.dhx_cal_container_rtl .dhx_agenda_line .description_header {
+  padding-right: 15px;
+  float: right;
+}
 .dhx_cal_header div.dhx_map_line,
 .dhx_cal_header div.dhx_agenda_line div,
 .dhx_cal_header div.dhx_agenda_line span {
   font-weight: normal;
   color: #fff;
+}
+.dhx_cal_container_rtl .dhx_cal_header div.dhx_map_line {
+  float: right;
+}
+.dhx_cal_container_rtl .dhx_agenda_area .dhx_agenda_line div {
+  border-left: 0px dotted #000;
 }
 .dhx_agenda_area .dhx_agenda_line div {
   border-right: 0px dotted #000;
@@ -816,6 +1185,10 @@ div.icon_delete {
   width: 1px;
   height: 100%;
 }
+.dhx_cal_container_rtl .dhx_v_border {
+  right: 186px;
+  left: unset;
+}
 .dhx_agenda_line .dhx_event_icon {
   width: 20px;
   border-width: 0px;
@@ -823,9 +1196,16 @@ div.icon_delete {
   background-position: 5px 4px;
   cursor: pointer;
 }
+.dhx_cal_container_rtl .dhx_agenda_line .dhx_event_icon {
+  background-position-x: 2px;
+}
 .dhx_agenda_line span {
   padding-left: 5px;
   line-height: 21px;
+}
+.dhx_cal_container_rtl .dhx_agenda_line span {
+  padding-left: 0;
+  padding-right: 5px;
 }
 .dhx_year_body {
   border-left: 1px solid #CECECE;
@@ -835,6 +1215,13 @@ div.icon_delete {
 }
 .dhx_scale_bar_last {
   border-right: 1px solid #CECECE;
+}
+.dhx_cal_container_rtl .dhx_year_body {
+  border-left: 0;
+  border-right: 1px solid #CECECE;
+}
+.dhx_cal_container_rtl .dhx_year_box .dhx_scale_bar_last {
+  border-left: 1px solid #CECECE;
 }
 .dhx_year_month {
   height: 18px;
@@ -921,6 +1308,9 @@ div.icon_delete {
   cursor: pointer;
   background: url(./imgs_contrast_black/calendar.gif) no-repeat;
 }
+.dhx_grid_rtl {
+  direction: rtl;
+}
 .dhx_matrix_scell,
 .dhx_timeline_scale_header {
   height: 100%;
@@ -937,8 +1327,17 @@ div.icon_delete {
   border-bottom: 1px solid #CECECE;
   border-right: 1px solid #CECECE;
 }
+.dhx_cal_container_rtl .dhx_matrix_cell,
+.dhx_cal_container_rtl .dhx_matrix_scell {
+  border-right: unset;
+  border-left: 1px solid #CECECE;
+}
 .dhx_timeline_scale_header {
   border-right: 1px solid #8d8d8d;
+}
+.dhx_cal_container_rtl .dhx_timeline_scale_header {
+  border-right: unset;
+  border-left: 1px solid #8d8d8d;
 }
 .dhx_cal_data .dhx_timeline_table_wrapper div {
   box-sizing: border-box;
@@ -973,8 +1372,18 @@ div.icon_delete {
 .dhx_event_resize_start {
   left: 0;
 }
+.dhx_cal_container_rtl .dhx_event_resize_start {
+  left: auto;
+  left: unset;
+  right: 0;
+}
 .dhx_event_resize_end {
   right: 0;
+}
+.dhx_cal_container_rtl .dhx_event_resize_end {
+  right: auto;
+  right: unset;
+  left: 0;
 }
 /* Tree view */
 .dhx_matrix_scell.folder,
@@ -1019,6 +1428,39 @@ div.icon_delete {
   padding-left: 15px;
   text-align: left;
 }
+.dhx_cal_container_rtl .dhx_matrix_scell .dhx_scell_level0 {
+  padding-left: 0;
+  padding-right: 5px;
+}
+.dhx_cal_container_rtl .dhx_matrix_scell .dhx_scell_level1 {
+  padding-left: 0;
+  padding-right: 20px;
+}
+.dhx_cal_container_rtl .dhx_matrix_scell .dhx_scell_level2 {
+  padding-left: 0;
+  padding-right: 35px;
+}
+.dhx_cal_container_rtl .dhx_matrix_scell .dhx_scell_level3 {
+  padding-left: 0;
+  padding-right: 50px;
+}
+.dhx_cal_container_rtl .dhx_matrix_scell .dhx_scell_level4 {
+  padding-left: 0;
+  padding-right: 65px;
+}
+.dhx_cal_container_rtl .dhx_matrix_scell.folder .dhx_scell_expand {
+  float: right;
+  padding-right: 0;
+  padding-left: 3px;
+}
+.dhx_cal_container_rtl .dhx_matrix_scell.folder .dhx_scell_name {
+  float: right;
+}
+.dhx_cal_container_rtl .dhx_matrix_scell.item .dhx_scell_name {
+  padding-left: 0;
+  padding-right: 15px;
+  text-align: right;
+}
 .dhx_data_table.folder .dhx_matrix_cell {
   border-right: 0;
 }
@@ -1044,6 +1486,9 @@ div.icon_delete {
   background: url(./imgs/icon.png) no-repeat;
   background-position: 5px 4px;
   cursor: pointer;
+}
+.dhx_cal_container_rtl .dhx_map_line .dhx_event_icon {
+  margin-right: 3px;
 }
 .dhx_map_line {
   height: 21px;
@@ -1078,6 +1523,15 @@ div.icon_delete {
 .dhx_map_line .headline_description {
   border-left: 0;
 }
+.dhx_cal_container_rtl .dhx_map_line div {
+  float: right;
+}
+.dhx_cal_container_rtl .dhx_map_line .headline_date,
+.dhx_cal_container_rtl .dhx_map_line .headline_description {
+  float: right;
+  border-left: 1px solid #CECECE;
+  border-right: 0;
+}
 .dhx_map_line .line_description {
   float: left;
   border-right: 1px dotted #8894A3;
@@ -1085,6 +1539,11 @@ div.icon_delete {
   padding-left: 5px;
   line-height: 21px;
   overflow: hidden;
+}
+.dhx_cal_container_rtl .dhx_map_line .line_description {
+  float: right;
+  text-align: right;
+  padding-left: unset;
 }
 .dhx_map_line.highlight {
   background-color: #C4C5CC;
@@ -1107,6 +1566,24 @@ div.icon_delete {
   z-index: 9;
   opacity: 1;
   font-family: "Arial", san-serif;
+}
+.dhtmlXTooltip_rtl {
+  direction: rtl;
+}
+.dhx_tooltip_rtl {
+  direction: rtl;
+}
+.dhx_tooltip_rtl .dhx_tooltip_date {
+  float: right;
+  padding: 0 5px 0 0;
+}
+.dhx_tooltip_rtl .dhx_tooltip_line {
+  margin: 0 0 0 12px;
+  padding: 0 4px 0 0;
+}
+.dhx_tooltip_rtl .dhx_tooltip_line .dhx_event_icon.icon_details {
+  float: right;
+  padding: 0 0 0 10px;
 }
 /* dhtmlXTooltip end */
 /* Lightbox checkbox section */
@@ -1147,8 +1624,14 @@ div.icon_delete {
 .dhx_wa_column {
   float: left;
 }
+.dhx_cal_container_rtl .dhx_wa_column {
+  float: right;
+}
 .dhx_wa_column_last .dhx_wa_day_cont {
   border-left: 1px solid #CECECE;
+}
+.dhx_cal_container_rtl .dhx_wa_column_last .dhx_wa_day_cont {
+  border-right: 1px solid #CECECE;
 }
 .dhx_wa_scale_bar {
   font-family: "Tahoma", san-serif;
@@ -1156,6 +1639,10 @@ div.icon_delete {
   font-size: 11px;
   border-top: 1px solid #CECECE;
   border-bottom: 1px solid #CECECE;
+}
+.dhx_cal_container_rtl .dhx_wa_scale_bar {
+  padding-left: 0;
+  padding-right: 10px;
 }
 .dhx_wa_day_data {
   background-color: #FCFEFC;
@@ -1165,6 +1652,12 @@ div.icon_delete {
   border-bottom: 1px solid #CECECE;
   font-size: 14px;
   padding: 5px 0 5px 7px;
+}
+.dhx_cal_container_rtl .dhx_wa_ev_body {
+  padding: 5px 7px 5px 0;
+}
+.dhx_wa_ev_body_rtl {
+  direction: rtl;
 }
 .dhx_wa_dnd {
   font-family: "Tahoma", san-serif;
@@ -1188,6 +1681,10 @@ div.icon_delete {
 /* grid view */
 .dhx_cal_header div.dhx_grid_line div {
   border-left: 1px solid #CECECE;
+}
+.dhx_cal_container_rtl .dhx_cal_header div.dhx_grid_line div {
+  border-right: 1px solid #CECECE;
+  border-left: 0;
 }
 .dhx_grid_area {
   width: 100%;
@@ -1219,6 +1716,9 @@ div.icon_delete {
   line-height: 21px;
   overflow: hidden;
 }
+.dhx_cal_container_rtl .dhx_grid_line div {
+  float: right;
+}
 .dhx_grid_area td,
 .dhx_grid_line div {
   padding-left: 8px;
@@ -1232,6 +1732,15 @@ div.icon_delete {
 .dhx_grid_area tr.dhx_grid_event td {
   /*borders for old ies*/
   border-bottom: 1px solid #ECEEF4;
+}
+.dhx_cal_container_rtl .dhx_grid_area tr.dhx_grid_event td {
+  /*borders for old ies*/
+  border-bottom: 1px solid #ECEEF4;
+  direction: ltr;
+}
+.dhx_cal_container_rtl .dhx_map_line div.dhx_map_event_time {
+  float: right;
+  direction: ltr;
 }
 .dhx_grid_area tr.dhx_grid_event:nth-child(2n+1) td,
 .dhx_grid_area tr.dhx_grid_event:nth-child(2n) td {
@@ -1251,6 +1760,10 @@ div.icon_delete {
   border-right: 1px solid #A4BED4;
   width: 1px;
   height: 100%;
+}
+.dhx_cal_container_rtl .dhx_grid_v_border {
+  border-left: 1px solid #A4BED4;
+  border-right: 0;
 }
 .dhx_grid_event_selected {
   background-color: #9cc1db !important;
@@ -1339,10 +1852,17 @@ div.icon_delete {
 .dhx_cal_quick_info.dhx_qi_left .dhx_qi_big_icon {
   float: right;
 }
+.dhx_quick_info_rtl.dhx_cal_quick_info.dhx_qi_left .dhx_qi_big_icon {
+  float: left;
+}
 .dhx_cal_qi_title {
   padding: 5px 0px 10px 5px;
   color: #FFF;
   letter-spacing: 1px;
+}
+.dhx_cal_container_rtl .dhx_cal_qi_title {
+  padding: 5px 18px 10px 0px;
+  text-align: right;
 }
 .dhx_cal_qi_tdate {
   font-size: 14px;
@@ -1363,6 +1883,10 @@ div.icon_delete {
   width: 275px;
   overflow: hidden;
 }
+.dhx_quick_info_rtl .dhx_cal_qi_content {
+  padding: 16px 8px;
+  direction: rtl;
+}
 .dhx_qi_big_icon {
   min-width: 60px;
   padding: 5px 10px 5px 5px;
@@ -1377,14 +1901,27 @@ div.icon_delete {
   cursor: pointer;
   float: left;
 }
+.dhx_quick_info_rtl .dhx_qi_big_icon {
+  padding: 5px 5px 5px 10px;
+  margin: 5px 0px 5px 9px;
+}
 .dhx_cal_qi_controls div {
   float: left;
   height: 20px;
   text-align: center;
   line-height: 20px;
 }
+.dhx_quick_info_rtl .dhx_cal_qi_controls div {
+  float: right;
+}
+.dhx_quick_info_rtl.dhx_qi_right .dhx_cal_qi_controls {
+  padding-right: 15px;
+}
 .dhx_qi_big_icon .dhx_menu_icon {
   margin: 0 8px 0 0px;
+}
+.dhx_quick_info_rtl .dhx_qi_big_icon .dhx_menu_icon {
+  margin: 0 0 0 8px;
 }
 .dhx_drag_marker {
   width: 100%;
@@ -1517,11 +2054,17 @@ div.icon_delete {
 .dhx_cal_light .dhx_cal_radio input[type="radio"] {
   margin: 3px 3px 0px 5px;
 }
+.dhx_cal_light_rtl .dhx_cal_radio input[type="radio"] {
+  margin: 3px 5px 0px 3px;
+}
 .dhx_cal_light .dhx_cal_radio label {
   display: inline-block;
-  margin: 0;
+  margin: 0 0 0 0;
   position: relative;
   top: -3px;
+}
+.dhx_cal_light_rtl .dhx_cal_radio label {
+  margin: 0 0 0 0;
 }
 .dhx_cal_event div {
   line-height: normal;
@@ -1663,6 +2206,9 @@ div.icon_delete {
   border-right: 1px solid #8d8d8d;
   z-index: 2;
 }
+.dhx_cal_container_rtl .dhx_cal_header {
+  left: unset;
+}
 .dhx_cal_data {
   -webkit-tap-highlight-color: transparent;
   border-top: 1px solid #8d8d8d;
@@ -1671,6 +2217,9 @@ div.icon_delete {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+}
+.dhx_cal_container_rtl .dhx_cal_data {
+  direction: rtl;
 }
 .dhx_cal_data,
 .dhx_cal_event,
@@ -1699,9 +2248,28 @@ div.icon_delete {
   image-rendering: crisp-edges;
   image-rendering: pixelated;
 }
+.dhx_cal_container_rtl .dhx_scale_holder {
+  border-left: 1px solid #8d8d8d;
+  border-right: 0;
+}
+.dhx_cal_container_rtl .dhx_cal_header {
+  border-right: 0;
+  border-left: 1px solid #8d8d8d;
+}
+.dhx_cal_container_rtl .dhx_scale_bar {
+  border-left: 0;
+  border-right: 1px solid #8d8d8d;
+}
+.dhx_cal_container_rtl .dhx_month_head {
+  border-right: 0;
+  border-left: 1px solid #8d8d8d;
+}
+.dhx_cal_container_rtl .dhx_month_body {
+  border-right: 0;
+  border-left: 1px solid #8d8d8d;
+}
 .dhx_scale_holder_now {
   position: absolute;
-  border-right: 1px solid #8d8d8d;
   -ms-interpolation-mode: nearest-neighbor;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
@@ -1711,6 +2279,10 @@ div.icon_delete {
   position: absolute;
   border-right: 1px solid #8d8d8d;
   background-image: url(imgs_contrast_black/databg.png);
+}
+.dhx_cal_container_rtl .dhx_scale_holder_now {
+  border-right: 0;
+  border-left: 1px solid #8d8d8d;
 }
 .dhx_scale_hour {
   border-bottom: 1px solid #8d8d8d;
@@ -1732,6 +2304,10 @@ div.icon_delete {
   border-right: 1px solid #8d8d8d;
   background-color: #000;
   text-align: right;
+}
+.dhx_cal_container_rtl .dhx_month_head {
+  text-align: left;
+  padding: 0 0 0 5px;
 }
 .dhx_after .dhx_month_head,
 .dhx_before .dhx_month_head {
@@ -1790,6 +2366,9 @@ div.icon_delete {
   border-right: none;
   box-shadow: none;
 }
+.dhx_cal_container_rtl .dhx_multi_day {
+  direction: rtl;
+}
 .dhx_multi_day_icon,
 .dhx_multi_day_icon_small {
   background-color: #000;
@@ -1797,6 +2376,11 @@ div.icon_delete {
   border-bottom: 1px solid #8d8d8d;
   border-right: 1px solid #8d8d8d;
   background-repeat: no-repeat;
+}
+.dhx_cal_container_rtl .dhx_multi_day_icon,
+.dhx_cal_container_rtl .dhx_multi_day_icon_small {
+  border-right: 0;
+  border-left: 1px solid #8d8d8d;
 }
 .dhx_multi_day_icon {
   background-image: url(imgs_dhx_terrace/clock_big.gif);
@@ -1831,6 +2415,137 @@ div.icon_delete {
   background-image: url('imgs/export_ical.png');
 }
 /* export to PDF and iCal buttons end */
+.dhx_cal_navline.dhx_cal_navline_flex {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 1vw;
+  box-sizing: border-box;
+  /*.dhx_cal_tab_standalone{
+		margin-left: 14px;
+	}*/
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab {
+  box-sizing: border-box;
+  height: 32px;
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab_last {
+  margin-right: 14px;
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab {
+  border-left-style: none;
+  box-shadow: -1px 0 0 #FFF;
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_date {
+  width: auto;
+  flex-grow: 1;
+}
+.dhx_cal_navline.dhx_cal_navline_flex div {
+  position: static;
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_navbar_row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0 1vw;
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_next_button {
+  border-left-style: none;
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_navbar_rows_container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  box-sizing: border-box;
+  flex-grow: 1;
+  height: 100%;
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_line_break,
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_line_spacer {
+  display: block;
+  width: auto;
+  flex-grow: 1;
+}
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_today_button,
+.dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab_standalone {
+  margin: 0 7px;
+}
+@media only screen and (max-width: 1023px) {
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab.active,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_today_button {
+    min-width: 4vw;
+    font-size: 1.3vw;
+    box-sizing: content-box;
+    padding: 0 0.5vw;
+    width: auto;
+  }
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab.active,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_today_button,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_prev_button,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_next_button {
+    height: 2.5vw;
+    line-height: 2.5vw;
+  }
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab_last {
+    margin-right: 2vw;
+  }
+}
+@media only screen and (max-width: 840px) {
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab.active,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_today_button {
+    min-width: 4vw;
+    font-size: 1.5vw;
+    box-sizing: content-box;
+    padding: 0 0.5vw;
+    width: auto;
+  }
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab.active,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_today_button,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_prev_button,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_next_button {
+    height: 4vw;
+    line-height: 4vw;
+  }
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab_last {
+    margin-right: 1vw;
+  }
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_date {
+    font-size: 2.5vw;
+  }
+}
+@media only screen and (max-width: 480px) {
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab.active,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_today_button {
+    font-size: 0.8rem;
+    padding: 0 2vw;
+  }
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_tab.active,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_today_button,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_prev_button,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_next_button {
+    height: 6vw;
+    line-height: 6vw;
+  }
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_prev_button,
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_next_button {
+    width: 2rem;
+  }
+  .dhx_cal_navline.dhx_cal_navline_flex .dhx_cal_date {
+    font-size: 4vw;
+  }
+}
 /*All*/
 .dhx_form_repeat,
 .dhx_form_repeat input {
@@ -1881,6 +2596,17 @@ div.icon_delete {
   width: 173px;
   padding: 17px 3px 0px 10px;
 }
+.dhx_cal_light_rtl .dhx_repeat_center,
+.dhx_cal_light_rtl .dhx_repeat_left,
+.dhx_cal_light_rtl .dhx_repeat_divider,
+.dhx_cal_light_rtl .dhx_repeat_right {
+  float: none;
+  display: inline-block;
+  vertical-align: top;
+}
+.dhx_cal_light_rtl .dhx_repeat_right {
+  margin-right: 0;
+}
 input.dhx_repeat_text {
   height: 16px;
   width: 27px;
@@ -1888,11 +2614,17 @@ input.dhx_repeat_text {
   line-height: 18px;
   padding: 0 0 0 2px;
 }
+.dhx_cal_light_rtl input.dhx_repeat_text {
+  padding: 0 2px 0 0;
+}
 .dhx_form_repeat select {
   height: 20px;
   width: 87px;
   padding: 0 0 0 2px;
   margin: 0 4px 0 4px;
+}
+.dhx_cal_light_rtl .dhx_form_repeat select {
+  padding: 0 2px 0 0;
 }
 input.dhx_repeat_date {
   height: 18px;
@@ -1904,11 +2636,17 @@ input.dhx_repeat_date {
   border: 1px #7f9db9 solid;
   line-height: 18px;
 }
+.dhx_cal_light_rtl input.dhx_repeat_date {
+  padding: 0 2px 0 0;
+}
 input[type="radio"].dhx_repeat_radio {
   margin: 5px 4px 0 0;
   display: inline-block;
   position: relative;
   top: 2px;
+}
+.dhx_cal_light_rtl input[type="radio"].dhx_repeat_radio {
+  margin: 5px 0 0 4px;
 }
 input.dhx_repeat_checkbox {
   margin: 4px 4px 0 0;
@@ -1982,6 +2720,11 @@ input.dhx_repeat_checkbox {
 .dhx_agenda_line div {
   border-right: 1px solid #8d8d8d;
 }
+.dhx_cal_container_rtl .dhx_v_border,
+.dhx_agenda_line div {
+  border-left: 1px solid #8d8d8d;
+  border-right: 0;
+}
 .dhx_agenda_line {
   font-size: 14px;
   height: 22px;
@@ -2054,6 +2797,9 @@ input.dhx_repeat_checkbox {
 .dhx_map_line .headline_date {
   border-right: 1px solid #8d8d8d;
 }
+.dhx_cal_container_rtl .dhx_map_line .headline_date {
+  border-left: 1px solid #8d8d8d;
+}
 /* map view end */
 /* tooltip start */
 .dhtmlXTooltip.tooltip {
@@ -2110,6 +2856,9 @@ input.dhx_repeat_checkbox {
 /* grid view start */
 .dhx_grid_v_border {
   border-right-color: #8d8d8d;
+}
+.dhx_cal_container_rtl .dhx_grid_v_border {
+  border-left-color: #8d8d8d;
 }
 .dhx_grid_area {
   background: transparent;
@@ -2348,7 +3097,7 @@ div.dhx_agenda_line span {
   border-color: transparent;
 }
 .dhx_cal_event_line {
-  height: 17px;
+  height: 19px;
 }
 .dhx_cal_event_clear {
   padding: 2px 0;
