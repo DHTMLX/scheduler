@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.1 Stardard
+dhtmlxScheduler v.5.3.2 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -47,15 +47,18 @@ scheduler.renderCalendar = function(obj, _prev, is_refresh) {
 			e = e || event;
 			var src = e.target || e.srcElement;
 
-			if (src.className.indexOf("dhx_month_head") != -1) {
-				var pname = src.parentNode.className;
-				if (pname.indexOf("dhx_after") == -1 && pname.indexOf("dhx_before") == -1) {
-					var newdate = scheduler._helpers.parseDate(this.getAttribute("date"));
-					newdate.setDate(parseInt(src.innerHTML, 10));
+			var $dom = scheduler.$domHelpers;
+			if ($dom.closest(src, ".dhx_month_head")) {
+				if (!$dom.closest(src, ".dhx_after") && !$dom.closest(src, ".dhx_before")) {
+
+					var cellRoot = $dom.closest(src, "[data-cell-date]");
+					var dateAttribute = cellRoot.getAttribute("data-cell-date");
+					var newDate = scheduler.templates.parse_date(dateAttribute);
+				
 					scheduler.unmarkCalendar(this);
-					scheduler.markCalendar(this, newdate, "dhx_calendar_click");
-					this._last_date = newdate;
-					if (this.conf.handler) this.conf.handler.call(scheduler, newdate, this);
+					scheduler.markCalendar(this, newDate, "dhx_calendar_click");
+					this._last_date = newDate;
+					if (this.conf.handler) this.conf.handler.call(scheduler, newDate, this);
 				}
 			}
 		};

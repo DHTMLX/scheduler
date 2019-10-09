@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.1 Stardard
+dhtmlxScheduler v.5.3.2 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -1937,7 +1937,7 @@ Scheduler.plugin = function (code) {
 };
 Scheduler._schedulerPlugins = [];
 Scheduler.getSchedulerInstance = function () {
-	var scheduler = { version: "5.3.1" };
+	var scheduler = { version: "5.3.2" };
 
 var commonViews = {
 	agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html",
@@ -2899,7 +2899,7 @@ scheduler._on_mouse_move=function(e){
 
 			}
 
-
+			var timeStep = this.config.time_step;
 			var ev=this.getEvent(this._drag_id);
 			var obj;
 			if (scheduler.matrix)
@@ -2962,8 +2962,24 @@ scheduler._on_mouse_move=function(e){
 				} else {
 					var end_day_start = this.date.date_part(new Date(ev.end_date.valueOf() - 1)).valueOf();
 					var end_day_date = new Date(end_day_start);
+					var firstHour = this.config.first_hour;
+					var lastHour = this.config.last_hour;
+					var maxY = (lastHour - firstHour) * (60/timeStep);
 
-					end = end_day_start + pos.y*this.config.time_step*60000;
+					this.config.time_step = 1;
+					var precisePos = this._mouse_coords(e);
+					this.config.time_step = timeStep;
+
+					var minDate = pos.y*timeStep*60000;
+					var maxDate = Math.min(pos.y + 1, maxY)*timeStep*60000;
+					var preciseDate = precisePos.y*60000;
+
+					// rounding end date to the closest time step
+					if(Math.abs(minDate - preciseDate) > Math.abs(maxDate - preciseDate)){
+						end = end_day_start + maxDate;
+					}else{
+						end = end_day_start + minDate;
+					}
 					end = end + ((new Date(end)).getTimezoneOffset() - end_day_date.getTimezoneOffset()) * 60000;
 					this._els["dhx_cal_data"][0].style.cursor="s-resize";
 					if (this._mode == "week" || this._mode == "day")
@@ -2973,13 +2989,13 @@ scheduler._on_mouse_move=function(e){
 					if (end <= this._drag_start){
 						var shift = pos.shift||((this._table_view && !pos.custom)?24*60*60000:0);
 						start = end-(pos.shift?0:shift);
-						end = this._drag_start+(shift||(this.config.time_step*60000));
+						end = this._drag_start+(shift||(timeStep*60000));
 					} else {
 						start = this._drag_start;
 					}
 				} else {
 					if (end<=start)
-						end=start+this.config.time_step*60000;
+						end=start+timeStep*60000;
 				}
 			}
 			var new_end = new Date(end-1);
@@ -3688,6 +3704,7 @@ scheduler._render_month_scale = function(div, dd/*month start*/, sd/*view start*
 
 			cell.className = cls + " " + this.templates.month_date_class(sd, cd);
 
+			cell.setAttribute("data-cell-date", scheduler.templates.format_date(sd));
 			var body_class = "dhx_month_body";
 			var head_class = "dhx_month_head";
 			if (j === 0 && this.config.left_border) {

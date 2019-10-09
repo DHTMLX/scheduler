@@ -1,3 +1,8 @@
+### 5.3.2
+
+- Fix incorrect work of the click handler in the Mini Calendar when a custom calendar_date template is defined
+- Fix rounding of the end date of an event when it is resized in Day/Week views
+
 ### 5.3.1
 
 - Disable responsive lightbox by default
