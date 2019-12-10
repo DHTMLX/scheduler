@@ -1,3 +1,14 @@
+### 5.3.4
+
+- Fix the incorrect work of the vertical scroll in a scrollable timeline when the mouse pointer is over the sections column
+- Fix the incorrect serialization of nested objects by the dataProcessor
+- Fix the script error which fired when creating a new event using a custom lightbox
+
+### 5.3.3
+
+- More informative error messages for common misconfigurations are added
+- HTML markup of some public samples is cleaned up
+
 ### 5.3.2
 
 - Fix incorrect work of the click handler in the Mini Calendar when a custom calendar_date template is defined

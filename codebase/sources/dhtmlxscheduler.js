@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.2 Stardard
+dhtmlxScheduler v.5.3.4 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -1937,7 +1937,7 @@ Scheduler.plugin = function (code) {
 };
 Scheduler._schedulerPlugins = [];
 Scheduler.getSchedulerInstance = function () {
-	var scheduler = { version: "5.3.2" };
+	var scheduler = { version: "5.3.4" };
 
 var commonViews = {
 	agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html",
@@ -1963,7 +1963,7 @@ var requiredExtensions = {
 
 scheduler._commonErrorMessages = {
 	unknownView: function(view){
-		var relatedDoc = "Related docs: " + commonViews[view] || commonViews.anythingElse; 
+		var relatedDoc = "Related docs: " + (commonViews[view] || commonViews.anythingElse); 
 		var relatedExtension = requiredExtensions[view] ? ("You're probably missing " + requiredExtensions[view] + ".") : "";
 		return (
 			"`"+view+"` view is not defined. \n" +
@@ -2005,6 +2005,22 @@ scheduler.renderCalendar = function() {
 	throw new Error("scheduler.renderCalendar is not implemented. Be sure to add the required extension: ext/dhtmlxscheduler_minical.js" + 
 	"\n" +
 	"https://docs.dhtmlx.com/scheduler/minicalendar.html");
+};
+
+scheduler.exportToPNG = function() {
+	throw new Error([
+		"scheduler.exportToPNG is not implemented.",
+		"This feature requires an additional module, be sure to check the related doc here https://docs.dhtmlx.com/scheduler/png.html",
+		"Licensing info: https://dhtmlx.com/docs/products/dhtmlxScheduler/export.shtml"
+	].join("\n"));
+};
+
+scheduler.exportToPDF = function() {
+	throw new Error([
+		"scheduler.exportToPDF is not implemented.",
+		"This feature requires an additional module, be sure to check the related doc here https://docs.dhtmlx.com/scheduler/pdf.html",
+		"Licensing info: https://dhtmlx.com/docs/products/dhtmlxScheduler/export.shtml"
+	].join("\n"));
 };
 
 dhtmlxEventable(scheduler);
@@ -2329,6 +2345,17 @@ scheduler.init=function(id,date,mode){
 		this.$container.appendChild(layout.navbar.render(this.config.header));
 		this.$container.appendChild(layout.header.render());
 		this.$container.appendChild(layout.dataArea.render());
+	} else {
+		// if no header config provided - make sure scheduler container has all necessary elements
+		if(!this.$container.querySelector(".dhx_cal_header") || 
+			!this.$container.querySelector(".dhx_cal_data") || 
+			!this.$container.querySelector(".dhx_cal_navline")){
+				throw new Error([
+					"Required DOM elements are missing from the scheduler container.",
+					"Be sure to either specify them manually in the markup: https://docs.dhtmlx.com/scheduler/initialization.html#initializingschedulerviamarkup",
+					"Or to use **scheduler.config.header** setting so they could be created automatically: https://docs.dhtmlx.com/scheduler/initialization.html#initializingschedulerviaheaderconfig"
+				].join("\n"));
+			}
 	}
 
 	if (this.config.rtl) this.$container.className += " dhx_cal_container_rtl";
@@ -3307,6 +3334,11 @@ scheduler._set_aria_buttons_attrs = function(){
 };
 
 scheduler.updateView = function(date, mode) {
+
+	if (!this.$container) {
+		throw new Error("The scheduler is not initialized. \n **scheduler.updateView** or **scheduler.setCurrentView** can be called only after **scheduler.init**");
+	}
+	
 	date = date || this._date;
 	mode = mode || this._mode;
 	var dhx_cal_data = 'dhx_cal_data';
@@ -7466,6 +7498,9 @@ scheduler.form_blocks={
 };
 
 scheduler._setLbPosition = function(box) {
+	if(!box){
+		return;
+	}
 	var scrollTop = window.pageYOffset||document.body.scrollTop||document.documentElement.scrollTop;
 	var scrollLeft = window.pageXOffset||document.body.scrollLeft||document.documentElement.scrollLeft;
 
@@ -8334,27 +8369,49 @@ scheduler._dp_init=function(dp){
 		dp._waitMode = 0;
 	});
 
-	dp._objToJson = function(obj, data, prefix){
+
+	var serialize = function(obj, data, prefix){
 		prefix = prefix || "";
 		data = data || {};
 
 		for (var a in obj){
 			if (a.indexOf("_") === 0) continue;
-			if (obj[a] && obj[a].getUTCFullYear) //not very good, but will work
+			if (obj[a] && obj[a].getUTCFullYear){ //not very good, but will work
 				data[prefix+a] = this.obj._helpers.formatDate(obj[a]);
-			else {
-				if (obj[a] && typeof obj[a] == "object")
-					dp._objToJson(obj[a], data, prefix+a+".");
-				else
+			}else {
+				if (obj[a] && typeof obj[a] == "object"){
+					serialize.call(this, obj[a], data, prefix+a+".");
+				}else {
 					data[prefix+a] = obj[a];
+				}
 			}
 		}
 
 		return data;
 	};
+	var serializeJSON = function(obj){
+		var copy = scheduler.utils.copy(obj);
+		for(var i in copy){
+			if (i.indexOf("_") === 0) {
+				delete copy[i];
+			} else if (copy[i]) {
+				if(copy[i].getUTCFullYear){
+					copy[i] = this.obj._helpers.formatDate(copy[i]);
+				} else if(typeof copy[i] == "object") {
+					copy[i] = serializeJSON(copy[i]);
+				}
+			}
+		}
+		return copy;
+	};
+
 	dp._getRowData=function(id,pref){
 		var ev=this.obj.getEvent(id);
-		return this._objToJson(ev);
+		if(this._tMode == "JSON"){
+			return serializeJSON.call(this, ev);
+		}else{
+			return serialize.call(this, ev);
+		}
 	};
 	dp._clearUpdateFlag=function(){};
 
