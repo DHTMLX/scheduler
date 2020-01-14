@@ -1,7 +1,7 @@
 # dhtmlxScheduler #
 
 [![dhtmlx.com](https://img.shields.io/badge/made%20by-DHTMLX-blue)](https://dhtmlx.com/)
-[![Version: 5.3.4](https://img.shields.io/badge/version-5.3.4-green.svg)](https://docs.dhtmlx.com/scheduler/what_s_new.html)
+[![npm: v.5.3.4](https://img.shields.io/badge/npm-v.5.3.4-blue.svg)](https://www.npmjs.com/package/dhtmlx-scheduler)
 [![License: GPL v2](https://img.shields.io/badge/license-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
 
