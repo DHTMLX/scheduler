@@ -1,9 +1,8 @@
 # dhtmlxScheduler #
 
 [![dhtmlx.com](https://img.shields.io/badge/made%20by-DHTMLX-blue)](https://dhtmlx.com/)
-[![npm: v.5.3.4](https://img.shields.io/badge/npm-v.5.3.4-blue.svg)](https://www.npmjs.com/package/dhtmlx-scheduler)
+[![npm: v.5.3.5](https://img.shields.io/badge/npm-v.5.3.5-blue.svg)](https://www.npmjs.com/package/dhtmlx-scheduler)
 [![License: GPL v2](https://img.shields.io/badge/license-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
-
 
 [dhtmlxScheduler](https://dhtmlx.com/docs/products/dhtmlxScheduler) is a JavaScript event calendar that allows you to add a Google-like scheduler to your web app or website. 
 
@@ -14,7 +13,6 @@ Very lightweight, highly customizable, and fast, dhtmlxScheduler provides a quic
 ![DHTMLX Scheduler Demo](https://docs.dhtmlx.com/scheduler/media/init_scheduler_front.png)
 
 [See more samples >](https://docs.dhtmlx.com/scheduler/samples/index.html)
-
 
 ## Getting started ##
 
@@ -59,19 +57,21 @@ scheduler.parse([
 
 ### Complete guides ###
 
+- [Vue.js](https://dhtmlx.com/blog/use-dhtmlx-scheduler-vue-js-framework-demo/)
 - [Angular](https://dhtmlx.com/blog/angular-dhtmlxscheduler-tutorial/)
 - [Node](https://docs.dhtmlx.com/scheduler/howtostart_nodejs.html)
 - ASP.NET
 	- [ASP.NET Core](https://docs.dhtmlx.com/scheduler/howtostart_dotnet_core.html)
+	- [ASP.NET MVC](https://docs.dhtmlx.com/scheduler/howtostart_dotnet.html)
 - PHP
+	- [Plain PHP](https://docs.dhtmlx.com/scheduler/howtostart_plain_php.html)
 	- [Laravel](https://docs.dhtmlx.com/scheduler/howtostart_php_laravel.html)
-	- [Slim framework](https://docs.dhtmlx.com/scheduler/howtostart_php.html)
+	- [Slim framework](https://docs.dhtmlx.com/scheduler/howtostart_php_slim4.html)
 - [Ruby on Rails](https://docs.dhtmlx.com/scheduler/howtostart_ruby.html)
 
-### **All tutorials** ###
+### All tutorials ###
 
 [https://docs.dhtmlx.com/scheduler/howtostart_guides.html](https://docs.dhtmlx.com/scheduler/howtostart_guides.html)
-
 
 ## Features ##
 
@@ -87,7 +87,6 @@ scheduler.parse([
 
 - PHP, ASP.NET, Java, CF [connectors](https://dhtmlx.com/docs/products/dhtmlxConnector/)
 
-
 ## Support ##
 
 Star our GitHub repo
@@ -100,10 +99,9 @@ Follow us on [Twitter](https://twitter.com/dhtmlx)
 
 Like our page on [Facebook](https://www.facebook.com/dhtmlx/)
 
-
 ## License ##
 
-dhtmlxScheduler v.5.3.4 Stardard
+dhtmlxScheduler v.5.3.5 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 

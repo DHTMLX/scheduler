@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.4 Stardard
+dhtmlxScheduler v.5.3.5 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -40,11 +40,15 @@ scheduler.attachEvent("onTemplatesReady", function () {
 			if (p.event){
 				try{
 					if(scheduler.getEvent(p.event)){
-						showEvent(p.event);
+						setTimeout(function(){
+							showEvent(p.event);
+						});
 						return false;
 					}else{
 						var handler = scheduler.attachEvent("onXLE", function(){
-							showEvent(p.event);
+							setTimeout(function(){
+								showEvent(p.event);
+							});
 							scheduler.detachEvent(handler);
 						});
 					}

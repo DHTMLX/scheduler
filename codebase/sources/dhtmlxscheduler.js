@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.4 Stardard
+dhtmlxScheduler v.5.3.5 Stardard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -1937,7 +1937,7 @@ Scheduler.plugin = function (code) {
 };
 Scheduler._schedulerPlugins = [];
 Scheduler.getSchedulerInstance = function () {
-	var scheduler = { version: "5.3.4" };
+	var scheduler = { version: "5.3.5" };
 
 var commonViews = {
 	agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html",
@@ -2316,6 +2316,62 @@ var layout = {
 	},
 };
 
+function hasSchedulerMarkup(element){
+	return !!(
+		element.querySelector(".dhx_cal_header") &&
+		element.querySelector(".dhx_cal_data") &&
+		element.querySelector(".dhx_cal_navline")
+		);
+}
+
+function createDefaultHeader(scheduler){
+	var views = [
+		"day",
+		"week",
+		"month"
+	];
+	var date = [
+		"date"
+	];
+	var nav = [
+		"prev",
+		"today",
+		"next"
+	];
+
+	if(scheduler.matrix){
+		for(var i in scheduler.matrix){
+			views.push(i);
+		}
+	}
+	if(scheduler._props){
+		for(var i in scheduler._props){
+			views.push(i);
+		}
+	}
+
+	if(scheduler._grid && scheduler._grid.names){
+		for(var i in scheduler._grid.names){
+			views.push(i);
+		}
+	}
+
+	var optionalViews = [
+		"map",
+		"agenda",
+		"week_agenda",
+		"year"
+	];
+	
+	optionalViews.forEach(function(viewName){
+		if(scheduler[viewName + "_view"]){
+			views.push(viewName);
+		}
+	});
+
+	return views.concat(date).concat(nav);
+}
+
 scheduler.init=function(id,date,mode){
 	date=date||(scheduler._currentDate());
 	mode=mode||"week";
@@ -2336,6 +2392,18 @@ scheduler.init=function(id,date,mode){
 		this.$container.setAttribute("role", "application");
 	}
 
+	if(!this.config.header && !hasSchedulerMarkup(this.$container)){
+		// if no header config and no required markup - use the default header 
+		// so the scheduler could be initialized in an empty div
+		this.config.header = createDefaultHeader(this);
+		console.log([// jshint ignore:line
+			"Required DOM elements are missing from the scheduler container and **scheduler.config.header** is not specified.",
+			"Using a default header configuration: ",
+			"scheduler.config.header = " + JSON.stringify(this.config.header, null, 2),
+			"Check this article for the details: https://docs.dhtmlx.com/scheduler/initialization.html"
+		].join("\n"));// jshint ignore:line
+	}
+
 	if (this.config.header) {
 		this.$container.innerHTML = "";
 		this.$container.classList.add("dhx_cal_container");
@@ -2347,15 +2415,13 @@ scheduler.init=function(id,date,mode){
 		this.$container.appendChild(layout.dataArea.render());
 	} else {
 		// if no header config provided - make sure scheduler container has all necessary elements
-		if(!this.$container.querySelector(".dhx_cal_header") || 
-			!this.$container.querySelector(".dhx_cal_data") || 
-			!this.$container.querySelector(".dhx_cal_navline")){
-				throw new Error([
-					"Required DOM elements are missing from the scheduler container.",
-					"Be sure to either specify them manually in the markup: https://docs.dhtmlx.com/scheduler/initialization.html#initializingschedulerviamarkup",
-					"Or to use **scheduler.config.header** setting so they could be created automatically: https://docs.dhtmlx.com/scheduler/initialization.html#initializingschedulerviaheaderconfig"
-				].join("\n"));
-			}
+		if(!hasSchedulerMarkup(this.$container)){
+			throw new Error([
+				"Required DOM elements are missing from the scheduler container.",
+				"Be sure to either specify them manually in the markup: https://docs.dhtmlx.com/scheduler/initialization.html#initializingschedulerviamarkup",
+				"Or to use **scheduler.config.header** setting so they could be created automatically: https://docs.dhtmlx.com/scheduler/initialization.html#initializingschedulerviaheaderconfig"
+			].join("\n"));
+		}
 	}
 
 	if (this.config.rtl) this.$container.className += " dhx_cal_container_rtl";
@@ -6322,7 +6388,7 @@ scheduler._render_v_bar = function (ev, x, y, w, h, style, contentA, contentB, b
 	var bg_color = (ev.color ? ("background-color:" + ev.color + ";") : "");
 	var color = (ev.textColor ? ("color:" + ev.textColor + ";") : "");
 
-	var borderBox = scheduler._border_box_bvents();
+	var borderBox = scheduler._border_box_events();
 
 	var borderBoxWidth = w - 2;
 	var boxWidth = borderBox ? borderBoxWidth : (w-4),
@@ -8542,12 +8608,100 @@ scheduler._skin_xy = {
 	bar_height: [24,20]
 };
 
+// material skin uses a different box sizing model than other skins, and also requires some post-processing.
+// In order to render events correctly, we need to know which box sizing model is used
+// We can detect it by styles applied, taking into account that styles may be loaded after scheduler is rendered
+
 scheduler._is_material_skin = function(){
-	return ((scheduler.skin + "").indexOf("material") > -1);
+	if(!scheduler.skin){
+		return checkIfMaterialSkin();
+	}else{
+		return ((scheduler.skin + "").indexOf("material") > -1);
+	}
 };
 
-scheduler._border_box_bvents = function(){
-	return scheduler._is_material_skin();
+var calculatedMaterial;
+function checkIfMaterialSkin(){
+	if(calculatedMaterial === undefined){
+		var probe = document.createElement("div");
+		probe.style.position = "absolute";
+		probe.style.left = "-9999px";
+		probe.style.top = "-9999px";
+		probe.innerHTML = "<div class='dhx_cal_container'>" +
+			"<div class='dhx_cal_scale_placeholder'>" +
+			"</div>"+
+		"<div>";
+		document.body.appendChild(probe);
+		var styles = window.getComputedStyle(probe.querySelector(".dhx_cal_scale_placeholder"));
+		var position = styles.getPropertyValue('position');
+		if(position === "absolute"){
+			// page has skins for placeholder element from material skin
+			calculatedMaterial = true;
+		}else{
+			calculatedMaterial = false;
+		}
+
+		setTimeout(function(){
+			calculatedMaterial = null;
+		}, 500);
+	}
+	return calculatedMaterial;
+}
+
+var cachedBorderBoxValue;
+function checkIfBorderBoxStyling(){
+	if(scheduler._is_material_skin()){
+		return true;
+	}else{
+		if(cachedBorderBoxValue === undefined){
+			var probe = document.createElement("div");
+			probe.style.position = "absolute";
+			probe.style.left = "-9999px";
+			probe.style.top = "-9999px";
+			probe.innerHTML = "<div class='dhx_cal_container'>" +
+				"<div class='dhx_cal_data'>" +
+					"<div class='dhx_cal_event'><div class='dhx_body'></div>"+
+				"</div>"+
+			"<div>";
+		
+			document.body.appendChild(probe);
+			var styles = window.getComputedStyle(probe.querySelector(".dhx_body"));
+			var boxSizing = styles.getPropertyValue('box-sizing');
+			document.body.removeChild(probe);
+			cachedBorderBoxValue = !!(boxSizing === "border-box");
+
+			if(!cachedBorderBoxValue){
+				setTimeout(function(){
+					cachedBorderBoxValue = undefined;
+				}, 1000);// recalculate in case scheduler initialized before skin is loaded
+			}
+		}else{
+			return cachedBorderBoxValue;
+		}
+	}
+}
+
+function refreshAfterLoad(){
+	if(scheduler._is_material_skin() || scheduler._border_box_events()){
+		return;
+	}
+
+	var oldStyling = cachedBorderBoxValue;
+	cachedBorderBoxValue = undefined;
+	calculatedMaterial = undefined;
+	var newStyling = checkIfBorderBoxStyling();
+
+	// if box styling model changed - means scheduler was rendered before stylesheet was loaded or parsed inline
+	// repaint scheduler in order to apply new styles
+	if(oldStyling !== newStyling && scheduler.$container){
+		scheduler.setCurrentView();
+	}
+}
+window.addEventListener('DOMContentLoaded', refreshAfterLoad);
+window.addEventListener('load', refreshAfterLoad);
+
+scheduler._border_box_events = function(){
+	return checkIfBorderBoxStyling();
 };
 
 scheduler._configure = function(col, data, skin){
@@ -8567,8 +8721,6 @@ scheduler._skin_init = function(){
 		}
 	}
 
-	
-	
 	var set = 0;
 	if (scheduler.skin && (scheduler.skin === "classic" || scheduler.skin === "glossy")) set = 1;
 

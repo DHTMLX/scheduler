@@ -1,3 +1,10 @@
+### 5.3.5
+
+- Fix styling of the 'next' button on the right side of the navigation panel in Terrace skin when the scheduler is initialized using header config
+- Fix the incorrect work of the URL extension which failed to highlight events by url in some cases
+- Fix the incorrect work of the Material skin when scheduler styles are loaded using the @import command
+- If neither header config nor default markup is specified while initializing the scheduler, a default value for the scheduler header will be auto-generated to escape a script error
+
 ### 5.3.4
 
 - Fix the incorrect work of the vertical scroll in a scrollable timeline when the mouse pointer is over the sections column
