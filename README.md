@@ -87,7 +87,7 @@ scheduler.parse([
 
 - PHP, ASP.NET, Java, CF [connectors](https://dhtmlx.com/docs/products/dhtmlxConnector/)
 
-## Support ##
+## Follow us ##
 
 Star our GitHub repo
 
