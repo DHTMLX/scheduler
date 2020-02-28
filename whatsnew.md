@@ -1,3 +1,11 @@
+### 5.3.6
+
+- Fix the incorrect displaying of events in the Day Timeline view when scrollable:true or smart_rendering:true is used
+- Fix the script error which happened in the Day Timeline view after dragging a new event when scrollable:true was used together with dataProcessor
+- Fix the script error which was thrown if no date element was included in the header config
+- Fix styling of the day tab in the Material skin when the header config does not contain a week or month tab
+
+
 ### 5.3.5
 
 - Fix styling of the 'next' button on the right side of the navigation panel in Terrace skin when the scheduler is initialized using header config

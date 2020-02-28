@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.5 Stardard
+dhtmlxScheduler v.5.3.6 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -1937,7 +1937,7 @@ Scheduler.plugin = function (code) {
 };
 Scheduler._schedulerPlugins = [];
 Scheduler.getSchedulerInstance = function () {
-	var scheduler = { version: "5.3.5" };
+	var scheduler = { version: "5.3.6" };
 
 var commonViews = {
 	agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html",
@@ -2045,9 +2045,9 @@ var itemTypes = {
 		element.setAttribute("name", config.view + "_tab");
 		element.setAttribute("data-viewname", config.view );
 		if(scheduler.config.fix_tab_position){
-			if(config.view === "day") {
+			if(config.$firstTab) {
 				element.classList.add("dhx_cal_tab_first");
-			}else if(config.view === "month") {
+			}else if(config.$lastTab) {
 				element.classList.add("dhx_cal_tab_last");
 			} else if(config.view !== "week") {
 				element.classList.add("dhx_cal_tab_standalone");
@@ -2164,8 +2164,24 @@ function renderLayout(config) {
 	}else{
 		items = [config];
 	}
+
 	for (var i = 0; i < items.length; i++) {
 		var view = prepareConfig(items[i]);
+
+		if(view.view === "day" && items[i + 1]){
+			var next = prepareConfig(items[i + 1]);
+			if(next.view === "week" || next.view === "month"){
+				view.$firstTab = true;
+			}
+		}
+
+		if(view.view === "month" && items[i - 1]){
+			var next = prepareConfig(items[i - 1]);
+			if(next.view === "week" || next.view === "day"){
+				view.$lastTab = true;
+			}
+		}
+
 		var element = renderElement(view);
 
 		fragment.appendChild(element);
@@ -3608,6 +3624,10 @@ scheduler._render_scales = function(header, data_area){
 	}
 };
 
+scheduler._getNavDateElement = function(){
+	return this.$container.querySelector(".dhx_cal_date");
+};
+
 scheduler._reset_scale=function(){
 	//current mode doesn't support scales
 	//we mustn't call reset_scale for such modes, so it just to be sure
@@ -3641,9 +3661,12 @@ scheduler._reset_scale=function(){
 	this._min_date=d;
 
 	var navBarDateStr = this.templates[this._mode+"_date"](dd,ed,this._mode);
-	this._els["dhx_cal_date"][0].innerHTML = navBarDateStr;
-	this._waiAria.navBarDateAttr(this._els["dhx_cal_date"][0] ,navBarDateStr);
 
+	var scaleElement = this._getNavDateElement();
+	if(scaleElement){
+		scaleElement.innerHTML = navBarDateStr;
+		this._waiAria.navBarDateAttr(scaleElement, navBarDateStr);
+	}
 
 	this._max_date = ed;
 	scheduler._render_scales(h, data_area);

@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.5 Stardard
+dhtmlxScheduler v.5.3.6 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -116,7 +116,11 @@ scheduler.attachEvent("onTemplatesReady",function() {
 		v_border.style.height = (agenda_area.offsetHeight < scheduler._els["dhx_cal_data"][0].offsetHeight) ? "100%" : (agenda_area.offsetHeight+"px");
 
 		var t=scheduler._els["dhx_cal_data"][0].firstChild.childNodes;
-		scheduler._els["dhx_cal_date"][0].innerHTML=scheduler.templates.agenda_date(scheduler._min_date, scheduler._max_date, scheduler._mode);
+
+		var dateElement = scheduler._getNavDateElement();
+		if(dateElement){
+			dateElement.innerHTML=scheduler.templates.agenda_date(scheduler._min_date, scheduler._max_date, scheduler._mode);
+		}
 
 		scheduler._rendered=[];
 		for (var i=0; i < t.length-1; i++)

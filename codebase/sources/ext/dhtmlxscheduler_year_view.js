@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.5 Stardard
+dhtmlxScheduler v.5.3.6 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -275,7 +275,7 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 		var sd = this.date[this._mode + "_start"](this.date.copy(this._date));
 		var ssd = sd;
 		var d = null;
-		for (var i = 0; i < c.year_y; i++)
+		for (var i = 0; i < c.year_y; i++){
 			for (var j = 0; j < c.year_x; j++) {
 				d = document.createElement("div");
 				d.className = "dhx_year_box";
@@ -318,7 +318,13 @@ scheduler.templates.year_tooltip = function(s, e, ev) {
 				sd = this.date.add(sd, 1, "month");
 
 			}
-		this._els["dhx_cal_date"][0].innerHTML = this.templates[this._mode + "_date"](ssd, sd, this._mode);
+		}
+
+		var dateElement = this._getNavDateElement();
+		if(dateElement){
+			dateElement.innerHTML = this.templates[this._mode + "_date"](ssd, sd, this._mode);
+		}
+
 		this.week_starts = week_starts;
 		week_starts._month = ssd.getMonth();
 		this._min_date = ssd;
