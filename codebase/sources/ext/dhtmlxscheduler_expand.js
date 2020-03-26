@@ -14,6 +14,7 @@ scheduler.expand = function() {
 	if(!scheduler.callEvent("onBeforeExpand", []))
 		return;
 	var t = scheduler._obj;
+	t.className += " dhx_scheduler_expanded";
 	do {
 		t._position = t.style.position || "";
 		t.style.position = "static";
@@ -40,6 +41,7 @@ scheduler.collapse = function() {
 	if(!scheduler.callEvent("onBeforeCollapse", []))
 		return;
 	var t = scheduler._obj;
+	t.className = t.className.replace("dhx_scheduler_expanded", "").replace("  "," ");
 	do {
 		t.style.position = t._position;
 	} while ((t = t.parentNode) && t.style);
