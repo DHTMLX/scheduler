@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.6 Standard
+dhtmlxScheduler v.5.3.7 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -9,8 +9,6 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
 
 */
 Scheduler.plugin(function(scheduler){
-
-(function() {
 
 	scheduler.config.container_autoresize = true;
 	scheduler.config.month_day_min_height = 90;
@@ -227,6 +225,10 @@ Scheduler.plugin(function(scheduler){
 							for(var r=0; r < rows.length; r++){
 								height += cfg._section_height[rows[r].key];
 							}
+							// Check and add extra height to avoid events hiding by the horizontal scrollbar
+							if(scheduler.$container.clientWidth != scheduler.$container.scrollWidth){
+								height += getScrollSize();
+							}
 						}
 						height -= 1;
 					}
@@ -260,11 +262,14 @@ Scheduler.plugin(function(scheduler){
 			return true;
 		}
 
+		var asyncRepaint = window.requestAnimationFrame || window.setTimeout;
 		var scrollTop = document.documentElement.scrollTop;
 
-		updateContainterHeight();
+		asyncRepaint(function() {
+			updateContainterHeight();
+		});
+
 		if ( (scheduler.matrix && scheduler.matrix[mode]) || mode == "month") {
-			var asyncRepaint = window.requestAnimationFrame || window.setTimeout;
 			asyncRepaint(function() {
 				updateContainterHeight(true);
 				document.documentElement.scrollTop = scrollTop;
@@ -298,7 +303,7 @@ Scheduler.plugin(function(scheduler){
 		}
 		return true;
 	});
-	
+
 	scheduler.attachEvent("onViewChange", conditionalUpdateContainerHeight);
 	scheduler.attachEvent("onXLE", conditionalUpdateContainerHeight);
 	scheduler.attachEvent("onEventChanged", conditionalUpdateContainerHeight);
@@ -318,6 +323,16 @@ Scheduler.plugin(function(scheduler){
 		active = true;
 		return true;
 	});
-})();
+	// helper function
+	function getScrollSize() {
+		var div = document.createElement("div");
+		div.style.cssText = "visibility:hidden;position:absolute;left:-1000px;width:100px;padding:0px;margin:0px;height:110px;min-height:100px;overflow-y:scroll;";
+
+		document.body.appendChild(div);
+		var size = div.offsetWidth - div.clientWidth;
+		document.body.removeChild(div);
+		return size;
+	}
+
 
 });

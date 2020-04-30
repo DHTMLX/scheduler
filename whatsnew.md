@@ -1,3 +1,8 @@
+### 5.3.7
+
+- Fix incorrect work of Container Autoresize extension with the scrollable timeline
+- Fix the incorrect work of show_unassigned option of the Timeline view
+
 ### 5.3.6
 
 - Fix the incorrect displaying of events in the Day Timeline view when scrollable:true or smart_rendering:true is used
@@ -247,28 +252,28 @@
 
 ### 3.0
 
-- Version of scheduler for touch phones 
-- WeekAgenda view 
-- Netbook friendly lightbox form 
-- Cascade event display 
+- Version of scheduler for touch phones
+- WeekAgenda view
+- Netbook friendly lightbox form
+- Cascade event display
 - Simple way to define a color for event
 - Drag and drop of the details form
-- Custom buttons for the details form 
+- Custom buttons for the details form
 - Current time marker in day and week view
 - Multiline header for timeline view
-- Configurable work-time bounds 
-- API to access lightbox values 
+- Configurable work-time bounds
+- API to access lightbox values
 
-### 2.3 
+### 2.3
 
-- Map view was added 
-- Cell mode for Timeline view was added 
-- Tree mode for Timeline view was added 
+- Map view was added
+- Cell mode for Timeline view was added
+- Tree mode for Timeline view was added
 - Tooltips for all views were added
 - Abbility to create new events by double click or by drag-and-drop in Timeline mode
 - Abbility to move events by drop-and-drag in Timeline mode
-- Abbility to create new events by external drag and drop 
-- Multiselect section for details form 
-- Checkbox, combo, radio - sections for details form 
-- Api of mini-calendar extension extended 
+- Abbility to create new events by external drag and drop
+- Multiselect section for details form
+- Checkbox, combo, radio - sections for details form
+- Api of mini-calendar extension extended
 - Custom form implementation simplified
