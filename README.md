@@ -4,9 +4,9 @@
 [![npm: v.5.3.7](https://img.shields.io/badge/npm-v.5.3.7-blue.svg)](https://www.npmjs.com/package/dhtmlx-scheduler)
 [![License: GPL v2](https://img.shields.io/badge/license-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
-[dhtmlxScheduler](https://dhtmlx.com/docs/products/dhtmlxScheduler) is a JavaScript event calendar that allows you to add a Google-like scheduler to your web app or website. 
+[dhtmlxScheduler](https://dhtmlx.com/docs/products/dhtmlxScheduler) is a JavaScript event calendar that allows you to add a Google-like scheduler to your web app or website.
 
-Intuitive drag-and-drop interface allows the end users to quickly manage events and appointments in different views: Day, Week, Month, Year, Agenda, Timeline, etc. 
+Intuitive drag-and-drop interface allows the end users to quickly manage events and appointments in different views: Day, Week, Month, Year, Agenda, Timeline, etc.
 
 Very lightweight, highly customizable, and fast, dhtmlxScheduler provides a quick way to add an Ajax-based event calendar on a web page.
 
@@ -53,7 +53,7 @@ scheduler.parse([
 ]);
 ~~~
 
-==> [Check the live demo](https://snippet.dhtmlx.com/a69d7378a)
+==> [Check the live demo](https://snippet.dhtmlx.com/5/71834aa3b)
 
 ### Complete guides ###
 
