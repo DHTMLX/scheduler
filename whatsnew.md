@@ -1,3 +1,10 @@
+### 5.3.8
+
+- Fix the incorrect height of the modal overlay of the Lightbox
+- Fix the incorrect sizes of the scheduler when the scheduler is initialized inside Bootstrap modals
+- Scheduler now automatically tracks the container resizes and adjusts its own sizes accordingly
+- Add Mini Calendar control for the header config
+
 ### 5.3.7
 
 - Fix incorrect work of Container Autoresize extension with the scrollable timeline

@@ -169,14 +169,14 @@
 }
 
 .dhx_cal_ltext textarea{
-	background-color: @lightbox-area-rs-textarea-bg ; 
+	background-color: @lightbox-area-rs-textarea-bg ;
 	overflow:auto;
 	color: @lightbox-area-rs-font-color;
 	height:100%;
 	width: 100%;
 	outline: @lightbox-area-rs-outline !important;
 	resize: none;
-	border: @lightbox-area-rs-border; 
+	border: @lightbox-area-rs-border;
 	line-height: @lightbox-area-rs-line-height;
 	font-family: @lightbox-area-rs-font-family;
 	box-sizing: border-box;
@@ -276,7 +276,7 @@
 .dhx_cal_cover{
 	width:100%;
 	height:100%;
-	position:absolute;
+	position:fixed;
 	z-index:14;
 	top:0px;
 	left:0px;
@@ -379,8 +379,8 @@
 	.dhx_wrap_section{
 		padding: @lightbox-area-wrap-padding;
 		.dhx_cal_ltext.dhx_cal_template {
-			direction: ltr; 
-			float: right;             
+			direction: ltr;
+			float: right;
 			margin-right: 15px !important;
 		}
 	}
@@ -401,7 +401,7 @@
 	select {
 		padding: @lightbox-area-rs-select-padding-rtl;
 		margin: @lightbox-area-rs-select-margin-rtl;
-	} 
+	}
 	.dhx_custom_button {
 		left:15px;
 		right: auto;

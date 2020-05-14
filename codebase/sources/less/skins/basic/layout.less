@@ -76,13 +76,13 @@
 	position:relative;
 	overflow:hidden;
 	background-color:@container-background;
-	font-family:@container-font-family; 
+	font-family:@container-font-family;
 	font-size:@container-font-size;
 }
 
 .dhx_cal_container div{
-	-moz-user-select:none;    
-	-moz-user-select:-moz-none;    
+	-moz-user-select:none;
+	-moz-user-select:-moz-none;
 }
 
 .dhx_cal_navline {
@@ -93,7 +93,7 @@
 	color:@navline-font-color;
 }
 
-.dhx_cal_navline div{ 
+.dhx_cal_navline div{
 	position:absolute;
 	white-space:nowrap;
 	top: @navline-btn-top-position;
@@ -114,7 +114,7 @@
 }
 
 .dhx_cal_button .dhx_left_bg{
-	width:1px; 
+	width:1px;
 	overflow:hidden;
 	height:17px;
 	z-index:5;
@@ -123,7 +123,7 @@
 
 .dhx_cal_prev_button {
 	cursor:pointer;
-	right: @nav-prev-btn-position; 
+	right: @nav-prev-btn-position;
 	background-color: @nav-btn-background;
 	background-image:@nav-prev-btn-bg-img;
 	background-position:@nav-prev-btn-bg-position;
@@ -140,13 +140,13 @@
 	font-size: @nav-today-btn-font-size;
 	font-weight: @nav-today-btn-font-weight;
 	color: @nav-today-btn-font-color;
-	right:@nav-today-btn-position; 
+	right:@nav-today-btn-position;
 	background-color: @nav-btn-background;
 	background-image:@nav-today-btn-bg-img;
 	background-position: @nav-today-btn-bg-position;
 	background-repeat: no-repeat;
 	height:@nav-btn-height;
-	width:@nav-today-btn-width; 
+	width:@nav-today-btn-width;
 	border: @nav-today-btn-border;
 	border-radius: @nav-today-btn-border-radius;
 	text-decoration: @nav-today-btn-text-decor;
@@ -155,20 +155,20 @@
 
 .dhx_cal_next_button{
 	cursor:pointer;
-	right: @nav-next-btn-position; 
+	right: @nav-next-btn-position;
 	background-color: @nav-btn-background;
 	background-image:@nav-next-btn-bg-img;
-	background-position: @nav-next-btn-bg-position;	
+	background-position: @nav-next-btn-bg-position;
 	background-repeat: no-repeat;
 	height:@nav-btn-height;
-	width:@nav-btn-width; 
+	width:@nav-btn-width;
 	border: @nav-btn-border;
 	border-radius: @nav-next-btn-border-radius;
 }
 
 
 .dhx_cal_tab {
-	width:@nav-tab-width; 
+	width:@nav-tab-width;
 	height:@nav-tab-height;
 	background-color: @nav-tab-background;
 	text-align:@nav-tab-text-align;
@@ -184,7 +184,7 @@
 
 	&:hover {
 		/*color: @nav-tab-text-hov-text-color;*/
-	
+
 	}
 }
 
@@ -248,7 +248,7 @@
 }
 
 .dhx_scale_bar {
-	position:absolute;	
+	position:absolute;
 	text-align: @col-header-cell-text-align;
 	background-color:@col-header-cell-background;
 	padding:@col-header-cell-padding;
@@ -259,11 +259,23 @@
 	color: @col-header-font-color;
 }
 
-
+.scheduler_container_resize_watcher{
+	background:transparent;
+	width: 100%;
+	height:100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: -1;
+	pointer-events:none;
+	border:0;
+	box-sizing: border-box;
+	opacity: 0;
+}
 
 
 .dhx_scale_holder{
-	position:absolute;	
+	position:absolute;
 	border-right: @scale-column-border-right;
 	background-image: @scale-column-background-img;
 	-ms-interpolation-mode: nearest-neighbor;
@@ -294,7 +306,7 @@
 }
 
 .dhx_scale_holder_now {
-	position:absolute;	
+	position:absolute;
 	-ms-interpolation-mode: nearest-neighbor;
 	image-rendering: -moz-crisp-edges;
 	image-rendering: crisp-edges;
@@ -302,7 +314,7 @@
 }
 
 .dhx_scale_holder_now {
-	position:absolute;	
+	position:absolute;
 	border-right: @scale-column-border-right;
 	background-image: @scale-column-now-background-img;
 }
@@ -333,7 +345,7 @@
 	font-size: @daybox-title-font-size;
 	font-weight: @daybox-title-font-weight;
 	line-height: @daybox-title-line-height;
-	color: @daybox-title-color;	
+	color: @daybox-title-color;
 	border-right: @daybox-title-border-right;
 	background-color: @daybox-title-background;
 	text-align: @daybox-title-text-align;
@@ -549,8 +561,8 @@
 			width: auto;
 		}
 
-		.dhx_cal_tab, 
-		.dhx_cal_tab.active, 
+		.dhx_cal_tab,
+		.dhx_cal_tab.active,
 		.dhx_cal_today_button,
 		.dhx_cal_prev_button,
 		.dhx_cal_next_button{
@@ -575,8 +587,8 @@
 			width: auto;
 		}
 
-		.dhx_cal_tab, 
-		.dhx_cal_tab.active, 
+		.dhx_cal_tab,
+		.dhx_cal_tab.active,
 		.dhx_cal_today_button,
 		.dhx_cal_prev_button,
 		.dhx_cal_next_button{
@@ -601,8 +613,8 @@
 			padding: 0 2vw;
 		}
 
-		.dhx_cal_tab, 
-		.dhx_cal_tab.active, 
+		.dhx_cal_tab,
+		.dhx_cal_tab.active,
 		.dhx_cal_today_button,
 		.dhx_cal_prev_button,
 		.dhx_cal_next_button{
@@ -614,7 +626,7 @@
 		.dhx_cal_next_button{
 			width: 2rem;
 		}
-	
+
 		.dhx_cal_date{
 			font-size: 4vw;
 		}

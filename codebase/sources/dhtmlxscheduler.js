@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.7 Standard
+dhtmlxScheduler v.5.3.8 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -1937,7 +1937,7 @@ Scheduler.plugin = function (code) {
 };
 Scheduler._schedulerPlugins = [];
 Scheduler.getSchedulerInstance = function () {
-	var scheduler = { version: "5.3.7" };
+	var scheduler = { version: "5.3.8" };
 
 var commonViews = {
 	agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html",
@@ -2067,6 +2067,27 @@ var itemTypes = {
 	spacer: function () {
 		return div("dhx_cal_line_spacer");
 	},
+	minicalendarButton: function(config){
+		var minicalendarDiv = div('dhx_minical_icon');
+		if(!config.click){
+			minicalendarDiv.onclick = function () {
+				if (scheduler.isCalendarVisible()) {
+					scheduler.destroyCalendar();
+				} else {
+					scheduler.renderCalendar({
+						position: this,
+						date: scheduler.getState().date,
+						navigation: true,
+						handler: function (date, calendar) {
+							scheduler.setCurrentView(date);
+							scheduler.destroyCalendar();
+						}
+					});
+				}
+			};
+		}
+		return minicalendarDiv;
+	},
 	html_element: function (config) {
 		return div("dhx_cal_nav_content");
 	}
@@ -2089,6 +2110,9 @@ function findRenderer(config) {
 				break;
 			case "button":
 				renderer = itemTypes.button;
+				break;
+			case "minicalendar":
+				renderer = itemTypes.minicalendarButton;
 				break;
 			default:
 				renderer = itemTypes.view;
@@ -2215,7 +2239,7 @@ scheduler._update_nav_bar = function (config, container) {
 
 	var newHeight = config.height || scheduler.xy.nav_height;
 
-	if(previousHeight === null || 
+	if(previousHeight === null ||
 			(previousHeight !== newHeight)){
 		heightChanged = true;
 	}
@@ -2255,52 +2279,78 @@ scheduler._detachDomEvent = function(el, event, handler){
 	}
 };
 
+
 scheduler._init_once = function(){
+	function isAttachedNode(container){
+	var root = document.body;
 
-	var oldSize = getWindowSize();
-	scheduler.event(window,"resize",function() {
-		if (!isAttachedNode(scheduler._obj))
-			return;
+	while(container && container != root){
+		container = container.parentNode;
+	}
 
-		window.clearTimeout(scheduler._resize_timer);
-		scheduler._resize_timer = window.setTimeout(function () {
-			var newSize = getWindowSize();
+	return !!(root == container);
+}
 
-			// ie7-8 triggers "resize" when window's elements are resized, it messes container-autoresize extension
-			// check if it's actually resized
+function getWindowSize(window){
+	return {
+		w : window.innerWidth || document.documentElement.clientWidth,
+		h : window.innerHeight || document.documentElement.clientHeight
+	};
+}
+function equals(a,b){
+	return a.w == b.w && a.h == b.h;
+}
+
+function listenWindowResize(scheduler, window){
+	var oldSize = getWindowSize(window);
+	var resizeDelay;
+	window.addEventListener("resize", function(){
+		clearTimeout(resizeDelay);
+		resizeDelay = setTimeout(function(){
+			if (!isAttachedNode(scheduler.$container)){
+				return;
+			}
+			var newSize = getWindowSize(window);
+			// element may be resized by container-autoresize exteinsion
+			// check if the size is actually changed in order to not to get endless loop
 			if (!equals(oldSize, newSize)) {
-				if (!isAttachedNode(scheduler._obj))
-					return;
-
+				oldSize = newSize;
 				if (scheduler.callEvent("onSchedulerResize", [])) {
 					scheduler.updateView();
 					scheduler.callEvent("onAfterSchedulerResize", []);
 				}
 			}
-			oldSize = newSize;
-		}, 100);
-
+		}, 150);
 	});
+}
 
-	function isAttachedNode(container){
-		var root = document.body;
-
-		while(container && container != root){
-			container = container.parentNode;
-		}
-
-		return !!(root == container);
+function addResizeListener(scheduler){
+	var root = scheduler.$container;
+	var containerStyles = window.getComputedStyle(root);
+	if(containerStyles.getPropertyValue("position") == "static"){
+		root.style.position = "relative";
 	}
 
-	function getWindowSize(){
-		return {
-			w : window.innerWidth || document.documentElement.clientWidth,
-			h : window.innerHeight || document.documentElement.clientHeight
-		};
+	var resizeWatcher = document.createElement('iframe');
+	resizeWatcher.className = "scheduler_container_resize_watcher";
+	resizeWatcher.tabIndex = -1;
+	if(scheduler.config.wai_aria_attributes){
+		resizeWatcher.setAttribute("role", "none");
+		resizeWatcher.setAttribute("aria-hidden", true);
 	}
-	function equals(a,b){
-		return a.w == b.w && a.h == b.h;
+
+	// in some environments (namely, in SalesForce) iframe.contentWindow is not available
+	root.appendChild(resizeWatcher);
+	if (resizeWatcher.contentWindow) {
+		listenWindowResize(scheduler, resizeWatcher.contentWindow);
+	} else {
+		// if so - ditch the iframe and fallback to listening the main window resize
+		root.removeChild(resizeWatcher);
+		listenWindowResize(scheduler, window);
 	}
+}
+
+addResizeListener(scheduler);
 
 	scheduler._init_once = function(){};
 };
@@ -2378,7 +2428,7 @@ function createDefaultHeader(scheduler){
 		"week_agenda",
 		"year"
 	];
-	
+
 	optionalViews.forEach(function(viewName){
 		if(scheduler[viewName + "_view"]){
 			views.push(viewName);
@@ -2409,7 +2459,7 @@ scheduler.init=function(id,date,mode){
 	}
 
 	if(!this.config.header && !hasSchedulerMarkup(this.$container)){
-		// if no header config and no required markup - use the default header 
+		// if no header config and no required markup - use the default header
 		// so the scheduler could be initialized in an empty div
 		this.config.header = createDefaultHeader(this);
 		console.log([// jshint ignore:line
@@ -2823,7 +2873,7 @@ scheduler._week_indexes_from_pos = function(pos){
 		return pos;
 	}else{
 		var column = this._get_column_index(pos.x);
-		
+
 		pos.x=Math.min(this._cols.length-1, Math.max(0,Math.ceil(column)-1));
 		pos.y=Math.max(0,Math.ceil(pos.y*60/(this.config.time_step*this.config.hour_size_px))-1)+this.config.first_hour*(60/this.config.time_step);
 		return pos;
@@ -3374,7 +3424,7 @@ scheduler._trigger_dyn_loading = function(){
 scheduler.update_view=function(){
 	this._reset_ignores();
 	this._update_nav_bar(
-		this.config.header, 
+		this.config.header,
 		this.$container.querySelector(".dhx_cal_navline"));
 
 	var view = this[this._mode + "_view"];
@@ -3420,7 +3470,7 @@ scheduler.updateView = function(date, mode) {
 	if (!this.$container) {
 		throw new Error("The scheduler is not initialized. \n **scheduler.updateView** or **scheduler.setCurrentView** can be called only after **scheduler.init**");
 	}
-	
+
 	date = date || this._date;
 	mode = mode || this._mode;
 	var dhx_cal_data = 'dhx_cal_data';
@@ -3555,7 +3605,7 @@ scheduler._calc_scale_sizes = function(width, from, to){//
 	var summ = width; //border delta
 	var count = this._get_columns_num(from, to);
 	//if (this.config.rtl) this._process_ignores(scheduler.date.add(to, -1, "day"), count, "day", -1);
-	//else 
+	//else
 	this._process_ignores(from, count, "day", 1);
 	var realcount = count - this._ignores_detected;
 	for (var i=0; i<count; i++){
@@ -3617,8 +3667,8 @@ scheduler._render_scales = function(header, data_area){
 			this.callEvent("onScaleAdd",[scales, d]);
 		}
 		left+=this._cols[i];
-		//if (this.config.rtl) d=this.date.add(d,-1,"day"); 
-		//else 
+		//if (this.config.rtl) d=this.date.add(d,-1,"day");
+		//else
 		d=this.date.add(d,1,"day");
 		d = this.date.day_start(d);
 	}
@@ -7373,7 +7423,7 @@ scheduler.form_blocks={
 			return node.firstChild.value;
 		},
 		focus:function(node){
-			var a=node.firstChild; scheduler._focus(a, true); 
+			var a=node.firstChild; scheduler._focus(a, true);
 		}
 	},
 	time:{
@@ -7496,7 +7546,7 @@ scheduler.form_blocks={
 				s[map[0]].disabled=input.checked;
 				s[ map[0] + s.length/2 ].disabled=input.checked;
 
-				input.onclick = function(){ 
+				input.onclick = function(){
 					if(input.checked) {
 						var obj = {};
 						scheduler.form_blocks.time.get_value(node,obj,config);
@@ -7513,12 +7563,12 @@ scheduler.form_blocks={
 
 					s[map[0]].disabled=input.checked;
 					s[ map[0] + s.length/2 ].disabled=input.checked;
-					
+
 					_fill_lightbox_select(s,0,start_date||ev.start_date);
 					_fill_lightbox_select(s,4,end_date||ev.end_date);
 				};
 			}
-			
+
 			if(cfg.auto_end_date && cfg.event_duration) {
 				var _update_lightbox_select = function () {
 					start_date = new Date(s[map[3]].value,s[map[2]].value,s[map[1]].value,0,s[map[0]].value);
@@ -7529,7 +7579,7 @@ scheduler.form_blocks={
 					s[i].onchange = _update_lightbox_select;
 				}
 			}
-			
+
 			function _fill_lightbox_select(s,i,d) {
 				var time_values = config._time_values;
 				var direct_value = d.getHours()*60+d.getMinutes();
@@ -7573,7 +7623,7 @@ scheduler.form_blocks={
 				}
 			}
 
-			if (ev.end_date<=ev.start_date) 
+			if (ev.end_date<=ev.start_date)
 				ev.end_date=scheduler.date.add(ev.start_date,scheduler.config.time_step,"minute");
 			return {
 				start_date: new Date(ev.start_date),
@@ -7581,7 +7631,7 @@ scheduler.form_blocks={
 			};
 		},
 		focus:function(node){
-			scheduler._focus(node.getElementsByTagName("select")[0]); 
+			scheduler._focus(node.getElementsByTagName("select")[0]);
 		}
 	}
 };
@@ -7709,25 +7759,18 @@ scheduler.hideCover=function(box){
 	}
 };
 scheduler.hide_cover=function(){
-	if (this._cover) 
+	if (this._cover)
 		this._cover.parentNode.removeChild(this._cover);
 	this._cover=null;
-};
-
-scheduler.set_cover_height = function(coverH) {
-	var _document_height = ((document.height !== undefined) ? document.height : document.body.offsetHeight);
-	var _scroll_height = ((document.documentElement) ? document.documentElement.scrollHeight : 0);
-	coverH = Math.max(_document_height, _scroll_height) + 'px';
 };
 
 scheduler.show_cover=function(){
 	if(this._cover) {
 		return;
 	}
-		
+
 	this._cover=document.createElement("div");
 	this._cover.className="dhx_cal_cover";
-	this.set_cover_height(this._cover.style.height);
 	document.body.appendChild(this._cover);
 };
 scheduler.save_lightbox=function(){
@@ -7909,11 +7952,11 @@ scheduler.getLightbox=function(){ //scheduler.config.wide_form=true;
 			d.className+=" dhx_cal_light_wide";
 		if (scheduler.form_blocks.recurring)
 			d.className+=" dhx_cal_light_rec";
-		if (scheduler.config.rtl) 
+		if (scheduler.config.rtl)
 			d.className+=" dhx_cal_light_rtl";
 		if (scheduler.config.responsive_lightbox)
 			d.className += " dhx_cal_light_responsive";
-			
+
 		if (/msie|MSIE 6/.test(navigator.userAgent))
 			d.className+=" dhx_ie6";
 		d.style.visibility="hidden";
@@ -7931,8 +7974,8 @@ scheduler.getLightbox=function(){ //scheduler.config.wide_form=true;
 		var rtl = scheduler.config.rtl;
 		for (var i = 0; i < buttons.length; i++) {
 			ariaAttr = this._waiAria.lightboxButtonAttrString(buttons[i]);
-			html += "<div "+ariaAttr+" class='dhx_btn_set dhx_"+(rtl?"left":"right")+"_btn_set " + 
-						buttons[i] + "_set' style='float:"+(rtl?"left":"right")+";'><div dhx_button='1' class='" + 
+			html += "<div "+ariaAttr+" class='dhx_btn_set dhx_"+(rtl?"left":"right")+"_btn_set " +
+						buttons[i] + "_set' style='float:"+(rtl?"left":"right")+";'><div dhx_button='1' class='" +
 						buttons[i] + "'></div><div>" + scheduler.locale.labels[buttons[i]] + "</div></div>";
 		}
 
@@ -7950,7 +7993,7 @@ scheduler.getLightbox=function(){ //scheduler.config.wide_form=true;
 
 		document.body.insertBefore(d,document.body.firstChild);
 		this._lightbox=d;
-		
+
 		var sns=this.config.lightbox.sections;
 		html="";
 		for (var i=0; i < sns.length; i++) {
@@ -7962,11 +8005,11 @@ scheduler.getLightbox=function(){ //scheduler.config.wide_form=true;
 				var ariaAttr = scheduler._waiAria.lightboxSectionButtonAttrString(this.locale.labels["button_"+sns[i].button]);
 			 	button = "<div "+ariaAttr+" class='dhx_custom_button' index='"+i+"'><div class='dhx_custom_button_"+sns[i].button+"'></div><div>"+this.locale.labels["button_"+sns[i].button]+"</div></div>";
 			 }
-			
+
 			if (this.config.wide_form){
 				html+="<div class='dhx_wrap_section'>";
 			}
-			
+
 			var label_name = this.locale.labels["section_"+sns[i].name];
 			if(typeof label_name !== "string"){
 				label_name = sns[i].name;
