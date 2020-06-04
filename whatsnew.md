@@ -1,3 +1,11 @@
+### 5.3.9
+
+- Fix the incorrect display of a scrollable timeline after scrolling it down and dragging and dropping the last row
+- Fix the incorrect display of events which happened after switching between two scrollable timelines
+- Fix script error that fired when a timeline was scrolled on touch devices
+- Fix the incorrect Content-Type of POST/PUT/DELETE requests sent by dataProcessor when custom headers are specified
+- The timeline_row_class template for CSS class of a timeline row is added
+
 ### 5.3.8
 
 - Fix the incorrect height of the modal overlay of the Lightbox

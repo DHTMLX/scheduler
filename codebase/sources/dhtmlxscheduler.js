@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.8 Standard
+dhtmlxScheduler v.5.3.9 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -1263,6 +1263,10 @@ dataProcessor.prototype = {
 			this._headers = this._headers || {};
 			this._headers["Content-type"] = "application/json";
 		}
+
+		if(this._headers && !this._headers["Content-Type"]){
+			this._headers["Content-Type"] = "application/x-www-form-urlencoded";
+		}
 	},
 	escape: function (data) {
 		if (this._utf)
@@ -1937,7 +1941,7 @@ Scheduler.plugin = function (code) {
 };
 Scheduler._schedulerPlugins = [];
 Scheduler.getSchedulerInstance = function () {
-	var scheduler = { version: "5.3.8" };
+	var scheduler = { version: "5.3.9" };
 
 var commonViews = {
 	agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html",
@@ -4003,7 +4007,7 @@ scheduler._lame_clone = function(object, cache) {
 			return cache[i+1];
 
 	if (object && typeof object == "object") {
-		result = {};
+		result = Object.create(object); // preserve prototype methods
 		t = [Array,Date,Number,String,Boolean];
 		for (i=0; i<t.length; i++) {
 			if (object instanceof t[i])
