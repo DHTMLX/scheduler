@@ -1,3 +1,10 @@
+### 5.3.10
+
+- Fix the incorrect work of column_width when some units are hidden
+- Fix touch support on iPad on Safari
+- Fix the incorrect work of the onDblClick and onClick events when handling false result in Grid view
+- Fix the incorrect work of drag and drop in Timeline view which caused events to move to the next section after clicking on the bottom border of the event bar
+
 ### 5.3.9
 
 - Fix the incorrect display of a scrollable timeline after scrolling it down and dragging and dropping the last row

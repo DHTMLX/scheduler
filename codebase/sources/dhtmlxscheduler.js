@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.9 Standard
+dhtmlxScheduler v.5.3.10 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -1941,7 +1941,7 @@ Scheduler.plugin = function (code) {
 };
 Scheduler._schedulerPlugins = [];
 Scheduler.getSchedulerInstance = function () {
-	var scheduler = { version: "5.3.9" };
+	var scheduler = { version: "5.3.10" };
 
 var commonViews = {
 	agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html",
@@ -2665,12 +2665,14 @@ scheduler.select=function(id){
 	this.unselect();
 	this._select_id = id;
 	this.updateEvent(id);
+	this.callEvent("onEventSelected", [id]);
 };
 scheduler.unselect=function(id){
 	if (id && id!=this._select_id) return;
 	var t=this._select_id;
 	this._select_id = null;
 	if (t && this.getEvent(t)) this.updateEvent(t);
+	this.callEvent("onEventUnselected", [t]);
 };
 scheduler.getState=function(){
 	return {
@@ -2903,7 +2905,10 @@ scheduler._mouse_coords=function(ev){
 	} else {
 		pos.x-=this.$domHelpers.getAbsoluteLeft(this._obj)+(this._table_view?0:this.xy.scale_width);
 	}
-	pos.y-=this.$domHelpers.getAbsoluteTop(this._obj)+this.xy.nav_height+(this._dy_shift||0)+this.xy.scale_height-this._els["dhx_cal_data"][0].scrollTop;
+
+	var dataArea = this.$container.querySelector(".dhx_cal_data");
+	//pos.y-=this.$domHelpers.getAbsoluteTop(this._obj)+this.xy.nav_height+(this._dy_shift||0)+this.xy.scale_height-this._els["dhx_cal_data"][0].scrollTop;
+	pos.y-=this.$domHelpers.getAbsoluteTop(dataArea)-this._els["dhx_cal_data"][0].scrollTop;
 	pos.ev = ev;
 	var handler = this["mouse_"+this._mode];
 	if (handler){
@@ -6733,6 +6738,12 @@ scheduler.getRenderedEvent = function(id) {
 	return null;
 };
 scheduler.showEvent = function(id, mode) {
+	var section;
+	if(id && typeof id === "object"){
+		mode = id.mode;
+		section = id.section;
+		id = id.section;
+	}
 	var ev = (typeof id == "number" || typeof id == "string") ? scheduler.getEvent(id) : id;
 	mode = mode||scheduler._mode;
 
@@ -6765,7 +6776,15 @@ scheduler.showEvent = function(id, mode) {
 		var event = scheduler.getEvent(ev.id);
 		
 		if(event){
-			var top = timeline.posFromSection(event[property]);
+			if(!section){
+				var section = event[property];
+				if(Array.isArray(section)){
+					section = section[0];
+				}else if(typeof section === "string" && scheduler.config.section_delimiter && section.indexOf(scheduler.config.section_delimiter) > -1){
+					section = section.split(scheduler.config.section_delimiter)[0];
+				}
+			}
+			var top = timeline.posFromSection(section);
 			var left = timeline.posFromDate(event.start_date);
 			var container = scheduler.$container.querySelector(".dhx_timeline_data_wrapper");
 			left = left - (container.offsetWidth - timeline.dx) / 2;
@@ -8106,7 +8125,8 @@ scheduler._init_touch_events = function(){
 		( ((navigator.userAgent.indexOf("Mobile")!=-1)   ||
 			(navigator.userAgent.indexOf("iPad")!=-1)       ||
 			(navigator.userAgent.indexOf("Android")!=-1)    ||
-			(navigator.userAgent.indexOf("Touch")!=-1)) && !window.MSStream);
+			(navigator.userAgent.indexOf("Touch")!=-1)) && !window.MSStream) ||
+			((navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1));
 
 	if(mobile){
 		this.xy.scroll_width = 0;
@@ -8299,6 +8319,11 @@ scheduler._touch_events = function(names, accessor, ignore){
 
 	// touchstart
 	attachTouchEvent(this._obj, names[1], function(e){
+		// block pull-to-refresh
+		if(document && document.body){
+			document.body.classList.add("dhx_cal_touch_active");
+		}
+
 		if (ignore(e)) return;
 		scheduler._pointerDragId = e.pointerId;
 
@@ -8393,6 +8418,10 @@ scheduler._touch_events = function(names, accessor, ignore){
 
 	// touch end
 	attachTouchEvent(this._els["dhx_cal_data"][0], names[2], function(e){
+		if(document && document.body){
+			document.body.classList.remove("dhx_cal_touch_active");
+		}
+
 		if (ignore(e)) return;
 
 		if(scheduler.config.touch_swipe_dates){

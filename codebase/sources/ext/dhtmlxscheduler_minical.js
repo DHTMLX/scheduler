@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.9 Standard
+dhtmlxScheduler v.5.3.10 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -32,7 +32,7 @@ scheduler.renderCalendar = function(obj, _prev, is_refresh) {
 
 		if (typeof pos == "string")
 			pos = document.getElementById(pos);
-		if (pos && (typeof pos.left == "undefined")) {
+		if (pos && (typeof pos.left == "undefined" && typeof pos.right == "undefined")) {
 			var tpos = scheduler.$domHelpers.getOffset(pos);
 			pos = {
 				top: tpos.top + pos.offsetHeight,
@@ -119,8 +119,19 @@ scheduler._get_def_cont = function(pos) {
 		document.body.appendChild(this._def_count);
 	}
 
-	this._def_count.style.left = pos.left + "px";
-	this._def_count.style.top = pos.top + "px";
+	if(pos.left){
+		this._def_count.style.left = pos.left + "px";
+	}
+	if(pos.right){
+		this._def_count.style.right = pos.right + "px";
+	}
+	if(pos.top){
+		this._def_count.style.top = pos.top + "px";
+	}
+	if(pos.bottom){
+		this._def_count.style.bottom = pos.bottom + "px";
+	}
+
 	this._def_count._created = new Date();
 
 	return this._def_count;

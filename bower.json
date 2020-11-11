@@ -1,6 +1,6 @@
 {
   "name": "scheduler",
-  "version": "5.3.9",
+  "version": "5.3.10",
   "homepage": "https://dhtmlx.com/docs/products/dhtmlxScheduler/",
   "description": "JavaScript event calendar. Allows to manage events and appointments in different views",
   "main": [
