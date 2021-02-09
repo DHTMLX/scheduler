@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.10 Standard
+dhtmlxScheduler v.5.3.11 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -1257,15 +1257,27 @@ dataProcessor.prototype = {
 			this._endnm = true;
 		}
 
+		var contentType = "Content-Type";
+
+		function hasContentType(headers, contentType){
+			var match = contentType.toLowerCase();
+			for(var i in headers){
+				if(i.toLowerCase() === match){
+					return true;
+				}
+			}
+			return false;
+		}
+
 		if (this._tMode == "JSON") {
 			this._tSend = false;
 			this._endnm = true;
 			this._headers = this._headers || {};
-			this._headers["Content-type"] = "application/json";
+			this._headers[contentType] = "application/json";
 		}
 
-		if(this._headers && !this._headers["Content-Type"]){
-			this._headers["Content-Type"] = "application/x-www-form-urlencoded";
+		if(this._headers && !hasContentType(this._headers, contentType)){
+			this._headers[contentType] = "application/x-www-form-urlencoded";
 		}
 	},
 	escape: function (data) {
@@ -1941,7 +1953,7 @@ Scheduler.plugin = function (code) {
 };
 Scheduler._schedulerPlugins = [];
 Scheduler.getSchedulerInstance = function () {
-	var scheduler = { version: "5.3.10" };
+	var scheduler = { version: "5.3.11" };
 
 var commonViews = {
 	agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html",
@@ -2308,7 +2320,7 @@ function equals(a,b){
 function listenWindowResize(scheduler, window){
 	var oldSize = getWindowSize(window);
 	var resizeDelay;
-	window.addEventListener("resize", function(){
+	scheduler.event(window, "resize", function(){
 		clearTimeout(resizeDelay);
 		resizeDelay = setTimeout(function(){
 			if (!isAttachedNode(scheduler.$container)){
@@ -4000,6 +4012,7 @@ scheduler.updateCollection = function(list_name, collection) {
 	list.push.apply(list, collection || []);
 	scheduler.callEvent("onOptionsLoad", []);
 	scheduler.resetLightbox();
+	scheduler.hideCover();
 	return true;
 };
 scheduler._lame_clone = function(object, cache) {
@@ -5649,6 +5662,10 @@ scheduler.event_updated = function(ev, force) {
 		this.clear_event(ev.id);
 };
 scheduler.is_visible_events = function(ev) {
+	if(!this._min_date || !this._max_date){
+		return false;
+	}
+
 	//if in displayed dates
 	var in_visible_range = (ev.start_date.valueOf() < this._max_date.valueOf() && this._min_date.valueOf() < ev.end_date.valueOf());
 
@@ -5678,7 +5695,7 @@ scheduler.is_visible_events = function(ev) {
 	}
 };
 scheduler.isOneDayEvent = function(ev) {
-	// decrease by one ms so events that ends on midnight on the next day were still considered one day events 
+	// decrease by one ms so events that ends on midnight on the next day were still considered one day events
 	// e.g. (09-02-2018 19:00 - 10-02-2018 00:00)
 	// events >= 24h long are considered multiday
 	var checkEndDate = new Date(ev.end_date.valueOf() - 1);
@@ -5731,7 +5748,7 @@ scheduler.render_view_data = function(evs, hold) {
 		var tvd = [];
 		for (var i = 0; i < evs.length; i++) {
 			if (this._is_main_area_event(evs[i]))
-				tvs.push(evs[i]); 
+				tvs.push(evs[i]);
 			else
 				tvd.push(evs[i]);
 		}
@@ -5855,7 +5872,7 @@ scheduler.render_data = function(evs, hold) {
 					width: parent.clientWidth
 				};
 			}
-			
+
 			var container = containers[ev._sday];
 			this.render_event(ev, container.buffer, container.width);
 		}
@@ -6224,7 +6241,7 @@ scheduler._pre_render_events_table = function(evs, hold) { // max - max height o
 		ev._sweek = Math.floor((this._correct_shift(sd.valueOf(), 1) - this._min_date.valueOf()) / (60 * 60 * 1000 * 24 * cols));
 
 		var isAnyCellVisible = scheduler._is_any_multiday_cell_visible(sd, ed, ev);
-		
+
 		if(!isAnyCellVisible){
 			continue;
 		}
@@ -6300,7 +6317,7 @@ scheduler.updateEvent = function(id) {
 
 	if (ev && this.is_visible_events(ev) && this.filter_event(id, ev) && (this._table_view || this.config.multi_day || ev._timed)) {
 		if (this.config.update_render){
-			this.render_view_data(); 
+			this.render_view_data();
 		}else{
 			if(this.getState().mode == "month" && !this.getState().drag_id && !this.isOneDayEvent(ev)){
 				this.render_view_data();
@@ -6338,7 +6355,7 @@ scheduler.render_event = function(ev, buffer, parentWidth) {
 	var menu_offset = (this.config.use_select_menu_space) ? 0 : menu;
 	if (ev._sday < 0) return; //can occur in case of recurring event during time shift
 
-	var parent = scheduler.locate_holder(ev._sday);	
+	var parent = scheduler.locate_holder(ev._sday);
 	if (!parent) return; //attempt to render non-visible event
 
 	buffer = buffer || parent;
@@ -6384,7 +6401,7 @@ scheduler.render_event = function(ev, buffer, parentWidth) {
 		d.className = "dhx_cal_event dhx_cal_editor";
 		if (this.config.rtl) left++;
 		this.set_xy(d, width, height - 20, left, top + (scheduler.xy.event_header_height || 14));
-		
+
 
 		if(ev.color){
 			d.style.backgroundColor = ev.color;
@@ -6481,9 +6498,9 @@ scheduler._render_v_bar = function (ev, x, y, w, h, style, contentA, contentB, b
 	var bodyHeight = borderBox ? (h - this.xy.event_header_height - 1) : (h-(this._quirks?20:30) + 1);
 
 
-	var html = '<div event_id="' + id + '" class="' + cs + 
-				'" style="position:absolute; top:' + y + 'px; ' + 
-				((this.config.rtl) ? 'right:':'left:') + x + 'px; width:' + boxWidth + 'px; height:' + h + 'px;' + 
+	var html = '<div event_id="' + id + '" class="' + cs +
+				'" style="position:absolute; top:' + y + 'px; ' +
+				((this.config.rtl) ? 'right:':'left:') + x + 'px; width:' + boxWidth + 'px; height:' + h + 'px;' +
 				(style || "") + '"></div>';
 	d.innerHTML = html;
 
@@ -6774,7 +6791,7 @@ scheduler.showEvent = function(id, mode) {
 		var property = timeline.y_property;
 
 		var event = scheduler.getEvent(ev.id);
-		
+
 		if(event){
 			if(!section){
 				var section = event[property];
@@ -8762,7 +8779,7 @@ function checkIfBorderBoxStyling(){
 					"<div class='dhx_cal_event'><div class='dhx_body'></div>"+
 				"</div>"+
 			"<div>";
-		
+
 			document.body.appendChild(probe);
 			var styles = window.getComputedStyle(probe.querySelector(".dhx_body"));
 			var boxSizing = styles.getPropertyValue('box-sizing');
@@ -8792,7 +8809,7 @@ function refreshAfterLoad(){
 
 	// if box styling model changed - means scheduler was rendered before stylesheet was loaded or parsed inline
 	// repaint scheduler in order to apply new styles
-	if(oldStyling !== newStyling && scheduler.$container){
+	if(oldStyling !== newStyling && scheduler.$container && scheduler.getState().mode){
 		scheduler.setCurrentView();
 	}
 }
@@ -8857,8 +8874,8 @@ scheduler._skin_init = function(){
 
 	//classic skin need not any further customization
 	if (set) return;
-	
-	
+
+
 	var minic = scheduler.config.minicalendar;
 	if (minic) minic.padding = 14;
 

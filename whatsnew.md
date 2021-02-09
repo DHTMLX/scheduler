@@ -1,3 +1,13 @@
+### 5.3.11
+
+- Fix the script error occurred when changing dates in the scheduler when the Cookie extension is enabled
+- Fix the incorrect value of the Content-Type header when the transaction mode of dataProcessor is set to "JSON"
+- CSS corrections for the Lightbox on mobile devices when the Terrace skin is used
+- Fix issues with recurring events that caused some events to transfer to the next month when the target month doesn't have the appropriate date and "monthly" recurrence is used
+- Fix the issue that caused the modal overlay to stay visible after the Lightbox was closed via calling scheduler.updateCollection()
+- The onBeforeEventPasted API event is added in order to allow validation or modifying the position of the pasted event
+- New recurring_overflow_instances configuration option is added
+
 ### 5.3.10
 
 - Fix the incorrect work of column_width when some units are hidden

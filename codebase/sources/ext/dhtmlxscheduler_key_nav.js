@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.10 Standard
+dhtmlxScheduler v.5.3.11 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -2583,6 +2583,9 @@ scheduler._temp_key_scope = function (){
 		return copy;
 	};
 	scheduler._do_paste = function(is_copy, modified_ev, original_ev){
+		if(scheduler.callEvent("onBeforeEventPasted", [is_copy, modified_ev, original_ev]) === false){
+			return;
+		}
 		scheduler.addEvent(modified_ev);
 		scheduler.callEvent("onEventPasted", [is_copy, modified_ev, original_ev]);
 	};
@@ -2599,7 +2602,7 @@ scheduler._temp_key_scope = function (){
 		if(node && node.eventId) return node.eventId;
 		return scheduler._select_id;
 	}
-	
+
 	scheduler.event(document, "keydown", function(e){
 		// compatibility fix - scheduler focus on ctrl+v on mouse hover
 		if(((e.ctrlKey || e.metaKey) && e.keyCode == 86) && scheduler._buffer_event && !scheduler.$keyboardNavigation.dispatcher.isEnabled()) {

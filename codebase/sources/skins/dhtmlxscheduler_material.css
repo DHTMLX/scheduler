@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.10 Standard
+dhtmlxScheduler v.5.3.11 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -833,6 +833,9 @@ div.icon_delete {
     margin-left: 0 !important;
     height: 100% !important;
   }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_larea label {
+    display: inline;
+  }
   .dhx_cal_light.dhx_cal_light_responsive .dhx_cal_lsection {
     font-size: 3.906vw !important;
     width: 23.438vw !important;
@@ -887,13 +890,13 @@ div.icon_delete {
     height: 11.23vw;
   }
   .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time {
-    padding-left: 26.5vw !important;
-    width: 70vw !important;
+    padding-left: 28.5vw !important;
+    width: auto !important;
     min-height: 19.531vw !important;
   }
   .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time select {
     float: left;
-    margin: 1.465vw 0.977vw 1.465vw 0.977vw !important;
+    margin: 1.465vw 0.5vw 1.465vw 0.5vw !important;
   }
   .dhx_cal_light.dhx_cal_light_responsive .dhx_wrap_section .dhx_section_time .dhx_lightbox_time_select {
     width: 18.555vw;
@@ -923,7 +926,7 @@ div.icon_delete {
     height: 4.883vw;
   }
   .dhx_cal_light.dhx_cal_light_responsive .dhx_custom_button div {
-    height: 3.125vw;
+    height: auto;
   }
   .dhx_cal_light.dhx_cal_light_responsive .dhx_custom_button .dhx_custom_button_recurring {
     background-size: 7.813vw !important;
@@ -958,6 +961,7 @@ div.icon_delete {
   }
   .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat label {
     padding-right: 0;
+    white-space: nowrap;
   }
   .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat form,
   .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat form select,
@@ -967,8 +971,19 @@ div.icon_delete {
     font-size: 2.93vw !important;
     line-height: 2.93vw !important;
   }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_center,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_left,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_divider,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_right {
+    height: auto;
+    float: none;
+  }
   .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_center {
     height: auto !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_center,
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_left {
+    padding-bottom: 10px;
   }
   .dhx_cal_light.dhx_cal_light_responsive .dhx_form_repeat .dhx_repeat_text {
     width: 6.836vw !important;
@@ -1002,6 +1017,17 @@ div.icon_delete {
   }
   .dhx_cal_light.dhx_cal_light_responsive .dhx_custom_button div {
     /*padding-top: @ligthbox-responsive-recurring-btn-div-padding;*/
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_fullday input {
+    vertical-align: middle;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .combo {
+    height: auto !important;
+  }
+  .dhx_cal_light.dhx_cal_light_responsive .dhx_custom_button .dhx_custom_button_recurring {
+    background-position: -14px -1px !important;
+    width: 4.836vw !important;
+    height: 4.836vw !important;
   }
   .dhx_cal_light_rtl.dhx_cal_light_responsive .dhx_cal_larea {
     margin-right: 0 !important;

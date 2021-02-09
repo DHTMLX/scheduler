@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.10 Standard
+dhtmlxScheduler v.5.3.11 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -29,33 +29,38 @@ Scheduler.plugin(function(scheduler){
 		}
 		return "";
 	}
+
+	function getCookieName(scheduler) {
+		return (scheduler._obj.id || "scheduler") + "_settings";
+	}
+
 	var first = true;
-	scheduler.attachEvent("onBeforeViewChange",function(om,od,m,d){
+	scheduler.attachEvent("onBeforeViewChange",function(oldMode,oldDate,mode,date){
 		// if Url plugin is enabled - explicit url values should have more priority than cookies
 		if (first && scheduler._get_url_nav){
-			var url_nav = scheduler._get_url_nav();
-			if(url_nav.date || url_nav.mode || url_nav.event){
+			var urlNavigationPlugin = scheduler._get_url_nav();
+			if(urlNavigationPlugin.date || urlNavigationPlugin.mode || urlNavigationPlugin.event){
 				first = false;
 			}
 		}
 
-		var cookie = (scheduler._obj.id || "scheduler") + "_settings";
+		var cookie = getCookieName(scheduler);
 
 		if (first){
 			first = false;
-			var data=getCookie(cookie);
-			if (data){
+			var schedulerCookie = getCookie(cookie);
+			if (schedulerCookie){
 
 				if(!scheduler._min_date){
 					//otherwise scheduler will have incorrect date until timeout
 					//it can cause js error with 'onMouseMove' handler of key_nav.js
-					scheduler._min_date = d;
+					scheduler._min_date = date;
 				}
 
-				data = unescape(data).split("@");
-				data[0] = this._helpers.parseDate(data[0]);
-				var view = this.isViewExists(data[1]) ? data[1] : m,
-					date = !isNaN(+data[0]) ? data[0] : d;
+				schedulerCookie = unescape(schedulerCookie).split("@");
+				schedulerCookie[0] = this._helpers.parseDate(schedulerCookie[0]);
+				var view = this.isViewExists(schedulerCookie[1]) ? schedulerCookie[1] : mode,
+					date = !isNaN(+schedulerCookie[0]) ? schedulerCookie[0] : date;
 
 				window.setTimeout(function(){
 					scheduler.setCurrentView(date,view);
@@ -63,11 +68,14 @@ Scheduler.plugin(function(scheduler){
 				return false;
 			}
 		}
-		var text = escape(this._helpers.formatDate(d||od)+"@"+(m||om));
-		setCookie(cookie,"expires=Sun, 31 Jan 9999 22:00:00 GMT",text);
 		return true;
 	});
 
+	scheduler.attachEvent("onViewChange", function (newMode , newDate){
+		var cookie = getCookieName(scheduler);
+		var text = escape(this._helpers.formatDate(newDate)+"@"+(newMode));
+		setCookie(cookie,"expires=Sun, 31 Jan 9999 22:00:00 GMT",text);
+	});
 
 	// As we are blocking first render above there could be a problem in case of dynamic loading and rendering of visible data in general ('from'/'to' won't be defined)
 	var old_load = scheduler._load;
