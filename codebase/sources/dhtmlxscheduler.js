@@ -1327,7 +1327,7 @@ dataProcessor.prototype = {
 		this._changed = !!mode;
 	},
 	/**
-	 *	@desc: set if rows should be send to server automaticaly
+	 *	@desc: set if rows should be send to server automatically
 	 *	@param: mode - "row" - based on row selection changed, "cell" - based on cell editing finished, "off" - manual data sending
 	 *	@type: public
 	 */
@@ -1815,8 +1815,8 @@ dataProcessor.prototype = {
 
 
 	/* process updating request answer
-		if status == collision version is depricated
-		set flag for autoupdating immidiatly
+		if status == collision version is deprecated
+		set flag for autoupdating immediately
 	*/
 	afterAutoUpdate: function (sid, action, tid, xml_node) {
 		if (action == 'collision') {
@@ -3960,7 +3960,7 @@ scheduler._reset_month_scale=function(b,dd,sd,rows){
 	//recalculates rows height and redraws month layout
 	var ed=scheduler.date.add(dd,1,"month");
 
-	//trim time part for comparation reasons
+	//trim time part for comparison reasons
 	var cd = scheduler._currentDate();
 	this.date.date_part(cd);
 	this.date.date_part(sd);
@@ -5443,8 +5443,8 @@ scheduler.config={
 	wai_aria_application_role: true
 };
 
-scheduler.config.buttons_left.$inital = scheduler.config.buttons_left.join();
-scheduler.config.buttons_right.$inital = scheduler.config.buttons_right.join();
+scheduler.config.buttons_left.$initial = scheduler.config.buttons_left.join();
+scheduler.config.buttons_right.$initial = scheduler.config.buttons_right.join();
 
 scheduler._helpers = {
 	parseDate: function parseDate(date) {
@@ -8841,8 +8841,8 @@ scheduler._skin_init = function(){
 	if (scheduler.skin && (scheduler.skin === "classic" || scheduler.skin === "glossy")) set = 1;
 
 	if(scheduler._is_material_skin()){
-		var defaultButtonsLeft = scheduler.config.buttons_left.$inital;
-		var defaultButtonsRight = scheduler.config.buttons_right.$inital;
+		var defaultButtonsLeft = scheduler.config.buttons_left.$initial;
+		var defaultButtonsRight = scheduler.config.buttons_right.$initial;
 		if(defaultButtonsLeft && scheduler.config.buttons_left.slice().join() == defaultButtonsLeft &&
 			defaultButtonsRight && scheduler.config.buttons_right.slice().join() == defaultButtonsRight){
 			var tmp = scheduler.config.buttons_left.slice();
