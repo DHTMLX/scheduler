@@ -17,7 +17,7 @@ scheduler.xy.map_description_width = 400; // description column width
 scheduler.config.map_resolve_event_location = true; // if events in database doesn't have lat and lng values there will be an attempt to resolve them on event loading, useful for migration
 scheduler.config.map_resolve_user_location = true; // if user will be promted to share his location to display it on the map
 
-scheduler.config.map_initial_position = new google.maps.LatLng(48.724, 8.215); // inital position of the map
+scheduler.config.map_initial_position = new google.maps.LatLng(48.724, 8.215); // initial position of the map
 scheduler.config.map_error_position = new google.maps.LatLng(15, 15); // this position will be displayed in case if event doesn't have corresponding coordinates
 
 scheduler.config.map_infowindow_max_width = 300;
@@ -29,7 +29,7 @@ scheduler.config.map_zoom_after_resolve = 15;
 scheduler.locale.labels.marker_geo_success = "It seems you are here.";
 scheduler.locale.labels.marker_geo_fail = "Sorry, could not get your current position using geolocation.";
 
-scheduler.templates.marker_date = scheduler.date.date_to_str("%Y-%m-%d %H:%i"); // date for map's infowindow will be formated following way
+scheduler.templates.marker_date = scheduler.date.date_to_str("%Y-%m-%d %H:%i"); // date for map's infowindow will be formatted following way
 
 scheduler.templates.marker_text = function(start, end, ev) {
 	return "<div><b>" + ev.text + "</b><br/><br/>" + (ev.event_location || '') + "<br/><br/>" + scheduler.templates.marker_date(start) + " - " + scheduler.templates.marker_date(end) + "</div>";
@@ -73,7 +73,7 @@ scheduler.attachEvent("onSchedulerReady", function() {
 	var gmap = document.createElement('div');
 	gmap.className = 'dhx_map';
 	gmap.id = 'dhx_gmap';
-	gmap.style.dispay = "none";
+	gmap.style.display = "none";
 
 	var node = scheduler._obj;
 
@@ -85,7 +85,7 @@ scheduler.attachEvent("onSchedulerReady", function() {
 	_setMapSize('dhx_gmap');
 
 	var mapOptions = {
-		zoom: scheduler.config.map_inital_zoom || 10,
+		zoom: scheduler.config.map_initial_zoom || 10,
 		center: scheduler.config.map_initial_position,
 		mapTypeId: scheduler.config.map_type || google.maps.MapTypeId.ROADMAP
 	};
@@ -289,7 +289,7 @@ scheduler.attachEvent("onSchedulerReady", function() {
 			fill_map_tab();
 			gmap.style.display = 'block';
 
-			// need to resize block everytime window is resized
+			// need to resize block every time window is resized
 			_setMapSize('dhx_gmap');
 			temp_center = scheduler.map._obj.getCenter();
 

@@ -20,7 +20,7 @@ Scheduler.plugin(function(scheduler){
 			return true;
 		}
 
-		// short event shouldn't disapear to multiday area during dnd-resize
+		// short event shouldn't disappear to multiday area during dnd-resize
 		if(scheduler._drag_mode == "resize" && scheduler._drag_id == ev.id){
 			return true;
 		}

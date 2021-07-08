@@ -80,7 +80,7 @@ scheduler.attachEvent("onTemplatesReady",function(){
 		for(var i=0; i<scheduler.layers.length; i++) {
 			scheduler.config['lightbox_'+scheduler.layers[i].name] = { };
             scheduler.config['lightbox_'+scheduler.layers[i].name].sections = _cloneObj(scheduler.config.lightbox.sections);
-			scheduler._layers_zindex[scheduler.layers[i].name] = scheduler.config.inital_layer_zindex||5 + i*3;
+			scheduler._layers_zindex[scheduler.layers[i].name] = scheduler.config.initial_layer_zindex||5 + i*3;
 			if(scheduler.layers[i].url) {
 				var dp = new dataProcessor(scheduler.layers[i].url);
 				dp.layer = scheduler.layers[i].name;

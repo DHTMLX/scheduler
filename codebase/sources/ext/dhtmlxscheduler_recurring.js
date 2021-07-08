@@ -927,7 +927,7 @@ scheduler.get_visible_events = function(only_timed) {
 	var out = [];
 	for (var i = 0; i < stack.length; i++) {
 		if (stack[i].rec_type) {
-			//deleted element of serie
+			//deleted element of series
 			if (stack[i].rec_pattern != "none")
 				this.repeat_date(stack[i], out);
 		}
