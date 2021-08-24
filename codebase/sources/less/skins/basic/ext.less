@@ -252,7 +252,7 @@
 .dhx_matrix_cell div, .dhx_matrix_scell div{ 
 	overflow:hidden;
 	text-align:center;
-    height:auto; 
+	height:auto; 
 }
 
 .dhx_cal_lsection .dhx_readonly{
@@ -297,6 +297,7 @@
 }
 
 .dhx_matrix_scell .dhx_scell_level0{
+	
 	padding-left: 5px;
 }
 
@@ -322,19 +323,29 @@
 	text-align: left;
 }
 
+.dhx_matrix_scell.folder,
+.dhx_timeline_label_row.dhx_row_folder {
+	overflow: visible;
+}
+
+.dhx_matrix_scell.folder > div {
+	display: flex;
+	align-items: center;
+	height: inherit;
+}
+
 .dhx_matrix_scell.folder .dhx_scell_expand{
-	float: left;
-	width: 10px;
-	padding-right:3px;
+	width: 12px;
 	position: relative;
+	flex-shrink: 0;
 }
 
 .dhx_matrix_scell.folder .dhx_scell_name{
-	float: left;
 	width: auto;
 	color: @grid-tree-folder-name-font-color;
 	text-transform: @grid-tree-folder-name-text-transform;
 	font-weight: @grid-tree-folder-name-font-weight;
+	max-height: 100%;
 }
 
 .dhx_matrix_scell.item .dhx_scell_name{
@@ -370,13 +381,11 @@
 
 	
 	.dhx_matrix_scell.folder .dhx_scell_expand{
-		float: right;
 		padding-right:0;
 		padding-left:3px;
 	}
 	
 	.dhx_matrix_scell.folder .dhx_scell_name{
-		float: right;
 	}
 	
 	.dhx_matrix_scell.item .dhx_scell_name{

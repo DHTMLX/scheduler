@@ -1,3 +1,11 @@
+### 5.3.12
+
+- Fix the issue with Tree Timeline view which caused it to enter an infinite loop when the list of sections contains duplicated keys
+- Fix the incorrect work of the monthly recurring events when After N occurrences limitation is used
+- Fix the incorrect work of the recurring_overflow_instances config in the lastDay mode which caused the event instance to lose the minutes/seconds part of its date
+- Fix the issue with blocking the dragged event from being moved out of the scheduler when returning false from the onBeforeEventDragOut event
+- The default CSS of Tree Timeline section labels is changed to prevent unexpected line break when the label is too long for the cell
+
 ### 5.3.11
 
 - Fix the script error occurred when changing dates in the scheduler when the Cookie extension is enabled

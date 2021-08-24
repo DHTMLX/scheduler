@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.11 Standard
+dhtmlxScheduler v.5.3.12 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -306,7 +306,7 @@ scheduler.form_blocks["recurring"] = {
 
 			//	dates.end = scheduler.date.add(new Date(dates.start), repeat + transp, code.join("_"));
 
-				dates.end = this.date["add_" + code.join("_")](new Date(dates.start), repeat + transp, {start_date: dates.start}) || dates.start;
+				dates.end = scheduler.date["add_" + code.join("_")](new Date(dates.start), repeat + transp, {start_date: dates.start}) || dates.start;
 			}
 
 			return code.join("_") + "#" + repeat;
@@ -1064,7 +1064,7 @@ scheduler.transpose_type = function(type) {
 					// no such day in a month
 					if(correctOverflowInstances === "lastDay"){
 						// return either last day of the month
-						nd = new Date(origYear, origMonth + 1, 0);
+						nd = new Date(origYear, origMonth + 1, 0, nd.getHours(), nd.getMinutes(), nd.getSeconds(), nd.getMilliseconds());
 					}else{
 						// or go to the next instance
 						nd = scheduler.date[addRecurring](new Date(origYear, origMonth + 1, 0), inc||1, seriesInstance, currentCount);

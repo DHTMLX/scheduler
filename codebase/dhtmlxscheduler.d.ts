@@ -1,4 +1,4 @@
-// Type definitions for dhtmlxScheduler 5.3.11
+// Type definitions for dhtmlxScheduler 5.3.12
 // Project: http://dhtmlx.com/docs/products/dhtmlxScheduler
 
 type SchedulerCallback = (...args: any[]) => any;
