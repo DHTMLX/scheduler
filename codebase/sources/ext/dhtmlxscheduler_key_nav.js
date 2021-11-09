@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.12 Standard
+dhtmlxScheduler v.5.3.13 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -283,7 +283,7 @@ scheduler.$keyboardNavigation.EventHandler = {
 
 			// back tab
 			// go to the last element if we focused on the first
-			nextIndex = (currentIndex <= 0) ? (focusable[focusable.length - 1]) : (currentIndex - 1);
+			nextIndex = (currentIndex <= 0) ? (focusable.length - 1) : (currentIndex - 1);
 
 			nextItem = focusable[nextIndex];
 			if(nextItem){
@@ -1072,19 +1072,17 @@ scheduler.$keyboardNavigation.Event.prototype = scheduler._compose(
 			return defaultElement;
 		},
 
-
+		isScrolledIntoView: function (el) {
+			var eventBox = el.getBoundingClientRect();
+			var viewPort = scheduler.$container.querySelector(".dhx_cal_data").getBoundingClientRect();
+			
+			if(eventBox.bottom < viewPort.top || eventBox.top > viewPort.bottom){
+				return false;
+			}
+			return true;
+		},
 
 		getNode: function(){
-
-			function isScrolledIntoView(el) {
-				var eventBox = el.getBoundingClientRect();
-				var viewPort = scheduler.$container.querySelector(".dhx_cal_data").getBoundingClientRect();
-				
-				if(eventBox.bottom < viewPort.top || eventBox.top > viewPort.bottom){
-					return false;
-				}
-				return true;
-			}
 
 			var idSelector = "[event_id='"+this.eventId+"']";
 
@@ -1095,7 +1093,7 @@ scheduler.$keyboardNavigation.Event.prototype = scheduler._compose(
 				if(scheduler.isMultisectionEvent && scheduler.isMultisectionEvent(scheduler.getEvent(this.eventId))){
 					var nodes = scheduler.$container.querySelectorAll(idSelector);
 					for(var i = 0; i < nodes.length; i++){
-						if(isScrolledIntoView(nodes[i])){
+						if(this.isScrolledIntoView(nodes[i])){
 							return nodes[i];
 						}
 					}
@@ -1117,7 +1115,15 @@ scheduler.$keyboardNavigation.Event.prototype = scheduler._compose(
 				scheduler.setCurrentView(event.start_date);
 			}
 
-			scheduler.$keyboardNavigation.KeyNavNode.prototype.focus.apply(this);
+			var node = this.getNode();
+			if (this.isScrolledIntoView(node)) {
+				scheduler.$keyboardNavigation.dispatcher.keepScrollPosition((function(){
+					scheduler.$keyboardNavigation.KeyNavNode.prototype.focus.apply(this);
+				}).bind(this));
+			} else {
+				scheduler.$keyboardNavigation.KeyNavNode.prototype.focus.apply(this);
+			}
+
 		},
 		blur: function(){
 			scheduler.$keyboardNavigation.KeyNavNode.prototype.blur.apply(this);
@@ -1233,15 +1239,43 @@ scheduler.$keyboardNavigation.TimeSlot.prototype = scheduler._compose(
 		getDefaultDate: function(){
 			var from;
 			var state = scheduler.getState();
+			var visibleTime = new Date(state.date);
+			visibleTime.setSeconds(0);
+			visibleTime.setMilliseconds(0);
+
+			var nowTime = new Date();
+			nowTime.setSeconds(0);
+			nowTime.setMilliseconds(0);
+
 			var timeline = scheduler.matrix && scheduler.matrix[state.mode];
+			var showNowTime = false;
+			if(visibleTime.valueOf() === nowTime.valueOf()){
+				showNowTime = true;
+			}
 
 			if(timeline){
-				from = scheduler.date[timeline.name + "_start"](new Date(state.date));
+				if(showNowTime){
+					if(timeline.x_unit === "day"){
+						nowTime.setHours(0);
+						nowTime.setMinutes(0);
+					}else if(timeline.x_unit === "hour"){
+						nowTime.setMinutes(0);
+					}
+					from = nowTime;
+				}else{
+					from = scheduler.date[timeline.name + "_start"](new Date(state.date));
+				}
+
 				from = this.findVisibleColumn(from);
 			}else{
 				from = new Date(scheduler.getState().min_date);
+				if(showNowTime){
+					from = nowTime;
+				}
 				from = this.findVisibleColumn(from);
-				from.setHours(scheduler.config.first_hour);
+				if(!showNowTime){
+					from.setHours(scheduler.config.first_hour);
+				}
 
 				if(!scheduler._table_view){
 					var dataContainer = scheduler.$container.querySelector(".dhx_cal_data");
@@ -3055,7 +3089,7 @@ scheduler.$keyboardNavigation.patchMinicalendar = function(){
 
 	}
 
-if(window.Scheduler){
+if(window.Scheduler && window.Scheduler.plugin){
 	window.Scheduler.plugin(setupKeyNav);
 }else{
 	setupKeyNav(window.scheduler);

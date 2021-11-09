@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.12 Standard
+dhtmlxScheduler v.5.3.13 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -1953,7 +1953,7 @@ Scheduler.plugin = function (code) {
 };
 Scheduler._schedulerPlugins = [];
 Scheduler.getSchedulerInstance = function () {
-	var scheduler = { version: "5.3.12" };
+	var scheduler = { version: "5.3.13" };
 
 var commonViews = {
 	agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html",
@@ -4264,6 +4264,32 @@ scheduler.eventRemove = function(el, event, handler){
 		].join(", "));
 
 		var nodesArray = Array.prototype.slice.call(nodes, 0);
+		
+		for(var i = 0; i < nodesArray.length; i++){
+			nodesArray[i].$position = i;
+			// we remember original nodes order, 
+			// so when we sort them by tabindex we ensure order of nodes with same tabindex is preserved, 
+			// since some browsers do unstable sort
+		}
+		
+		nodesArray.sort(function(a, b) {
+			if(a.tabIndex === 0 && b.tabIndex !== 0){
+				return 1;
+			}
+			if(a.tabIndex !== 0 && b.tabIndex === 0){
+				return -1;
+			}
+			
+			if (a.tabIndex === b.tabIndex){
+				// ensure we do stable sort
+				return a.$position - b.$position;
+			}
+			if (a.tabIndex < b.tabIndex) {
+				return -1;
+			}
+			return 1;
+		});
+		
 		for(var i = 0; i < nodesArray.length; i++){
 			var node = nodesArray[i];
 			var isValid = (hasNonNegativeTabIndex(node)  || isEnabled(node) || hasHref(node)) && isVisible(node);
@@ -6781,8 +6807,11 @@ scheduler.showEvent = function(id, mode) {
 
 	scheduler.setCurrentView(new Date(ev.start_date), mode);
 
-	ev.color = original_color;
-	ev.textColor = original_text_color;
+	function restoreOriginalColors(){
+		ev.color = original_color;
+		ev.textColor = original_text_color;
+	}
+
 	scheduler.config.scroll_hour = scroll_hour;
 	scheduler.config.preserve_scroll = preserve_scroll;
 
@@ -6806,11 +6835,24 @@ scheduler.showEvent = function(id, mode) {
 			var container = scheduler.$container.querySelector(".dhx_timeline_data_wrapper");
 			left = left - (container.offsetWidth - timeline.dx) / 2;
 			top = top - container.offsetHeight / 2 + timeline.dy/2;
+
+			if (timeline._smartRenderingEnabled()) {
+				var handlerId = timeline.attachEvent("onScroll", function(){
+					restoreOriginalColors();
+					timeline.detachEvent(handlerId);
+				});
+			}
+
 			timeline.scrollTo({
 				left: left,
 				top: top
 			});
+			if (!timeline._smartRenderingEnabled()) {
+				restoreOriginalColors();
+			}
 		}
+	}else{
+		restoreOriginalColors();
 	}
 
 	scheduler.callEvent("onAfterEventDisplay", [ev, mode]);
@@ -7611,6 +7653,11 @@ scheduler.form_blocks={
 
 			if(cfg.auto_end_date && cfg.event_duration) {
 				var _update_lightbox_select = function () {
+					
+					if (!(cfg.auto_end_date && cfg.event_duration)){
+						// setting may be disabled after the handler is attached
+						return;
+					}
 					start_date = new Date(s[map[3]].value,s[map[2]].value,s[map[1]].value,0,s[map[0]].value);
 					end_date = new Date(start_date.getTime() + (scheduler.config.event_duration * 60 * 1000));
 					_fill_lightbox_select(s, 4, end_date);
@@ -7788,7 +7835,6 @@ scheduler._empty_lightbox=function(data){
 scheduler.hide_lightbox=function(id){
 	scheduler.endLightbox(false, this.getLightbox());
 };
-scheduler.hideLightbox = scheduler.hide_lightbox;
 
 scheduler.hideCover=function(box){
 	if (box) box.style.display="none";
@@ -7852,9 +7898,14 @@ scheduler.resetLightbox = function(){
 	scheduler._lightbox = null;
 };
 scheduler.cancel_lightbox=function(){
-	this.callEvent("onEventCancel",[this._lightbox_id, this._new_event]);
+	if(this._lightbox_id){
+		this.callEvent("onEventCancel",[this._lightbox_id, this._new_event]);
+	}
+
 	this.hide_lightbox();
 };
+scheduler.hideLightbox = scheduler.cancel_lightbox;// GS-1650 need to use cancel in order to fire onEventCancel event, which is important to refresh the state of recurring series
+
 scheduler._init_lightbox_events=function(){
 	this.getLightbox().onclick=function(e){
 		var src=e?e.target:event.srcElement;

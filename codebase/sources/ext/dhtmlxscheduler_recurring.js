@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.12 Standard
+dhtmlxScheduler v.5.3.13 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -675,6 +675,20 @@ scheduler._get_rec_marker = function(time, id) {
 scheduler._get_rec_markers = function(id) {
 	return (this._rec_markers_pull[id] || []);
 };
+
+function clearMilliseconds(date){
+//	return date;
+	return new Date(
+		date.getFullYear(), 
+		date.getMonth(), 
+		date.getDate(), 
+		date.getHours(), 
+		date.getMinutes(),
+		date.getSeconds(),
+		0
+	);
+}
+
 scheduler._rec_temp = [];
 (function() {
 	var old_add_event = scheduler.addEvent;
@@ -683,6 +697,13 @@ scheduler._rec_temp = [];
 
 		if (ev_id && scheduler.getEvent(ev_id)) {
 			var ev = scheduler.getEvent(ev_id);
+			
+			if(ev.start_date){
+				ev.start_date = clearMilliseconds(ev.start_date);
+			}
+			if(ev.end_date){
+				ev.end_date = clearMilliseconds(ev.end_date);
+			}
 			if (this._is_modified_occurence(ev))
 				scheduler._add_rec_marker(ev, ev.event_length * 1000);
 			if (ev.rec_type)
@@ -691,6 +712,7 @@ scheduler._rec_temp = [];
 		return ev_id;
 	};
 })();
+
 scheduler.attachEvent("onEventIdChange", function(id, new_id) {
 	if (this._ignore_call) return;
 	this._ignore_call = true;
@@ -737,7 +759,7 @@ scheduler.attachEvent("onConfirmedBeforeEventDelete", function(id) {
 	if (this._is_virtual_event(id) || (this._is_modified_occurence(ev) && ev.rec_type && ev.rec_type != 'none')) {
 		id = id.split("#");
 		var nid = this.uid();
-		var tid = (id[1]) ? id[1] : (ev._pid_time / 1000);
+		var tid = (id[1]) ? id[1] : Math.round(ev._pid_time / 1000);
 
 		var nev = this._copy_event(ev);
 		nev.id = nid;
@@ -793,8 +815,16 @@ scheduler.attachEvent("onEventChanged", function(id, event) {
 		this._not_render = false;
 
 	} else {
-		if (ev.rec_type && this._lightbox_id)
+		if(ev.start_date){
+			ev.start_date = clearMilliseconds(ev.start_date);
+		}
+		if(ev.end_date){
+			ev.end_date = clearMilliseconds(ev.end_date);
+		}
+
+		if (ev.rec_type && this._lightbox_id){
 			this._roll_back_dates(ev);
+		}
 		var sub = this._get_rec_markers(id);
 		for (var i in sub) {
 			if (sub.hasOwnProperty(i)) {
@@ -818,8 +848,9 @@ scheduler.attachEvent("onEventChanged", function(id, event) {
 scheduler.attachEvent("onEventAdded", function(id) {
 	if (!this._loading) {
 		var ev = this.getEvent(id);
-		if (ev.rec_type && !ev.event_length)
+		if (ev.rec_type && !ev.event_length){
 			this._roll_back_dates(ev);
+		}
 	}
 	return true;
 });
@@ -844,7 +875,13 @@ scheduler.attachEvent("onEventCancel", function(id) {
 	}
 });
 scheduler._roll_back_dates = function(ev) {
-	ev.event_length = (ev.end_date.valueOf() - ev.start_date.valueOf()) / 1000;
+	if(ev.start_date){
+		ev.start_date = clearMilliseconds(ev.start_date);
+	}
+	if(ev.end_date){
+		ev.end_date = clearMilliseconds(ev.end_date);
+	}
+	ev.event_length = Math.round((ev.end_date.valueOf() - ev.start_date.valueOf()) / 1000);
 	ev.end_date = ev._end_date;
 	if (ev._start_date) {
 		ev.start_date.setMonth(0);
@@ -1111,7 +1148,7 @@ scheduler.repeat_date = function(ev, stack, non_render, from, to, maxCount) {
 			copy.text = ev.text;
 			copy.start_date = td;
 			copy.event_pid = ev.id;
-			copy.id = ev.id + "#" + Math.ceil(timestamp / 1000);
+			copy.id = ev.id + "#" + Math.round(timestamp / 1000);
 			copy.end_date = ted;
 
 			copy.end_date = scheduler._fix_daylight_saving_date(copy.start_date, copy.end_date, ev, td, copy.end_date);

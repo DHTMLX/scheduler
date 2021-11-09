@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.12 Standard
+dhtmlxScheduler v.5.3.13 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -447,6 +447,10 @@ scheduler.form_blocks.calendar_time = {
 		if (scheduler.config.event_duration && scheduler.config.auto_end_date) {
 
 			var _update_minical_select = function () {
+				if (!(scheduler.config.auto_end_date && scheduler.config.event_duration)){
+					// setting may be disabled after the handler is attached
+					return;
+				}
 				start_date = scheduler.date.add(inputs[0]._date, selects[0].value, "minute");
 				end_date = new Date(start_date.getTime() + (scheduler.config.event_duration * 60 * 1000));
 

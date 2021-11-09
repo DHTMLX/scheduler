@@ -1,3 +1,13 @@
+### 5.3.13
+
+Fix the issue that caused the edited recurring series to disappear after closing Lightbox via scheduler.hideLightbox
+Fix the issue with disabling the auto_end_date config dynamically
+Fix the incorrect work of modified instances of a recurring series when the start_date of the series event contains non-empty milliseconds part
+Fix the issue with the Keyboard Navigation module that changed the scroll position of the scheduler when resizing an event in some cases
+Now, when Keyboard Navigation is enabled, "trap modal focus" of the Lightbox and dhtmlx.modalbox should respect the tabindex of elements
+Now, when the "Today" button is pressed, the Keyboard Navigation focuses on the first cell of the Today column rather than the first cell of the first column of the Week View
+Fix the incorrect work of scheduler.showEvent in the Timeline view when the Smart Rendering is enabled
+
 ### 5.3.12
 
 - Fix the issue with Tree Timeline view which caused it to enter an infinite loop when the list of sections contains duplicated keys
