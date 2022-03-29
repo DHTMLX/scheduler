@@ -1,3 +1,11 @@
+### 5.3.14
+
+Fix the incorrect work of drag and drop for recurring events that was added via the scheduler.addEvent()method
+Fix the script error that was thrown from scheduler.formSection() when recurring events were enabled
+Fix the issue that caused the scheduler to display events that shouldn't be visible due to the value of the first_hour config
+Removed the unexpected call of the onEventUnselected event that fired on every empty click when no events were previously selected
+Now the onEventUnselected event will fire when the selected event is deleted
+
 ### 5.3.13
 
 Fix the issue that caused the edited recurring series to disappear after closing Lightbox via scheduler.hideLightbox

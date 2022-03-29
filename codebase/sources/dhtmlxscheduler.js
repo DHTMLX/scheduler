@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.13 Standard
+dhtmlxScheduler v.5.3.14 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -1953,7 +1953,7 @@ Scheduler.plugin = function (code) {
 };
 Scheduler._schedulerPlugins = [];
 Scheduler.getSchedulerInstance = function () {
-	var scheduler = { version: "5.3.13" };
+	var scheduler = { version: "5.3.14" };
 
 var commonViews = {
 	agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html",
@@ -2674,7 +2674,9 @@ scheduler.select=function(id){
 	if (this._select_id==id) return;
 	scheduler._close_not_saved();
 	this.editStop(false);
-	this.unselect();
+	if(this._select_id){
+		this.unselect();
+	}
 	this._select_id = id;
 	this.updateEvent(id);
 	this.callEvent("onEventSelected", [id]);
@@ -2731,7 +2733,7 @@ scheduler._click={
 				scheduler._click.buttons[mask.split(" ")[1].replace("icon_","")](id);
 		} else{
 			scheduler._close_not_saved();
-			if (new Date().valueOf()-(scheduler._new_event||0) > 500){
+			if (scheduler.getState().select_id && new Date().valueOf()-(scheduler._new_event||0) > 500){
 				scheduler.unselect();
 			}
 		}
@@ -5603,6 +5605,9 @@ scheduler.addEvent = function(start_date, end_date, text, id, extra_data) {
 	if (ev.start_date.valueOf() == ev.end_date.valueOf())
 		ev.end_date.setTime(ev.end_date.valueOf() + d);
 
+	ev.start_date.setMilliseconds(0);
+	ev.end_date.setMilliseconds(0);
+
 	ev._timed = this.isOneDayEvent(ev);
 
 	var is_new = !this._events[ev.id];
@@ -5617,7 +5622,9 @@ scheduler.deleteEvent = function(id, silent) {
 	if (!silent && (!this.callEvent("onBeforeEventDelete", [id, ev]) || !this.callEvent("onConfirmedBeforeEventDelete", [id, ev])))
 		return;
 	if (ev) {
-		this._select_id = null;
+		if(scheduler.getState().select_id == id){
+			scheduler.unselect();
+		}
 		delete this._events[id];
 		this.event_updated(ev);
 
@@ -5703,7 +5710,7 @@ scheduler.is_visible_events = function(ev) {
 			lastHour = this.config.last_hour,
 			firstHour = this.config.first_hour;
 
-		var end_dates_visible = (this._table_view || !((evLastHour > lastHour || evLastHour < firstHour) && (evFirstHour >= lastHour || evFirstHour < firstHour)));
+		var end_dates_visible = (this._table_view || !((evLastHour > lastHour || evLastHour <= firstHour) && (evFirstHour >= lastHour || evFirstHour < firstHour)));
 
 		if(end_dates_visible){
 			return true;
@@ -5713,7 +5720,7 @@ scheduler.is_visible_events = function(ev) {
 			var event_duration = (ev.end_date.valueOf() - ev.start_date.valueOf()) / (1000*60*60),//hours
 				hidden_duration = 24 - (this.config.last_hour - this.config.first_hour);
 
-			return !!((event_duration > hidden_duration) || (evFirstHour < lastHour && evLastHour >= firstHour));
+			return !!((event_duration > hidden_duration) || (evFirstHour < lastHour && evLastHour > firstHour));
 
 		}
 	}else{
@@ -7384,13 +7391,22 @@ scheduler.attachEvent("onXLE", function() {
 scheduler._lightbox_controls = {};
 scheduler.formSection = function(name){
 	var config = this.config.lightbox.sections;
-	var i =0;
-	for (i; i < config.length; i++)
-		if (config[i].name == name)
+	var i = 0;
+	for (i; i < config.length; i++) {
+		if (config[i].name == name) {
 			break;
+		}
+	}
+
+	if (i === config.length) {
+		// GS-1662 section not found, should exit here instead of throwing an error
+		return null;
+	}
+
 	var section = config[i];
-	if (!scheduler._lightbox)
+	if (!scheduler._lightbox) {
 		scheduler.getLightbox();
+	}
 	var header = document.getElementById(section.id);
 	var node = header.nextSibling;
 

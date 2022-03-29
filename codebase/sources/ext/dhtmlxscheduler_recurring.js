@@ -1,7 +1,7 @@
 /*
 
 @license
-dhtmlxScheduler v.5.3.13 Standard
+dhtmlxScheduler v.5.3.14 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -585,7 +585,10 @@ scheduler.form_blocks["recurring"] = {
 		if (node.open) {
 			var ds = scheduler.form_blocks["recurring"]._ds;
 			var actual_dates = {};
-			this.formSection('time').getValue(actual_dates);
+
+			var timeControl = getTimeSection();
+
+			timeControl.getValue(actual_dates);
 			ds.start = actual_dates.start_date;
 			ev.rec_type = scheduler.form_blocks["recurring"]._get_repeat_code(ds);
 			if (ds._start) {
@@ -604,11 +607,11 @@ scheduler.form_blocks["recurring"] = {
 		return ev.rec_type;
 	},
 	_get_button: function(){
-		var node = scheduler.formSection("recurring").header;
+		var node = getRecurringSection().header;
 		return node.firstChild.firstChild;
 	},
 	_get_form: function(){
-		return scheduler.formSection("recurring").node;
+		return getRecurringSection().node;
 	},
 	open:function(){
 		var block = scheduler.form_blocks.recurring;
@@ -657,6 +660,58 @@ scheduler.form_blocks["recurring"] = {
 	}
 };
 
+function getTimeSection(){
+	var timeControl = scheduler.formSection('time');
+	if(!timeControl){
+		timeControl = getFirstSectionOfType('time');
+	}
+	if(!timeControl){
+		timeControl = getFirstSectionOfType('calendar_time');
+	}
+
+	
+	if (!timeControl) {
+		throw new Error(["Can't calculate the recurring rule, the Recurring form block can't find the Time control. Make sure you have the time control in 'scheduler.config.lightbox.sections' config.",
+"You can use either the default time control https://docs.dhtmlx.com/scheduler/time.html, or the datepicker https://docs.dhtmlx.com/scheduler/minicalendar.html, or a custom control. ",
+"In the latter case, make sure the control is named \"time\":",
+"",
+"scheduler.config.lightbox.sections = [",
+"{name:\"time\", height:72, type:\"YOU CONTROL\", map_to:\"auto\" }];"]
+.join("\n"));
+	}
+
+	return timeControl;
+}
+
+function getRecurringSection(){
+	var recurringSection = scheduler.formSection('recurring');
+	if(!recurringSection){
+		recurringSection = getFirstSectionOfType('recurring');
+	}
+
+	if (!recurringSection) {
+		throw new Error(["Can't locate the Recurring form section.",
+		"Make sure that you have the recurring control on the lightbox configuration https://docs.dhtmlx.com/scheduler/recurring_events.html#recurringlightbox ",
+		"and that the recurring control has name \"recurring\":",
+"",
+"scheduler.config.lightbox.sections = [",
+"	{name:\"recurring\", ... }",
+"];"].join("\n"));
+
+	}
+
+	return recurringSection;
+}
+
+function getFirstSectionOfType(type){
+	for(var i = 0; i < scheduler.config.lightbox.sections.length; i++){
+		var section = scheduler.config.lightbox.sections[i];
+		if(section.type === type){
+			return scheduler.formSection(section.name);
+		}
+	}
+	return null;
+}
 
 //problem may occur if we will have two repeating events in the same moment of time
 scheduler._rec_markers = {};
