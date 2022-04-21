@@ -868,6 +868,11 @@ export interface SchedulerConfigOptions {
 	multi_day_height_limit: number|boolean;
 
 	/**
+	 * always render the multi-day header
+	*/
+	multi_day_always_visible: boolean;
+
+	/**
 	 * enables the possibility to render the same events in several sections of the Timeline or Units view
 	*/
 	multisection: boolean;
