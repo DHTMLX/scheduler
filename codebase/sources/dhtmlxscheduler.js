@@ -5987,7 +5987,7 @@ scheduler._pre_render_events = function(evs, hold) {
 					scale_settings.scroll_fix = true;
 				}
 			} else {
-				if (!evs.length && this._els["dhx_multi_day"][0].style.visibility == "visible")
+				if (!evs.length && this._els["dhx_multi_day"][0].style.visibility == "visible" && !this.config.multi_day_always_visible)
 					h[0] = -1;
 				if (evs.length || h[0] == -1 || this.config.multi_day_always_visible) {
 					//shift days to have space for multiday events
