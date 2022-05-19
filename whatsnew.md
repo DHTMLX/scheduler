@@ -1,3 +1,30 @@
+### 6.0.0
+
+- This update brings some changes in the structure of the Scheduler package and behavior of functionality. Be sure to check Migration notes to be on the safe side.
+
+- Destructors for Scheduler and DataProcessor instances
+- Ability to specify the height of Timeline sections
+- Ability to specify multiple columns in the left-hand panel of Timeline View
+- New resolvePosition, dateFromPos, getEventTop methods of the Timeline object
+- All extensions must be activated now via the plugins() method
+- Locale files were removed from the package, new API for the Scheduler localization is added
+- Scheduler.getSchedulerInstance now can take a configuration object while creating a new Scheduler instance
+- The CSP extension was removed from the package, the csp mode is enabled by default
+- The settings object as the third parameter of the attachEvent() method is added
+- Routing options for DataProcessor
+- Ability to import dhtmlxScheduler as an ES6 module
+- New week_agenda_date template
+- The ajax, env, i18n objects are added
+- New Promise method
+- New destructor() method and onDestroy event
+- Debug helpers are added: assert() method, show_errors property, onError event
+- New methods are added: bind(), copy(), defined(), mixin()
+- The constructor function of the dataProcessor has moved from the global scope to the scheduler object (window.dataProcessor -> scheduler.DataProcessor)
+- New createDataProcessor() method
+- Public helpers for popup messages has moved from the dhtml to scheduler object
+- New serialize() method
+- New overwrite_marked_timespans property
+
 ### 5.3.14
 
 Fix the incorrect work of drag and drop for recurring events that was added via the scheduler.addEvent()method

@@ -241,6 +241,36 @@
 .dhx_cal_data .dhx_timeline_table_wrapper div{ 
 	box-sizing: border-box;
 }
+
+.dhx_matrix_scell.dhx_matrix_scell_columns, .dhx_timeline_scale_header {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.dhx_timeline_label_column,
+.dhx_timeline_label_column_header{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+	flex-grow: 0;
+	flex-shrink: 0;
+	height: 100%;
+}
+
+.dhx_timeline_label_column{
+	border-left:1px solid #e0e0e0;
+}
+
+.dhx_timeline_label_column_header{
+	border-left-color: transparent;
+}
+
+.dhx_timeline_label_column:first-child{
+	border-left:0;
+}
+
 .dhx_matrix_cell{
 	background-color:white;
 }

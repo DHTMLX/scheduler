@@ -46,7 +46,7 @@
 ==============================================================================================*/
 
 
-.dhx_cal_container, .dhtmlx_modal_box, .dhtmlx_message_area, .dhx_cal_light, .dhtmlXTooltip {
+.dhx_cal_container, .scheduler_modal_box, .scheduler_message_area, .dhx_cal_light, .dhtmlXTooltip {
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -486,7 +486,7 @@ td .dhx_month_head a,
                             5.	Modal Pop-Ups and It's Elements
 ==============================================================================================*/
 
-.dhtmlx_popup_title {
+.scheduler_popup_title {
 	border-top-left-radius:0;
 	border-top-right-radius:0;
 	border-width:0px;
@@ -499,37 +499,38 @@ td .dhx_month_head a,
 	line-height:42px;
 }
 
-.dhtmlx_modal_box .dhtmlx_popup_controls {
+.scheduler_modal_box .scheduler_popup_controls {
 	text-align: left;
 }
 
-.dhtmlx_modal_box .dhtmlx_popup_controls .dhtmlx_popup_button.dhtmlx_ok_button,
-.dhtmlx_modal_box .dhtmlx_popup_controls .dhtmlx_popup_button.dhtmlx_cancel_button {
+.scheduler_modal_box .scheduler_popup_controls .scheduler_popup_button,
+.scheduler_modal_box .scheduler_popup_controls .scheduler_popup_button.scheduler_ok_button,
+.scheduler_modal_box .scheduler_popup_controls .scheduler_popup_button.scheduler_cancel_button {
 	float: right;
 	text-align: center;
 	text-transform: uppercase;
 }
 
-.dhtmlx_popup_controls::after {
+.scheduler_popup_controls::after {
 	content: "";
 	display: table;
 	clear: both;
 }
 
-.dhtmlx_popup_button.dhtmlx_cancel_button {
+.scheduler_popup_button.scheduler_cancel_button {
 	margin-right: 10px;
 }
 
-.dhtmlx_popup_button.dhtmlx_ok_button:active div {
+.scheduler_popup_button.scheduler_ok_button:active div {
 	color: @modal-ok-button-color;
 }
 
-.dhtmlx_message_area .dhtmlx-error{
+.scheduler_message_area .scheduler-error{
 	box-shadow: @info-popup-shadow;
 }
 
-.dhtmlx_message_area .dhtmlx-error,
-.dhtmlx_message_area .dhtmlx-error div{
+.scheduler_message_area .scheduler-error,
+.scheduler_message_area .scheduler-error div{
 	background: #FF584C;
 	border:1px solid transparent;
 	border-radius: 0;
@@ -689,7 +690,7 @@ td .dhx_month_head a,
 
 
  // Modal Pop up - Series Event edition
- .dhtmlx_modal_box.dhtmlx-alert .dhtmlx_edit_series_button {
+ .scheduler_modal_box.scheduler-alert .scheduler_edit_series_button {
 	float: right;
 	text-align: center;
 	text-transform: uppercase;
@@ -716,7 +717,7 @@ td .dhx_month_head a,
 	}
 }
 
-.dhtmlx_modal_box.dhtmlx-alert .dhtmlx_edit_occurrence_button {
+.scheduler_modal_box.scheduler-alert .scheduler_edit_occurrence_button {
 	width: auto;
 	float: right;
 	text-align: center;
@@ -1281,7 +1282,7 @@ textarea.dhx_cal_editor {
 	margin: 0 0 16px 3px;
 }
 
- .dhtmlx_cancel_button:hover {
+ .scheduler_cancel_button:hover {
 	/*border-color:	@modal-popup-button-hov-border;*/
 	background-color: @modal-popup-button-hov-color;
 	transition: all 0.1s ease-in-out;
@@ -1293,7 +1294,7 @@ textarea.dhx_cal_editor {
 	}
 }
 
-.dhtmlx_popup_button.dhtmlx_ok_button {
+.scheduler_popup_button.scheduler_ok_button {
 
 	&:hover {
 		border-color: darken(#FF584C, 15);
@@ -2033,7 +2034,7 @@ div.dhx_year_tooltip {
 
 
 .dhx_cal_ltitle {
-	text-overflow: ellipsis;
+	/*text-overflow: ellipsis;*/
 }
 
 .dhx_expand_icon {
