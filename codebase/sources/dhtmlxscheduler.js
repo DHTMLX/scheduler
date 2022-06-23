@@ -1,7 +1,7 @@
 /*!
  * @license
  * 
- * dhtmlxScheduler v.6.0.0 Standard
+ * dhtmlxScheduler v.6.0.1 Standard
  * 
  * To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
  * 
@@ -5464,64 +5464,12 @@ function extend(scheduler) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return extend; });
+/* harmony import */ var _utils_scoped_event__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils/scoped_event */ "./sources/core/utils/scoped_event.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+
 function extend(scheduler) {
-  var defaultDomEvents = {
-    event: function event(el, _event, handler) {
-      if (el.addEventListener) el.addEventListener(_event, handler, false);else if (el.attachEvent) el.attachEvent("on" + _event, handler);
-    },
-    eventRemove: function eventRemove(el, event, handler) {
-      if (el.removeEventListener) el.removeEventListener(event, handler, false);else if (el.detachEvent) el.detachEvent("on" + event, handler);
-    }
-  };
-
-  var domEvents = function (addEvent, removeEvent) {
-    addEvent = addEvent || defaultDomEvents.event;
-    removeEvent = removeEvent || defaultDomEvents.eventRemove;
-    var handlers = [];
-    var eventScope = {
-      attach: function attach(el, event, callback, capture) {
-        handlers.push({
-          element: el,
-          event: event,
-          callback: callback,
-          capture: capture
-        });
-        addEvent(el, event, callback, capture);
-      },
-      detach: function detach(el, event, callback, capture) {
-        removeEvent(el, event, callback, capture);
-
-        for (var i = 0; i < handlers.length; i++) {
-          var handler = handlers[i];
-
-          if (handler.element === el && handler.event === event && handler.callback === callback && handler.capture === capture) {
-            handlers.splice(i, 1);
-            i--;
-          }
-        }
-      },
-      detachAll: function detachAll() {
-        var staticArray = handlers.slice(); // original handlers array can be spliced on every iteration
-
-        for (var i = 0; i < staticArray.length; i++) {
-          var handler = staticArray[i];
-          eventScope.detach(handler.element, handler.event, handler.callback, handler.capture);
-          eventScope.detach(handler.element, handler.event, handler.callback, undefined);
-          eventScope.detach(handler.element, handler.event, handler.callback, false);
-          eventScope.detach(handler.element, handler.event, handler.callback, true);
-        }
-
-        handlers.splice(0, handlers.length);
-      },
-      extend: function extend() {
-        return domEvents(this.event, this.eventRemove);
-      }
-    };
-    return eventScope;
-  }();
-
+  var domEvents = Object(_utils_scoped_event__WEBPACK_IMPORTED_MODULE_0__["default"])();
   scheduler.event = domEvents.attach;
   scheduler.eventRemove = domEvents.detach;
   scheduler._eventRemoveAll = domEvents.detachAll;
@@ -6327,9 +6275,11 @@ DataProcessor.prototype = {
       var action = this.getActionByState(state);
 
       var _onResolvedCreateUpdate = function _onResolvedCreateUpdate(tag) {
+        var resultState = state;
+
         if (tag && tag.responseText && tag.setRequestHeader) {
           if (tag.status !== 200) {
-            action = "error";
+            resultState = "error";
           }
 
           try {
@@ -6337,17 +6287,17 @@ DataProcessor.prototype = {
           } catch (e) {}
         }
 
-        action = action || "updated";
+        resultState = resultState || "updated";
         var sid = rowId;
         var tid = rowId;
 
         if (tag) {
-          action = tag.action || state;
+          resultState = tag.action || resultState;
           sid = tag.sid || sid;
           tid = tag.id || tag.tid || tid;
         }
 
-        self.afterUpdateCallback(sid, tid, action, tag);
+        self.afterUpdateCallback(sid, tid, resultState, tag);
       };
 
       var actionPromise;
@@ -7592,11 +7542,9 @@ function extend(scheduler) {
 
       var widt = pos.x2 - pos.x;
       var el = document.createElement("div");
-
-      el.onclick = function (e) {
+      scheduler.event(el, "click", function (e) {
         scheduler._view_month_day(e);
-      };
-
+      });
       el.className = "dhx_month_link";
       el.style.top = pos.y + "px";
       el.style.left = pos.x + "px";
@@ -8243,7 +8191,7 @@ function extend(scheduler) {
       this._editor = d2.querySelector("textarea");
       if (this._quirks7) this._editor.style.height = height - 12 + "px"; //IEFIX
 
-      this._editor.onkeydown = function (e) {
+      scheduler.event(this._editor, "keydown", function (e) {
         if (e.shiftKey) return true;
         var code = e.keyCode;
         if (code == scheduler.keys.edit_save) scheduler.editStop(true);
@@ -8252,12 +8200,11 @@ function extend(scheduler) {
         if (code == scheduler.keys.edit_save || code == scheduler.keys.edit_cancel) {
           if (e.preventDefault) e.preventDefault();
         }
-      };
-
-      this._editor.onselectstart = function (e) {
+      });
+      scheduler.event(this._editor, "selectstart", function (e) {
         e.cancelBubble = true;
         return true;
-      };
+      });
 
       scheduler._focus(this._editor, true); //IE and opera can add x-scroll during focusing
 
@@ -8902,7 +8849,7 @@ function extend(scheduler) {
         var select = node.firstChild;
 
         if (!select._dhx_onchange && sns.onchange) {
-          select.onchange = sns.onchange;
+          scheduler.event(select, "change", sns.onchange);
           select._dhx_onchange = true;
         }
 
@@ -9056,25 +9003,28 @@ function extend(scheduler) {
           s[map[0]].disabled = input.checked;
           s[map[0] + s.length / 2].disabled = input.checked;
 
-          input.onclick = function () {
-            if (input.checked) {
-              var obj = {};
-              scheduler.form_blocks.time.get_value(node, obj, config);
-              start_date = scheduler.date.date_part(obj.start_date);
-              end_date = scheduler.date.date_part(obj.end_date);
-              if (+end_date == +start_date || +end_date >= +start_date && (ev.end_date.getHours() !== 0 || ev.end_date.getMinutes() !== 0)) end_date = scheduler.date.add(end_date, 1, "day");
-            } else {
-              start_date = null;
-              end_date = null;
-            }
+          if (!input.$_eventAttached) {
+            input.$_eventAttached = true;
+            scheduler.event(input, "click", function () {
+              if (input.checked) {
+                var obj = {};
+                scheduler.form_blocks.time.get_value(node, obj, config);
+                start_date = scheduler.date.date_part(obj.start_date);
+                end_date = scheduler.date.date_part(obj.end_date);
+                if (+end_date == +start_date || +end_date >= +start_date && (ev.end_date.getHours() !== 0 || ev.end_date.getMinutes() !== 0)) end_date = scheduler.date.add(end_date, 1, "day");
+              } else {
+                start_date = null;
+                end_date = null;
+              }
 
-            s[map[0]].disabled = input.checked;
-            s[map[0] + s.length / 2].disabled = input.checked;
+              s[map[0]].disabled = input.checked;
+              s[map[0] + s.length / 2].disabled = input.checked;
 
-            _fill_lightbox_select(s, 0, start_date || ev.start_date);
+              _fill_lightbox_select(s, 0, start_date || ev.start_date);
 
-            _fill_lightbox_select(s, 4, end_date || ev.end_date);
-          };
+              _fill_lightbox_select(s, 4, end_date || ev.end_date);
+            });
+          }
         }
 
         if (cfg.auto_end_date && cfg.event_duration) {
@@ -9091,7 +9041,10 @@ function extend(scheduler) {
           };
 
           for (var i = 0; i < 4; i++) {
-            s[i].onchange = _update_lightbox_select;
+            if (!s[i].$_eventAttached) {
+              s[i].$_eventAttached = true;
+              scheduler.event(s[i], "change", _update_lightbox_select);
+            }
           }
         }
 
@@ -9358,24 +9311,45 @@ function extend(scheduler) {
   scheduler.hideLightbox = scheduler.cancel_lightbox; // GS-1650 need to use cancel in order to fire onEventCancel event, which is important to refresh the state of recurring series
 
   scheduler._init_lightbox_events = function () {
-    this.getLightbox().onclick = function (e) {
-      var src = e.target;
-      if (!src.className) src = src.previousSibling;
+    if (this.getLightbox().$_eventAttached) {
+      return;
+    }
 
-      if (src && src.className && scheduler._getClassName(src).indexOf("dhx_btn_set") > -1) {
-        // assistive software (e.g. jaws) can dispatch event on the top element of a button
-        src = src.querySelector("[dhx_button]");
-        if (!src) return;
+    var lightbox = this.getLightbox();
+    lightbox.$_eventAttached = true;
+    scheduler.event(lightbox, "click", function (e) {
+      var buttonTarget = scheduler.$domHelpers.closest(e.target, ".dhx_btn_set");
+
+      if (!buttonTarget) {
+        var sectionButton = scheduler.$domHelpers.closest(e.target, ".dhx_custom_button[data-section-index]");
+
+        if (sectionButton) {
+          var index = Number(sectionButton.getAttribute("data-section-index"));
+          var block = scheduler.form_blocks[scheduler.config.lightbox.sections[index].type];
+          block.button_click(scheduler.$domHelpers.closest(sectionButton, ".dhx_cal_lsection"), sectionButton, e);
+        }
+
+        return;
       }
 
-      var className = scheduler._getClassName(src);
+      var action = buttonTarget ? buttonTarget.getAttribute("data-action") : null;
 
-      if (src && className) switch (className) {
+      switch (action) {
         case "dhx_save_btn":
+        case "save":
+          if (scheduler.config.readonly_active) {
+            return;
+          }
+
           scheduler.save_lightbox();
           break;
 
         case "dhx_delete_btn":
+        case "delete":
+          if (scheduler.config.readonly_active) {
+            return;
+          }
+
           var c = scheduler.locale.labels.confirm_deleting;
 
           scheduler._dhtmlx_confirm(c, scheduler.locale.labels.title_confirm_deleting, function () {
@@ -9388,37 +9362,15 @@ function extend(scheduler) {
           break;
 
         case "dhx_cancel_btn":
+        case "cancel":
           scheduler.cancel_lightbox();
           break;
 
         default:
-          if (src.getAttribute("dhx_button")) {
-            scheduler.callEvent("onLightboxButton", [className, src, e]);
-          } else {
-            var index, block, sec;
-
-            if (className.indexOf("dhx_custom_button") != -1) {
-              if (className.indexOf("dhx_custom_button_") != -1) {
-                index = src.parentNode.getAttribute("index");
-                sec = src.parentNode.parentNode;
-              } else {
-                index = src.getAttribute("index");
-                sec = src.parentNode;
-                src = src.firstChild;
-              }
-            }
-
-            if (index) {
-              block = scheduler.form_blocks[scheduler.config.lightbox.sections[index].type];
-              block.button_click(index, src, sec, sec.nextSibling);
-            }
-          }
-
-          break;
+          scheduler.callEvent("onLightboxButton", [action, buttonTarget, e]);
       }
-    };
-
-    this.getLightbox().onkeydown = function (e) {
+    });
+    scheduler.event(lightbox, "keydown", function (e) {
       var event = e || window.event;
       var target = e.target || e.srcElement;
       var buttonTarget = target.querySelector("[dhx_button]");
@@ -9446,6 +9398,10 @@ function extend(scheduler) {
           if (buttonTarget && buttonTarget.click) {
             buttonTarget.click();
           } else {
+            if (scheduler.config.readonly_active) {
+              return;
+            }
+
             scheduler.save_lightbox();
           }
 
@@ -9458,7 +9414,7 @@ function extend(scheduler) {
         default:
           break;
       }
-    };
+    });
   };
 
   scheduler.setLightboxSize = function () {
@@ -9515,7 +9471,6 @@ function extend(scheduler) {
       if (scheduler.form_blocks.recurring) d.className += " dhx_cal_light_rec";
       if (scheduler.config.rtl) d.className += " dhx_cal_light_rtl";
       if (scheduler.config.responsive_lightbox) d.className += " dhx_cal_light_responsive";
-      if (/msie|MSIE 6/.test(navigator.userAgent)) d.className += " dhx_ie6";
       d.style.visibility = "hidden";
       var html = this._lightbox_template;
       var buttons = this.config.buttons_left;
@@ -9523,7 +9478,7 @@ function extend(scheduler) {
 
       for (var i = 0; i < buttons.length; i++) {
         ariaAttr = this._waiAria.lightboxButtonAttrString(buttons[i]);
-        html += "<div " + ariaAttr + " class='dhx_btn_set dhx_" + (scheduler.config.rtl ? "right" : "left") + "_btn_set " + buttons[i] + "_set'><div dhx_button='1' class='" + buttons[i] + "'></div><div>" + scheduler.locale.labels[buttons[i]] + "</div></div>";
+        html += "<div " + ariaAttr + " data-action='" + buttons[i] + "' class='dhx_btn_set dhx_" + (scheduler.config.rtl ? "right" : "left") + "_btn_set " + buttons[i] + "_set'><div class='" + buttons[i] + "'></div><div>" + scheduler.locale.labels[buttons[i]] + "</div></div>";
       }
 
       buttons = this.config.buttons_right;
@@ -9531,19 +9486,18 @@ function extend(scheduler) {
 
       for (var i = 0; i < buttons.length; i++) {
         ariaAttr = this._waiAria.lightboxButtonAttrString(buttons[i]);
-        html += "<div " + ariaAttr + " class='dhx_btn_set dhx_" + (rtl ? "left" : "right") + "_btn_set " + buttons[i] + "_set' style='float:" + (rtl ? "left" : "right") + ";'><div dhx_button='1' class='" + buttons[i] + "'></div><div>" + scheduler.locale.labels[buttons[i]] + "</div></div>";
+        html += "<div " + ariaAttr + " data-action='" + buttons[i] + "' class='dhx_btn_set dhx_" + (rtl ? "left" : "right") + "_btn_set " + buttons[i] + "_set' style='float:" + (rtl ? "left" : "right") + ";'><div class='" + buttons[i] + "'></div><div>" + scheduler.locale.labels[buttons[i]] + "</div></div>";
       }
 
       html += "</div>";
       d.innerHTML = html;
 
       if (scheduler.config.drag_lightbox) {
-        d.firstChild.onmousedown = scheduler._ready_to_dnd;
-
-        d.firstChild.onselectstart = function () {
+        scheduler.event(d.firstChild, "mousedown", scheduler._ready_to_dnd);
+        scheduler.event(d.firstChild, "selectstart", function (e) {
+          e.preventDefault();
           return false;
-        };
-
+        });
         d.firstChild.style.cursor = "move";
 
         scheduler._init_dnd_events();
@@ -9566,7 +9520,7 @@ function extend(scheduler) {
         if (sns[i].button) {
           var ariaAttr = scheduler._waiAria.lightboxSectionButtonAttrString(this.locale.labels["button_" + sns[i].button]);
 
-          button = "<div " + ariaAttr + " class='dhx_custom_button' index='" + i + "'><div class='dhx_custom_button_" + sns[i].button + "'></div><div>" + this.locale.labels["button_" + sns[i].button] + "</div></div>";
+          button = "<div " + ariaAttr + " class='dhx_custom_button' data-section-index='" + i + "' index='" + i + "'><div class='dhx_custom_button_" + sns[i].button + "'></div><div>" + this.locale.labels["button_" + sns[i].button] + "</div></div>";
         }
 
         if (this.config.wide_form) {
@@ -9644,7 +9598,7 @@ function extend(scheduler) {
         var control = scheduler.form_blocks[section.type];
 
         if (control.focus) {
-          label.onclick = function (section) {
+          scheduler.event(label, "click", function (section) {
             return function () {
               var block = scheduler.form_blocks[section.type];
 
@@ -9652,7 +9606,7 @@ function extend(scheduler) {
 
               if (block && block.focus) block.focus.call(scheduler, node);
             };
-          }(section);
+          }(section));
         }
       }
     }
@@ -10395,7 +10349,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     if (!modality.cover) {
       modality.cover = document.createElement("div"); //necessary for IE only
 
-      modality.cover.onkeydown = modal_key;
+      scheduler.event(modality.cover, "keydown", modal_key);
       modality.cover.className = "dhx_modal_cover";
       document.body.appendChild(modality.cover);
     }
@@ -10423,11 +10377,10 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     var message = document.createElement("div");
     message.innerHTML = "<div>" + text.text + "</div>";
     message.className = "scheduler-info dhtmlx-info scheduler-" + text.type + " dhtmlx-" + text.type;
-
-    message.onclick = function () {
+    scheduler.event(message, "click", function () {
       messageBox.hide(text.id);
       text = null;
-    };
+    });
 
     scheduler._waiAria.messageInfoAttr(message);
 
@@ -10493,7 +10446,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       box.childNodes[config.title ? 1 : 0].appendChild(node);
     }
 
-    box.onclick = function (event) {
+    scheduler.event(box, "click", function (event) {
       var source = event.target || event.srcElement;
       if (!source.className) source = source.parentNode;
 
@@ -10502,8 +10455,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         result = result == "true" || (result == "false" ? false : result);
         callback(config, result);
       }
-    };
-
+    });
     config.box = box;
     if (ok || cancel) _dhx_msg_cfg = config;
     return box;
@@ -10518,7 +10470,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     if (config.position == "top") box.style.top = "-3px";else box.style.top = y + 'px';
     box.style.left = x + 'px'; //necessary for IE only
 
-    box.onkeydown = modal_key;
+    scheduler.event(box, "keydown", modal_key);
     modalBox.focus(box);
     if (config.hidden) modalBox.hide(box);
     scheduler.callEvent("onMessagePopup", [box]);
@@ -10754,8 +10706,8 @@ function extend(scheduler) {
     minicalendarButton: function minicalendarButton(config) {
       var minicalendarDiv = div('dhx_minical_icon');
 
-      if (!config.click) {
-        minicalendarDiv.onclick = function () {
+      if (!config.click && !minicalendarDiv.$_eventAttached) {
+        scheduler.event(minicalendarDiv, "click", function () {
           if (scheduler.isCalendarVisible()) {
             scheduler.destroyCalendar();
           } else {
@@ -10769,7 +10721,7 @@ function extend(scheduler) {
               }
             });
           }
-        };
+        });
       }
 
       return minicalendarDiv;
@@ -10974,6 +10926,7 @@ function extend(scheduler) {
     }
 
     if (heightChanged || configChanged) {
+      scheduler.unset_actions();
       scheduler._els = [];
       scheduler.get_elements();
       scheduler.set_actions();
@@ -11262,54 +11215,48 @@ function extend(scheduler) {
     }
   };
 
-  scheduler.unset_actions = function () {
-    for (var a in this._els) {
-      if (this._click[a]) for (var i = 0; i < this._els[a].length; i++) {
-        this._els[a][i].onclick = null;
-      }
-    }
+  var domEventsScope = scheduler._createDomEventScope();
 
-    this._obj.onselectstart = null;
-    this._obj.onmousemove = null;
-    this._obj.onmousedown = null;
-    this._obj.onmouseup = null;
-    this._obj.ondblclick = null;
-    this._obj.oncontextmenu = null;
+  scheduler.unset_actions = function () {
+    domEventsScope.detachAll();
   };
 
   scheduler.set_actions = function () {
     for (var a in this._els) {
-      if (this._click[a]) for (var i = 0; i < this._els[a].length; i++) {
-        this._els[a][i].onclick = scheduler._click[a];
+      if (this._click[a]) {
+        for (var i = 0; i < this._els[a].length; i++) {
+          var element = this._els[a][i];
+
+          var handler = this._click[a].bind(element);
+
+          domEventsScope.attach(element, "click", handler);
+        }
       }
     }
 
-    this._obj.onselectstart = function (e) {
+    domEventsScope.attach(this._obj, "selectstart", function (e) {
+      e.preventDefault();
       return false;
-    };
+    }); //this._obj.onselectstart=function(e){ return false; };
 
-    this._obj.onmousemove = function (e) {
+    domEventsScope.attach(this._obj, "mousemove", function (e) {
       if (!scheduler._temp_touch_block) scheduler._on_mouse_move(e);
-    };
-
-    this._obj.onmousedown = function (e) {
+    });
+    domEventsScope.attach(this._obj, "mousedown", function (e) {
       if (!scheduler._ignore_next_click) scheduler._on_mouse_down(e);
-    };
-
-    this._obj.onmouseup = function (e) {
+    });
+    domEventsScope.attach(this._obj, "mouseup", function (e) {
       if (!scheduler._ignore_next_click) scheduler._on_mouse_up(e);
-    };
-
-    this._obj.ondblclick = function (e) {
+    });
+    domEventsScope.attach(this._obj, "dblclick", function (e) {
       scheduler._on_dbl_click(e);
-    };
-
-    this._obj.oncontextmenu = function (e) {
+    });
+    domEventsScope.attach(this._obj, "contextmenu", function (e) {
       var ev = e;
       var src = ev.target || ev.srcElement;
       var returnValue = scheduler.callEvent("onContextMenu", [scheduler._locate_event(src), ev]);
       return returnValue;
-    };
+    });
   };
 
   scheduler.select = function (id) {
@@ -12501,7 +12448,7 @@ function extend(scheduler) {
 
         c1.appendChild(c2);
         this._els[dhx_multi_day] = [c1, c2];
-        this._els[dhx_multi_day][0].onclick = this._click.dhx_cal_data;
+        scheduler.event(this._els[dhx_multi_day][0], "click", this._click.dhx_cal_data);
       }
     }
   };
@@ -13896,7 +13843,7 @@ function extend(scheduler) {
         var isQt = navigator.userAgent.match(/AppleWebKit/) !== null && navigator.userAgent.match(/Qt/) !== null && navigator.userAgent.match(/Safari/) !== null;
 
         if (!!async) {
-          t.onreadystatechange = function () {
+          t.addEventListener("readystatechange", function () {
             if (t.readyState == 4 || isQt && t.readyState == 3) {
               // what for long response and status 404?
               if (t.status != 200 || t.responseText === "") if (!scheduler.callEvent("onAjaxError", [t])) return;
@@ -13916,7 +13863,7 @@ function extend(scheduler) {
                 }
               }, 0);
             }
-          };
+          });
         }
 
         if (method == "GET" && !this.cache) {
@@ -14384,6 +14331,89 @@ if (Element.prototype.closest) {
     return null;
   };
 }
+
+/***/ }),
+
+/***/ "./sources/core/utils/event.js":
+/*!*************************************!*\
+  !*** ./sources/core/utils/event.js ***!
+  \*************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  event: function event(el, _event, handler) {
+    if (el.addEventListener) el.addEventListener(_event, handler, false);else if (el.attachEvent) el.attachEvent("on" + _event, handler);
+  },
+  eventRemove: function eventRemove(el, event, handler) {
+    if (el.removeEventListener) el.removeEventListener(event, handler, false);else if (el.detachEvent) el.detachEvent("on" + event, handler);
+  }
+});
+
+/***/ }),
+
+/***/ "./sources/core/utils/scoped_event.js":
+/*!********************************************!*\
+  !*** ./sources/core/utils/scoped_event.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _event__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./event */ "./sources/core/utils/event.js");
+
+/* harmony default export */ __webpack_exports__["default"] = (function () {
+  var domEvents = function domEvents(addEvent, removeEvent) {
+    addEvent = addEvent || _event__WEBPACK_IMPORTED_MODULE_0__["default"].event;
+    removeEvent = removeEvent || _event__WEBPACK_IMPORTED_MODULE_0__["default"].eventRemove;
+    var handlers = [];
+    var eventScope = {
+      attach: function attach(el, event, callback, capture) {
+        handlers.push({
+          element: el,
+          event: event,
+          callback: callback,
+          capture: capture
+        });
+        addEvent(el, event, callback, capture);
+      },
+      detach: function detach(el, event, callback, capture) {
+        removeEvent(el, event, callback, capture);
+
+        for (var i = 0; i < handlers.length; i++) {
+          var handler = handlers[i];
+
+          if (handler.element === el && handler.event === event && handler.callback === callback && handler.capture === capture) {
+            handlers.splice(i, 1);
+            i--;
+          }
+        }
+      },
+      detachAll: function detachAll() {
+        var staticArray = handlers.slice(); // original handlers array can be spliced on every iteration
+
+        for (var i = 0; i < staticArray.length; i++) {
+          var handler = staticArray[i];
+          eventScope.detach(handler.element, handler.event, handler.callback, handler.capture);
+          eventScope.detach(handler.element, handler.event, handler.callback, undefined);
+          eventScope.detach(handler.element, handler.event, handler.callback, false);
+          eventScope.detach(handler.element, handler.event, handler.callback, true);
+        }
+
+        handlers.splice(0, handlers.length);
+      },
+      extend: function extend() {
+        return domEvents(this.event, this.eventRemove);
+      }
+    };
+    return eventScope;
+  };
+
+  return domEvents();
+});
 
 /***/ }),
 
@@ -14968,8 +14998,8 @@ __webpack_require__.r(__webpack_exports__);
 
   scheduler._active_link_click = function (e) {
     var start = e.target;
-    var to = start.getAttribute("jump_to");
-    var s_d = scheduler.date.str_to_date(scheduler.config.api_date);
+    var to = start.getAttribute("data-link-date");
+    var s_d = scheduler.date.str_to_date(scheduler.config.api_date, false, true);
 
     if (to) {
       scheduler.setCurrentView(s_d(to), scheduler.config.active_link_view);
@@ -14990,7 +15020,7 @@ __webpack_require__.r(__webpack_exports__);
       var d_s = scheduler.date.date_to_str(scheduler.config.api_date);
 
       scheduler.templates[fullname] = function (date) {
-        return "<a jump_to='" + d_s(date) + "' href='#'>" + week_x(date) + "</a>";
+        return "<a data-link-date='" + d_s(date) + "' href='#'>" + week_x(date) + "</a>";
       };
     };
 
@@ -16107,7 +16137,13 @@ __webpack_require__.r(__webpack_exports__);
 
       if (config.handler) {
         var checkbox = node.getElementsByTagName('input')[0];
-        checkbox.onclick = config.handler;
+
+        if (checkbox.$_eventAttached) {
+          return;
+        }
+
+        checkbox.$_eventAttached = true;
+        scheduler.event(checkbox, "click", config.handler); //checkbox.onclick = config.handler;
       }
     },
     get_value: function get_value(node, ev, config) {
@@ -16189,9 +16225,9 @@ __webpack_require__.r(__webpack_exports__);
 
     scheduler._obj.appendChild(t);
 
-    t.onclick = function () {
+    scheduler.event(t, "click", function () {
       if (!scheduler.expanded) scheduler.expand();else scheduler.collapse();
-    };
+    });
   });
 
   scheduler._maximize = function () {
@@ -20066,17 +20102,17 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
         this._editor = d2.firstChild;
 
-        this._editor.onkeypress = function (e) {
+        this._editor.addEventListener("keypress", function (e) {
           if (e.shiftKey) return true;
           var code = e.keyCode;
           if (code == scheduler.keys.edit_save) scheduler.editStop(true);
           if (code == scheduler.keys.edit_cancel) scheduler.editStop(false);
-        };
+        });
 
-        this._editor.onselectstart = function (e) {
+        this._editor.addEventListener("selectstart", function (e) {
           e.cancelBubble = true;
           return true;
-        };
+        });
 
         d2.firstChild.focus(); //IE and opera can add x-scroll during focusing
 
@@ -21870,6 +21906,8 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = (function (scheduler) {
+  var minicalDomEvents = scheduler._createDomEventScope();
+
   scheduler.templates.calendar_month = scheduler.date.date_to_str("%F %Y");
   scheduler.templates.calendar_scale_date = scheduler.date.date_to_str("%D");
   scheduler.templates.calendar_date = scheduler.date.date_to_str("%d");
@@ -21902,22 +21940,25 @@ __webpack_require__.r(__webpack_exports__);
       if (!cont) cont = scheduler._get_def_cont(pos);
       cal = this._render_calendar(cont, date, obj);
 
-      cal.onclick = function (e) {
-        var src = e.target || e.srcElement;
-        var $dom = scheduler.$domHelpers;
+      if (!cal.$_eventAttached) {
+        cal.$_eventAttached = true;
+        minicalDomEvents.attach(cal, "click", function (e) {
+          var src = e.target || e.srcElement;
+          var $dom = scheduler.$domHelpers;
 
-        if ($dom.closest(src, ".dhx_month_head")) {
-          if (!$dom.closest(src, ".dhx_after") && !$dom.closest(src, ".dhx_before")) {
-            var cellRoot = $dom.closest(src, "[data-cell-date]");
-            var dateAttribute = cellRoot.getAttribute("data-cell-date");
-            var newDate = scheduler.templates.parse_date(dateAttribute);
-            scheduler.unmarkCalendar(this);
-            scheduler.markCalendar(this, newDate, "dhx_calendar_click");
-            this._last_date = newDate;
-            if (this.conf.handler) this.conf.handler.call(scheduler, newDate, this);
+          if ($dom.closest(src, ".dhx_month_head")) {
+            if (!$dom.closest(src, ".dhx_after") && !$dom.closest(src, ".dhx_before")) {
+              var cellRoot = $dom.closest(src, "[data-cell-date]");
+              var dateAttribute = cellRoot.getAttribute("data-cell-date");
+              var newDate = scheduler.templates.parse_date(dateAttribute);
+              scheduler.unmarkCalendar(this);
+              scheduler.markCalendar(this, newDate, "dhx_calendar_click");
+              this._last_date = newDate;
+              if (this.conf.handler) this.conf.handler.call(scheduler, newDate, this);
+            }
           }
-        }
-      };
+        }.bind(cal));
+      }
     } else {
       cal = this._render_calendar(_prev.parentNode, date, obj, _prev);
       scheduler.unmarkCalendar(cal);
@@ -21971,11 +22012,9 @@ __webpack_require__.r(__webpack_exports__);
     if (!this._def_count) {
       this._def_count = document.createElement("div");
       this._def_count.className = "dhx_minical_popup";
-
-      this._def_count.onclick = function (e) {
+      scheduler.event(this._def_count, "click", function (e) {
         e.cancelBubble = true;
-      };
-
+      });
       document.body.appendChild(this._def_count);
     }
 
@@ -22143,7 +22182,7 @@ __webpack_require__.r(__webpack_exports__);
         arrow.style.cssText = css_texts[j];
         arrow.innerHTML = this._mini_cal_arrows[j];
         header.appendChild(arrow);
-        arrow.onclick = handler(diffs[j]);
+        minicalDomEvents.attach(arrow, "click", handler(diffs[j]));
       }
     }
 
@@ -22201,7 +22240,8 @@ __webpack_require__.r(__webpack_exports__);
     }
 
     if (!cal) return;
-    cal.onclick = null;
+    minicalDomEvents.detachAll(); //cal.onclick = null;
+
     cal.innerHTML = "";
     if (cal.parentNode) cal.parentNode.removeChild(cal);
     if (this._def_count) this._def_count.style.top = "-1000px";
@@ -22213,16 +22253,12 @@ __webpack_require__.r(__webpack_exports__);
     return false;
   };
 
-  scheduler._attach_minical_events = function () {
+  scheduler.attachEvent("onTemplatesReady", function () {
     scheduler.event(document.body, "click", function () {
       scheduler.destroyCalendar();
     });
-
-    scheduler._attach_minical_events = function () {};
-  };
-
-  scheduler.attachEvent("onTemplatesReady", function () {
-    scheduler._attach_minical_events();
+  }, {
+    once: true
   });
   scheduler.templates.calendar_time = scheduler.date.date_to_str("%d-%m-%Y");
   scheduler.form_blocks.calendar_time = {
@@ -22262,7 +22298,7 @@ __webpack_require__.r(__webpack_exports__);
       var start_date, end_date;
 
       var _init_once = function _init_once(inp, date, number) {
-        inp.onclick = function () {
+        scheduler.event(inp, "click", function () {
           scheduler.destroyCalendar(null, true);
           scheduler.renderCalendar({
             position: inp,
@@ -22279,7 +22315,7 @@ __webpack_require__.r(__webpack_exports__);
               }
             }
           });
-        };
+        });
       };
 
       if (scheduler.config.full_day) {
@@ -22296,27 +22332,30 @@ __webpack_require__.r(__webpack_exports__);
         selects[0].disabled = input.checked;
         selects[1].disabled = input.checked;
 
-        input.onclick = function () {
-          if (input.checked === true) {
-            var obj = {};
-            scheduler.form_blocks.calendar_time.get_value(node, obj);
-            start_date = scheduler.date.date_part(obj.start_date);
-            end_date = scheduler.date.date_part(obj.end_date);
-            if (+end_date == +start_date || +end_date >= +start_date && (ev.end_date.getHours() !== 0 || ev.end_date.getMinutes() !== 0)) end_date = scheduler.date.add(end_date, 1, "day");
-          }
+        if (!input.$_eventAttached) {
+          input.$_eventAttached = true;
+          scheduler.event(input, "click", function () {
+            if (input.checked === true) {
+              var obj = {};
+              scheduler.form_blocks.calendar_time.get_value(node, obj);
+              start_date = scheduler.date.date_part(obj.start_date);
+              end_date = scheduler.date.date_part(obj.end_date);
+              if (+end_date == +start_date || +end_date >= +start_date && (ev.end_date.getHours() !== 0 || ev.end_date.getMinutes() !== 0)) end_date = scheduler.date.add(end_date, 1, "day");
+            }
 
-          var start = start_date || ev.start_date;
-          var end = end_date || ev.end_date;
+            var start = start_date || ev.start_date;
+            var end = end_date || ev.end_date;
 
-          _attach_action(inputs[0], start);
+            _attach_action(inputs[0], start);
 
-          _attach_action(inputs[1], end);
+            _attach_action(inputs[1], end);
 
-          selects[0].value = start.getHours() * 60 + start.getMinutes();
-          selects[1].value = end.getHours() * 60 + end.getMinutes();
-          selects[0].disabled = input.checked;
-          selects[1].disabled = input.checked;
-        };
+            selects[0].value = start.getHours() * 60 + start.getMinutes();
+            selects[1].value = end.getHours() * 60 + end.getMinutes();
+            selects[0].disabled = input.checked;
+            selects[1].disabled = input.checked;
+          });
+        }
       }
 
       if (scheduler.config.event_duration && scheduler.config.auto_end_date) {
@@ -22333,7 +22372,9 @@ __webpack_require__.r(__webpack_exports__);
           selects[1].value = end_date.getHours() * 60 + end_date.getMinutes();
         };
 
-        selects[0].onchange = _update_minical_select; // only update on first select should trigger update so user could define other end date if he wishes too
+        if (!selects[0].$_eventAttached) {
+          selects[0].addEventListener("change", _update_minical_select); // only update on first select should trigger update so user could define other end date if he wishes too
+        }
       }
 
       function _attach_action(inp, date, number) {
@@ -22436,6 +22477,9 @@ __webpack_require__.r(__webpack_exports__);
 
   scheduler.attachEvent("onEventCancel", function () {
     scheduler.destroyCalendar(null, true);
+  });
+  scheduler.attachEvent("onDestroy", function () {
+    scheduler.destroyCalendar();
   });
 });
 
@@ -23186,6 +23230,10 @@ __webpack_require__.r(__webpack_exports__);
   scheduler.config.show_quick_info = true;
   scheduler.xy.menu_width = 0;
   scheduler.attachEvent("onClick", function (id) {
+    if (!scheduler.config.show_quick_info) {
+      return;
+    }
+
     scheduler.showQuickInfo(id);
     return true;
   });
@@ -23226,8 +23274,12 @@ __webpack_require__.r(__webpack_exports__);
   };
 
   scheduler.showQuickInfo = function (id) {
-    if (id == this._quick_info_box_id || !this.config.show_quick_info) return;
+    if (id == this._quick_info_box_id) return;
     this.hideQuickInfo(true);
+
+    if (this.callEvent("onBeforeQuickInfo", [id]) === false) {
+      return;
+    }
 
     var pos = this._get_event_counter_part(id);
 
@@ -23615,50 +23667,11 @@ __webpack_require__.r(__webpack_exports__);
         olds.call(this, n);
         if (scheduler._lightbox) scheduler._lightbox.parentNode.removeChild(scheduler._lightbox);
         this._lightbox = n;
-        if (scheduler.config.drag_lightbox) n.firstChild.onmousedown = scheduler._ready_to_dnd;
+        if (scheduler.config.drag_lightbox) scheduler.event(n.firstChild, "mousedown", scheduler._ready_to_dnd);
+
+        scheduler._init_lightbox_events();
+
         this.setLightboxSize();
-
-        n.onclick = function (e) {
-          var src = e.target;
-          var buttonElement = scheduler.$domHelpers.closest(src, ".dhx_btn_set");
-
-          if (buttonElement) {
-            if (buttonElement.querySelector(".dhx_cancel_btn")) {
-              scheduler.cancel_lightbox();
-            }
-          }
-        };
-
-        n.onkeydown = function (e) {
-          var event = e;
-          var target = e.target || e.srcElement;
-          var buttonTarget = target.querySelector("[dhx_button]");
-
-          if (!buttonTarget) {
-            buttonTarget = target.parentNode.querySelector(".dhx_custom_button, .dhx_readonly");
-          }
-
-          switch ((e || event).keyCode) {
-            case 32:
-              {
-                //space
-                if ((e || event).shiftKey) return;
-
-                if (buttonTarget && buttonTarget.click) {
-                  buttonTarget.click();
-                }
-
-                break;
-              }
-
-            case scheduler.keys.edit_cancel:
-              scheduler.cancel_lightbox();
-              break;
-
-            default:
-              break;
-          }
-        };
       }
 
       return res;
@@ -23796,7 +23809,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         start: ev.start_date,
         end: ev._end_date
       };
-      var str_date_format = scheduler.date.str_to_date(scheduler.config.repeat_date);
+      var str_date_format = scheduler.date.str_to_date(scheduler.config.repeat_date, false, true);
 
       var str_date = function str_date(_str_date) {
         var date = str_date_format(_str_date);
@@ -24123,10 +24136,14 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
         var node = scheduler.form_blocks["recurring"]._get_form_node(els, "repeat", code[0]);
 
-        if (node.nodeName == "SELECT" && node.onchange) {
-          node.onchange();
-        } else if (node.onclick) {
-          node.onclick();
+        if (node.nodeName == "SELECT"
+        /* && node.onchange*/
+        ) {
+            //	node.onchange();
+            node.dispatchEvent(new Event('change'));
+            node.dispatchEvent(new MouseEvent('click'));
+          } else {
+          node.dispatchEvent(new MouseEvent('click'));
         }
       }
 
@@ -24137,10 +24154,12 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
         switch (el.name) {
           case "repeat":
-            if (el.nodeName == "SELECT") {
-              el.onchange = change_current_view;
-            } else {
-              el.onclick = change_current_view;
+            if (el.nodeName == "SELECT" && !el.$_eventAttached) {
+              el.$_eventAttached = true;
+              el.addEventListener("change", change_current_view);
+            } else if (!el.$_eventAttached) {
+              el.$_eventAttached = true;
+              el.addEventListener("click", change_current_view);
             }
 
             break;
@@ -24233,7 +24252,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       scheduler.setLightboxSize();
     },
     focus: function focus(node) {},
-    button_click: function button_click(index, el, section, cont) {
+    button_click: function button_click(node, button, event) {
       var block = scheduler.form_blocks.recurring;
 
       var cont = block._get_form();
@@ -25208,6 +25227,8 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = (function (scheduler) {
+  var tooltipEventScope = scheduler._createDomEventScope();
+
   var dhtmlXTooltip = {};
   scheduler.ext.tooltip = scheduler.dhtmlXTooltip = scheduler.tooltip = dhtmlXTooltip;
   dhtmlXTooltip.config = {
@@ -25227,7 +25248,7 @@ __webpack_require__.r(__webpack_exports__);
     if (this._mobile && !scheduler.config.touch_tooltip) return;
     var dhxTooltip = dhtmlXTooltip;
     var tooltip_div = this.tooltip;
-    var tooltip_div_style = tooltip_div.style;
+    var tooltipStyle = tooltip_div.style;
     dhxTooltip.tooltip.className = dhxTooltip.config.className;
     var pos = this.position(event);
     var target = event.target || event.srcElement; // if we are over tooltip -- do nothing, just return (so tooltip won't move)
@@ -25238,18 +25259,11 @@ __webpack_require__.r(__webpack_exports__);
 
     var actual_x = pos.x + (dhxTooltip.config.delta_x || 0);
     var actual_y = pos.y - (dhxTooltip.config.delta_y || 0);
-    tooltip_div_style.visibility = "hidden";
-
-    if (tooltip_div_style.removeAttribute) {
-      tooltip_div_style.removeAttribute("right");
-      tooltip_div_style.removeAttribute("bottom");
-    } else {
-      tooltip_div_style.removeProperty("right");
-      tooltip_div_style.removeProperty("bottom");
-    }
-
-    tooltip_div_style.left = "0";
-    tooltip_div_style.top = "0";
+    tooltipStyle.visibility = "hidden";
+    tooltipStyle.right = "";
+    tooltipStyle.bottom = "";
+    tooltipStyle.left = "0";
+    tooltipStyle.top = "0";
 
     if (scheduler.config.rtl) {
       tooltip_div.className += " dhtmlXTooltip_rtl";
@@ -25262,37 +25276,44 @@ __webpack_require__.r(__webpack_exports__);
 
     if (document.documentElement.clientWidth - actual_x - tooltip_width < 0) {
       // tooltip is out of the right page bound
-      if (tooltip_div_style.removeAttribute) tooltip_div_style.removeAttribute("left");else tooltip_div_style.removeProperty("left");
-      tooltip_div_style.right = document.documentElement.clientWidth - actual_x + 2 * (dhxTooltip.config.delta_x || 0) + "px";
+      tooltipStyle.left = "";
+      tooltipStyle.right = document.documentElement.clientWidth - actual_x + 2 * (dhxTooltip.config.delta_x || 0) + "px";
     } else {
       if (actual_x < 0) {
         // tooltips is out of the left page bound
-        tooltip_div_style.left = pos.x + Math.abs(dhxTooltip.config.delta_x || 0) + "px";
+        tooltipStyle.left = pos.x + Math.abs(dhxTooltip.config.delta_x || 0) + "px";
       } else {
         // normal situation
-        tooltip_div_style.left = actual_x + "px";
+        tooltipStyle.left = actual_x + "px";
       }
     }
 
     if (document.documentElement.clientHeight - actual_y - tooltip_height < 0) {
       // tooltip is below bottom of the page
-      if (tooltip_div_style.removeAttribute) tooltip_div_style.removeAttribute("top");else tooltip_div_style.removeProperty("top");
-      tooltip_div_style.bottom = document.documentElement.clientHeight - actual_y - 2 * (dhxTooltip.config.delta_y || 0) + "px";
+      var bottom = document.documentElement.clientHeight - actual_y - 2 * (dhxTooltip.config.delta_y || 0);
+
+      if (bottom + tooltip_height > document.documentElement.clientHeight) {
+        actual_y -= Math.abs(document.documentElement.clientHeight - actual_y - tooltip_height);
+        actual_y = Math.max(actual_y, 0);
+        tooltipStyle.top = actual_y + "px";
+      } else {
+        tooltipStyle.bottom = bottom + "px";
+        tooltipStyle.top = "";
+      }
     } else {
       if (actual_y < 0) {
         // tooltip is higher then top of the page
-        tooltip_div_style.top = pos.y + Math.abs(dhxTooltip.config.delta_y || 0) + "px";
+        tooltipStyle.top = pos.y + Math.abs(dhxTooltip.config.delta_y || 0) + "px";
       } else {
         // normal situation
-        tooltip_div_style.top = actual_y + "px";
+        tooltipStyle.top = actual_y + "px";
       }
     }
 
     scheduler._waiAria.tooltipVisibleAttr(this.tooltip);
 
-    tooltip_div_style.visibility = "visible";
-
-    this.tooltip.onmouseleave = function (e) {
+    tooltipStyle.visibility = "visible";
+    tooltipEventScope.attach(this.tooltip, "mouseleave", function (e) {
       /*
        A rare but reported scenario, when tooltip appears at the edge of the scheduler (e.g. left part inside cal, right part - outside).
        User moves mouse from the scheduler into the tooltip, and then from the tooltip to the page outside the calendar.
@@ -25306,8 +25327,7 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       if (node != scheduler._obj) tooltip.delay(tooltip.hide, tooltip, [], tooltip.config.timeout_to_hide);
-    };
-
+    });
     scheduler.callEvent("onTooltipDisplayed", [this.tooltip, this.tooltip.event_id]);
   };
 
@@ -25322,8 +25342,9 @@ __webpack_require__.r(__webpack_exports__);
       scheduler._waiAria.tooltipHiddenAttr(this.tooltip);
 
       var event_id = this.tooltip.event_id;
-      this.tooltip.event_id = null;
-      this.tooltip.onmouseleave = null;
+      this.tooltip.event_id = null; //this.tooltip.onmouseleave = null;
+
+      tooltipEventScope.detachAll();
       this.tooltip.parentNode.removeChild(this.tooltip);
       scheduler.callEvent("onAfterTooltip", [event_id]);
     }
@@ -25412,6 +25433,9 @@ __webpack_require__.r(__webpack_exports__);
   scheduler.attachEvent("onEventDeleted", function () {
     dhtmlXTooltip.hide();
     return true;
+  });
+  scheduler.attachEvent("onDestroy", function () {
+    dhtmlXTooltip.hide();
   });
 });
 
@@ -25593,8 +25617,6 @@ __webpack_require__.r(__webpack_exports__);
   };
 
   var old = scheduler.render_data;
-  var to_attr = scheduler.date.date_to_str("%Y/%m/%d");
-  var from_attr = scheduler.date.str_to_date("%Y/%m/%d");
 
   scheduler.render_data = function (evs) {
     if (!is_year_mode()) return old.apply(this, arguments);
@@ -25638,7 +25660,7 @@ __webpack_require__.r(__webpack_exports__);
       t.className = "dhx_year_tooltip";
       if (this.config.rtl) t.className += " dhx_tooltip_rtl";
       document.body.appendChild(t);
-      t.onclick = scheduler._click.dhx_cal_data;
+      t.addEventListener("click", scheduler._click.dhx_cal_data);
     }
 
     var evs = this.getEvents(date, this.date.add(date, 1, "day"));
@@ -25668,7 +25690,7 @@ __webpack_require__.r(__webpack_exports__);
     var src = e.target || e.srcElement;
     if (src.tagName.toLowerCase() == 'a') // fix for active links extension (it adds links to the date in the cell)
       src = src.parentNode;
-    if (scheduler._getClassName(src).indexOf("dhx_year_event") != -1) scheduler._showToolTip(from_attr(src.getAttribute("date")), scheduler.$domHelpers.getOffset(src), e, src);else scheduler._hideToolTip();
+    if (scheduler._getClassName(src).indexOf("dhx_year_event") != -1) scheduler._showToolTip(scheduler.templates.parse_date(src.getAttribute("date-year-date")), scheduler.$domHelpers.getOffset(src), e, src);else scheduler._hideToolTip();
   };
 
   scheduler._init_year_tooltip = function () {
@@ -25692,7 +25714,7 @@ __webpack_require__.r(__webpack_exports__);
   scheduler._year_marked_cells = {};
 
   scheduler._mark_year_date = function (date, event) {
-    var dateString = to_attr(date);
+    var dateString = scheduler.templates.format_date(date);
 
     var cell = this._get_year_cell(date);
 
@@ -25704,7 +25726,7 @@ __webpack_require__.r(__webpack_exports__);
 
     if (!scheduler._year_marked_cells[dateString]) {
       cell.className = "dhx_month_head dhx_year_event";
-      cell.setAttribute("date", dateString);
+      cell.setAttribute("date-year-date", dateString);
       scheduler._year_marked_cells[dateString] = cell;
     }
 
@@ -25923,13 +25945,13 @@ __webpack_require__.r(__webpack_exports__);
     var node = scheduler._get_year_el_node(node, scheduler._locate_year_month_root);
 
     if (!node) return null;
-    var date = node.getAttribute("date");
+    var date = node.getAttribute("date-year-date");
     if (!date) return null;
-    return scheduler.date.week_start(scheduler.date.month_start(from_attr(date)));
+    return scheduler.date.week_start(scheduler.date.month_start(scheduler.templates.parse_date(date)));
   };
 
   scheduler._locate_year_month_day = function (n) {
-    return scheduler._getClassName(n).indexOf("dhx_year_event") != -1 && n.hasAttribute && n.hasAttribute("date");
+    return scheduler._getClassName(n).indexOf("dhx_year_event") != -1 && n.hasAttribute && n.hasAttribute("date-year-date");
   };
 
   var locateEvent = scheduler._locate_event;
@@ -25940,8 +25962,8 @@ __webpack_require__.r(__webpack_exports__);
     if (!id) {
       var day = scheduler._get_year_el_node(node, scheduler._locate_year_month_day);
 
-      if (!day || !day.hasAttribute("date")) return null;
-      var dat = from_attr(day.getAttribute("date"));
+      if (!day || !day.hasAttribute("date-year-date")) return null;
+      var dat = scheduler.templates.parse_date(day.getAttribute("date-year-date"));
       var evs = scheduler.getEvents(dat, scheduler.date.add(dat, 1, "day"));
       if (!evs.length) return null; //can be multiple events in the cell, return any single one
 
@@ -25960,7 +25982,7 @@ __webpack_require__.r(__webpack_exports__);
   };
 
   scheduler._locate_year_month_root = function (n) {
-    return n.hasAttribute && n.hasAttribute("date");
+    return n.hasAttribute && n.hasAttribute("date-year-date");
   };
 
   scheduler._get_year_month_cell = function (node) {
@@ -25982,6 +26004,10 @@ __webpack_require__.r(__webpack_exports__);
 
     return node;
   };
+
+  scheduler.attachEvent("onDestroy", function () {
+    scheduler._hideToolTip();
+  });
 });
 
 /***/ }),
@@ -29191,11 +29217,11 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 /* harmony default export */ __webpack_exports__["default"] = (function (extensionManager) {
   var scheduler = {
-    version: "6.0.0"
+    version: "6.0.1"
   };
   Object(_core_common_errors__WEBPACK_IMPORTED_MODULE_2__["default"])(scheduler);
-  Object(_core_scheduler__WEBPACK_IMPORTED_MODULE_4__["default"])(scheduler);
   Object(_core_common__WEBPACK_IMPORTED_MODULE_5__["default"])(scheduler);
+  Object(_core_scheduler__WEBPACK_IMPORTED_MODULE_4__["default"])(scheduler);
   Object(_core_wai_aria__WEBPACK_IMPORTED_MODULE_6__["default"])(scheduler); //utils(scheduler);
 
   scheduler.utils = _core_utils_utils__WEBPACK_IMPORTED_MODULE_7__["default"];

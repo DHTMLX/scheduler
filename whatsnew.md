@@ -1,3 +1,11 @@
+### 6.0.1
+
+- Fix compatibility with Salesforce LWC
+- Fix the incorrect placement of the Tooltip that caused tooltip to be cut in some cases
+- Fix the display of columns in the Tree Timeline view
+- Disabling the show_quick_info config now stops the Quick Info from appearing after the mouse click on an event, but allows opening the popup via calling the showQuickInfo() method
+- Fix the incorrect work of the repeat_date config in some cases
+
 ### 6.0.0
 
 - This update brings some changes in the structure of the Scheduler package and behavior of functionality. Be sure to check Migration notes to be on the safe side.
