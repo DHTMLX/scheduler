@@ -995,7 +995,7 @@ export interface SchedulerConfigOptions {
 	scroll_hour: number;
 
 	/**
-	 * specifies the delimeter that will be used to separate several sections/units in the related data property of the event
+	 * specifies the delimiter that will be used to separate several sections/units in the related data property of the event
 	*/
 	section_delimiter: string;
 

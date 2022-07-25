@@ -1,3 +1,10 @@
+### 6.0.2
+
+Fix the regression in scripts for building Custom Skins
+Fix the script errors occurred on pages with enabled Content Security Policy
+Fix the incorrect work of the DataProcessor when it is initialized with the router object
+Fix the typo in the name of the DOM attribute for cells of the Year view
+
 ### 6.0.1
 
 - Fix compatibility with Salesforce LWC

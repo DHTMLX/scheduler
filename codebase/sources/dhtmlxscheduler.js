@@ -1,7 +1,7 @@
 /*!
  * @license
  * 
- * dhtmlxScheduler v.6.0.1 Standard
+ * dhtmlxScheduler v.6.0.2 Standard
  * 
  * To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
  * 
@@ -5402,9 +5402,9 @@ function extend(scheduler) {
         return ISO8601.test(datestr);
       };
 
-      var parseYMD = generateStringToDate("%Y-%m-%d %H:%i:%s", utc);
-      var parseMDY = generateStringToDate("%m/%d/%Y %H:%i:%s", utc);
-      var parseDMY = generateStringToDate("%d-%m-%Y %H:%i:%s", utc);
+      var parseYMD = stringToDateMethod("%Y-%m-%d %H:%i:%s", utc);
+      var parseMDY = stringToDateMethod("%m/%d/%Y %H:%i:%s", utc);
+      var parseDMY = stringToDateMethod("%d-%m-%Y %H:%i:%s", utc);
       return function (dateString) {
         if (!exactFormat && !scheduler.config.parse_exact_format) {
           if (dateString && dateString.getISOWeek) {
@@ -5772,8 +5772,8 @@ function extend(scheduler) {
     event_attribute: "data-event-id",
     show_errors: true
   };
-  scheduler.config.buttons_left.$inital = scheduler.config.buttons_left.join();
-  scheduler.config.buttons_right.$inital = scheduler.config.buttons_right.join();
+  scheduler.config.buttons_left.$initial = scheduler.config.buttons_left.join();
+  scheduler.config.buttons_right.$initial = scheduler.config.buttons_right.join();
   scheduler._helpers = {
     parseDate: function parseDate(date) {
       var parse = scheduler.templates.xml_date || scheduler.templates.parse_date;
@@ -6075,7 +6075,7 @@ DataProcessor.prototype = {
   },
 
   /**
-   *	@desc: set if rows should be send to server automaticaly
+   *	@desc: set if rows should be send to server automatically
    *	@param: mode - "row" - based on row selection changed, "cell" - based on cell editing finished, "off" - manual data sending
    *	@type: public
    */
@@ -6300,22 +6300,23 @@ DataProcessor.prototype = {
         self.afterUpdateCallback(sid, tid, resultState, tag);
       };
 
+      var routerMode = "event";
       var actionPromise;
 
       if (this._router instanceof Function) {
-        actionPromise = this._router("event", action, dataToSend, rowId);
+        actionPromise = this._router(routerMode, action, dataToSend, rowId);
       } else {
         switch (state) {
           case "inserted":
-            actionPromise = this._router.create(dataToSend);
+            actionPromise = this._router[routerMode].create(dataToSend);
             break;
 
           case "deleted":
-            actionPromise = this._router["delete"](rowId);
+            actionPromise = this._router[routerMode]["delete"](rowId);
             break;
 
           default:
-            actionPromise = this._router.update(dataToSend, rowId);
+            actionPromise = this._router[routerMode].update(dataToSend, rowId);
             break;
         }
       }
@@ -6726,8 +6727,8 @@ DataProcessor.prototype = {
   },
 
   /* process updating request answer
-  	if status == collision version is depricated
-  	set flag for autoupdating immidiatly
+  	if status == collision version is deprecated
+  	set flag for autoupdating immediately
   */
   afterAutoUpdate: function afterAutoUpdate(sid, action, tid, xml_node) {
     if (action == 'collision') {
@@ -6929,6 +6930,8 @@ function extend(scheduler) {
       router = config;
     } else if (config.hasOwnProperty("router")) {
       router = config.router;
+    } else if (config.hasOwnProperty("event")) {
+      router = config;
     }
 
     if (router) {
@@ -12636,7 +12639,7 @@ function extend(scheduler) {
 
   scheduler._reset_month_scale = function (b, dd, sd, rows) {
     //recalculates rows height and redraws month layout
-    var ed = scheduler.date.add(dd, 1, "month"); //trim time part for comparation reasons
+    var ed = scheduler.date.add(dd, 1, "month"); //trim time part for comparison reasons
 
     var cd = scheduler._currentDate();
 
@@ -13134,8 +13137,8 @@ function extend(scheduler) {
     if (scheduler.skin && (scheduler.skin === "classic" || scheduler.skin === "glossy")) set = 1;
 
     if (scheduler._is_material_skin()) {
-      var defaultButtonsLeft = scheduler.config.buttons_left.$inital;
-      var defaultButtonsRight = scheduler.config.buttons_right.$inital;
+      var defaultButtonsLeft = scheduler.config.buttons_left.$initial;
+      var defaultButtonsRight = scheduler.config.buttons_right.$initial;
 
       if (defaultButtonsLeft && scheduler.config.buttons_left.slice().join() == defaultButtonsLeft && defaultButtonsRight && scheduler.config.buttons_right.slice().join() == defaultButtonsRight) {
         var tmp = scheduler.config.buttons_left.slice();
@@ -15201,7 +15204,7 @@ __webpack_require__.r(__webpack_exports__);
   var is_event_short = function is_event_short(ev) {
     if (!((ev.end_date - ev.start_date) / (1000 * 60 * 60) >= 24)) {
       return true;
-    } // short event shouldn't disapear to multiday area during dnd-resize
+    } // short event shouldn't disappear to multiday area during dnd-resize
 
 
     if (scheduler._drag_mode == "resize" && scheduler._drag_id == ev.id) {
@@ -19802,7 +19805,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       for (var i = 0; i < scheduler.layers.length; i++) {
         scheduler.config['lightbox_' + scheduler.layers[i].name] = {};
         scheduler.config['lightbox_' + scheduler.layers[i].name].sections = _cloneObj(scheduler.config.lightbox.sections);
-        scheduler._layers_zindex[scheduler.layers[i].name] = scheduler.config.inital_layer_zindex || 5 + i * 3;
+        scheduler._layers_zindex[scheduler.layers[i].name] = scheduler.config.initial_layer_zindex || 5 + i * 3;
 
         if (scheduler.layers[i].url) {
           var dp = scheduler.createDataProcessor({
@@ -21388,7 +21391,7 @@ __webpack_require__.r(__webpack_exports__);
 
   scheduler.config.map_resolve_user_location = true; // if user will be promted to share his location to display it on the map
 
-  scheduler.config.map_initial_position = new google.maps.LatLng(48.724, 8.215); // inital position of the map
+  scheduler.config.map_initial_position = new google.maps.LatLng(48.724, 8.215); // initial position of the map
 
   scheduler.config.map_error_position = new google.maps.LatLng(15, 15); // this position will be displayed in case if event doesn't have corresponding coordinates
 
@@ -21397,7 +21400,7 @@ __webpack_require__.r(__webpack_exports__);
   scheduler.config.map_zoom_after_resolve = 15;
   scheduler.locale.labels.marker_geo_success = "It seems you are here.";
   scheduler.locale.labels.marker_geo_fail = "Sorry, could not get your current position using geolocation.";
-  scheduler.templates.marker_date = scheduler.date.date_to_str("%Y-%m-%d %H:%i"); // date for map's infowindow will be formated following way
+  scheduler.templates.marker_date = scheduler.date.date_to_str("%Y-%m-%d %H:%i"); // date for map's infowindow will be formatted following way
 
   scheduler.templates.marker_text = function (start, end, ev) {
     return "<div><b>" + ev.text + "</b><br/><br/>" + (ev.event_location || '') + "<br/><br/>" + scheduler.templates.marker_date(start) + " - " + scheduler.templates.marker_date(end) + "</div>";
@@ -21444,7 +21447,7 @@ __webpack_require__.r(__webpack_exports__);
     var gmap = document.createElement('div');
     gmap.className = 'dhx_map';
     gmap.id = 'dhx_gmap';
-    gmap.style.dispay = "none";
+    gmap.style.display = "none";
     var node = scheduler._obj;
     node.appendChild(gmap);
     scheduler._els.dhx_gmap = [];
@@ -21454,7 +21457,7 @@ __webpack_require__.r(__webpack_exports__);
     _setMapSize('dhx_gmap');
 
     var mapOptions = {
-      zoom: scheduler.config.map_inital_zoom || 10,
+      zoom: scheduler.config.map_initial_zoom || 10,
       center: scheduler.config.map_initial_position,
       mapTypeId: scheduler.config.map_type || google.maps.MapTypeId.ROADMAP
     };
@@ -21657,7 +21660,7 @@ __webpack_require__.r(__webpack_exports__);
         //map tab activated
         clear_map_tab();
         fill_map_tab();
-        gmap.style.display = 'block'; // need to resize block everytime window is resized
+        gmap.style.display = 'block'; // need to resize block every time window is resized
 
         _setMapSize('dhx_gmap');
 
@@ -24631,7 +24634,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
     for (var i = 0; i < stack.length; i++) {
       if (stack[i].rec_type) {
-        //deleted element of serie
+        //deleted element of series
         if (stack[i].rec_pattern != "none") this.repeat_date(stack[i], out);
       } else out.push(stack[i]);
     }
@@ -25690,7 +25693,7 @@ __webpack_require__.r(__webpack_exports__);
     var src = e.target || e.srcElement;
     if (src.tagName.toLowerCase() == 'a') // fix for active links extension (it adds links to the date in the cell)
       src = src.parentNode;
-    if (scheduler._getClassName(src).indexOf("dhx_year_event") != -1) scheduler._showToolTip(scheduler.templates.parse_date(src.getAttribute("date-year-date")), scheduler.$domHelpers.getOffset(src), e, src);else scheduler._hideToolTip();
+    if (scheduler._getClassName(src).indexOf("dhx_year_event") != -1) scheduler._showToolTip(scheduler.templates.parse_date(src.getAttribute("data-year-date")), scheduler.$domHelpers.getOffset(src), e, src);else scheduler._hideToolTip();
   };
 
   scheduler._init_year_tooltip = function () {
@@ -25726,7 +25729,8 @@ __webpack_require__.r(__webpack_exports__);
 
     if (!scheduler._year_marked_cells[dateString]) {
       cell.className = "dhx_month_head dhx_year_event";
-      cell.setAttribute("date-year-date", dateString);
+      cell.setAttribute("data-year-date", dateString);
+      cell.setAttribute("date", dateString);
       scheduler._year_marked_cells[dateString] = cell;
     }
 
@@ -25945,13 +25949,13 @@ __webpack_require__.r(__webpack_exports__);
     var node = scheduler._get_year_el_node(node, scheduler._locate_year_month_root);
 
     if (!node) return null;
-    var date = node.getAttribute("date-year-date");
+    var date = node.getAttribute("data-year-date");
     if (!date) return null;
     return scheduler.date.week_start(scheduler.date.month_start(scheduler.templates.parse_date(date)));
   };
 
   scheduler._locate_year_month_day = function (n) {
-    return scheduler._getClassName(n).indexOf("dhx_year_event") != -1 && n.hasAttribute && n.hasAttribute("date-year-date");
+    return scheduler._getClassName(n).indexOf("dhx_year_event") != -1 && n.hasAttribute && n.hasAttribute("data-year-date");
   };
 
   var locateEvent = scheduler._locate_event;
@@ -25962,8 +25966,8 @@ __webpack_require__.r(__webpack_exports__);
     if (!id) {
       var day = scheduler._get_year_el_node(node, scheduler._locate_year_month_day);
 
-      if (!day || !day.hasAttribute("date-year-date")) return null;
-      var dat = scheduler.templates.parse_date(day.getAttribute("date-year-date"));
+      if (!day || !day.hasAttribute("data-year-date")) return null;
+      var dat = scheduler.templates.parse_date(day.getAttribute("data-year-date"));
       var evs = scheduler.getEvents(dat, scheduler.date.add(dat, 1, "day"));
       if (!evs.length) return null; //can be multiple events in the cell, return any single one
 
@@ -25982,7 +25986,7 @@ __webpack_require__.r(__webpack_exports__);
   };
 
   scheduler._locate_year_month_root = function (n) {
-    return n.hasAttribute && n.hasAttribute("date-year-date");
+    return n.hasAttribute && n.hasAttribute("data-year-date");
   };
 
   scheduler._get_year_month_cell = function (node) {
@@ -29217,7 +29221,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 /* harmony default export */ __webpack_exports__["default"] = (function (extensionManager) {
   var scheduler = {
-    version: "6.0.1"
+    version: "6.0.2"
   };
   Object(_core_common_errors__WEBPACK_IMPORTED_MODULE_2__["default"])(scheduler);
   Object(_core_common__WEBPACK_IMPORTED_MODULE_5__["default"])(scheduler);
