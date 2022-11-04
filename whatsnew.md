@@ -1,3 +1,11 @@
+### 6.0.3
+
+Fix the regression in the Year view which caused incorrect date arguments for the 'onEmptyClick' event handler
+Fix work of the 'height' property of the 'time' section of the lightbox
+Fix the issue with the incorrect height of the time scale in the timeline view when the 'second_scale' was specified
+Fix the value of the new event flag in the 'onEventCancel' event arguments (the flag must have a boolean value)
+Fix the script error which happened on scroll in the Tree Timeline view when 'smart_rendering' was enabled and sections were initially loaded in the 'closed' state
+
 ### 6.0.2
 
 Fix the regression in scripts for building Custom Skins

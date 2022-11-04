@@ -1,7 +1,7 @@
 /*!
  * @license
  * 
- * dhtmlxScheduler v.6.0.2 Standard
+ * dhtmlxScheduler v.6.0.3 Standard
  * 
  * To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
  * 
@@ -8984,8 +8984,8 @@ function extend(scheduler) {
 
         var defaults = scheduler._lightbox_controls.defaults.select;
         var defaultHeight = defaults ? defaults.height : 23;
-        var height = defaultHeight || 30;
-        return "<div style='height:" + height + "px;padding-top:0px;font-size:inherit;' class='dhx_section_time'>" + html + "<span style='font-weight:normal; font-size:10pt;'> &nbsp;&ndash;&nbsp; </span>" + html + "</div>";
+        var height = (sns.height || defaultHeight || 23) + "px";
+        return "<div style='height:" + height + ";padding-top:0px;font-size:inherit;' class='dhx_section_time'>" + html + "<span style='font-weight:normal; font-size:10pt;'> &nbsp;&ndash;&nbsp; </span>" + html + "</div>";
       },
       set_value: function set_value(node, value, ev, config) {
         var cfg = scheduler.config;
@@ -9305,7 +9305,7 @@ function extend(scheduler) {
 
   scheduler.cancel_lightbox = function () {
     if (this._lightbox_id) {
-      this.callEvent("onEventCancel", [this._lightbox_id, this._new_event]);
+      this.callEvent("onEventCancel", [this._lightbox_id, !!this._new_event]);
     }
 
     this.hide_lightbox();
@@ -18051,8 +18051,16 @@ __webpack_require__.r(__webpack_exports__);
         nextIndex = view.size && view.position ? view.position : 0;
       }
 
-      nextIndex = nextIndex < 0 ? nextIndex = (view.options || view.y_unit).length - 1 : nextIndex;
+      if (nextIndex < 0) {
+        nextIndex = 0;
+      }
+
       var options = view.options || view.y_unit;
+
+      if (nextIndex >= options.length) {
+        nextIndex = options.length - 1;
+      } //nextIndex = nextIndex < 0 ? nextIndex = (view.options || view.y_unit).length -1 : nextIndex;
+
 
       if (options[nextIndex]) {
         return options[nextIndex].key;
@@ -18090,6 +18098,12 @@ __webpack_require__.r(__webpack_exports__);
       return this.getNodes()[0];
     },
     focus: function focus() {
+      if (this.section && scheduler.getView() && scheduler.getView().smart_rendering && scheduler.getView().scrollTo && !scheduler.$container.querySelector("[data-section-id=\"".concat(this.section, "\"]"))) {
+        scheduler.getView().scrollTo({
+          section: this.section
+        });
+      }
+
       scheduler.$keyboardNavigation.marker.render(this.start_date, this.end_date, this.section);
       scheduler.$keyboardNavigation.KeyNavNode.prototype.focus.apply(this);
       scheduler.$keyboardNavigation._pasteDate = this.start_date;
@@ -19129,8 +19143,12 @@ __webpack_require__.r(__webpack_exports__);
 
       var width = Math.max(1, end_pos - start_pos - 1);
       block.style.cssText = "height: " + height + "px; left: " + start_pos + "px; width: " + width + "px; top: " + top + "px;";
-      area.appendChild(block);
-      blocks.push(block);
+
+      if (area) {
+        area.appendChild(block);
+        blocks.push(block);
+      }
+
       return blocks;
     },
     renderMonthCell: function renderMonthCell(date) {
@@ -25585,29 +25603,34 @@ __webpack_require__.r(__webpack_exports__);
     return ev.text;
   };
 
-  var is_year_mode = function is_year_mode() {
+  var isYearMode = function isYearMode() {
     return scheduler._mode == "year";
   };
 
+  var getCellDate = function getCellDate(node) {
+    var day = scheduler.$domHelpers.closest(node, "[data-cell-date]");
+    if (!day || !day.hasAttribute("data-cell-date")) return null;
+    return scheduler.templates.parse_date(day.getAttribute("data-cell-date"));
+  }; // dbl click hook for scheduler._on_dbl_click
+
+
   scheduler.dblclick_dhx_month_head = function (e) {
-    if (is_year_mode()) {
-      var t = e.target || e.srcElement;
+    if (isYearMode()) {
+      var target = e.target;
 
-      var className = scheduler._getClassName(t.parentNode);
-
-      if (className.indexOf("dhx_before") != -1 || className.indexOf("dhx_after") != -1) return false;
-      var monthNode = t;
-
-      while (monthNode && !(monthNode.hasAttribute && monthNode.hasAttribute("date"))) {
-        monthNode = monthNode.parentNode;
+      if (scheduler.$domHelpers.closest(target, ".dhx_before") || scheduler.$domHelpers.closest(target, ".dhx_after")) {
+        return false;
       }
 
-      if (monthNode) {
-        var start = this._helpers.parseDate(monthNode.getAttribute("date"));
+      var date = getCellDate(target);
 
-        start.setDate(parseInt(t.innerHTML, 10));
+      if (date) {
+        var start = date;
         var end = this.date.add(start, 1, "day");
-        if (!this.config.readonly && this.config.dblclick_create) this.addEventNow(start.valueOf(), end.valueOf(), e);
+
+        if (!this.config.readonly && this.config.dblclick_create) {
+          this.addEventNow(start.valueOf(), end.valueOf(), e);
+        }
       }
     }
   };
@@ -25616,13 +25639,13 @@ __webpack_require__.r(__webpack_exports__);
 
   scheduler.changeEventId = function () {
     chid.apply(this, arguments);
-    if (is_year_mode()) this.year_view(true);
+    if (isYearMode()) this.year_view(true);
   };
 
   var old = scheduler.render_data;
 
   scheduler.render_data = function (evs) {
-    if (!is_year_mode()) return old.apply(this, arguments);
+    if (!isYearMode()) return old.apply(this, arguments);
 
     for (var i = 0; i < evs.length; i++) {
       this._year_render_event(evs[i]);
@@ -25632,7 +25655,7 @@ __webpack_require__.r(__webpack_exports__);
   var clear = scheduler.clear_view;
 
   scheduler.clear_view = function () {
-    if (!is_year_mode()) return clear.apply(this, arguments);
+    if (!isYearMode()) return clear.apply(this, arguments);
     var dates = scheduler._year_marked_cells,
         div = null;
 
@@ -25641,6 +25664,7 @@ __webpack_require__.r(__webpack_exports__);
         div = dates[date];
         div.className = "dhx_month_head";
         div.removeAttribute("date");
+        div.removeAttribute("data-year-date");
       }
     }
 
@@ -25689,7 +25713,7 @@ __webpack_require__.r(__webpack_exports__);
   };
 
   scheduler._year_view_tooltip_handler = function (e) {
-    if (!is_year_mode()) return;
+    if (!isYearMode()) return;
     var src = e.target || e.srcElement;
     if (src.tagName.toLowerCase() == 'a') // fix for active links extension (it adds links to the date in the cell)
       src = src.parentNode;
@@ -25703,15 +25727,16 @@ __webpack_require__.r(__webpack_exports__);
   };
 
   scheduler._get_year_cell = function (d) {
-    //there can be more than 1 year in view
-    //year can start not from January
-    var m = d.getMonth() + 12 * (d.getFullYear() - this._min_date.getFullYear()) - this.week_starts._month;
+    var dateString = scheduler.templates.format_date(d);
+    var cells = this.$root.querySelectorAll(".dhx_cal_data [data-cell-date=\"".concat(dateString, "\"] .dhx_month_head"));
 
-    var yearBox = this._els["dhx_cal_data"][0].childNodes[m];
-    var dayIndex = this.week_starts[m] + d.getDate() - 1;
-    var row = yearBox.querySelectorAll(".dhx_year_body tr")[Math.floor(dayIndex / 7)];
-    var cell = row.querySelectorAll("td")[dayIndex % 7];
-    return cell.querySelector(".dhx_month_head");
+    for (var i = 0; i < cells.length; i++) {
+      if (!scheduler.$domHelpers.closest(cells[i], ".dhx_after, .dhx_before")) {
+        return cells[i];
+      }
+    }
+
+    return null;
   };
 
   scheduler._year_marked_cells = {};
@@ -25728,7 +25753,8 @@ __webpack_require__.r(__webpack_exports__);
     var ev_class = this.templates.event_class(event.start_date, event.end_date, event);
 
     if (!scheduler._year_marked_cells[dateString]) {
-      cell.className = "dhx_month_head dhx_year_event";
+      cell.classList.add("dhx_year_event"); // = "dhx_month_head dhx_year_event";
+
       cell.setAttribute("data-year-date", dateString);
       cell.setAttribute("date", dateString);
       scheduler._year_marked_cells[dateString] = cell;
@@ -25852,6 +25878,7 @@ __webpack_require__.r(__webpack_exports__);
         d.className = "dhx_year_box";
         d.style.cssText = "position:absolute;";
         d.setAttribute("date", this._helpers.formatDate(sd));
+        d.setAttribute("data-month-date", this._helpers.formatDate(sd));
         d.innerHTML = "<div class='dhx_year_month'></div><div class='dhx_year_grid'><div class='dhx_year_week'>" + week_template.innerHTML + "</div><div class='dhx_year_body'></div></div>";
         var header = d.querySelector(".dhx_year_month");
         var grid = d.querySelector(".dhx_year_grid");
@@ -25900,62 +25927,15 @@ __webpack_require__.r(__webpack_exports__);
   var getActionData = scheduler.getActionData;
 
   scheduler.getActionData = function (n_ev) {
-    if (!is_year_mode()) return getActionData.apply(scheduler, arguments);
-    var trg = n_ev.target;
-
-    var date = scheduler._get_year_month_date(trg);
-
-    var day = scheduler._get_year_month_cell(trg);
-
-    var pos = scheduler._get_year_day_indexes(day);
-
-    if (pos && date) {
-      date = scheduler.date.add(date, pos.week, "week");
-      date = scheduler.date.add(date, pos.day, "day");
-    } else {
-      date = null;
+    if (!isYearMode()) {
+      return getActionData.apply(scheduler, arguments);
     }
 
+    var date = getCellDate(n_ev.target);
     return {
       date: date,
       section: null
     };
-  };
-
-  scheduler._get_year_day_indexes = function (targetCell) {
-    var month = scheduler._get_year_el_node(targetCell, this._locate_year_month_table);
-
-    if (!month) return null;
-    var week = 0,
-        day = 0;
-
-    for (var week = 0, weeks = month.rows.length; week < weeks; week++) {
-      var w = month.rows[week].getElementsByTagName("td");
-
-      for (var day = 0, days = w.length; day < days; day++) {
-        if (w[day] == targetCell) break;
-      }
-
-      if (day < days) break;
-    }
-
-    if (week < weeks) return {
-      day: day,
-      week: week
-    };else return null;
-  };
-
-  scheduler._get_year_month_date = function (node) {
-    var node = scheduler._get_year_el_node(node, scheduler._locate_year_month_root);
-
-    if (!node) return null;
-    var date = node.getAttribute("data-year-date");
-    if (!date) return null;
-    return scheduler.date.week_start(scheduler.date.month_start(scheduler.templates.parse_date(date)));
-  };
-
-  scheduler._locate_year_month_day = function (n) {
-    return scheduler._getClassName(n).indexOf("dhx_year_event") != -1 && n.hasAttribute && n.hasAttribute("data-year-date");
   };
 
   var locateEvent = scheduler._locate_event;
@@ -25964,49 +25944,15 @@ __webpack_require__.r(__webpack_exports__);
     var id = locateEvent.apply(scheduler, arguments);
 
     if (!id) {
-      var day = scheduler._get_year_el_node(node, scheduler._locate_year_month_day);
-
-      if (!day || !day.hasAttribute("data-year-date")) return null;
-      var dat = scheduler.templates.parse_date(day.getAttribute("data-year-date"));
-      var evs = scheduler.getEvents(dat, scheduler.date.add(dat, 1, "day"));
+      var date = getCellDate(node);
+      if (!date) return null;
+      var evs = scheduler.getEvents(date, scheduler.date.add(date, 1, "day"));
       if (!evs.length) return null; //can be multiple events in the cell, return any single one
 
       id = evs[0].id;
     }
 
     return id;
-  };
-
-  scheduler._locate_year_month_cell = function (n) {
-    return n.nodeName.toLowerCase() == "td";
-  };
-
-  scheduler._locate_year_month_table = function (n) {
-    return n.nodeName.toLowerCase() == "table";
-  };
-
-  scheduler._locate_year_month_root = function (n) {
-    return n.hasAttribute && n.hasAttribute("data-year-date");
-  };
-
-  scheduler._get_year_month_cell = function (node) {
-    return this._get_year_el_node(node, this._locate_year_month_cell);
-  };
-
-  scheduler._get_year_month_table = function (node) {
-    return this._get_year_el_node(node, this._locate_year_month_table);
-  };
-
-  scheduler._get_year_month_root = function (node) {
-    return this._get_year_el_node(this._get_year_month_table(node), this._locate_year_month_root);
-  };
-
-  scheduler._get_year_el_node = function (node, condition) {
-    while (node && !condition(node)) {
-      node = node.parentNode;
-    }
-
-    return node;
   };
 
   scheduler.attachEvent("onDestroy", function () {
@@ -29221,7 +29167,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
 /* harmony default export */ __webpack_exports__["default"] = (function (extensionManager) {
   var scheduler = {
-    version: "6.0.2"
+    version: "6.0.3"
   };
   Object(_core_common_errors__WEBPACK_IMPORTED_MODULE_2__["default"])(scheduler);
   Object(_core_common__WEBPACK_IMPORTED_MODULE_5__["default"])(scheduler);
