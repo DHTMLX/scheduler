@@ -548,7 +548,7 @@ div.icon_delete {
   white-space: nowrap;
   display: flex;
   flex-direction: row;
-  justify-content: start;
+  justify-content: flex-start;
 }
 .dhx_cal_ltext.dhx_cal_template {
   position: relative;
