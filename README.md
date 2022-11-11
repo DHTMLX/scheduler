@@ -4,15 +4,15 @@
 [![npm: v.6.0.3](https://img.shields.io/badge/npm-v.6.0.3-blue.svg)](https://www.npmjs.com/package/dhtmlx-scheduler)
 [![License: GPL v2](https://img.shields.io/badge/license-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
-[dhtmlxScheduler](https://dhtmlx.com/docs/products/dhtmlxScheduler) is a JavaScript event calendar that allows you to add a Google-like scheduler to your web app or website.
+[dhtmlxScheduler](https://dhtmlx.com/docs/products/dhtmlxScheduler) is a JavaScript library that allows you to add a Google-like scheduler to your web app or website.
 
 Intuitive drag-and-drop interface allows the end users to quickly manage events and appointments in different views: Day, Week, Month, Year, Agenda, Timeline, etc.
 
-Very lightweight, highly customizable, and fast, dhtmlxScheduler provides a quick way to add an Ajax-based event calendar on a web page.
+Feature-rich, highly customizable, and performant, dhtmlxScheduler provides a quick way to add an Ajax-based scheduling calendar on a web page.
 
-![DHTMLX Scheduler Demo](https://docs.dhtmlx.com/scheduler/media/init_scheduler_front.png)
+![DHTMLX Scheduler Demo](https://github.com/plazarev/media/blob/master/javascript-scheduler-dhtmlx.png?raw=true)
 
-[See more samples >](https://docs.dhtmlx.com/scheduler/samples/index.html)
+==> [See more samples](https://docs.dhtmlx.com/scheduler/samples/index.html)
 
 ## Getting started ##
 
@@ -55,7 +55,7 @@ scheduler.parse([
 
 ==> [Check the live demo](https://snippet.dhtmlx.com/5/71834aa3b)
 
-### Complete guides ###
+## Complete guides ##
 
 - [Vue.js](https://dhtmlx.com/blog/use-dhtmlx-scheduler-vue-js-framework-demo/)
 - [Angular](https://dhtmlx.com/blog/angular-dhtmlxscheduler-tutorial/)
@@ -69,15 +69,13 @@ scheduler.parse([
 	- [Slim framework](https://docs.dhtmlx.com/scheduler/howtostart_php_slim4.html)
 - [Ruby on Rails](https://docs.dhtmlx.com/scheduler/howtostart_ruby.html)
 
-### All tutorials ###
-
-[https://docs.dhtmlx.com/scheduler/howtostart_guides.html](https://docs.dhtmlx.com/scheduler/howtostart_guides.html)
+==> [Check all tutorials](https://docs.dhtmlx.com/scheduler/howtostart_guides.html)
 
 ## Features ##
 
 - Responsive design and full support for touch screens
 
-- Support for all modern browsers: Google Chrome, Internet Explorer (11+), Safari, Firefox and MS Edge
+- Support for all modern browsers: Google Chrome, Safari, Firefox and MS Edge
 
 - Configurable options - color shapes, time scales, custom form for recurring events, 25 languages, and RTL support
 
@@ -111,4 +109,5 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
 ## Useful links ##
 
 - [Online  documentation](https://docs.dhtmlx.com/scheduler/)
+- [DHTMLX Scheduler product page](https://dhtmlx.com/docs/products/dhtmlxScheduler/)
 - [Support forum](https://forum.dhtmlx.com/c/scheduler-all/scheduler)
