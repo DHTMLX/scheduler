@@ -6,7 +6,7 @@
 
 [dhtmlxScheduler](https://dhtmlx.com/docs/products/dhtmlxScheduler) is a JavaScript library that allows you to add a Google-like scheduler to your web app or website.
 
-Intuitive drag-and-drop interface allows the end users to quickly manage events and appointments in different views: Day, Week, Month, Year, Agenda, Timeline, etc.
+Intuitive drag-and-drop interface allows the end users to quickly manage events and appointments in 10 different views, including Day, Week, Month, Year, Agenda, Timeline, etc.
 
 Feature-rich, highly customizable, and performant, dhtmlxScheduler provides a quick way to add an Ajax-based scheduling calendar on a web page.
 
@@ -87,15 +87,15 @@ scheduler.parse([
 
 ## Follow us ##
 
-Star our GitHub repo
+Star our GitHub repo :star:
 
-Take a [survey](https://docs.google.com/forms/d/e/1FAIpQLSee5YV4WBfZ17RJ-H1TpkBYYcXsZTr0xqNpOrhGrCLiaQeOJQ/viewform) to help us understand your needs
+Take a [survey](https://docs.google.com/forms/d/e/1FAIpQLSee5YV4WBfZ17RJ-H1TpkBYYcXsZTr0xqNpOrhGrCLiaQeOJQ/viewform) to help us understand your needs :memo:
 
-Read us on [Medium](https://medium.com/@dhtmlx)
+Read us on [Medium](https://medium.com/@dhtmlx) :newspaper:
 
-Follow us on [Twitter](https://twitter.com/dhtmlx)
+Follow us on [Twitter](https://twitter.com/dhtmlx) :bird: 
 
-Like our page on [Facebook](https://www.facebook.com/dhtmlx/)
+Like our page on [Facebook](https://www.facebook.com/dhtmlx/) :+1:
 
 ## License ##
 
@@ -108,6 +108,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
 
 ## Useful links ##
 
-- [Online  documentation](https://docs.dhtmlx.com/scheduler/)
+- [Documentation](https://docs.dhtmlx.com/scheduler/)
+- [Online samples](https://docs.dhtmlx.com/scheduler/samples/index.html)
 - [DHTMLX Scheduler product page](https://dhtmlx.com/docs/products/dhtmlxScheduler/)
 - [Support forum](https://forum.dhtmlx.com/c/scheduler-all/scheduler)
