@@ -6,9 +6,7 @@
 
 [dhtmlxScheduler](https://dhtmlx.com/docs/products/dhtmlxScheduler) is a JavaScript library that allows you to add a Google-like scheduler to your web app or website.
 
-Intuitive drag-and-drop interface allows the end users to quickly manage events and appointments in 10 different views, including Day, Week, Month, Year, Agenda, Timeline, etc.
-
-Feature-rich, highly customizable, and performant, dhtmlxScheduler provides a quick way to add an Ajax-based scheduling calendar on a web page.
+Intuitive drag-and-drop interface allows end users to quickly manage events and appointments in 10 different views, including Day, Week, Month, Year, Agenda, Timeline, etc. The Scheduler also supports integration with Google Maps so users can assign a location to the particular calendar events. Moreover, they can create recurring and multiday events.
 
 ![DHTMLX Scheduler Demo](https://github.com/plazarev/media/blob/master/javascript-scheduler-dhtmlx.png?raw=true)
 
@@ -82,6 +80,8 @@ scheduler.parse([
 ![RTL support](https://dhtmlx.com/blog/wp-content/uploads/2019/09/Scheduler-RTL-views.gif)
 
 - Export service to XML, iCal, JSON, PDF, PNG, MS Project
+
+- Dynamic loading
 
 - PHP, ASP.NET, Java, CF [connectors](https://dhtmlx.com/docs/products/dhtmlxConnector/)
 
