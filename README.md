@@ -1,10 +1,10 @@
-# dhtmlxScheduler #
+# DHTMLX Scheduler #
 
 [![dhtmlx.com](https://img.shields.io/badge/made%20by-DHTMLX-blue)](https://dhtmlx.com/)
 [![npm: v.6.0.3](https://img.shields.io/badge/npm-v.6.0.3-blue.svg)](https://www.npmjs.com/package/dhtmlx-scheduler)
 [![License: GPL v2](https://img.shields.io/badge/license-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
-[dhtmlxScheduler](https://dhtmlx.com/docs/products/dhtmlxScheduler) is a JavaScript library that allows you to add a Google-like scheduler to your web app or website.
+[DHTMLX Scheduler](https://dhtmlx.com/docs/products/dhtmlxScheduler) is a JavaScript library that allows you to add a Google-like scheduler to your web app or website.
 
 Intuitive drag-and-drop interface allows end users to quickly manage events and appointments in 10 different views, including Day, Week, Month, Year, Agenda, Timeline, etc. The Scheduler also supports integration with Google Maps so users can assign a location to the particular calendar events. Moreover, they can create recurring and multiday events.
 
@@ -85,6 +85,24 @@ scheduler.parse([
 
 - PHP, ASP.NET, Java, CF [connectors](https://dhtmlx.com/docs/products/dhtmlxConnector/)
 
+## License ##
+
+dhtmlxScheduler v.6.0.3 Standard
+
+To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Individual, Commercial, Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at info@dhtmlx.com
+
+(c) XB Software
+
+## Useful links ##
+
+- [Documentation](https://docs.dhtmlx.com/scheduler/)
+- [Online samples](https://docs.dhtmlx.com/scheduler/samples/index.html)
+- [Video tutorials](https://www.youtube.com/playlist?list=PLKS_XdyIGP4M1Jtg1qyjdJtCsqU1bqGsc)
+- [DHTMLX Scheduler product page](https://dhtmlx.com/docs/products/dhtmlxScheduler/)
+- [List of available integrations](https://dhtmlx.com/docs/products/integrations/)
+- [Export services](https://dhtmlx.com/docs/products/dhtmlxScheduler/export.shtml)
+- [Support forum](https://forum.dhtmlx.com/c/scheduler-all/scheduler)
+
 ## Follow us ##
 
 Star our GitHub repo :star:
@@ -96,19 +114,3 @@ Read us on [Medium](https://medium.com/@dhtmlx) :newspaper:
 Follow us on [Twitter](https://twitter.com/dhtmlx) :bird: 
 
 Like our page on [Facebook](https://www.facebook.com/dhtmlx/) :+1:
-
-## License ##
-
-dhtmlxScheduler v.6.0.3 Standard
-
-To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
-
-(c) XB Software Ltd.
-
-
-## Useful links ##
-
-- [Documentation](https://docs.dhtmlx.com/scheduler/)
-- [Online samples](https://docs.dhtmlx.com/scheduler/samples/index.html)
-- [DHTMLX Scheduler product page](https://dhtmlx.com/docs/products/dhtmlxScheduler/)
-- [Support forum](https://forum.dhtmlx.com/c/scheduler-all/scheduler)
