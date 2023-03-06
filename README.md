@@ -89,7 +89,7 @@ scheduler.parse([
 
 dhtmlxScheduler v.6.0.3 Standard
 
-To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at info@dhtmlx.com
+To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Individual, Commercial, Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at info@dhtmlx.com
 
 (c) XB Software
 
