@@ -1,3 +1,11 @@
+### 6.0.4
+
+Fix the incorrect work of the dataProcessor when an instance of the Recurring series is edited.
+Fix the issue that caused Recurring series to lose custom properties assigned to them.
+Fix the script error that happens after scheduler.destructor() call when the container_autoresize extension is enabled.
+Fix the regression in the Timeline view that prevented autoscroll during event drag and drop.
+The attached onContextMenu event handler now prevents the default context automatically.
+
 ### 6.0.3
 
 Fix the regression in the Year view which caused incorrect date arguments for the 'onEmptyClick' event handler
