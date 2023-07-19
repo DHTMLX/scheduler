@@ -2120,6 +2120,63 @@ export interface SchedulerStatic {
 	 * @param view optional, (optional) the view name
 	*/
 	updateView(date?: Date, view?: string): void;
+
+
+   /**
+   * A key-value mapping of string keys to Scheduler form blocks.
+   * The keys represent the names of the custom lightbox controls.
+   * The values are objects that implement the SchedulerFormBlock interface.
+   *
+   * @type {Object.<string, SchedulerFormBlock>}
+   */
+   [key: string]: SchedulerFormBlock
+}
+
+/**
+ * Represents a custom lightbox control form block, providing functions to render, set values, get values, and focus.
+ * @interface SchedulerFormBlock
+ */
+interface SchedulerFormBlock {
+	/**
+	 * Renders the form block based on the provided configuration.
+	 * @function
+	 * @name SchedulerFormBlock#render
+	 * @param {any} config - The configuration object for the custom lightbox control.
+	 * @returns {string} Returns the HTML string representing the rendered the custom control.
+	 */
+	render: (config: any) => string;
+  
+	/**
+	 * Sets the value of the custom lightbox control.
+	 * @function
+	 * @name SchedulerFormBlock#set_value
+	 * @param {HTMLElement} node - HTML object related to HTML defined above.
+	 * @param {*} value - value defined by map_to property.
+	 * @param {Event} ev - The event object.
+	 * @param {any} config - Section configuration object.
+	 * @returns {void}
+	 */
+	set_value: (node: HTMLElement, value: any, ev: Event, config: any) => void;
+  
+	/**
+	 * Gets the value of the custom control.
+	 * @function
+	 * @name SchedulerFormBlock#get_value
+	 * @param {HTMLElement} node - HTML object related to HTML defined above.
+	 * @param {Event} ev - The event object.
+	 * @param {any} config - Section configuration object.
+	 * @returns {*} Returns the value of the custom lightbox control.
+	 */
+	get_value: (node: HTMLElement, ev: Event, config: any) => any;
+  
+	/**
+	 * Focuses on the custom lightbox control.
+	 * @function
+	 * @name SchedulerFormBlock#focus
+	 * @param {HTMLElement} node - HTML object related to HTML defined above.
+	 * @returns {void}
+	 */
+	focus: (node: HTMLElement) => void;
 }
 
 export declare var scheduler: SchedulerStatic;
