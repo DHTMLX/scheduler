@@ -1,3 +1,9 @@
+### 6.0.5
+
+Fix the issue where the lightbox was not functioning in SalesForce LWC
+Fix for the container_autoresize issue that occurred with ignore_week when the week started on a hidden day
+Updated type definitions to include scheduler.form_blocks
+
 ### 6.0.4
 
 Fix the incorrect work of the dataProcessor when an instance of the Recurring series is edited.

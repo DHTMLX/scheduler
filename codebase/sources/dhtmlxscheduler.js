@@ -1,7 +1,7 @@
 /*!
  * @license
  * 
- * dhtmlxScheduler v.6.0.4 Standard
+ * dhtmlxScheduler v.6.0.5 Standard
  * 
  * To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
  * 
@@ -7526,12 +7526,24 @@ function extend(scheduler) {
       }
     }
   };
+
+  // GS-2214. Attaching the lightbox to the BODY element is not considered secure.
+  // Attach it to Scheduler container for Salesforce and other secure environments
+  function getLightboxRoot() {
+    var cspEnvironment = scheduler.config.csp === true;
+    var salesforceEnvironment = !!window["Sfdc"] || !!window["$A"] || window["Aura"] || '$shadowResolver$' in document.body;
+    if (cspEnvironment || salesforceEnvironment) {
+      return scheduler.$root;
+    } else {
+      return document.body;
+    }
+  }
   scheduler._setLbPosition = function (box) {
     if (!box) {
       return;
     }
-    var scrollTop = window.pageYOffset || document.body.scrollTop || document.documentElement.scrollTop;
-    var scrollLeft = window.pageXOffset || document.body.scrollLeft || document.documentElement.scrollLeft;
+    var scrollTop = window.pageYOffset || getLightboxRoot().scrollTop || document.documentElement.scrollTop;
+    var scrollLeft = window.pageXOffset || getLightboxRoot().scrollLeft || document.documentElement.scrollLeft;
     var viewHeight = window.innerHeight || document.documentElement.clientHeight;
     if (scrollTop)
       // if vertical scroll on window
@@ -7539,11 +7551,11 @@ function extend(scheduler) {
       // vertical scroll on body
       box.style.top = Math.round(Math.max((viewHeight - box.offsetHeight) / 2, 0) + 9) + "px"; // +9 for compatibility with auto tests
     // not quite accurate but used for compatibility reasons
-    if (document.documentElement.scrollWidth > document.body.offsetWidth)
+    if (document.documentElement.scrollWidth > getLightboxRoot().offsetWidth)
       // if horizontal scroll on the window
-      box.style.left = Math.round(scrollLeft + (document.body.offsetWidth - box.offsetWidth) / 2) + "px";else
+      box.style.left = Math.round(scrollLeft + (getLightboxRoot().offsetWidth - box.offsetWidth) / 2) + "px";else
       // horizontal scroll on the body
-      box.style.left = Math.round((document.body.offsetWidth - box.offsetWidth) / 2) + "px";
+      box.style.left = Math.round((getLightboxRoot().offsetWidth - box.offsetWidth) / 2) + "px";
   };
   scheduler.showCover = function (box) {
     if (box) {
@@ -7552,7 +7564,7 @@ function extend(scheduler) {
     }
     if (scheduler.config.responsive_lightbox) {
       document.documentElement.classList.add("dhx_cal_overflow_container");
-      document.body.classList.add("dhx_cal_overflow_container");
+      getLightboxRoot().classList.add("dhx_cal_overflow_container");
     }
     this.show_cover();
   };
@@ -7631,7 +7643,7 @@ function extend(scheduler) {
     this.hide_cover();
     if (scheduler.config.responsive_lightbox) {
       document.documentElement.classList.remove("dhx_cal_overflow_container");
-      document.body.classList.remove("dhx_cal_overflow_container");
+      getLightboxRoot().classList.remove("dhx_cal_overflow_container");
     }
   };
   scheduler.hide_cover = function () {
@@ -7644,7 +7656,7 @@ function extend(scheduler) {
     }
     this._cover = document.createElement("div");
     this._cover.className = "dhx_cal_cover";
-    document.body.appendChild(this._cover);
+    getLightboxRoot().appendChild(this._cover);
   };
   scheduler.save_lightbox = function () {
     var data = this._lightbox_out({}, this._lame_copy(this.getEvent(this._lightbox_id)));
@@ -7778,14 +7790,14 @@ function extend(scheduler) {
   };
 
   scheduler._init_dnd_events = function () {
-    scheduler.event(document.body, "mousemove", scheduler._move_while_dnd);
-    scheduler.event(document.body, "mouseup", scheduler._finish_dnd);
+    scheduler.event(getLightboxRoot(), "mousemove", scheduler._move_while_dnd);
+    scheduler.event(getLightboxRoot(), "mouseup", scheduler._finish_dnd);
     scheduler._init_dnd_events = function () {};
   };
   scheduler._move_while_dnd = function (e) {
     if (scheduler._dnd_start_lb) {
       if (!document.dhx_unselectable) {
-        document.body.className += " dhx_unselectable";
+        getLightboxRoot().classList.add("dhx_unselectable");
         document.dhx_unselectable = true;
       }
       var lb = scheduler.getLightbox();
@@ -7802,7 +7814,7 @@ function extend(scheduler) {
   scheduler._finish_dnd = function () {
     if (scheduler._lb_start) {
       scheduler._lb_start = scheduler._dnd_start_lb = false;
-      document.body.className = document.body.className.replace(" dhx_unselectable", "");
+      getLightboxRoot().classList.remove("dhx_unselectable");
       document.dhx_unselectable = false;
     }
   };
@@ -7841,7 +7853,7 @@ function extend(scheduler) {
         scheduler._init_dnd_events();
       }
       this._waiAria.lightboxAttr(d);
-      document.body.insertBefore(d, document.body.firstChild);
+      getLightboxRoot().insertBefore(d, getLightboxRoot().firstChild);
       this._lightbox = d;
       var sns = this.config.lightbox.sections;
       html = "";
@@ -10548,31 +10560,34 @@ function extend(scheduler) {
   };
 
   //non-linear scales
-  scheduler._get_real_event_length = function (sd, fd, obj) {
-    var ev_length = fd - sd;
-    var hours = obj._start_correction + obj._end_correction || 0;
+  scheduler._get_real_event_length = function (startDate, endDate, config) {
+    // config may be a timeline view or a configuration object
+    var eventLength = endDate - startDate;
+
+    // excludedDuration - duration between [00:00, first_hour] and [last_hour, 23:59]
+    var excludedDuration = config._start_correction + config._end_correction || 0;
     var ignore = this["ignore_" + this._mode];
-    var start_slot = 0,
-      end_slot;
-    if (obj.render) {
-      start_slot = this._get_date_index(obj, sd);
-      end_slot = this._get_date_index(obj, fd);
+    var startColumnIndex = 0,
+      endColumnIndex;
+    if (config.render) {
+      startColumnIndex = this._get_date_index(config, startDate);
+      endColumnIndex = this._get_date_index(config, endDate);
     } else {
-      end_slot = Math.round(ev_length / 60 / 60 / 1000 / 24);
+      endColumnIndex = Math.round(eventLength / 60 / 60 / 1000 / 24);
     }
     var last_column = true;
-    while (start_slot < end_slot) {
-      var check = scheduler.date.add(fd, -obj.x_step, obj.x_unit);
-      if (ignore && ignore(fd) && (!last_column || last_column && ignore(check))) {
-        ev_length -= fd - check;
+    while (startColumnIndex < endColumnIndex) {
+      var check = scheduler.date.add(endDate, -config.x_step, config.x_unit);
+      if (ignore && ignore(endDate) && (!last_column || last_column && ignore(check))) {
+        eventLength -= endDate - check;
       } else {
+        eventLength -= excludedDuration;
         last_column = false;
-        ev_length -= hours;
       }
-      fd = check;
-      end_slot--;
+      endDate = check;
+      endColumnIndex--;
     }
-    return ev_length;
+    return eventLength;
   };
   scheduler._get_fictional_event_length = function (end_date, ev_length, obj, back) {
     var sd = new Date(end_date);
@@ -13081,7 +13096,13 @@ __webpack_require__.r(__webpack_exports__);
         case "dhx_cal_data":
           var mode = scheduler.getState().mode;
           if (checked_div.childNodes[1] && mode != "month") {
-            height = checked_div.childNodes[1].offsetHeight;
+            var maxHeight = 0;
+            for (var _i = 0; _i < checked_div.childNodes.length; _i++) {
+              if (checked_div.childNodes[_i].offsetHeight > maxHeight) {
+                maxHeight = checked_div.childNodes[_i].offsetHeight;
+              }
+            }
+            height = maxHeight;
           } else {
             height = Math.max(checked_div.offsetHeight - 1, checked_div.scrollHeight);
           }
@@ -24781,7 +24802,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
 
 /* harmony default export */ __webpack_exports__["default"] = (function (extensionManager) {
   var scheduler = {
-    version: "6.0.4"
+    version: "6.0.5"
   };
   Object(_core_common_errors__WEBPACK_IMPORTED_MODULE_2__["default"])(scheduler);
   Object(_core_common__WEBPACK_IMPORTED_MODULE_5__["default"])(scheduler);

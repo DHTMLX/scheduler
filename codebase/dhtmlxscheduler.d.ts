@@ -5,7 +5,90 @@ type SchedulerCallback = (...args: any[]) => any;
 type SchedulerFilterCallback = { (id: string | number, event: any): boolean }
 
 
-type SchedulerEventName = "onAfterEventDisplay"|"onAfterFolderToggle"|"onAfterLightbox"|"onAfterQuickInfo"|"onAfterSchedulerResize"|"onBeforeCollapse"|"onBeforeDrag"|"onBeforeEventChanged"|"onBeforeEventCreated"|"onBeforeEventDelete"|"onBeforeEventDisplay"|"onBeforeEventDragIn"|"onBeforeEventDragOut"|"onBeforeEventPasted"|"onBeforeExpand"|"onBeforeExternalDragIn"|"onBeforeFolderToggle"|"onBeforeLightbox"|"onBeforeParse"|"onBeforeTodayDisplayed"|"onBeforeTooltip"|"onBeforeViewChange"|"onCellClick"|"onCellDblClick"|"onClearAll"|"onClick"|"onCollapse"|"onConfirmedBeforeEventDelete"|"onContextMenu"|"onDataRender"|"onDblClick"|"onDestroy"|"onDragEnd"|"onEmptyClick"|"onError"|"onEventAdded"|"onEventCancel"|"onEventChanged"|"onEventCollision"|"onEventCopied"|"onEventCreated"|"onEventCut"|"onEventDeleted"|"onEventDrag"|"onEventDragIn"|"onEventDragOut"|"onEventDropOut"|"onEventIdChange"|"onEventLoading"|"onEventPasted"|"onEventSave"|"onEventSelected"|"onEventUnselected"|"onExpand"|"onExternalDragIn"|"onLightbox"|"onLightboxButton"|"onLimitViolation"|"onLoadEnd"|"onLoadError"|"onLoadStart"|"onLocationError"|"onMouseDown"|"onMouseMove"|"onOptionsLoad"|"onOptionsLoadFinal"|"onOptionsLoadStart"|"onParse"|"onQuickInfo"|"onSaveError"|"onScaleAdd"|"onScaleDblClick"|"onSchedulerReady"|"onSchedulerResize"|"onTemplatesReady"|"onTimelineCreated"|"onViewChange"|"onViewMoreClick"|"onXLE"|"onXLS"|"onXScaleClick"|"onXScaleDblClick"|"onYScaleClick"|"onYScaleDblClick";
+type SchedulerEventName = "onAfterEventDisplay" |
+	"onAfterFolderToggle" |
+	"onAfterLightbox" |
+	"onAfterQuickInfo" |
+	"onAfterSchedulerResize" |
+	"onBeforeCollapse" |
+	"onBeforeDrag" |
+	"onBeforeEventChanged" |
+	"onBeforeEventCreated" |
+	"onBeforeEventDelete" |
+	"onBeforeEventDisplay" |
+	"onBeforeEventDragIn" |
+	"onBeforeEventDragOut" |
+	"onBeforeEventPasted" |
+	"onBeforeExpand" |
+	"onBeforeExternalDragIn" |
+	"onBeforeFolderToggle" |
+	"onBeforeLightbox" |
+	"onBeforeParse" |
+	"onBeforeTodayDisplayed" |
+	"onBeforeTooltip" |
+	"onBeforeViewChange" |
+	"onCellClick" |
+	"onCellDblClick" |
+	"onClearAll" |
+	"onClick" |
+	"onCollapse" |
+	"onConfirmedBeforeEventDelete" |
+	"onContextMenu" |
+	"onDataRender" |
+	"onDblClick" |
+	"onDestroy" |
+	"onDragEnd" |
+	"onEmptyClick" |
+	"onError" |
+	"onEventAdded" |
+	"onEventCancel" |
+	"onEventChanged" |
+	"onEventCollision" |
+	"onEventCopied" |
+	"onEventCreated" |
+	"onEventCut" |
+	"onEventDeleted" |
+	"onEventDrag" |
+	"onEventDragIn" |
+	"onEventDragOut" |
+	"onEventDropOut" |
+	"onEventIdChange" |
+	"onEventLoading" |
+	"onEventPasted" |
+	"onEventSave" |
+	"onEventSelected" |
+	"onEventUnselected" |
+	"onExpand" |
+	"onExternalDragIn" |
+	"onLightbox" |
+	"onLightboxButton" |
+	"onLimitViolation" |
+	"onLoadEnd" |
+	"onLoadError" |
+	"onLoadStart" |
+	"onLocationError" |
+	"onMouseDown" |
+	"onMouseMove" |
+	"onOptionsLoad" |
+	"onOptionsLoadFinal" |
+	"onOptionsLoadStart" |
+	"onParse" |
+	"onQuickInfo" |
+	"onSaveError" |
+	"onScaleAdd" |
+	"onScaleDblClick" |
+	"onSchedulerReady" |
+	"onSchedulerResize" |
+	"onTemplatesReady" |
+	"onTimelineCreated" |
+	"onViewChange" |
+	"onViewMoreClick" |
+	"onXLE" |
+	"onXLS" |
+	"onXScaleClick" |
+	"onXScaleDblClick" |
+	"onYScaleClick" |
+	"onYScaleDblClick";
 
 
 export interface SchedulerTemplates {
@@ -359,6 +442,13 @@ export interface SchedulerTemplates {
 	grid_date(start: Date, end: Date): string;
 
 	/**
+	 * specifies the text in the columns
+	 * @param field_name the column's id
+	 * @param event the event object
+	*/
+	grid_field(field_name: string, event: any): string;
+
+	/**
 	 * specifies the format of dates in columns with id='date'
 	 * @param start the date when an event is scheduled to begin
 	 * @param end the date when an event is scheduled to be completed
@@ -373,11 +463,12 @@ export interface SchedulerTemplates {
 	grid_single_date(date: Date): string;
 
 	/**
-	 * specifies the text in the columns
-	 * @param field_name the column's id
-	 * @param event the event object
+	 * specifies the CSS class that will be applied to a cell of the view
+	 * @param evs an array of objects of events contained in a cell (defined only in the 'cell' mode)
+	 * @param date the date of a column
+	 * @param section the section object
 	*/
-	grid_field(field_name: string, event: any): string;
+	timeline_cell_class(evs: any[], date: Date, section: any): string;
 
 	/**
 	 * specifies the number of scheduled events in a cell of the view
@@ -388,32 +479,24 @@ export interface SchedulerTemplates {
 	timeline_cell_value(evs: any[], date: Date, section: any): string;
 
 	/**
-	 * specifies the CSS class that will be applied to a cell of the view
-	 * @param evs an array of objects of events contained in a cell (defined only in the 'cell' mode)
-	 * @param date the date of a column
+	 * specifies the date in the header of the view
+	 * @param date1 the date when an event is scheduled to begin
+	 * @param date2 the date when an event is scheduled to be completed
+	*/
+	timeline_date(date1: Date, date2: Date): string;
+
+	/**
+	 * specifies the CSS class that will be applied to a row of the Timeline view
 	 * @param section the section object
+	 * @param timeline the timeline object
 	*/
-	timeline_cell_class(evs: any[], date: Date, section: any): string;
+	timeline_row_class(section: any, timeline: any): string;
 
 	/**
-	 * specifies the name of a CSS class that will be applied to items of the X-Axis
+	 * specifies items of the X-Axis
 	 * @param date the date which needs formatting
 	*/
-	timeline_scalex_class(date: Date): string;
-
-	/**
-	 * specifies the name of a CSS class that will be applied to items of the second X-Axis
-	 * @param date the date which needs formatting
-	*/
-	timeline_second_scalex_class(date: Date): string;
-
-	/**
-	 * specifies the name of a CSS class that will be applied to items of the Y-Axis
-	 * @param key the section's id
-	 * @param label the section's label
-	 * @param section the section object that contains the 'key' and 'label' properties
-	*/
-	timeline_scaley_class(key: string, label: string, section: any): string;
+	timeline_scale_date(date: Date): string;
 
 	/**
 	 * specifies items of the Y-Axis
@@ -424,31 +507,38 @@ export interface SchedulerTemplates {
 	timeline_scale_label(key: string, label: string, section: any): string;
 
 	/**
-	 * specifies the tooltip over a day cell containing some scheduled event(s)
-	 * @param start the date when an event is scheduled to begin
-	 * @param end the date when an event is scheduled to be completed
-	 * @param event the event object
-	*/
-	timeline_tooltip(start: Date, end: Date, event: any): string;
-
-	/**
-	 * specifies the date in the header of the view
-	 * @param date1 the date when an event is scheduled to begin
-	 * @param date2 the date when an event is scheduled to be completed
-	*/
-	timeline_date(date1: Date, date2: Date): string;
-
-	/**
-	 * specifies items of the X-Axis
+	 * specifies the name of a CSS class that will be applied to items of the X-Axis
 	 * @param date the date which needs formatting
 	*/
-	timeline_scale_date(date: Date): string;
+	timeline_scalex_class(date: Date): string;
+
+	/**
+	 * specifies the name of a CSS class that will be applied to items of the Y-Axis
+	 * @param key the section's id
+	 * @param label the section's label
+	 * @param section the section object that contains the 'key' and 'label' properties
+	*/
+	timeline_scaley_class(key: string, label: string, section: any): string;
 
 	/**
 	 * specifies items of the second X-Axis
 	 * @param date the date which needs formatting
 	*/
 	timeline_second_scale_date(date: Date): string;
+
+	/**
+	 * specifies the name of a CSS class that will be applied to items of the second X-Axis
+	 * @param date the date which needs formatting
+	*/
+	timeline_second_scalex_class(date: Date): string;
+
+	/**
+	 * specifies the tooltip over a day cell containing some scheduled event(s)
+	 * @param start the date when an event is scheduled to begin
+	 * @param end the date when an event is scheduled to be completed
+	 * @param event the event object
+	*/
+	timeline_tooltip(start: Date, end: Date, event: any): string;
 
 	/**
 	 * specifies the date in the header of the view
@@ -476,13 +566,6 @@ export interface SchedulerTemplates {
 	 * @param date the date which needs formatting
 	*/
 	xml_format(date: Date): string;
-
-	/**
-	 * specifies the CSS class that will be applied to a row of the Timeline view
-	 * @param section the section object
-	 * @param timeline the timeline object
-	*/
-	timeline_row_class(section: any, timeline: any): string;
 
 	[customTemplate: string]: any;
 }
@@ -995,7 +1078,7 @@ export interface SchedulerConfigOptions {
 	scroll_hour: number;
 
 	/**
-	 * specifies the delimiter that will be used to separate several sections/units in the related data property of the event
+	 * specifies the delimeter that will be used to separate several sections/units in the related data property of the event
 	*/
 	section_delimiter: string;
 
@@ -1224,6 +1307,50 @@ export interface SchedulerLocale {
 	labels: SchedulerLocaleLabels;
 }
 
+export interface SchedulerFormBlock {
+
+	/**
+	 * Renders the form block based on the provided configuration.
+	 * @function
+	 * @name SchedulerFormBlock#render
+	 * @param {any} config - The configuration object for the custom lightbox control.
+	 * @returns {string} Returns the HTML string representing the rendered the custom control.
+	 */
+	render: (config: any) => string;
+
+	/**
+	 * Sets the value of the custom lightbox control.
+	 * @function
+	 * @name SchedulerFormBlock#set_value
+	 * @param {HTMLElement} node - HTML object related to HTML defined above.
+	 * @param {*} value - value defined by map_to property.
+	 * @param {Event} ev - The event object.
+	 * @param {any} config - Section configuration object.
+	 * @returns {void}
+	 */
+	set_value: (node: HTMLElement, value: any, ev: Event, config: any) => void;
+
+	/**
+	 * Gets the value of the custom control.
+	 * @function
+	 * @name SchedulerFormBlock#get_value
+	 * @param {HTMLElement} node - HTML object related to HTML defined above.
+	 * @param {Event} ev - The event object.
+	 * @param {any} config - Section configuration object.
+	 * @returns {*} Returns the value of the custom lightbox control.
+	 */
+	get_value: (node: HTMLElement, ev: Event, config: any) => any;
+
+	/**
+	 * Focuses on the custom lightbox control.
+	 * @function
+	 * @name SchedulerFormBlock#focus
+	 * @param {HTMLElement} node - HTML object related to HTML defined above.
+	 * @returns {void}
+	 */
+	focus: (node: HTMLElement) => void;
+	}
+
 export interface SchedulerSizes {
 
 	/**
@@ -1440,9 +1567,9 @@ export interface SchedulerStatic {
 	 * attaches the handler to an inner event of dhtmlxScheduler
 	 * @param name the event's name, case-insensitive
 	 * @param handler the handler function
-	 * @param settings optional, an <a href="#propertiesofsettingsobject">object with settings</a> for the event handler
+	 * @param settings optional, optional, an <a href="#propertiesofsettingsobject">object with settings</a> for the event handler
 	*/
-	attachEvent(name: SchedulerEventName, handler: SchedulerCallback, settings: any): string;
+	attachEvent(name: SchedulerEventName, handler: SchedulerCallback, settings?: any): string;
 
 	/**
 	 * makes the scheduler reflect all data changes in the Backbone model and vice versa
@@ -1933,7 +2060,7 @@ export interface SchedulerStatic {
 	/**
 	 * serializes all events loaded into the scheduler
 	*/
-	serialize(): any[];
+	serialize(): void;
 
 	/**
 	 * defines a named collection that can be loaded into Units, Timeline views, or the Lightbox
@@ -2120,7 +2247,16 @@ export interface SchedulerStatic {
 	 * @param view optional, (optional) the view name
 	*/
 	updateView(date?: Date, view?: string): void;
-}
+	
+	// /**
+	//  * A key-value mapping of string keys to Scheduler form blocks.
+	//  * The keys represent the names of the custom lightbox controls.
+	//  * The values are objects that implement the SchedulerFormBlock interface.
+	//  */
+	form_blocks: { [key: string]: SchedulerFormBlock };
+
+	[customMethod: string]: any;
+	}
 
 export declare var scheduler: SchedulerStatic;
 
