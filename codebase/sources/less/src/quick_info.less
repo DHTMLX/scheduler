@@ -1,0 +1,145 @@
+.dhx_cal {
+	&_quick_info {
+
+		--dhx-scheduler-quick-info-font-size: var(--dhx-regular-font-size);
+
+		position: absolute;
+		z-index: 8;
+
+		font-size: var(--dhx-scheduler-quick-info-font-size);
+		background: var(--dhx-scheduler-popup-background);
+		color: var(--dhx-scheduler-popup-color);
+		border: var(--dhx-scheduler-popup-border);
+		padding: calc(var(--dhx-scheduler-base-padding)*2) calc(var(--dhx-scheduler-base-padding)*3);
+		border-radius: var(--dhx-scheduler-border-radius);
+		width: 300px;
+
+		display: flex;
+		flex-direction: column;
+		box-shadow: var(--dhx-scheduler-box-shadow-s);
+
+	}
+
+	&_qi_tcontrols{
+		display: flex;
+		justify-content: end;
+		height: 8px;
+
+		.dhx_cal_qi_close_btn{
+			.button-icon();
+			width:unset;
+			min-width: unset;
+
+			padding: 2px;
+			font-size: 18px;
+			cursor: pointer;
+
+			height: 20px;
+			position: relative;
+			z-index: 1;
+		}
+	}
+
+
+	&_qi_title,
+	&_qi_controls,
+	&_qi_content {
+		padding: 0 calc(var(--dhx-scheduler-base-padding) * 3);
+	}
+
+	&_qi_title {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		padding-right: 14px;
+	}
+
+
+	&_qi_tcontent {
+		font-size: var(--dhx-scheduler-heading-font-size);
+		font-weight: var(--dhx-scheduler-heading-font-weight);
+		line-height: 150%;
+		position: relative;
+		display: flex;
+		flex-direction: row;
+		justify-content: start;
+		align-items: center;
+		gap: 8px;
+
+		overflow: hidden;
+
+		flex-grow: 0;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+
+		> span {
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+	}
+
+	&_qi_tcontent::before {
+		display: var(--dhx-scheduler-quick-info-dot-display, block);
+		content: '';
+		flex-shrink: 0;
+		width: var(--dhx-scheduler-month-event-marker-size);
+		height: var(--dhx-scheduler-month-event-marker-size);
+		border-radius: 2px;
+		background: var(--dhx-scheduler-base-colors-primary);
+	}
+
+	&_qi_tdate {
+		font-size: var(--dhx-scheduler-important-font-size);
+		font-weight: var(--dhx-scheduler-important-font-weight);
+		line-height: var(--dhx-scheduler-important-line-height);
+	}
+
+	&_qi_content{
+		padding-top: 16px;
+		padding-bottom: 8px;
+	}
+
+	&_qi_controls {
+		display: flex;
+		flex-direction: row;
+		justify-content: start;
+		align-items: center;
+		padding-top:8px;
+		gap: 12px;
+		color: var(--dhx-scheduler-base-colors-primary);
+
+		> div:first-child {
+			margin-left: -3px;
+		}
+
+	}
+}
+
+.dhx_qi_big_icon {
+	// display: flex;
+	// align-items: center;
+	// justify-content: center;
+	// gap: var(--dhx-scheduler-base-padding);
+	// padding-top: 6px;
+	// padding-bottom: 6px;
+
+
+}
+.dhx_menu_icon {
+	width: 20px;
+	height: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	--dhx-scheduler-base-colors-icons: var(--dhx-scheduler-btn-color);
+}
+
+/*
+.dhx_menu_icon.icon_details {
+	background: url("./imgs/icon-edit.svg") center no-repeat;
+}
+
+.dhx_menu_icon.icon_delete {
+	background: url("./imgs/icon-delete.svg") center no-repeat;
+}*/

@@ -1,0 +1,68 @@
+.dhx_grid_event {
+	height: var(--dhx-scheduler-list-line-height);
+	line-height: var(--dhx-scheduler-list-line-height);
+	background: var(--dhx-scheduler-grid-event-background);
+	color: var(--dhx-scheduler-grid-event-text);
+}
+
+.dhx_grid_event:nth-child(even) {
+	--dhx-scheduler-grid-event-background: var(--dhx-scheduler-base-colors-select);
+}
+
+.dhx_grid_event.dhx_grid_event_selected{
+	--dhx-scheduler-grid-event-background: var(--dhx-scheduler-base-colors-icons);
+}
+
+.dhx_grid_area td,
+.dhx_grid_line>div {
+	padding-left: 8px;
+	padding-right: 8px;
+}
+
+.dhx_grid_line>div {
+	text-align: center;
+}
+
+.dhx_grid_area>table {
+	border-collapse: collapse;
+	width: 100%;
+	table-layout: fixed;
+}
+
+.dhx_grid_area td {
+	table-layout: fixed;
+	text-align: center;
+	height: var(--dhx-scheduler-list-line-height);
+	line-height: var(--dhx-scheduler-list-line-height);
+}
+
+.dhx_cal_header > .dhx_grid_line {
+	display: flex;
+}
+
+
+.dhx_grid_v_border {
+	position: absolute;
+	border-right: var(--dhx-scheduler-default-border);
+	width: 1px;
+	height: 100%;
+}
+
+.dhx_grid_view_sort {
+
+	position: absolute;
+	top: 5px;
+
+	width: 0;
+	height: 0;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-top: 10px solid var(--dhx-scheduler-base-colors-text-light);
+}
+
+.dhx_grid_sort_asc .dhx_grid_view_sort {
+	border-top: none;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-bottom: 10px solid var(--dhx-scheduler-base-colors-text-light);
+}

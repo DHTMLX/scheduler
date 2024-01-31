@@ -1,0 +1,112 @@
+.dhx_cal_month_table {
+	overflow: hidden;
+}
+
+.dhx_cal_month_row{
+	display: flex;
+}
+
+.dhx_cal_month_cell {
+	box-sizing: border-box;
+	background: var(--dhx-scheduler-timescale-background);
+
+	border-right: var(--dhx-scheduler-default-border);
+	border-bottom: var(--dhx-scheduler-default-border);
+
+	display: flex;
+	flex-direction: column;
+
+	&.dhx_now {
+		--dhx-scheduler-timescale-background: var(--dhx-scheduler-timescale-today-background);
+	}
+}
+
+
+.dhx_month_body_border,
+.dhx_month_head_border{
+	border-left: var(--dhx-scheduler-default-border);
+}
+
+.dhx_cal_container_rtl {
+	.dhx_cal_month_cell {
+		border-left: var(--dhx-scheduler-default-border);
+		border-right: none;
+	}
+
+	.dhx_month_body_border,
+	.dhx_month_head_border{
+		border-left: none;
+		border-right: var(--dhx-scheduler-default-border);
+	}
+
+}
+
+
+.dhx_month_head {
+	box-sizing: border-box;
+	display: flex;
+
+	flex-shrink: 0;
+	color: var(--dhx-scheduler-month-header-color);
+	justify-content: end;
+	align-items: flex-start;
+	align-self: stretch;
+	padding: var(--dhx-scheduler-month-day-header-padding);
+}
+
+.dhx_month_body {
+	flex-grow: 1;
+	padding: var(--dhx-scheduler-base-padding) calc(var(--dhx-scheduler-base-padding) * 2);
+	box-sizing: border-box;
+	position: relative;
+}
+
+.dhx_before,
+.dhx_after {
+	--dhx-scheduler-month-header-color: var(--dhx-scheduler-inactive-month-color);
+}
+
+/*view more link in month view*/
+
+.dhx_month_link{
+	position: absolute;
+	text-align: right;
+	cursor: pointer;
+	padding-right: 10px;
+}
+
+.dhx_month_link a{
+	// color: @daybox-month-link-font-color;
+}
+
+.dhx_month_link a:hover{
+	text-decoration: underline;
+	// color: darken(@daybox-month-link-font-color, 15);
+}
+
+.dhx_global_tip{
+
+	font-family: var(--dhx-scheduler-font-family);
+	line-height: 110%;
+	background-color: var(--dhx-scheduler-container-background);
+	color: var(--dhx-scheduler-container-color);
+	text-align:center;
+	font-size:20px;
+	position:fixed;
+	top:60px; right:20px;
+	z-index:14;
+	padding:20px 30px; width:190px;
+
+	background: var(--dhx-scheduler-popup-background);
+	color: var(--dhx-scheduler-popup-color);
+	border: var(--dhx-scheduler-popup-border);
+	box-shadow: var(--dhx-scheduler-box-shadow-m);
+
+}
+
+@media (-moz-touch-enabled) { 
+	.dhx_cal_container{
+		user-select:none;
+		-moz-user-select:none;
+	}
+}

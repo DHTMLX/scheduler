@@ -1,0 +1,46 @@
+/* key nav */
+.dhx_focus_slot {
+	background: var(--dhx-scheduler-base-colors-select);
+	position: absolute;
+	pointer-events: none;
+	opacity: 0.5;
+}
+
+.dhx_cal_container *:focus {
+	outline-style: solid;
+	/*not visible focus outline in ie11*/
+	outline-style: auto;
+	outline-color: var(--dhx-scheduler-base-colors-select);
+}
+
+/* key nav end*/
+
+.dhx_no_select {
+	user-select: none;
+}
+
+.dhx_drag_placeholder {
+	z-index: 10;
+	opacity: 0.8;
+}
+
+.dhx_drag_placeholder .dhx_cal_select_menu {
+	display: none;
+}
+
+/* readonly */
+
+.dhx_cal_light_readonly {
+	.dhx_section_time {
+		display: block;
+
+		.dhx_section_time_spacer {
+			visibility: visible;
+		}
+	}
+
+	.dhx_cal_lsection+div {
+		padding-top: 4px;
+		padding-bottom: 4px;
+	}
+}

@@ -1,3 +1,25 @@
+### 7.0.0
+
+Skins customization with CSS variables
+New Dark skin is introduced
+New Agenda view is added
+Terrace skin is updated
+Ability to install the professional versions of the Scheduler via npm
+Enhanced ability to customize markers in the Map View
+Improvements in the default display for short events in the Day/Week/Units views
+Day/Week/Units views don't use images for the background grid any more
+Bluebird Promise library is removed from the core library
+Various improvements for scaling on high-definition screens and responsiveness on smaller screens
+Columns of the Day/Week/Units views are now able to reserve free space
+Updated type definitions
+The export API is included into scheduler.plugins and no longer requires adding additional JS file. Check the Migration article
+Display issues of the recurring form when the French locale is used
+Incorrect duration of events after drag-and-drop actions in the Timeline view when using the first_hour/last_hour settings
+Unexpected scroll behavior when using the mouse wheel over the left-hand panel of the Timeline view
+Visual lag during vertical scrolling in the Timeline view on high-definition screens with Smart Rendering enabled
+Non-functional drag-and-drop in the Units view when the all_timed extension is active
+The Multiselect plugin in GPL builds is restored
+
 ### 6.0.5
 
 Fix the issue where the lightbox was not functioning in SalesForce LWC

@@ -1,4 +1,5 @@
-const less = require('less')
+const less = require('less');
+const path = require("path");
 const postcss = require('postcss')
 const url = require("postcss-url")
 const fs = require('fs')
@@ -14,7 +15,7 @@ if (!themeArg) {
 const theme = String(themeArg).trim();
 const inputFolder = `./`;
 const inputPath = `${inputFolder}${theme}.less`;
-const outputPath = `../../${theme}.css`;
+const outputPath = `./${theme}.css`;
 
 
 if (!theme.match(/^[a-zA-Z0-9_\-]+$/)) {
@@ -47,6 +48,6 @@ function runPostCss(css, from, to) {
 			to: to
 		}).then(result => {
 			fs.writeFileSync(outputPath, result.css);
-			console.log(`Finished: ${theme}`);
+			console.log(`Finished: ${theme} -> ${path.resolve(outputPath)}`);
 		});
 }

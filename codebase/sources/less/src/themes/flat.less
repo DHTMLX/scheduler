@@ -1,0 +1,108 @@
+:root[data-scheduler-theme='flat'] {
+	--dhx-scheduler-theme: flat;
+	--dhx-scheduler-font-family: Segoe UI,Arial,san-serif;
+
+	--dhx-scheduler-base-colors-primary: #0288D1;
+	--dhx-scheduler-base-colors-primary-hover: #007cbf;
+	--dhx-scheduler-base-colors-primary-active: #00659b;
+	--dhx-scheduler-base-colors-primary-lighter: #edf8ff;
+
+	--dhx-scheduler-event-background: var(--dhx-scheduler-base-colors-primary);
+
+	--dhx-scheduler-base-colors-border: #cecece;
+	--dhx-scheduler-halfhour-border: 1px solid #e8e8e8;
+	--dhx-scheduler-event-title-font-size: 12px;
+
+	--dhx-scheduler-event-text-font-size: 14px;
+	--dhx-scheduler-event-text-font-weight: 500;
+
+	--dhx-scheduler-heading-font-size: 22px;
+	--dhx-scheduler-heading-font-weight: 300;
+	--dhx-scheduler-caption-font-size: 14px;
+	--dhx-scheduler-caption-font-weight: 400;
+
+	--dhx-scheduler-hours-font-size: 12px;
+
+	--dhx-scheduler-scale-color: #767676;
+
+	--dhx-scheduler-border-radius:0;
+
+	--dhx-scheduler-timeline-folder-background: #ebeced;
+
+	--dhx-scheduler-box-shadow-s: 0 3px 5px 0 rgba(0,0,0,.1);;
+	--dhx-scheduler-box-shadow-m: 0px 4px 24px 0px rgba(44, 47, 60, 0.36);
+	
+	--dhx-scheduler-box-shadow-l: 0px 4px 24px 0px rgba(44, 47, 60, 0.56);
+
+	.dhx_cal_navline{
+		--dhx-scheduler-btn-outline-border-color: transparent;
+		--dhx-scheduler-btn-outline-border-hover: transparent;
+		--dhx-scheduler-btn-outline-border-color-disabled: transparent;
+	}
+
+	.dhx_scale_hour{
+		justify-content: center;
+	}
+
+	.dhx_cal_tab {
+		min-width: 90px;
+	}
+
+	.dhx_cal_navline{
+		& > div {
+			order: 1
+		}
+
+		.dhx_cal_next_button{
+			order: 6;
+		}
+		.dhx_cal_today_button{
+			order: 5;
+			border-color: transparent;
+		}
+		.dhx_cal_prev_button{
+			order: 4;
+		}
+
+		.dhx_cal_date{
+			order: 3;
+		}
+
+		.dhx_cal_date{
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
+
+	.dhx_data_table.folder .dhx_matrix_cell {
+		border-right: 0;
+	}
+
+	.dhx_timeline_scale_header{
+		border-right: none;
+	}
+
+	.dhx_cal_container_rtl  .dhx_timeline_scale_header {
+		border-left: unset;
+	 }
+
+	.dhx_scale_hour{
+		display: flex;
+		flex-direction: row;
+		.dhx_scale_h {
+			font-size: 22px;
+			line-height: 44px;
+			font-weight: lighter;
+		}
+		.dhx_scale_m {
+			font-size: 11px;
+			line-height: 35px;
+			align-self: end;
+			font-weight: lighter;
+			transform: translateY(-2px);
+		}
+	}
+
+	--dhx-scheduler-config-form_wide: 1;
+	--dhx-scheduler-xy-scale_height: 35px;
+}

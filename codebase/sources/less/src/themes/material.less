@@ -1,0 +1,138 @@
+:root[data-scheduler-theme='material'] {
+	--dhx-scheduler-theme: material;
+	--dhx-scheduler-font-family: Roboto, Helvetica, Arial, sans-serif;
+
+	--dhx-scheduler-base-colors-primary: #0288D1;
+	--dhx-scheduler-base-colors-primary-hover: #007cbf;
+	--dhx-scheduler-base-colors-primary-active: #00659b;
+	--dhx-scheduler-base-colors-primary-lighter: #edf8ff;
+
+	--dhx-scheduler-event-background: var(--dhx-scheduler-base-colors-primary);
+
+	--dhx-scheduler-base-colors-border: #e0e0e0;
+	--dhx-scheduler-event-title-font-size: calc(var(--dhx-scheduler-font-size) - 2px);
+
+	--dhx-scheduler-event-text-font-size: var(--dhx-scheduler-font-size);
+	--dhx-scheduler-event-text-font-weight: 500;
+
+	--dhx-scheduler-heading-font-size: 20px;
+	--dhx-scheduler-caption-font-size: var(--dhx-scheduler-font-size);
+	--dhx-scheduler-caption-font-weight: 500;
+	--dhx-scheduler-btn-font-weight: 500;
+	--dhx-scheduler-heading-font-weight: 500;
+
+	--dhx-scheduler-hours-font-size: calc(var(--dhx-scheduler-font-size) - 2px);
+
+	--dhx-scheduler-base-colors-text-base: rgba(0,0,0,.75);
+
+
+	--dhx-scheduler-header-border: 1px solid transparent;
+	--dhx-scheduler-scale-color: rgba(0,0,0,.54);
+
+	--dhx-scheduler-border-radius:0;
+
+	--dhx-scheduler-btn-text-transform: uppercase;
+	--dhx-scheduler-btn-padding: 1px 20px 0;
+
+	--dhx-scheduler-halfhour-border: none;
+
+	--dhx-scheduler-timeline-folder-background: #ebeced;
+
+	--dhx-scheduler-box-shadow-s: 0 3px 5px 0 rgba(0,0,0,.1);;
+	--dhx-scheduler-box-shadow-m: 0px 4px 24px 0px rgba(44, 47, 60, 0.36);
+	
+	--dhx-scheduler-box-shadow-l: 0px 4px 24px 0px rgba(44, 47, 60, 0.56);
+
+	--dhx-scheduler-lightbox-title-background: var(--dhx-scheduler-base-colors-primary);
+	--dhx-scheduler-lightbox-title-color: #FFFFFF;
+	--dhx-scheduler-lightbox-title-font-size: var(--dhx-scheduler-font-size);
+
+	--dhx-scheduler-lightbox-wide-max-width: 540px;
+
+	.dhx_scale_hour{
+		justify-content: center;
+	}
+
+	.dhx_cal_tab {
+		min-width: 90px;
+	}
+
+	.dhx_cal_navline{
+		& > div {
+			order: 1
+		}
+
+		.dhx_cal_next_button{
+			order: 6;
+		}
+		.dhx_cal_today_button{
+			order: 5;
+			border-color: transparent;
+		}
+		.dhx_cal_prev_button{
+			order: 4;
+		}
+
+		.dhx_cal_date{
+			order: 3;
+		}
+
+		.dhx_cal_date{
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
+
+	.dhx_data_table.folder .dhx_matrix_cell {
+		border-right: 0;
+	}
+
+	.dhx_timeline_scale_header{
+		border-right: none;
+	}
+	.dhx_cal_container_rtl  .dhx_timeline_scale_header {
+		border-left: unset;
+	}
+
+	.dhx_cal_scale_placeholder{
+		position: absolute;
+		z-index: 2;
+		box-shadow: 0 3px 5px 0 rgba(0,0,0,.1);
+		left: 0;
+		pointer-events: none;
+	}
+
+	.dhx_year_box {
+
+		.dhx_year_month {
+			font-weight: 500;
+			color: var(--dhx-scheduler-base-colors-primary);
+		}
+
+		.dhx_month_head.dhx_year_event::after {
+			content:none;
+		}
+	
+		.dhx_year_event {
+			--dhx-scheduler-datepicker-cell-color: var(--dhx-scheduler-datepicker-hover-color);
+			--dhx-scheduler-datepicker-cell-background: var(--dhx-scheduler-datepicker-hover-background);
+		}
+	
+	}
+
+	.dhx_cal_ltitle{
+		font-weight: 400;
+		text-transform: uppercase;
+		
+	}
+	.dhx_cal_ltitle_controls{
+		--dhx-scheduler-base-colors-icons: var(--dhx-scheduler-lightbox-title-color);
+	}
+
+	.dhx_timeline_scale_header {
+		.dhx_scale_text_styles();
+	}
+	
+
+	--dhx-scheduler-config-form_wide: 1;
+}

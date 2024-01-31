@@ -1,0 +1,68 @@
+.dhx_scheduler_map .dhx_cal_header, 
+.dhx_scheduler_agenda .dhx_cal_header {
+	height: auto;
+}
+
+.dhx_agenda_line_header {
+	clear: both;
+	overflow: hidden;
+}
+
+.dhx_agenda_line, .dhx_map_line {
+
+	height: var(--dhx-scheduler-list-line-height);
+	line-height: var(--dhx-scheduler-list-line-height);
+	overflow: hidden;
+	display: flex;
+
+	.dhx_agenda_event_time, .dhx_map_event_time {
+		flex-shrink: 0;
+		width: 188px;
+		text-align: center;
+		border-right: var(--dhx-scheduler-default-border);
+	}
+
+	.dhx_event_icon {
+		height: 33px;
+		width: 33px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		path {
+			fill: var(--dhx-scheduler-base-colors-primary);
+		}
+	}
+
+	>div:first-child {
+		width: var(--dhx-scheduler-agenda-date-column-width);
+		text-align: center;
+	}
+}
+
+.dhx_agenda_line:nth-child(even),
+.dhx_map_line:nth-child(even) {
+	background: var(--dhx-scheduler-base-colors-select);
+}
+
+.dhx_map_area{
+	height:100%;
+}
+
+.dhx_map_head{
+	display: flex;
+	height: 100%;
+}
+
+.dhx_map_head > div {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 0 var(--dhx-scheduler-base-padding);
+}
+
+.dhx_v_border{
+	position: absolute;
+	height: 100%;
+	border-left: var(--dhx-scheduler-default-border);
+}

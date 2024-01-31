@@ -1,0 +1,216 @@
+.dhx_scheduler_event_base {
+	background: var(--dhx-scheduler-event-background);
+	color: var(--dhx-scheduler-event-color);
+	display: flex;
+
+	padding: 2px var(--dhx-scheduler-base-module);
+	border: var(--dhx-scheduler-event-border);
+	position: absolute;
+	box-sizing: border-box;
+	font-size: var(--dhx-scheduler-event-text-font-size);
+	line-height: var(--dhx-scheduler-event-text-line-height);
+	font-weight: var(--dhx-scheduler-event-text-font-weight);
+	--dhx-scheduler-base-colors-icons: var(--dhx-scheduler-event-color);
+}
+
+.dhx_title{
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.dhx_cal_event {
+
+	display: flex;
+	flex-direction: column;
+	border-radius: var(--dhx-scheduler-border-radius);
+	flex-direction: column;
+	.dhx_scheduler_event_base();
+
+
+	.dhx_title {
+		font-size: var(--dhx-scheduler-event-title-font-size);
+		line-height: var(--dhx-scheduler-event-title-line-height);
+		max-height: 21px;
+	}
+
+	.dhx_body {
+		font-size: var(--dhx-scheduler-event-text-font-size);
+		line-height: var(--dhx-scheduler-event-text-line-height);
+		flex: 1;
+		gap: 4px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.dhx_event_move.dhx_header {
+		display: none;
+	}
+
+	.dhx_event_resize {
+		cursor: ns-resize;
+	}
+
+	.dhx_resize_denied {
+		display: none !important;
+	}
+
+	.dhx_header {}
+
+	.dhx_footer {
+		position: absolute;
+		bottom: 2px;
+		opacity: 0;
+	}
+
+	.dhx_menu_icon {
+		--dhx-scheduler-base-colors-icons: var(--dhx-scheduler-event-text);
+	}
+
+	.dhx_menu_icon.icon_delete {
+		margin-left: -2px;
+	}
+
+	&.dhx_cal_select_menu {
+		padding: 2px;
+		padding-top: 8px;
+		padding-bottom: 8px;
+		box-shadow: var(--dhx-scheduler-box-shadow-s);
+		--dhx-scheduler-event-background: var(--dhx-scheduler-event-menu-background);
+		--dhx-scheduler-event-color: var(--dhx-scheduler-event-menu-color);
+
+		.dhx_body {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+			align-items: center;
+		}
+	}
+
+	textarea.dhx_cal_editor {
+		width: 100%;
+		height: 100%;
+		padding: 0;
+		margin: 0;
+		overflow: auto;
+		font-family: var(--dhx-scheduler-font-family);
+		font-size: var(--dhx-scheduler-font-size);
+	}
+}
+
+.dhx_cal_event_cascade{
+	--dhx-scheduler-event-border: 1px solid rgba(0,0,0, 0.05);
+ }
+
+.dhx_cal_editor {
+	z-index: 10;
+}
+
+
+.dhx_cal_event {
+
+	.dhx_footer,
+	.dhx_select_menu_footer {
+		height: calc(var(--dhx-scheduler-base-module) * 2);
+		border-width: 0;
+		position: relative;
+		margin-left: auto;
+		margin-right: auto;
+		.scheduler_icon();
+		.scheduler_icon.dots_h();
+	}
+
+
+	&.dhx_cal_event_drag,
+	&.dhx_cal_event_selected,
+	&:hover {
+		.dhx_event_resize.dhx_footer {
+			opacity: 1;
+			background-color: transparent;
+		}
+	}
+
+}
+
+.dhx_cal_event_line {
+	.dhx_scheduler_event_base();
+
+	--dhx-scheduler-event-text-font-size: var(--dhx-scheduler-event-bar-font-size);
+	--dhx-scheduler-event-text-line-height: var(--dhx-scheduler-event-bar-line-height);
+	cursor: pointer;
+	align-items: center;
+	z-index: 1;
+	overflow: hidden;
+	padding-left: 12px;
+	white-space: nowrap;
+
+	&.dhx_cal_event_line_end {
+		border-top-right-radius: var(--dhx-scheduler-border-radius);
+		border-bottom-right-radius: var(--dhx-scheduler-border-radius);
+	}
+
+	&.dhx_cal_event_line_start {
+		border-top-left-radius: var(--dhx-scheduler-border-radius);
+		border-bottom-left-radius: var(--dhx-scheduler-border-radius);
+	}
+
+	&.dhx_cal_event--small{
+		padding-left: 8px;
+	}
+	&.dhx_cal_event--xsmall{
+		padding-left: 4px;
+	}
+}
+
+.dhx_cal_container_rtl {
+	.dhx_cal_event_line{
+		border-top-right-radius: unset;
+		border-bottom-right-radius: unset;
+		border-top-left-radius: unset;
+		border-bottom-left-radius: unset;
+		&.dhx_cal_event_line_end {
+			border-top-left-radius: var(--dhx-scheduler-border-radius);
+			border-bottom-left-radius: var(--dhx-scheduler-border-radius);
+		}
+	
+		&.dhx_cal_event_line_start {
+			border-top-right-radius: var(--dhx-scheduler-border-radius);
+			border-bottom-right-radius: var(--dhx-scheduler-border-radius);
+		}
+	}
+}
+
+.dhx_cal_event{
+	&.dhx_cal_event--xsmall,
+	&.dhx_cal_event--small {
+
+		flex-direction: row-reverse;
+		justify-content: space-between;
+		--dhx-scheduler-event-title-font-size: var(--dhx-scheduler-event-bar-font-size);
+		--dhx-scheduler-event-title-line-height: var(--dhx-scheduler-event-bar-line-height);
+		--dhx-scheduler-event-text-font-size: var(--dhx-scheduler-event-bar-font-size);
+		--dhx-scheduler-event-text-line-height: var(--dhx-scheduler-event-bar-line-height);
+
+		gap: 4px;
+		padding-top: 2px;
+		padding-bottom: 1px;
+
+		.dhx_title {
+			display: flex;
+			justify-content: end;
+		}
+
+		.dhx_body {
+			flex-grow: 2;
+		}
+
+		.dhx_footer,
+		.dhx_select_menu_footer {
+			position: absolute;
+			bottom: 0;
+			left: 4px;
+			width: 100%;
+			transform: translateY(50%);
+		}
+	}
+}

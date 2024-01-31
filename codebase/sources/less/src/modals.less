@@ -1,0 +1,138 @@
+.scheduler_message_area{
+	position:fixed;
+	right:5px;
+	width:250px;
+	z-index:11;
+}
+
+.scheduler-info {
+	min-width: 120px;
+	padding: 12px;
+	font-family:var(--dhx-scheduler-font-family);
+	font-size: var(--dhx-scheduler-regular-font-size);
+	font-weight: var(--dhx-scheduler-regular-font-weight);
+	line-height: var(--dhx-scheduler-regular-line-height);
+	z-index: 14;
+	overflow: hidden;
+	margin:5px;
+	margin-bottom:10px;
+
+    transition: all .5s ease;
+
+	background: var(--dhx-scheduler-info-background);
+    color: var(--dhx-scheduler-info-color);
+    border:var(--dhx-scheduler-info-border);
+    box-shadow:var(--dhx-scheduler-info-shadow);
+}
+
+.scheduler-info.hidden{
+	height:0px;
+	padding:0px;
+	border-width:0px;
+	margin:0px;
+	overflow:hidden;
+}
+
+.scheduler_modal_box {
+
+	overflow:hidden;
+	position:fixed;
+	min-width: 300px;
+	width: var(--dhx-scheduler-modal-width);
+	background: var(--dhx-scheduler-modal-background);
+	box-shadow: var(--dhx-scheduler-box-shadow-l);
+	border: var(--dhx-scheduler-modal-border);
+	border-radius: var(--dhx-scheduler-modal-border-radius);
+	z-index:18;
+	border-radius: var(--dhx-scheduler-modal-border-radius);
+	font-family: var(--dhx-scheduler-font-family);
+	font-size: var(--dhx-scheduler-font-size);
+	line-height: 150%;
+}
+
+
+.scheduler_popup_text {
+	color: var(--dhx-scheduler-base-colors-text-base);
+}
+
+.scheduler_popup_title {
+	border-top-left-radius:var(--dhx-scheduler-modal-border-radius);
+	border-top-right-radius:var(--dhx-scheduler-modal-border-radius);
+	text-transform: uppercase;
+	font-weight: var(--dhx-scheduler-heading-font-weight);
+	padding: calc(var(--dhx-scheduler-modal-padding)/2) var(--dhx-scheduler-modal-padding);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+}
+
+.scheduler_popup_text{
+	padding: var(--dhx-scheduler-modal-padding);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.scheduler_popup_controls{
+	display: flex;
+	flex-direction: row-reverse;
+    padding: calc(var(--dhx-scheduler-modal-padding)/2) var(--dhx-scheduler-modal-padding);
+
+	align-items: center;
+    gap: 12px;
+}
+
+.scheduler-info, .scheduler_popup_button, .scheduler_button{
+	user-select: none;
+	cursor:pointer;
+}
+
+.scheduler_popup_text{
+	overflow:hidden;
+}
+
+div.dhx_modal_cover {
+	background: #44494E;
+
+	opacity: 0.2;
+	position: fixed;
+	z-index:17;
+	left: 0px;		top: 0px;
+	width: 100%;	height: 100%;
+	border: none;
+}
+
+// BUTTONS *********************************************
+
+.scheduler_popup_controls {
+	border-radius: var(--dhx-scheduler-border-radius);
+
+}
+
+.scheduler_message_area{
+	.scheduler-error{
+		--dhx-scheduler-info-background: var(--dhx-scheduler-base-colors-error);
+		--dhx-scheduler-info-color: var(--dhx-scheduler-base-colors-white);
+	}
+	
+	.scheduler-warning{
+		--dhx-scheduler-info-background: var(--dhx-scheduler-base-colors-warning);
+
+	}
+}
+
+.scheduler_modal_box.scheduler-error {
+	.scheduler_popup_title {
+		background: #d81b1b;
+		border:1px solid #ff3c3c;
+		color: #FFF;
+	}
+}
+
+.scheduler_modal_box.scheduler-error {
+	.scheduler_popup_title {
+		background: #FFAB00;
+		border:1px solid #FFAB00;
+	}
+}

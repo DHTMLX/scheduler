@@ -1,0 +1,203 @@
+.button {
+
+	background: var(--dhx-scheduler-btn-background);
+	color: var(--dhx-scheduler-btn-color);
+	border: 1px solid var(--dhx-scheduler-btn-border-color);
+	border-radius: var(--dhx-scheduler-border-radius);
+	height: var(--dhx-scheduler-control-height);
+	padding: var(--dhx-scheduler-btn-padding, 0 20px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+	gap: 4px;
+	flex-shrink: 0;
+	font-weight: 500;
+
+	font-size: var(--dhx-scheduler-font-size);
+	font-family: var(--dhx-scheduler-font-family);
+	font-weight: var(--dhx-scheduler-btn-font-weight, normal);
+	line-height: 142%;
+
+	text-transform: var(--dhx-scheduler-btn-text-transform);
+	cursor: pointer;
+
+	&:hover {
+		background: var(--dhx-scheduler-btn-background-hover);
+		color: var(--dhx-scheduler-btn-color-hover);
+		border-color: var(--dhx-scheduler-btn-border-hover);
+	}
+
+	&:active {
+		background: var(--dhx-scheduler-btn-background-active);
+		color: var(--dhx-scheduler-btn-color-active);
+		border-color: var(--dhx-scheduler-btn-border-active);
+	}
+
+	&:disabled{
+		background: var(--dhx-scheduler-btn-background-disabled);
+		color: var(--dhx-scheduler-btn-color-disabled);
+		border-color: var(--dhx-scheduler-btn-border-disabled);
+	}
+}
+
+
+.button-outline{
+	--dhx-scheduler-base-colors-icons: var(--dhx-scheduler-btn-color);
+
+
+	--dhx-scheduler-btn-background: var(--dhx-scheduler-btn-outline-background);
+	--dhx-scheduler-btn-color: var(--dhx-scheduler-btn-outline-color);
+	--dhx-scheduler-btn-border-color: var(--dhx-scheduler-btn-outline-border-color);
+
+	--dhx-scheduler-btn-background-hover: var(--dhx-scheduler-btn-outline-background-hover);
+	--dhx-scheduler-btn-color-hover: var(--dhx-scheduler-btn-outline-color-hover);
+	--dhx-scheduler-btn-border-hover: var(--dhx-scheduler-btn-outline-border-hover);
+
+	--dhx-scheduler-btn-background-active: var(--dhx-scheduler-btn-outline-background-active);
+	--dhx-scheduler-btn-color-active: var(--dhx-scheduler-btn-outline-color-active);
+	--dhx-scheduler-btn-border-active: var(--dhx-scheduler-btn-outline-border-active);
+
+	--dhx-scheduler-btn-background-disabled: var(--dhx-scheduler-btn-outline-background-disabled);
+	--dhx-scheduler-btn-color-disabled: var(--dhx-scheduler-btn-outline-color-disabled);
+	--dhx-scheduler-btn-border-color-disabled: var(--dhx-scheduler-btn-outline-border-color-disabled);
+}
+
+
+
+.button-danger{
+	--dhx-scheduler-btn-background: var(--dhx-scheduler-base-colors-error);
+	--dhx-scheduler-btn-color: var(--dhx-scheduler-base-colors-error-text);
+	--dhx-scheduler-btn-border-color: var(--dhx-scheduler-base-colors-error);
+
+	--dhx-scheduler-btn-background-hover: var(--dhx-scheduler-base-colors-error-hover);
+	--dhx-scheduler-btn-border-hover: var(--dhx-scheduler-base-colors-error-hover);
+
+	--dhx-scheduler-btn-background-active: var(--dhx-scheduler-base-colors-error-active);
+	--dhx-scheduler-btn-border-active: var(--dhx-scheduler-base-colors-error-active);
+}
+
+.button-danger-outline{
+	--dhx-scheduler-base-colors-icons: var(--dhx-scheduler-btn-color);
+
+
+	--dhx-scheduler-btn-background: transparent;
+	--dhx-scheduler-btn-color: var(--dhx-scheduler-base-colors-error);
+	--dhx-scheduler-btn-border-color: var(--dhx-scheduler-base-colors-error);
+
+	--dhx-scheduler-btn-background-hover: var(--dhx-scheduler-base-colors-error-lighter);
+	--dhx-scheduler-btn-color-hover: var(--dhx-scheduler-base-colors-error-hover);
+	--dhx-scheduler-btn-border-hover: var(--dhx-scheduler-base-colors-error-hover);
+
+	--dhx-scheduler-btn-background-active: var(--dhx-scheduler-base-colors-error-active);
+	--dhx-scheduler-btn-color-active: var(--dhx-scheduler-base-colors-error-active);
+	--dhx-scheduler-btn-border-active: var(--dhx-scheduler-base-colors-error-active);
+
+	--dhx-scheduler-btn-background-disabled: transparent;
+	--dhx-scheduler-btn-color-disabled: var(--dhx-scheduler-base-colors-icons);
+	--dhx-scheduler-btn-border-color-disabled: var(--dhx-scheduler-base-colors-icons);
+}
+
+.button-danger-link{
+	padding: 6px 0;
+	--dhx-scheduler-base-colors-icons: var(--dhx-scheduler-base-colors-error);
+
+	--dhx-scheduler-btn-background: transparent;
+	--dhx-scheduler-btn-color: var(--dhx-scheduler-base-colors-error);
+	--dhx-scheduler-btn-border-color: transparent;
+
+	--dhx-scheduler-btn-background-hover: transparent;
+	--dhx-scheduler-btn-color-hover: var(--dhx-scheduler-base-colors-error-hover);
+	--dhx-scheduler-btn-border-hover: transparent;
+
+	--dhx-scheduler-btn-background-active: transparent;
+	--dhx-scheduler-btn-color-active: var(--dhx-scheduler-base-colors-error-active);
+	--dhx-scheduler-btn-border-active: transparent;
+
+	--dhx-scheduler-btn-background-disabled: transparent;
+	--dhx-scheduler-btn-color-disabled: var(--dhx-scheduler-base-colors-icons);
+	--dhx-scheduler-btn-border-color-disabled: transparent;
+}
+
+.button-link {
+	padding: 6px 0;
+	--dhx-scheduler-btn-background: transparent;
+	--dhx-scheduler-btn-color: var(--dhx-scheduler-base-colors-primary);
+	--dhx-scheduler-btn-border-color: transparent;
+
+	--dhx-scheduler-btn-background-hover: transparent;
+	--dhx-scheduler-btn-color-hover: var(--dhx-scheduler-base-colors-primary-hover);
+	--dhx-scheduler-btn-border-hover: transparent;
+
+	--dhx-scheduler-btn-background-active: transparent;
+	--dhx-scheduler-btn-color-active: var(--dhx-scheduler-base-colors-primary-active);
+	--dhx-scheduler-btn-border-active: transparent;
+
+	--dhx-scheduler-btn-background-disabled: transparent;
+	--dhx-scheduler-btn-color-disabled: var(--dhx-scheduler-base-colors-icons);
+	--dhx-scheduler-btn-border-color-disabled: transparent;
+}
+
+.button-icon{
+    padding: 8px;
+    min-width: 32px;
+    height: 32px;
+    border-radius: 50%;
+
+	&:hover {
+		--dhx-scheduler-base-colors-icons: var(--dhx-scheduler-base-colors-icons-hover);
+	}
+
+	&:active {
+		--dhx-scheduler-base-colors-icons: var(--dhx-scheduler-base-colors-icons-active);
+	}
+
+	&:disabled{
+		--dhx-scheduler-base-colors-icons: var(--dhx-scheduler-btn-color-disabled);
+	}
+	.button-link();
+}
+
+.dhx_cal_btn,
+.dhx_cal_btn_danger,
+.dhx_cal_btn_outline,
+.dhx_cal_btn_danger_outline,
+.dhx_cal_btn_danger_link,
+.dhx_btn_set,
+.dhx_cal_tab,
+.dhx_qi_big_icon,
+.dhx_cal_today_button,
+.dhx_cal_tab_standalone{
+	.button();
+}
+
+
+
+.scheduler_popup_button{
+	.button();
+}
+
+.scheduler_popup_button:not(.scheduler_ok_button){
+	.button-outline();
+}
+
+.scheduler_ok_button{
+	.button-danger();
+}
+
+.dhx_cal_btn_outline,
+.dhx_cal_btn_danger_outline{
+	.button-outline();
+}
+
+.dhx_cal_button_danger{
+	.button-danger();
+}
+.dhx_cal_button_danger_outline{
+	.button-danger();
+}
+
+.dhx_cal_button_link,
+.dhx_qi_big_icon{
+	.button-link();
+}

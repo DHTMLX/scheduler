@@ -1,0 +1,480 @@
+.common_input {
+    border-radius: 2px;
+    background-color: var(--dhx-scheduler-lightbox-background);
+    color: var(--dhx-scheduler-lightbox-color);
+    border: var(--dhx-scheduler-lightbox-control-border);
+    font-size: var(--dhx-scheduler);
+    padding: 6px 8px;
+    box-sizing: border-box;
+    margin-top: 0;
+    margin-bottom: 0;
+
+    &:focus,
+    &:focus-visible {
+        border-color: var(--dhx-scheduler-base-colors-primary);
+        outline: none;
+    }
+
+    &:disabled{
+        background-color: var(--dhx-scheduler-base-colors-disabled);
+        color: var(--dhx-scheduler-base-colors-icons);
+    }
+}
+
+.one_line_input {
+    height: var(--dhx-scheduler-control-height);
+}
+
+.dhx_cal_cover,
+.dhx_cal_cover * {
+    box-sizing: border-box;
+}
+
+.dhx_cal_cover {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 14;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+}
+
+.dhx_cal_light {
+    margin-top: auto;
+    margin-bottom: auto;
+
+    width: max-content;
+    max-width: var(--dhx-scheduler-lightbox-width);
+    height: auto;
+    -webkit-tap-highlight-color: transparent;
+    background-color: var(--dhx-scheduler-lightbox-background);
+    color: var(--dhx-scheduler-lightbox-color);
+    position: absolute;
+    z-index: 15;
+    font-family: var(--dhx-scheduler-lightbox_font-family);
+    font-size: var(--dhx-scheduler-lightbox-font-size);
+    font-weight: var(--dhx-scheduler-lightbox-font-weight);
+    line-height: 142%;
+    border: var(--dhx-scheduler-lightbox-border);
+    border-radius: var(--dhx-scheduler-popup-border-radius);
+
+    &.dhx_cal_light_wide {
+        --dhx-scheduler-lightbox-width: var(--dhx-scheduler-lightbox-wide-max-width);
+    }
+
+    textarea,
+    input,
+    select {
+        .common_input();
+    }
+
+    input,
+    select {
+        .one_line_input();
+    }
+
+    input[type="select"],
+    input[type="checkbox"] {
+        height: var(--dhx-scheduler-checkbox-height);
+    }
+
+    .dhx_time{
+        display: none;
+    }
+
+
+}
+
+.dhx_cal_ltitle {
+
+    font-size: var(--dhx-scheduler-lightbox-title-font-size);
+    font-weight: var(--dhx-scheduler-heading-font-weight);
+    line-height: 142%;
+
+    background: var(--dhx-scheduler-lightbox-title-background);
+    color: var(--dhx-scheduler-lightbox-title-color);
+
+    border-bottom: var(--dhx-scheduler-default-border);
+
+    padding: calc(var(--dhx-scheduler-base-padding) * 3) calc(var(--dhx-scheduler-base-padding) * 3);
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: calc(var(--dhx-scheduler-base-padding) * 2);
+    border-top-right-radius: var(--dhx-scheduler-popup-border-radius);
+    border-top-left-radius: var(--dhx-scheduler-popup-border-radius);
+
+    .dhx_mark {
+        display: none;
+    }
+
+    .dhx_cal_ltitle_descr{
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .dhx_cal_ltitle_controls{
+        cursor: pointer;
+    }
+}
+
+.dhx_cal_larea {
+    border: none;
+    padding: 0 12px 4px;
+    // overflow: hidden;
+    height: auto;
+
+    gap: calc(var(--dhx-scheduler-base-padding) * 2);
+
+}
+
+.dhx_btn_inner.dhx_delete_btn {
+    display: block !important;
+
+
+    .scheduler_icon();
+    .scheduler_icon.delete();
+}
+
+.dhx_cal_light_rtl {
+    direction: rtl;
+}
+
+.dhx_cal_light_wide.dhx_cal_light_rtl {
+    .dhx_custom_button {
+        right: auto;
+        left: calc(var(--dhx-scheduler-base-padding) * 2);
+    }
+}
+
+.dhx_lightbox_time_select{
+    min-width: 80px;
+}
+.dhx_lightbox_day_select{
+    min-width: 60px;
+}
+.dhx_lightbox_month_select{
+    min-width: 110px;
+}
+.dhx_lightbox_year_select{
+    min-width: 77px;
+}
+
+.dhx_cal_light_wide {
+
+    .dhx_cal_larea {
+        display: flex;
+        flex-direction: column;
+        padding-top: 12px;
+        gap: 12px;
+    }
+
+    .dhx_wrap_section {
+        display: flex;
+        flex: 0;
+        position: relative
+    }
+
+    .dhx_cal_lsection {
+        width: 120px;
+        justify-content: start;
+        align-items: start;
+        flex-shrink: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding: 4px 8px;
+    }
+
+    .dhx_custom_button {
+        position: absolute;
+        left: auto;
+        right: calc(var(--dhx-scheduler-base-padding) * 2);
+    }
+
+    .dhx_cal_ltext {
+        flex: 1;
+    }
+
+    .dhx_section_time {
+        justify-content: start;
+    }
+
+    .dhx_fullday {
+        margin-left: unset;
+    }
+}
+
+.dhx_cal_lcontrols {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: calc(var(--dhx-scheduler-base-padding)*2);
+    padding: 12px;
+
+    .dhx_btn_set {
+        display: flex;
+        flex-direction: row;
+        gap: var(--dhx-scheduler-base-padding);
+
+        // &.dhx_save_btn_set {
+        //     .button-primary;
+        // }
+
+        &.dhx_delete_btn_set {
+            .button-danger-link;
+        }
+
+        &:not(.dhx_save_btn_set, .dhx_delete_btn_set) {
+            .button-outline;
+        }
+
+        .dhx_btn_inner {
+            display: none;
+        }
+    }
+
+    .dhx_cal_lcontrols_push_right {
+        margin-left: auto;
+    }
+}
+
+.dhx_cal_ltext {
+    textarea {
+        width: 100%;
+        height: 100%;
+        resize: none;
+        font-family: var(--dhx-scheduler-lightbox_font-family);
+        font-size: var(--dhx-scheduler-lightbox-font-size);
+        font-weight: var(--dhx-scheduler-lightbox-font-weight);
+        line-height: 142%;
+    }
+}
+.dhx_section_time_spacer,
+.dhx_lightbox_minical_spacer {
+    visibility: hidden;
+    flex-basis: 100%;
+    height: 0;
+}
+.dhx_section_time {
+    --dhx-scheduler-lightbox-time-font-size: var(--dhx-scheduler-important-font-size);
+    --dhx-scheduler-lightbox-time-font-weight: var(--dhx-scheduler-important-font-weight);
+
+    font-size: var(--dhx-scheduler-lightbox-time-font-size);
+    font-weight: var(--dhx-scheduler-lightbox-time-font-weight);
+    line-height: 142%;
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: calc(var(--dhx-scheduler-base-padding) * 2);
+    row-gap: var(--dhx-scheduler-base-padding);
+
+
+
+    .dhx_section_time_icon {
+        width: calc(var(--dhx-scheduler-base-module) * 2);
+        height: calc(var(--dhx-scheduler-base-module) * 2);
+        border-radius: 2px;
+        background: var(--dhx-scheduler-base-colors-primary);
+    }
+}
+
+.dhx_fullday {
+    margin-left: auto;
+}
+
+.dhx_cal_light_rtl {
+    .dhx_fullday {
+        margin-left: unset;
+        margin-right: auto;
+    }
+}
+
+.dhx_cal_lsection label {
+    font-weight: var(--dhx-scheduler-heading-font-weight);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.dhx_cal_lsection {
+    display: flex;
+    margin-top: 12px;
+    margin-bottom: 4px;
+
+    .dhx_custom_button {
+        .button();
+        .button-outline();
+        order: 1;
+        margin-left: auto;
+        margin-right: unset;
+    }
+}
+
+.dhx_cal_light_rtl {
+    .dhx_custom_button {
+        margin-left: unset;
+        margin-right: auto;
+    }
+}
+
+/* checkbox */
+
+.dhx_cal_checkbox {
+    display: flex;
+    gap: var(--dhx-scheduler-base-padding);
+}
+
+.dhx_cal_wide_checkbox {
+    padding: 4px 0;
+}
+
+/* radio */
+
+// .dhx_cal_radio label {
+//     font-size: var(--dhx-scheduler-caption-font-size);
+//     font-weight: var(--dhx-scheduler-caption-font-weight);
+// }
+
+.dhx_cal_radio input {
+    margin: var(--dhx-scheduler-base-padding);
+}
+
+.dhx_cal_radio_item {
+    display: flex;
+    gap: var(--dhx-scheduler-base-padding);
+    align-items: center;
+}
+
+.dhx_cal_radio {
+    display: flex;
+    gap: 4px;
+}
+
+.dhx_cal_radio_vertical {
+    flex-direction: column;
+    overflow: auto;
+
+    --dhx-scheduler-control-height: 20px;
+}
+
+/* select */
+
+.dhx_multi_select_control {
+    display: flex;
+    gap: 4px;
+}
+
+.dhx_multi_select_control_vertical {
+    flex-direction: column;
+}
+
+.dhx_multi_select_control label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.dhx_cal_select {}
+
+.dhx_cal_template {
+    position: relative;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+/* recurring */
+
+.dhx_form_repeat {
+    overflow: hidden;
+    flex-grow: 1;
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px;
+    }
+
+    input,
+    select {
+        .common_input();
+        margin-left: 4px;
+        margin-right: 4px;
+    }
+
+    label {
+        display: inline-flex;
+        align-items: center;
+        vertical-align: top;
+        gap: 4px;
+    }
+
+    #dhx_repeat_year,
+    #dhx_repeat_month,
+    #dhx_repeat_week,
+    #dhx_repeat_day,
+    .dhx_repeat_right {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    #dhx_repeat_month>div,
+    #dhx_repeat_week>div {
+        display: flex;
+        gap: 8px;
+    }
+
+}
+
+.dhx_repeat_left {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.dhx_repeat_divider {
+    background: var(--dhx-scheduler-base-colors-border);
+    height: 1px;
+}
+
+.dhx_repeat_text {
+    width: 28px;
+    .common_input();
+}
+
+.dhx_repeat_date,
+.dhx_form_repeat select {
+    .common_input();
+}
+
+.dhx_cal_light .dhx_readonly {
+    color: var(--dhx-scheduler-base-colors-readonly);
+}
+
+.dhx_lightbox_minical {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    .dhx_lightbox_minical_spacer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .dhx_minical_input {
+        max-width: 165px;
+    }
+
+    .dhx_lightbox_time_select{
+        width: 95px;
+    }
+}

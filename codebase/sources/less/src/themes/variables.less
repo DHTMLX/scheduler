@@ -1,0 +1,263 @@
+/* default terrace theme is here */
+
+:root {
+	--dhx-scheduler-theme: terrace;
+	--dhx-scheduler-font-family: Inter, Helvetica, Arial, sans-serif;
+	--dhx-scheduler-font-size: 14px;
+
+	--dhx-scheduler-heading-font-size: calc(var(--dhx-scheduler-font-size) + 2px);
+	--dhx-scheduler-heading-font-weight: 600;
+
+	--dhx-scheduler-important-font-size: var(--dhx-scheduler-font-size);
+	--dhx-scheduler-important-line-height: 142%;
+	--dhx-scheduler-important-font-weight: 500;
+	--dhx-scheduler-regular-font-size: var(--dhx-scheduler-font-size);
+	--dhx-scheduler-regular-font-weight: 400;
+	--dhx-scheduler-regular-line-height: 142%;
+
+	--dhx-scheduler-caption-font-size: calc(var(--dhx-scheduler-font-size) - 2px);
+	--dhx-scheduler-caption-font-weight: 400;
+	--dhx-scheduler-caption-line-height: 132%;
+
+	--dhx-scheduler-base-colors-primary: #537CFA;
+	--dhx-scheduler-base-colors-primary-hover: #4269E0;
+	--dhx-scheduler-base-colors-primary-active: #3365fb;
+	--dhx-scheduler-base-colors-primary-lighter: #537cfa33;
+
+	--dhx-scheduler-base-colors-warning: #FAB936;
+	--dhx-scheduler-base-colors-error: #E3334E;
+	--dhx-scheduler-base-colors-error-hover: #D3233E;
+	--dhx-scheduler-base-colors-error-active: #C3132E;
+	--dhx-scheduler-base-colors-error-lighter: #E3334E33;
+	--dhx-scheduler-base-colors-error-text: #FFFFFF;
+	--dhx-scheduler-base-colors-success: #1BC297;
+
+	--dhx-scheduler-base-colors-secondary: rgba(0, 0, 0, 0.04);
+	--dhx-scheduler-base-colors-secondary-hover: rgba(0, 0, 0, 0.1);
+
+	--dhx-scheduler-base-colors-white: #FFFFFF;
+	--dhx-scheduler-base-colors-select: #EFF3FF;
+	--dhx-scheduler-base-colors-hover-color: #e0e0e0;
+	--dhx-scheduler-base-colors-border: #D0DBE3;
+	--dhx-scheduler-base-colors-icons: #A1A4A6;
+	--dhx-scheduler-base-colors-icons-active: #8b8e90;
+	--dhx-scheduler-base-colors-icons-hover: #76787a;
+
+	--dhx-scheduler-base-colors-disabled: #E9E9E9;
+	--dhx-scheduler-base-colors-readonly: var(--dhx-scheduler-base-colors-icons);
+	--dhx-scheduler-base-colors-text-light: #44494E;
+	--dhx-scheduler-base-colors-text-base: #23272A;
+	--dhx-scheduler-base-colors-background: #FFFFFF;
+
+	--dhx-scheduler-container-background: var(--dhx-scheduler-base-colors-background);
+	--dhx-scheduler-container-color: var(--dhx-scheduler-base-colors-text-base);
+	--dhx-scheduler-container-background-alt: rgba(0, 0, 0, 0.4);
+
+	--dhx-scheduler-base-transition: 0.2s ease;
+
+	--dhx-scheduler-box-shadow-s: 0px 4px 24px 0px rgba(44, 47, 60, 0.08);
+	--dhx-scheduler-box-shadow-m: 0px 4px 24px 0px rgba(44, 47, 60, 0.36);
+
+	--dhx-scheduler-box-shadow-l: 0px 4px 24px 0px rgba(44, 47, 60, 0.56);
+
+	--dhx-scheduler-base-module: 4px;
+	--dhx-scheduler-base-padding: 4px;
+	--dhx-scheduler-border-radius: var(--dhx-scheduler-base-module);
+
+	--dhx-scheduler-event-colors-primary: #537CFA;
+	--dhx-scheduler-event-text-primary: rgba(255, 255, 255, 0.90);
+
+	--dhx-scheduler-toolbar-height: 40px;
+	--dhx-scheduler-transition: all 0.3s;
+
+	--dhx-scheduler-navline-font-color: var(--dhx-scheduler-base-colors-text-light);
+
+	--dhx-scheduler-default-border: 1px solid var(--dhx-scheduler-base-colors-border);
+	--dhx-scheduler-header-border: var(--dhx-scheduler-default-border);
+	--dhx-scheduler-halfhour-border: 1px dotted var(--dhx-scheduler-base-colors-border);
+
+	/* events */
+
+	--dhx-scheduler-event-background-primary: var(--dhx-scheduler-base-colors-primary);
+
+	--dhx-scheduler-event-blue: linear-gradient(180deg, #527CFF 0%, #9751FC 100%);
+	--dhx-scheduler-event-green: linear-gradient(180deg, #12D979 0%, #1ECDEB 100%);
+	--dhx-scheduler-event-violet: linear-gradient(180deg, #D071EF 0%, #EE71D5 100%);
+	--dhx-scheduler-event-yellow: linear-gradient(180deg, #FFB725 0%, #FFBB25 31.25%, #FAEA27 100%);
+
+	--dhx-scheduler-event-title-font-size: var(--dhx-scheduler-caption-font-size);
+	--dhx-scheduler-event-title-line-height: var(--dhx-scheduler-caption-line-height);
+
+	--dhx-scheduler-event-text-font-size: var(--dhx-scheduler-regular-font-size);
+	--dhx-scheduler-event-text-line-height: var(--dhx-scheduler-regular-line-height);
+	--dhx-scheduler-event-text-font-weight: var(--dhx-scheduler-regular-font-weight);
+	--dhx-scheduler-event-bar-font-size: var(--dhx-scheduler-caption-font-size);
+	--dhx-scheduler-event-bar-line-height: var(--dhx-scheduler-caption-line-height);
+	;
+
+	--dhx-scheduler-event-menu-background: var(--dhx-scheduler-popup-background);
+	--dhx-scheduler-event-menu-color: var(--dhx-scheduler-base-colors-primary);
+
+	--dhx-scheduler-event-background: var(--dhx-scheduler-event-blue);
+	--dhx-scheduler-event-border: none;
+	--dhx-scheduler-event-color: var(--dhx-scheduler-event-text-primary);
+	--dhx-scheduler-event-line-text: var(--dhx-scheduler-container-color);
+
+	--dhx-scheduler-event-marker-color: var(--dhx-scheduler-event-background);
+
+	--dhx-scheduler-popup-background: var(--dhx-scheduler-container-background);
+	--dhx-scheduler-popup-color: var(--dhx-scheduler-container-color);
+	--dhx-scheduler-popup-border: none;
+	--dhx-scheduler-popup-border-radius: var(--dhx-scheduler-border-radius);
+	/* form */
+
+	--dhx-scheduler-control-height: 32px;
+	--dhx-scheduler-checkbox-height: 20px;
+
+	--dhx-scheduler-lightbox_font-family: var(--dhx-scheduler-font-family);
+	--dhx-scheduler-lightbox-font-size: var(--dhx-scheduler-important-font-size);
+	--dhx-scheduler-lightbox-font-weight: var(--dhx-scheduler-important-font-weight);
+
+	--dhx-scheduler-lightbox-background: var(--dhx-scheduler-popup-background);
+	--dhx-scheduler-lightbox-border: var(--dhx-scheduler-popup-border);
+	--dhx-scheduler-lightbox-control-border: var(--dhx-scheduler-default-border);
+	--dhx-scheduler-lightbox-color: var(--dhx-scheduler-popup-color);
+
+	--dhx-scheduler-lightbox-title-background: var(--dhx-scheduler-base-colors-select);
+	--dhx-scheduler-lightbox-title-color: var(--dhx-scheduler-lightbox-color);
+	--dhx-scheduler-lightbox-title-font-size: var(--dhx-scheduler-heading-font-size);
+
+	--dhx-scheduler-lightbox-max-width: 496px;
+	--dhx-scheduler-lightbox-wide-max-width: 738px;
+	--dhx-scheduler-lightbox-width: var(--dhx-scheduler-lightbox-max-width);
+
+	/* week */
+
+	--dhx-scheduler-scale-color: var(--dhx-scheduler-container-color);
+	--dhx-scheduler-timescale-background: var(--dhx-scheduler-container-background);
+	--dhx-scheduler-timescale-today-background: var(--dhx-scheduler-base-colors-select);
+
+	--dhx-scheduler-hours-font-size: var(--dhx-scheduler-caption-font-size);
+	--dhx-scheduler-hours-font-weight: var(--dhx-scheduler-caption-font-weight);
+	/* month */
+	--dhx-scheduler-inactive-month-color: var(--dhx-scheduler-base-colors-icons);
+	--dhx-scheduler-month-header-color: var(--dhx-scheduler-container-color);
+
+	--dhx-scheduler-month-day-header-padding: var(--dhx-scheduler-base-padding) calc(var(--dhx-scheduler-base-padding) * 2);
+	--dhx-scheduler-month-event-marker-size: calc(var(--dhx-scheduler-base-module) * 2);
+	/* year */
+
+
+	/* agenda */
+
+	--dhx-scheduler-list-line-height: 36px;
+	--dhx-scheduler-agenda-date-column-width: 188px;
+
+
+	/* grid */
+
+	--dhx-scheduler-grid-event-background: transparent;
+	--dhx-scheduler-grid-event-text: initial;
+
+	/* timeline */
+	--dhx-scheduler-timeline-folder-background: var(--dhx-scheduler-base-colors-disabled);
+	--dhx-scheduler-timeline-folder-color: var(--dhx-scheduler-base-colors-primary);
+
+	/* markers */
+
+	--dhx-scheduler-blocked-time-background: var(--dhx-scheduler-base-colors-disabled);
+	--dhx-scheduler-today-marker-color: var(--dhx-scheduler-base-colors-error);
+
+	/* datepicker */
+
+	--dhx-scheduler-datepicker-width: 250px;
+	--dhx-scheduler-datepicker-font-size: var(--dhx-scheduler-font-size);
+	--dhx-scheduler-datepicker-family: var(--dhx-scheduler-font-family);
+	--dhx-scheduler-datepicker-cell-size: 28px;
+	--dhx-scheduler-datepicker-header-font-size: var(--dhx-scheduler-font-size);
+	--dhx-scheduler-datepicker-header-font-weight: 500;
+	--dhx-scheduler-datepicker-padding: 5px;
+	--dhx-scheduler-datepicker-inactive-month-color: var(--dhx-scheduler-inactive-month-color);
+
+
+	--dhx-scheduler-datepicker-cell-color: var(--dhx-scheduler-popup-color);
+	--dhx-scheduler-datepicker-cell-background: var(--dhx-scheduler-popup-background);
+
+	--dhx-scheduler-datepicker-today-color: var(--dhx-scheduler-base-colors-white);
+	--dhx-scheduler-datepicker-today-background: var(--dhx-scheduler-base-colors-primary);
+
+	--dhx-scheduler-datepicker-weekend-color: var(--dhx-scheduler-base-colors-primary);
+	--dhx-scheduler-datepicker-weekend-background: var(--dhx-scheduler-popup-background);
+
+	--dhx-scheduler-datepicker-disabled-color: var(--dhx-scheduler-base-colors-icons);
+	--dhx-scheduler-datepicker-disabled-background: var(--dhx-scheduler-base-colors-disabled);
+
+	--dhx-scheduler-datepicker-hover-color: var(--dhx-scheduler-base-colors-white);
+	--dhx-scheduler-datepicker-hover-background: var(--dhx-scheduler-base-colors-primary-hover);
+
+	--dhx-scheduler-datepicker-prevnext-color: var(--dhx-scheduler-inactive-month-color);
+	--dhx-scheduler-datepicker-prevnext-background: var(--dhx-scheduler-popup-background);
+
+	/* buttons */
+
+	--dhx-scheduler-btn-background: var(--dhx-scheduler-base-colors-primary);
+	--dhx-scheduler-btn-color: var(--dhx-scheduler-base-colors-white);
+	--dhx-scheduler-btn-border-color: var(--dhx-scheduler-base-colors-primary);
+
+	--dhx-scheduler-btn-color-hover: var(--dhx-scheduler-base-colors-white);
+	--dhx-scheduler-btn-background-hover: var(--dhx-scheduler-base-colors-primary-hover);
+	--dhx-scheduler-btn-border-hover: var(--dhx-scheduler-base-colors-primary-hover);
+
+	--dhx-scheduler-btn-color-active: var(--dhx-scheduler-base-colors-white);
+	--dhx-scheduler-btn-background-active: var(--dhx-scheduler-base-colors-primary-active);
+	--dhx-scheduler-btn-border-active: var(--dhx-scheduler-base-colors-primary-active);
+
+	--dhx-scheduler-btn-background-disabled: var(--dhx-scheduler-base-colors-disabled);
+	--dhx-scheduler-btn-color-disabled: var(--dhx-scheduler-base-colors-icons);
+	--dhx-scheduler-btn-border-color-disabled: var(--dhx-scheduler-base-colors-disabled);
+
+	--dhx-scheduler-btn-outline-background: transparent;
+	--dhx-scheduler-btn-outline-color: var(--dhx-scheduler-base-colors-primary);
+	--dhx-scheduler-btn-outline-border-color: var(--dhx-scheduler-base-colors-primary);
+
+	--dhx-scheduler-btn-outline-background-hover: var(--dhx-scheduler-base-colors-primary-lighter);
+	--dhx-scheduler-btn-outline-color-hover: var(--dhx-scheduler-base-colors-primary-hover);
+	--dhx-scheduler-btn-outline-border-hover: var(--dhx-scheduler-base-colors-primary-hover);
+
+	--dhx-scheduler-btn-outline-background-active: var(--dhx-scheduler-base-colors-primary-active);
+	--dhx-scheduler-btn-outline-color-active: var(--dhx-scheduler-base-colors-white);
+	--dhx-scheduler-btn-outline-border-active: var(--dhx-scheduler-base-colors-primary-active);
+
+	--dhx-scheduler-btn-outline-background-disabled: transparent;
+	--dhx-scheduler-btn-outline-color-disabled: var(--dhx-scheduler-base-colors-icons);
+	--dhx-scheduler-btn-outline-border-color-disabled: var(--dhx-scheduler-base-colors-icons);
+
+	--dhx-scheduler-btn-text-transform: none;
+
+	/* scheduler.xy values */
+	--dhx-scheduler-xy-scale_width: 50px;
+	--dhx-scheduler-xy-bar_height: 24;
+	--dhx-scheduler-xy-month_head_height: 26;
+
+	--dhx-scheduler-xy-scale_height: 24px;
+	--dhx-scheduler-xy-scroll_width: 18px;
+
+
+
+	/* modals */
+
+	--dhx-scheduler-info-background: var(--dhx-scheduler-popup-background);
+	--dhx-scheduler-info-color: var(--dhx-scheduler-popup-color);
+	--dhx-scheduler-info-border: var(--dhx-scheduler-popup-border);
+	--dhx-scheduler-info-shadow: var(--dhx-scheduler-box-shadow-m);
+
+
+
+	--dhx-scheduler-modal-background: var(--dhx-scheduler-popup-background);
+	--dhx-scheduler-modal-color: var(--dhx-scheduler-popup-color);
+	--dhx-scheduler-modal-border: var(--dhx-scheduler-popup-border);
+	--dhx-scheduler-modal-padding: 16px;
+	--dhx-scheduler-modal-width: 320px;
+	--dhx-scheduler-modal-border-radius: var(--dhx-scheduler-popup-border-radius);
+
+}

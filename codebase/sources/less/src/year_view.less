@@ -1,0 +1,83 @@
+.dhx_scheduler_year {
+	.dhx_cal_header {
+		display: none;
+	}
+
+	.dhx_cal_data{
+		padding: 40px;
+	}
+}
+
+.dhx_year_wrapper {
+	display: flex;
+	gap: 40px;
+	padding: 12px;
+	justify-content: center;
+	align-items: baseline;
+	flex-wrap: wrap;
+}
+
+.dhx_year_box {
+
+	// --dhx-scheduler-year_box_width: 260px;
+	// width: var(--dhx-scheduler-year_box_width);
+	.dhx_scale_bar {
+		position: relative;
+		width: var(--dhx-scheduler-datepicker-cell-size);
+	}
+
+	.dhx_month_head {
+		position: relative;
+	}
+
+	--dhx-scheduler-month-day-header-padding: 8px 12px;
+
+	.dhx_month_head.dhx_year_event::after {
+		.scheduler-event-marker();
+	}
+
+	.dhx_month_body {
+		display: none;
+	}
+}
+
+.dhx_year_month {
+	text-align: center;
+	padding: 12px 0;
+
+
+}
+
+.dhx_year_week {
+	display: flex;
+}
+
+.dhx_year_tooltip {
+	position: absolute;
+	padding: 12px;
+	font-family: var(--dhx-scheduler-font-family);
+	font-size: var(--dhx-scheduler-event-title-font-size);
+	background: var(--dhx-scheduler-popup-background);
+	border-radius: var(--dhx-scheduler-popup-border-radius);
+	border: var(--dhx-scheduler-popup-border);
+	color: var(--dhx-scheduler-popup-color);
+	box-shadow: var(--dhx-scheduler-box-shadow-m);
+	display: flex;
+	flex-direction: column;
+	width: 300px;
+	gap: 4px;
+}
+
+.dhx_tooltip_line {
+
+	border-radius: var(--dhx-scheduler-border-radius);
+	background: var(--dhx-scheduler-event-background);
+	color: var(--dhx-scheduler-event-color);
+	padding: 4px;
+	display: flex;
+	cursor: pointer;
+}
+
+.dhx_tooltip_rtl {
+	direction: rtl;
+}

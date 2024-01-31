@@ -1,0 +1,415 @@
+.dhx_unselectable,
+.dhx_unselectable div {
+	user-select: none;
+}
+
+.dhx_cal_container {
+	position: relative;
+	overflow: hidden;
+	font-family: var(--dhx-scheduler-font-family);
+	font-size: var(--dhx-scheduler-font-size);
+	line-height: 110%;
+	display: flex;
+	flex-direction: column;
+
+	background-color: var(--dhx-scheduler-container-background);
+	color: var(--dhx-scheduler-container-color);
+
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+
+	div[role="button"] {
+		cursor: pointer;
+	}
+
+	&.dhx_cal_container_rtl {
+		direction: rtl;
+	}
+}
+
+.dhx_cal_container,
+.dhx_cal_container * {
+	box-sizing: border-box;
+}
+
+.dhx_cal_container div {
+	user-select: none;
+}
+
+.dhx_cal_data,
+.dhx_cal_event,
+.dhx_cal_event_clear,
+.dhx_cal_event_line {
+	touch-action: pan-y;
+}
+
+.dhx_cal_navline {
+	position: relative;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	row-gap: 8px;
+	justify-content: space-between;
+	font-weight: var(--dhx-scheduler-important-font-weight);
+	padding: 12px;
+	min-height: var(--dhx-scheduler-toolbar-height);
+	color: var(--dhx-scheduler-navline-font-color);
+}
+
+
+.dhx_cal_navline_flex {
+	.dhx_cal_navbar_rows_container {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		box-sizing: border-box;
+		flex-grow: 1;
+		gap:12px;
+		height: 100%;
+	}
+
+	.dhx_cal_date {
+		width: auto;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.dhx_cal_today_button {
+		order: unset;
+	}
+
+	.dhx_cal_navbar_row {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+		padding: 0 1vw;
+		box-sizing: border-box;
+		height: 100%;
+		width: 100%;
+		flex-grow: 1;
+		flex-shrink: 1;
+	}
+
+	.dhx_cal_line_spacer {
+		display: block;
+		width: auto;
+		flex-grow: 1;
+	}
+}
+
+@media only screen and (max-width: 1023px) {
+
+	.dhx_cal_navline_flex {
+
+		.dhx_cal_next_button,
+		.dhx_cal_prev_button,
+		.dhx_cal_tab,
+		.dhx_cal_tab.active,
+		.dhx_cal_today_button {
+			height: 2.5vw;
+			line-height: 2.5vw;
+		}
+	}
+}
+
+@media only screen and (max-width: 840px) {
+
+	.dhx_cal_navline_flex {
+		--dhx-scheduler-btn-padding: 0 12px;
+		.dhx_cal_next_button,
+		.dhx_cal_prev_button,
+		.dhx_cal_tab,
+		.dhx_cal_tab.active,
+		.dhx_cal_today_button {
+			height: 4vw;
+			line-height: 4vw;
+		}
+	}
+}
+
+@media only screen and (max-width: 480px) {
+
+	.dhx_cal_navline_flex {
+		--dhx-scheduler-btn-padding: 0 4px;
+		.dhx_cal_next_button,
+		.dhx_cal_prev_button {
+			width: 2rem;
+		}
+	}
+}
+
+@media only screen and (max-width: 480px) {
+
+	.dhx_cal_navline_flex {
+
+		.dhx_cal_next_button,
+		.dhx_cal_prev_button,
+		.dhx_cal_tab,
+		.dhx_cal_tab.active,
+		.dhx_cal_today_button {
+			height: 6vw;
+			line-height: 6vw;
+		}
+	}
+}
+
+.dhx_cal_tab,
+.dhx_cal_tab_standalone,
+.dhx_cal_today_button {
+	&:not(.active) {
+		.button-outline;
+	}
+}
+
+.dhx_cal_tab {
+	// border-left-color: transparent;
+	// border-radius: 0;
+}
+
+.dhx_cal_tab_segmented {
+	border-left-style: none;
+	border-radius: 0;
+}
+
+.dhx_cal_tab_segmented.dhx_cal_tab_first {
+	border-left-style: solid;
+	border-radius: var(--dhx-scheduler-border-radius) 0px 0px var(--dhx-scheduler-border-radius);
+	margin-left: 4px;
+}
+
+.dhx_cal_tab_segmented.dhx_cal_tab_last {
+	border-radius: 0px var(--dhx-scheduler-border-radius) var(--dhx-scheduler-border-radius) 0px;
+	margin-right: 4px;
+}
+
+.dhx_cal_container_rtl {
+	.dhx_cal_tab_segmented.dhx_cal_tab_first {
+		border-left-style: none;
+		border-radius: 0px var(--dhx-scheduler-border-radius) var(--dhx-scheduler-border-radius) 0px;
+		margin-right: 4px;
+		margin-left: unset;
+	}
+
+	.dhx_cal_tab_segmented.dhx_cal_tab_last {
+		border-radius: var(--dhx-scheduler-border-radius) 0px 0px var(--dhx-scheduler-border-radius);
+		border-left-style: solid;
+		margin-right: unset;
+		margin-left: 4px;
+	}
+
+	.dhx_cal_date {
+		margin-right: unset;
+		margin-left: auto;
+	}
+
+	.dhx_cal_header {
+		border-left: var(--dhx-scheduler-default-border);
+		border-right: none;
+	}
+}
+
+.dhx_cal_tab_first {}
+
+.dhx_cal_tab_last {}
+
+.dhx_cal_tab_standalone {
+	border-radius: var(--dhx-scheduler-border-radius);
+	margin: 0 4px;
+}
+
+.dhx_cal_header {
+	height: 21px;
+	border-top: var(--dhx-scheduler-header-border);
+	border-right: var(--dhx-scheduler-header-border);
+	position: relative;
+	overflow: hidden;
+}
+
+.dhx_scale_bar {
+	position: absolute;
+}
+
+.dhx_cal_date {
+	text-align: center;
+	position: relative;
+	margin-right: auto;
+	font-size: var(--dhx-scheduler-heading-font-size);
+	line-height: 150%;
+	font-weight: var(--dhx-scheduler-heading-font-weight);
+	flex-shrink: 0;
+}
+
+
+.dhx_cal_data {
+	position: relative;
+	flex: 1;
+	overflow-y: auto;
+	overflow-x: hidden;
+	border-top: var(--dhx-scheduler-default-border);
+}
+
+.dhx_scale_holder {
+	position: absolute;
+}
+
+.dhx_cal_today_button {
+	margin-right: 5px;
+	order: -1;
+}
+
+
+.dhx_cal_prev_button,
+.dhx_cal_next_button {
+	order: 0;
+	width: 20px;
+	height: 20px;
+
+	.button();
+	.button-icon();
+	.scheduler_icon();
+
+	font-size: 24px;
+}
+
+.dhx_cal_prev_button {
+	.scheduler_icon.arrow_left();
+}
+
+.dhx_cal_next_button {
+	.scheduler_icon.arrow_right();
+}
+
+.dhx_cal_container_rtl {
+	.dhx_cal_prev_button {
+		.scheduler_icon.arrow_right();
+	}
+	
+	.dhx_cal_next_button {
+		.scheduler_icon.arrow_left();
+	}
+}
+
+
+.scheduler_container_resize_watcher {
+	background: transparent;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index: -1;
+	pointer-events: none;
+	border: 0;
+	box-sizing: border-box;
+	opacity: 0;
+}
+
+.dhx_title_datepicker_container {
+	z-index: 2;
+	position: absolute;
+}
+
+
+.scheduler-event-marker() {
+	content: "";
+	width: 4px;
+	height: 4px;
+	border-radius: 50%;
+	position: absolute;
+	bottom: 2px;
+	left: 50%;
+	transform: translateX(-50%);
+	background: var(--dhx-scheduler-event-marker-color);
+}
+
+.dhx_expand_icon {
+	position: absolute;
+	top: 0px;
+	right: 2px;
+	cursor: pointer;
+	z-index: 4;
+}
+
+/* marked timespans */
+
+.dhx_marked_timespan {
+	position: absolute;
+	width: 100%;
+	margin-left: 0;/* fix bootstrap conflict [class*="span"] */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.dhx_time_block {
+
+	position: absolute;
+	width: 100%;
+	background: var(--dhx-scheduler-blocked-time-background);
+	z-index: 1;
+	opacity: 0.6;
+}
+
+.dhx_time_block_reset {
+	opacity: 1;
+}
+
+.dhx_scheduler_month .dhx_marked_timespan {
+	display: none;
+}
+
+.dhx_mini_calendar .dhx_marked_timespan {
+	display: none;
+}
+
+.dhx_timeline_table_wrapper {
+	.dhx_marked_timespan {
+		z-index: 1;
+	}
+
+	.dhx_time_block {
+		z-index: 2;
+	}
+
+	.dhx_cal_event_line {
+		z-index: 1;
+	}
+
+	.dhx_timeline_scrollable_data {
+		overflow-x: auto;
+	}
+}
+
+.dhx_now_time {
+
+	width: 100%;
+	height: 2px;
+	background: var(--dhx-scheduler-today-marker-color);
+	opacity: 0.5;
+	box-shadow: 0 1px 0 1px var(--dhx-scheduler-today-marker-color);
+}
+
+.dhx_minical_icon{
+	.button();
+	.button-icon();
+	cursor: pointer;
+	// .button();
+	// .button-link();
+	.scheduler_icon();
+	.scheduler_icon.calendar();
+	font-size: 24px;
+}
+
+.dhx_scale_ignore {
+	display: none !important;
+}
+
+.dhx_drag_placeholder{
+	font-family: var(--dhx-scheduler-font-family);
+	font-size: var(--dhx-scheduler-font-size);
+}
+
+.dhx_hidden {
+	display: none !important;
+}

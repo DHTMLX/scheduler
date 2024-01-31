@@ -1,0 +1,115 @@
+.dhx_scale_text_styles {
+	font-size: var(--dhx-scheduler-caption-font-size);
+	font-weight: var(--dhx-scheduler-caption-font-weight);
+	color: var(--dhx-scheduler-scale-color);
+	line-height: 133%;
+}
+
+.dhx_scale_bar {
+	.dhx_scale_text_styles();
+	display: flex;
+	box-sizing: border-box;
+	height: 100%;
+	justify-content: center;
+	align-items: baseline;
+
+	padding: var(--dhx-scheduler-base-padding);
+	border-left: var(--dhx-scheduler-header-border);
+	overflow: hidden;
+}
+
+.dhx_scale_holder {
+	border-right: var(--dhx-scheduler-default-border);
+	background: var(--dhx-scheduler-timescale-background);
+	box-sizing: border-box;
+
+	&_now {
+		--dhx-scheduler-timescale-background: var(--dhx-scheduler-timescale-today-background);
+	}
+}
+
+.dhx_cal_container_rtl {
+	.dhx_scale_bar {
+		border-left: none;
+		border-right: var(--dhx-scheduler-header-border);
+	}
+
+	.dhx_scale_holder {
+		border-right: none;
+		border-left: var(--dhx-scheduler-default-border);
+	}
+}
+
+.dhx_scale_hour {
+	.dhx_scale_text_styles();
+
+	font-size: var(--dhx-scheduler-hours-font-size);
+	font-weight: var(--dhx-scheduler-hours-font-weight);
+	border-bottom: var(--dhx-scheduler-default-border);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: start;
+	box-sizing: border-box;
+	padding: var(--dhx-scheduler-base-padding);
+	box-sizing: border-box;
+
+}
+
+.dhx_scale_time_slot {
+
+
+	box-sizing: border-box;
+	border-bottom: var(--dhx-scheduler-default-border);
+
+
+	&.dhx_scale_time_slot_hour_start {
+		border-bottom: var(--dhx-scheduler-halfhour-border);
+	}
+}
+
+.dhx_drag_marker {
+	width: 100%;
+	opacity: .5;
+	background-color: var(--dhx-scheduler-base-colors-border);
+	position: absolute;
+	box-sizing: border-box;
+	border-top: var(--dhx-scheduler-default-border);
+	;
+	border-bottom: var(--dhx-scheduler-default-border);
+	;
+}
+
+.dhx_multi_day {
+	position: relative;
+	// border-bottom: var(--dhx-scheduler-default-border);
+	border-top: var(--dhx-scheduler-default-border);
+}
+
+.dhx_multi_day_icon,
+.dhx_multi_day_icon_small {
+	background-position: 50%;
+	font-size: 32px;
+	border-bottom: var(--dhx-scheduler-default-border);
+	border-right: var(--dhx-scheduler-default-border);
+	background-repeat: no-repeat;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	.scheduler_icon();
+	.scheduler_icon.clock();
+}
+
+.dhx_multi_day_icon_small {
+	font-size: 16px;
+}
+
+.dhx_cal_container_rtl {
+
+	.dhx_multi_day_icon,
+	.dhx_multi_day_icon_small {
+		border-right: none;
+		border-left: var(--dhx-scheduler-default-border);
+	}
+}

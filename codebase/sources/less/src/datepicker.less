@@ -1,0 +1,279 @@
+.dhx_cal_datepicker {
+	font-size: var(--dhx-scheduler-datepicker-font-size);
+	font-family: var(--dhx-scheduler-datepicker-family);
+	line-height: 142%;
+	font-weight: 400;
+	// width: var(--dhx-scheduler-datepicker-width);
+	border: var(--dhx-scheduler-popup-border);
+	background: var(--dhx-scheduler-popup-background);
+	color: var(--dhx-scheduler-popup-color);
+	box-shadow: var(--dhx-scheduler-box-shadow-s);
+	border-radius: var(--dhx-scheduler-popup-border-radius);
+	padding: 16px;
+
+}
+
+.dhx_cal_datepicker,
+.dhx_cal_datepicker *,
+.dhx_mini_calendar,
+.dhx_mini_calendar * {
+	box-sizing: border-box;
+}
+
+.dhx_cal_datepicker_arrow {
+	border: none;
+	background: none;
+	cursor: pointer;
+}
+
+.dhx_cal_datepicker_arrow:focus {
+	outline: none;
+}
+
+.dhx_cal_datepicker_data,
+.dhx_year_grid {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 100%;
+	padding: var(--dhx-scheduler-datepicker-padding);
+	gap: 8px;
+	color: var(--dhx-scheduler-month-header-color);
+}
+
+.dhx_cal_datepicker_done {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.dhx_cal_datepicker_header {
+	color: var(--dhx-scheduler-base-colors-primary);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: var(--dhx-scheduler-datepicker-padding);
+}
+
+.dhx_cal_datepicker_title {
+	font-weight: var(--dhx-scheduler-datepicker-header-font-size);
+	font-size: var(--dhx-scheduler-datepicker-header-font-size);
+	.button;
+	.button-link;
+}
+
+.dhx_cal_datepicker_days {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap: 4px;
+}
+
+.dhx_cal_datepicker_dayname,
+.dhx_cal_datepicker_date {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	transition: all 0.3s;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.dhx_cal_datepicker_dayname {
+	color: var(--dhx-scheduler-base-colors-icons);
+}
+
+.dhx_cal_datepicker_date {
+	border-radius: 50%;
+	width: var(--dhx-scheduler-datepicker-cell-size);
+	height: var(--dhx-scheduler-datepicker-cell-size);
+	color: var(--dhx-scheduler-datepicker-cell-color);
+	background: var(--dhx-scheduler-datepicker-cell-background);
+}
+
+.dhx_cal_datepicker_weekend {
+	--dhx-scheduler-datepicker-cell-color: var(--dhx-scheduler-datepicker-weekend-color);
+	--dhx-scheduler-datepicker-cell-background: var(--dhx-scheduler-datepicker-weekend-background);
+}
+
+
+.dhx_cal_datepicker_date.dhx_before,
+.dhx_cal_datepicker_date.dhx_after {
+	--dhx-scheduler-datepicker-cell-color: var(--dhx-scheduler-datepicker-prevnext-color);
+	--dhx-scheduler-datepicker-cell-background: var(--dhx-scheduler-datepicker-prevnext-background);
+}
+
+
+.dhx_cal_datepicker_current {
+	--dhx-scheduler-datepicker-cell-color: var(--dhx-scheduler-datepicker-today-color);
+	--dhx-scheduler-datepicker-cell-background: var(--dhx-scheduler-datepicker-today-background);
+}
+
+.dhx_cal_datepicker_date:not(.dhx_before,
+	.dhx_after):hover,
+.dhx_cal_datepicker_month:hover,
+.dhx_cal_datepicker_year:hover {
+	--dhx-scheduler-datepicker-cell-color: var(--dhx-scheduler-datepicker-hover-color);
+	--dhx-scheduler-datepicker-cell-background: var(--dhx-scheduler-datepicker-hover-background);
+}
+
+.dhx_cal_datepicker_months,
+.dhx_cal_datepicker_years {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 8px;
+}
+
+.dhx_cal_datepicker_months{
+	column-gap: 12px;
+}
+
+.dhx_cal_datepicker_years {
+	column-gap: 4px;
+}
+
+.dhx_cal_datepicker_month,
+.dhx_cal_datepicker_year {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: var(--dhx-scheduler-datepicker-cell-size);
+	border-radius: 10px;
+	padding: 4px 8px;
+	transition: background 0.3s;
+	position: relative;
+	color: var(--dhx-scheduler-datepicker-cell-color);
+	background: var(--dhx-scheduler-datepicker-cell-background);
+}
+
+.dhx_cal_datepicker_done_btn {
+	.button;
+	.button-link;
+}
+.dhx_datepicker_date_wrapper{
+	position: relative;
+
+	.scheduler_icon();
+	.scheduler_icon.calendar();
+
+	&:before {
+		position: absolute;
+		right: 4px;
+		top: 8px;
+		font-size: 20px;
+	}
+}
+
+.dhx_cal_datepicker_event {
+
+	&.dhx_cal_datepicker_current,
+	&:hover {
+		--dhx-scheduler-event-marker-color: var(--dhx-scheduler-datepicker-hover-color);
+	}
+}
+
+.dhx_cal_datepicker_event::after {
+	.scheduler-event-marker();
+}
+
+
+/* minical */
+.dhx_minical_popup {
+	position: absolute;
+	z-index: 15;
+}
+
+.dhx_mini_calendar {
+
+	font-size: var(--dhx-scheduler-datepicker-font-size);
+	font-family: var(--dhx-scheduler-datepicker-family);
+	line-height: 142%;
+	font-weight: 400;
+	// width: var(--dhx-scheduler-datepicker-width);
+	border: var(--dhx-scheduler-popup-border);
+	background: var(--dhx-scheduler-popup-background);
+	color: var(--dhx-scheduler-popup-color);
+	box-shadow: var(--dhx-scheduler-box-shadow-m);
+	border-radius: var(--dhx-scheduler-popup-border-radius);
+
+	--dhx-scheduler-datepicker-font-size: var(--dhx-scheduler-caption-font-size);
+	--dhx-scheduler-header-border: none;
+
+	.dhx_cal_month_row {
+		height: 35px !important;
+	}
+
+	.dhx_year_week {
+		border-bottom: var(--dhx-scheduler-default-border);
+	}
+
+	.dhx_scale_bar {
+		position: static;
+	}
+
+	.dhx_year_month {
+		font-weight: 500;
+		font-size: var(--dhx-scheduler-font-size);
+	}
+
+	.dhx_month_body {
+		display: none;
+	}
+
+	.dhx_cal_month_cell {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border-radius: 50%;
+		border: none;
+		background: var(--dhx-scheduler-popup-background);
+	}
+
+	.dhx_month_head {
+		border-radius: 50%;
+		color: var(--dhx-scheduler-datepicker-cell-color);
+		background: var(--dhx-scheduler-datepicker-cell-background);
+		width: 30px !important;
+		height: 30px !important;
+		padding: 4px;
+		justify-content: center;
+		align-items: center;
+		cursor: pointer;
+	}
+
+	div.dhx_month_head.dhx_year_event {
+		background-color: rgba(2, 136, 209, .2);
+		color: #0288d1;
+		font-weight: 500;
+	}
+
+	div.dhx_month_head.dhx_calendar_click {
+		background-color: #e5e5e5;
+		color: rgba(0, 0, 0, .75);
+		font-weight: 500;
+	}
+
+	.dhx_now .dhx_month_head {
+		background-color: #f7f7f7;
+	}
+
+	.dhx_after .dhx_month_head,
+	.dhx_before .dhx_month_head {
+		--dhx-scheduler-datepicker-cell-color: var(--dhx-scheduler-inactive-month-color);
+	}
+}
+
+.dhx_minical_input_wrapper{
+	position: relative;
+
+	.scheduler_icon();
+	.scheduler_icon.calendar();
+
+	&:before {
+		pointer-events: none;
+		position: absolute;
+		right: 5px;
+		top: 7px;
+		font-size: 20px;
+	}
+}
