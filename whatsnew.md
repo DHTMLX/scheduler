@@ -1,3 +1,11 @@
+### 7.0.1
+
+Regression in the Units view that caused layout issues when a scheduler was displayed on the current date
+Position of the Quick Info popup in the scrollable timeline is corrected
+Incorrect positioning of the selected time slot by the Keyboard Navigation module when the RTL mode is active
+The issue that prevented the creation of multi-day events in the Month view after performing a drag-resize action in the Day/Week views
+The height of the multi-day section in the Day/Week views is now limited to 200px by default
+
 ### 7.0.0
 
 Skins customization with CSS variables

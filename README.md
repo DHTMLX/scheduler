@@ -1,7 +1,7 @@
 # dhtmlxScheduler #
 
 [![dhtmlx.com](https://img.shields.io/badge/made%20by-DHTMLX-blue)](https://dhtmlx.com/)
-[![npm: v.7.0.0](https://img.shields.io/badge/npm-v.7.0.0-blue.svg)](https://www.npmjs.com/package/dhtmlx-scheduler)
+[![npm: v.7.0.1](https://img.shields.io/badge/npm-v.7.0.1-blue.svg)](https://www.npmjs.com/package/dhtmlx-scheduler)
 [![License: GPL v2](https://img.shields.io/badge/license-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
 [DHTMLX Scheduler](https://dhtmlx.com/docs/products/dhtmlxScheduler) is a JavaScript library that allows you to add a Google-like scheduler to your web app or website.
@@ -18,7 +18,7 @@ Intuitive drag-and-drop interface allows end users to quickly manage events and 
 Add files:
 ~~~html
 <script src="dhtmlxscheduler.js" ></script>
-<link rel="stylesheet" href="dhtmlxscheduler_material.css" type="text/css" charset="utf-8">
+<link rel="stylesheet" href="dhtmlxscheduler.css" type="text/css" charset="utf-8">
 ~~~
 
 Add markup:
@@ -87,7 +87,7 @@ scheduler.parse([
 
 ## License ##
 
-dhtmlxScheduler v.7.0.0 Standard
+dhtmlxScheduler v.7.0.1 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Individual, Commercial, Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at info@dhtmlx.com
 

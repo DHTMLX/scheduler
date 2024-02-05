@@ -562,18 +562,22 @@ url("src/dhx-scheduler-icons.woff2?7d3dc8d31762f76ad3c385c23e9afbc6") format("wo
 .scheduler_icon.chevron_down:before,
 .dhx_menu_icon.icon_chevron_down:before {
   content: "\f109";
+  font-size: 24px;
 }
 .scheduler_icon.chevron_left:before,
 .dhx_menu_icon.icon_chevron_left:before {
   content: "\f10a";
+  font-size: 24px;
 }
 .scheduler_icon.chevron_right:before,
 .dhx_menu_icon.icon_chevron_right:before {
   content: "\f10b";
+  font-size: 24px;
 }
 .scheduler_icon.chevron_up:before,
 .dhx_menu_icon.icon_chevron_up:before {
   content: "\f10c";
+  font-size: 24px;
 }
 .scheduler_icon.clock:before,
 .dhx_menu_icon.icon_clock:before {
@@ -2010,6 +2014,7 @@ url("src/dhx-scheduler-icons.woff2?7d3dc8d31762f76ad3c385c23e9afbc6") format("wo
 }
 .dhx_scale_holder_now {
   --dhx-scheduler-timescale-background: var(--dhx-scheduler-timescale-today-background);
+  position: absolute;
 }
 .dhx_cal_container_rtl .dhx_scale_bar {
   border-left: none;
@@ -2482,6 +2487,7 @@ url("src/dhx-scheduler-icons.woff2?7d3dc8d31762f76ad3c385c23e9afbc6") format("wo
   display: flex;
   flex-direction: column;
   box-shadow: var(--dhx-scheduler-box-shadow-s);
+  transition: left 0.5s ease, right 0.5s ease;
 }
 .dhx_cal_qi_tcontrols {
   display: flex;
@@ -2761,9 +2767,13 @@ url("src/dhx-scheduler-icons.woff2?7d3dc8d31762f76ad3c385c23e9afbc6") format("wo
   padding-left: 64px;
 }
 .dhx_matrix_scell.folder {
-  border-right: 0;
+  border-right-color: transparent;
   font-weight: 700;
   text-align: left;
+}
+.dhx_cal_container_rtl .dhx_matrix_scell.folder {
+  border-right: var(--dhx-scheduler-default-border);
+  border-left-color: transparent;
 }
 .dhx_matrix_line {
   overflow: hidden;
@@ -2783,6 +2793,7 @@ url("src/dhx-scheduler-icons.woff2?7d3dc8d31762f76ad3c385c23e9afbc6") format("wo
 }
 .dhx_matrix_scell.folder .dhx_scell_expand:before {
   content: "\f109";
+  font-size: 24px;
 }
 .dhx_matrix_scell.folder.closed .dhx_scell_expand {
   transform: rotate(-90deg);
@@ -2794,7 +2805,6 @@ url("src/dhx-scheduler-icons.woff2?7d3dc8d31762f76ad3c385c23e9afbc6") format("wo
 .dhx_matrix_scell.folder > div {
   display: flex;
   align-items: center;
-  gap: 4px;
   height: inherit;
 }
 .dhx_matrix_scell.folder .dhx_scell_expand {
@@ -2860,8 +2870,8 @@ url("src/dhx-scheduler-icons.woff2?7d3dc8d31762f76ad3c385c23e9afbc6") format("wo
 .dhx_second_scale_bar {
   border-bottom: var(--dhx-scheduler-header-border);
 }
-.dhx_timeline_label_column,
-.dhx_timeline_label_column_header {
+div.dhx_timeline_label_column,
+div.dhx_timeline_label_column_header {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -2869,6 +2879,12 @@ url("src/dhx-scheduler-icons.woff2?7d3dc8d31762f76ad3c385c23e9afbc6") format("wo
   flex-grow: 0;
   flex-shrink: 0;
   height: 100%;
+  white-space: nowrap;
+}
+div.dhx_timeline_label_column .dhx_timeline_label_content_wrapper,
+div.dhx_timeline_label_column_header .dhx_timeline_label_content_wrapper {
+  display: inline-block;
+  text-align: left;
 }
 .dhx_timeline_label_column {
   border-left: var(--dhx-scheduler-header-border);

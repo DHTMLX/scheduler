@@ -111,9 +111,16 @@
 }
 
 .dhx_matrix_scell.folder{
-	border-right: 0;
+	border-right-color: transparent;
 	font-weight: 700;
 	text-align: left;
+}
+
+.dhx_cal_container_rtl{
+	.dhx_matrix_scell.folder {
+		border-right: var(--dhx-scheduler-default-border);
+		border-left-color: transparent;
+	}
 }
 
 .dhx_matrix_line{
@@ -137,7 +144,6 @@
 .dhx_matrix_scell.folder > div {
 	display: flex;
 	align-items: center;
-	gap: 4px;
 	height: inherit;
 }
 
@@ -228,8 +234,8 @@
 }
 
 
-.dhx_timeline_label_column,
-.dhx_timeline_label_column_header{
+div.dhx_timeline_label_column,
+div.dhx_timeline_label_column_header{
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -237,6 +243,12 @@
 	flex-grow: 0;
 	flex-shrink: 0;
 	height: 100%;
+	white-space: nowrap;
+
+	.dhx_timeline_label_content_wrapper{
+		display: inline-block;
+		text-align: left;
+	}
 }
 
 .dhx_timeline_label_column{

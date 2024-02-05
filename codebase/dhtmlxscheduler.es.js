@@ -1898,7 +1898,7 @@ class at {
   }
 }
 function nt(e) {
-  const h = { version: "7.0.0" };
+  const h = { version: "7.0.1" };
   (function(t) {
     var r = { agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html", grid: "https://docs.dhtmlx.com/scheduler/grid_view.html", map: "https://docs.dhtmlx.com/scheduler/map_view.html", unit: "https://docs.dhtmlx.com/scheduler/units_view.html", timeline: "https://docs.dhtmlx.com/scheduler/timeline_view.html", week_agenda: "https://docs.dhtmlx.com/scheduler/weekagenda_view.html", year: "https://docs.dhtmlx.com/scheduler/year_view.html", anythingElse: "https://docs.dhtmlx.com/scheduler/views.html" }, s = { agenda: "ext/dhtmlxscheduler_agenda_view.js", grid: "ext/dhtmlxscheduler_grid_view.js", map: "ext/dhtmlxscheduler_map_view.js", unit: "ext/dhtmlxscheduler_units.js", timeline: "ext/dhtmlxscheduler_timeline.js, ext/dhtmlxscheduler_treetimeline.js, ext/dhtmlxscheduler_daytimeline.js", week_agenda: "ext/dhtmlxscheduler_week_agenda.js", year: "ext/dhtmlxscheduler_year_view.js", limit: "ext/dhtmlxscheduler_limit.js" };
     t._commonErrorMessages = { unknownView: function(c) {
@@ -2162,7 +2162,7 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
       return l;
     }, t._mouse_coords = function(l) {
       var f, g = document.body, p = document.documentElement;
-      f = this.$env.isIE || !l.pageX && !l.pageY ? { x: l.clientX + (g.scrollLeft || p.scrollLeft || 0) - g.clientLeft, y: l.clientY + (g.scrollTop || p.scrollTop || 0) - g.clientTop } : { x: l.pageX, y: l.pageY }, this.config.rtl && this._colsS ? (f.x = this.$container.querySelector(".dhx_cal_data").offsetWidth - f.x, this._mode !== "month" && (f.x -= this.xy.scale_width)) : f.x -= this.$domHelpers.getAbsoluteLeft(this._obj) + (this._table_view ? 0 : this.xy.scale_width);
+      f = this.$env.isIE || !l.pageX && !l.pageY ? { x: l.clientX + (g.scrollLeft || p.scrollLeft || 0) - g.clientLeft, y: l.clientY + (g.scrollTop || p.scrollTop || 0) - g.clientTop } : { x: l.pageX, y: l.pageY }, this.config.rtl && this._colsS ? (f.x = this.$container.querySelector(".dhx_cal_data").offsetWidth - f.x, f.x += this.$domHelpers.getAbsoluteLeft(this._obj), this._mode !== "month" && (f.x -= this.xy.scale_width)) : f.x -= this.$domHelpers.getAbsoluteLeft(this._obj) + (this._table_view ? 0 : this.xy.scale_width);
       var y = this.$container.querySelector(".dhx_cal_data");
       f.y -= this.$domHelpers.getAbsoluteTop(y) - this._els.dhx_cal_data[0].scrollTop, f.ev = l;
       var w = this["mouse_" + this._mode];
@@ -2346,7 +2346,7 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
           }
           this._drag_pos && (this._drag_pos.has_moved || this._drag_pos === !0) && (this._drag_id = this._drag_mode = null, this.render_view_data()), t.callEvent("onDragEnd", [f, g, l]);
         }
-        this._drag_id = null, this._drag_mode = null, this._drag_pos = null;
+        this._drag_id = null, this._drag_mode = null, this._drag_pos = null, this._drag_event = null, this._drag_from_start = null;
       }
     }, t._trigger_dyn_loading = function() {
       return !(!this._load_mode || !this._load() || (this._render_wait = !0, 0));
@@ -2881,7 +2881,7 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
       return s.indexOf("?") != -1 ? "&" : "?";
     } }, t.$ajax = t.ajax;
   }(h), be(h), function(t) {
-    t.config = { default_date: "%j %M %Y", month_date: "%F %Y", load_date: "%Y-%m-%d", week_date: "%l", day_date: "%D %j", hour_date: "%H:%i", month_day: "%d", date_format: "%Y-%m-%d %H:%i", api_date: "%d-%m-%Y %H:%i", parse_exact_format: !1, preserve_length: !0, time_step: 5, displayed_event_color: "#ff4a4a", displayed_event_text_color: "#ffef80", wide_form: 0, day_column_padding: 8, use_select_menu_space: !0, fix_tab_position: !0, start_on_monday: !0, first_hour: 0, last_hour: 24, readonly: !1, drag_resize: !0, drag_move: !0, drag_create: !0, drag_event_body: !0, dblclick_create: !0, details_on_dblclick: !0, edit_on_create: !0, details_on_create: !0, header: null, hour_size_px: 44, resize_month_events: !1, resize_month_timed: !1, responsive_lightbox: !1, separate_short_events: !0, rtl: !1, cascade_event_display: !1, cascade_event_count: 4, cascade_event_margin: 30, multi_day: !0, multi_day_height_limit: 0, drag_lightbox: !0, preserve_scroll: !0, select: !0, server_utc: !1, touch: !0, touch_tip: !0, touch_drag: 500, touch_swipe_dates: !1, quick_info_detached: !0, positive_closing: !1, drag_highlight: !0, limit_drag_out: !1, icons_edit: ["icon_save", "icon_cancel"], icons_select: ["icon_details", "icon_edit", "icon_delete"], buttons_left: ["dhx_save_btn", "dhx_cancel_btn"], buttons_right: ["dhx_delete_btn"], lightbox: { sections: [{ name: "description", map_to: "text", type: "textarea", focus: !0 }, { name: "time", height: 72, type: "time", map_to: "auto" }] }, highlight_displayed_event: !0, left_border: !1, ajax_error: "alert", delay_render: 0, timeline_swap_resize: !0, wai_aria_attributes: !0, wai_aria_application_role: !0, csp: "auto", event_attribute: "data-event-id", show_errors: !0 }, t.config.buttons_left.$initial = t.config.buttons_left.join(), t.config.buttons_right.$initial = t.config.buttons_right.join(), t._helpers = { parseDate: function(r) {
+    t.config = { default_date: "%j %M %Y", month_date: "%F %Y", load_date: "%Y-%m-%d", week_date: "%l", day_date: "%D %j", hour_date: "%H:%i", month_day: "%d", date_format: "%Y-%m-%d %H:%i", api_date: "%d-%m-%Y %H:%i", parse_exact_format: !1, preserve_length: !0, time_step: 5, displayed_event_color: "#ff4a4a", displayed_event_text_color: "#ffef80", wide_form: 0, day_column_padding: 8, use_select_menu_space: !0, fix_tab_position: !0, start_on_monday: !0, first_hour: 0, last_hour: 24, readonly: !1, drag_resize: !0, drag_move: !0, drag_create: !0, drag_event_body: !0, dblclick_create: !0, details_on_dblclick: !0, edit_on_create: !0, details_on_create: !0, header: null, hour_size_px: 44, resize_month_events: !1, resize_month_timed: !1, responsive_lightbox: !1, separate_short_events: !0, rtl: !1, cascade_event_display: !1, cascade_event_count: 4, cascade_event_margin: 30, multi_day: !0, multi_day_height_limit: 200, drag_lightbox: !0, preserve_scroll: !0, select: !0, server_utc: !1, touch: !0, touch_tip: !0, touch_drag: 500, touch_swipe_dates: !1, quick_info_detached: !0, positive_closing: !1, drag_highlight: !0, limit_drag_out: !1, icons_edit: ["icon_save", "icon_cancel"], icons_select: ["icon_details", "icon_edit", "icon_delete"], buttons_left: ["dhx_save_btn", "dhx_cancel_btn"], buttons_right: ["dhx_delete_btn"], lightbox: { sections: [{ name: "description", map_to: "text", type: "textarea", focus: !0 }, { name: "time", height: 72, type: "time", map_to: "auto" }] }, highlight_displayed_event: !0, left_border: !1, ajax_error: "alert", delay_render: 0, timeline_swap_resize: !0, wai_aria_attributes: !0, wai_aria_application_role: !0, csp: "auto", event_attribute: "data-event-id", show_errors: !0 }, t.config.buttons_left.$initial = t.config.buttons_left.join(), t.config.buttons_right.$initial = t.config.buttons_right.join(), t._helpers = { parseDate: function(r) {
       return (t.templates.xml_date || t.templates.parse_date)(r);
     }, formatDate: function(r) {
       return (t.templates.xml_format || t.templates.format_date)(r);
@@ -5023,7 +5023,8 @@ const lt = { active_links: function(e) {
       var m = this.createElement(), v = a._timeline_getX({ start_date: i }, !1, _) - 1, l = a._timeline_getX({ start_date: d }, !1, _) - 1, f = _._section_height[n] - 1 || _.dy - 1, g = 0;
       a._isRender("cell") && (g = u.offsetTop, v += _.dx, l += _.dx, u = a.$container.querySelector(".dhx_cal_data"));
       var p = Math.max(1, l - v - 1);
-      return m.style.cssText = "height: " + f + "px; left: " + v + "px; width: " + p + "px; top: " + g + "px;", u && (u.appendChild(m), t.push(m)), t;
+      let y = "left";
+      return a.config.rtl && (y = "right"), m.style.cssText = `height:${f}px; ${y}:${v}px; width:${p}px; top:${g}px;`, u && (u.appendChild(m), t.push(m)), t;
     }, renderMonthCell: function(i) {
       for (var d = a.$container.querySelectorAll(".dhx_month_head"), n = [], _ = 0; _ < d.length; _++)
         n.push(d[_].parentNode);
@@ -7185,13 +7186,15 @@ const lt = { active_links: function(e) {
     var i = a.offsetWidth, d = a.offsetHeight;
     if (e.config.quick_info_detached) {
       var n = h.left - h.dx * (i - h.width);
-      n + i > window.innerWidth && (n = window.innerWidth - i), n = Math.max(0, n), a.style.left = n + "px", a.style.top = h.top - (h.dy ? d : -h.height) + "px";
-    } else
-      a.style.top = this.xy.scale_height + this.xy.nav_height + 20 + "px", h.dx == 1 ? (a.style.right = "auto", a.style.left = -i + "px", setTimeout(function() {
+      e.getView() && e.getView()._x_scroll && (e.config.rtl ? n += e.getView()._x_scroll : n -= e.getView()._x_scroll), n + i > window.innerWidth && (n = window.innerWidth - i), n = Math.max(0, n), a.style.left = n + "px", a.style.top = h.top - (h.dy ? d : -h.height) + "px";
+    } else {
+      const _ = e.$container.querySelector(".dhx_cal_data").offsetTop;
+      a.style.top = _ + 20 + "px", h.dx == 1 ? (a.style.right = "auto", a.style.left = -i + "px", setTimeout(function() {
         a.style.left = "-10px";
       }, 1)) : (a.style.left = "auto", a.style.right = -i + "px", setTimeout(function() {
         a.style.right = "-10px";
       }, 1)), a.className = a.className.replace(" dhx_qi_left", "").replace(" dhx_qi_right", "") + " dhx_qi_" + (h.dx == 1 ? "left" : "right");
+    }
   }, e.attachEvent("onTemplatesReady", function() {
     if (e.hideQuickInfo(), this._quick_info_box) {
       var h = this._quick_info_box;

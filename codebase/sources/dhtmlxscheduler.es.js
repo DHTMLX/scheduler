@@ -988,6 +988,7 @@ function extend$j(scheduler2) {
       pos = { x: ev.clientX + (b.scrollLeft || d.scrollLeft || 0) - b.clientLeft, y: ev.clientY + (b.scrollTop || d.scrollTop || 0) - b.clientTop };
     if (this.config.rtl && this._colsS) {
       pos.x = this.$container.querySelector(".dhx_cal_data").offsetWidth - pos.x;
+      pos.x += this.$domHelpers.getAbsoluteLeft(this._obj);
       if (this._mode !== "month") {
         pos.x -= this.xy.scale_width;
       }
@@ -1420,6 +1421,8 @@ function extend$j(scheduler2) {
     this._drag_id = null;
     this._drag_mode = null;
     this._drag_pos = null;
+    this._drag_event = null;
+    this._drag_from_start = null;
   };
   scheduler2._trigger_dyn_loading = function() {
     if (this._load_mode && this._load()) {
@@ -3306,7 +3309,7 @@ function extend$e(scheduler2) {
   } };
 }
 function extend$d(scheduler2) {
-  scheduler2.config = { default_date: "%j %M %Y", month_date: "%F %Y", load_date: "%Y-%m-%d", week_date: "%l", day_date: "%D %j", hour_date: "%H:%i", month_day: "%d", date_format: "%Y-%m-%d %H:%i", api_date: "%d-%m-%Y %H:%i", parse_exact_format: false, preserve_length: true, time_step: 5, displayed_event_color: "#ff4a4a", displayed_event_text_color: "#ffef80", wide_form: 0, day_column_padding: 8, use_select_menu_space: true, fix_tab_position: true, start_on_monday: true, first_hour: 0, last_hour: 24, readonly: false, drag_resize: true, drag_move: true, drag_create: true, drag_event_body: true, dblclick_create: true, details_on_dblclick: true, edit_on_create: true, details_on_create: true, header: null, hour_size_px: 44, resize_month_events: false, resize_month_timed: false, responsive_lightbox: false, separate_short_events: true, rtl: false, cascade_event_display: false, cascade_event_count: 4, cascade_event_margin: 30, multi_day: true, multi_day_height_limit: 0, drag_lightbox: true, preserve_scroll: true, select: true, server_utc: false, touch: true, touch_tip: true, touch_drag: 500, touch_swipe_dates: false, quick_info_detached: true, positive_closing: false, drag_highlight: true, limit_drag_out: false, icons_edit: ["icon_save", "icon_cancel"], icons_select: ["icon_details", "icon_edit", "icon_delete"], buttons_left: ["dhx_save_btn", "dhx_cancel_btn"], buttons_right: ["dhx_delete_btn"], lightbox: { sections: [{ name: "description", map_to: "text", type: "textarea", focus: true }, { name: "time", height: 72, type: "time", map_to: "auto" }] }, highlight_displayed_event: true, left_border: false, ajax_error: "alert", delay_render: 0, timeline_swap_resize: true, wai_aria_attributes: true, wai_aria_application_role: true, csp: "auto", event_attribute: "data-event-id", show_errors: true };
+  scheduler2.config = { default_date: "%j %M %Y", month_date: "%F %Y", load_date: "%Y-%m-%d", week_date: "%l", day_date: "%D %j", hour_date: "%H:%i", month_day: "%d", date_format: "%Y-%m-%d %H:%i", api_date: "%d-%m-%Y %H:%i", parse_exact_format: false, preserve_length: true, time_step: 5, displayed_event_color: "#ff4a4a", displayed_event_text_color: "#ffef80", wide_form: 0, day_column_padding: 8, use_select_menu_space: true, fix_tab_position: true, start_on_monday: true, first_hour: 0, last_hour: 24, readonly: false, drag_resize: true, drag_move: true, drag_create: true, drag_event_body: true, dblclick_create: true, details_on_dblclick: true, edit_on_create: true, details_on_create: true, header: null, hour_size_px: 44, resize_month_events: false, resize_month_timed: false, responsive_lightbox: false, separate_short_events: true, rtl: false, cascade_event_display: false, cascade_event_count: 4, cascade_event_margin: 30, multi_day: true, multi_day_height_limit: 200, drag_lightbox: true, preserve_scroll: true, select: true, server_utc: false, touch: true, touch_tip: true, touch_drag: 500, touch_swipe_dates: false, quick_info_detached: true, positive_closing: false, drag_highlight: true, limit_drag_out: false, icons_edit: ["icon_save", "icon_cancel"], icons_select: ["icon_details", "icon_edit", "icon_delete"], buttons_left: ["dhx_save_btn", "dhx_cancel_btn"], buttons_right: ["dhx_delete_btn"], lightbox: { sections: [{ name: "description", map_to: "text", type: "textarea", focus: true }, { name: "time", height: 72, type: "time", map_to: "auto" }] }, highlight_displayed_event: true, left_border: false, ajax_error: "alert", delay_render: 0, timeline_swap_resize: true, wai_aria_attributes: true, wai_aria_application_role: true, csp: "auto", event_attribute: "data-event-id", show_errors: true };
   scheduler2.config.buttons_left.$initial = scheduler2.config.buttons_left.join();
   scheduler2.config.buttons_right.$initial = scheduler2.config.buttons_right.join();
   scheduler2._helpers = { parseDate: function parseDate(date) {
@@ -7661,7 +7664,7 @@ class DatePicker {
   }
 }
 function factoryMethod(extensionManager) {
-  const scheduler2 = { version: "7.0.0" };
+  const scheduler2 = { version: "7.0.1" };
   extend$n(scheduler2);
   extend$i(scheduler2);
   extend$j(scheduler2);
@@ -9307,7 +9310,11 @@ function marker(scheduler2) {
       area = scheduler2.$container.querySelector(".dhx_cal_data");
     }
     var width = Math.max(1, end_pos - start_pos - 1);
-    block.style.cssText = "height: " + height + "px; left: " + start_pos + "px; width: " + width + "px; top: " + top + "px;";
+    let direction = "left";
+    if (scheduler2.config.rtl) {
+      direction = "right";
+    }
+    block.style.cssText = `height:${height}px; ${direction}:${start_pos}px; width:${width}px; top:${top}px;`;
     if (area) {
       area.appendChild(block);
       blocks.push(block);
@@ -14145,6 +14152,13 @@ function quick_info(scheduler2) {
     var height = qi.offsetHeight;
     if (scheduler2.config.quick_info_detached) {
       var left = pos.left - pos.dx * (width - pos.width);
+      if (scheduler2.getView() && scheduler2.getView()._x_scroll) {
+        if (scheduler2.config.rtl) {
+          left += scheduler2.getView()._x_scroll;
+        } else {
+          left -= scheduler2.getView()._x_scroll;
+        }
+      }
       var right = left + width;
       if (right > window.innerWidth) {
         left = window.innerWidth - width;
@@ -14153,7 +14167,8 @@ function quick_info(scheduler2) {
       qi.style.left = left + "px";
       qi.style.top = pos.top - (pos.dy ? height : -pos.height) + "px";
     } else {
-      qi.style.top = this.xy.scale_height + this.xy.nav_height + 20 + "px";
+      const dataPos = scheduler2.$container.querySelector(".dhx_cal_data").offsetTop;
+      qi.style.top = dataPos + 20 + "px";
       if (pos.dx == 1) {
         qi.style.right = "auto";
         qi.style.left = -width + "px";
