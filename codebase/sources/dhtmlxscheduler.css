@@ -1363,6 +1363,10 @@ url("src/dhx-scheduler-icons.woff2?7d3dc8d31762f76ad3c385c23e9afbc6") format("wo
   opacity: 0.5;
   box-shadow: 0 1px 0 1px var(--dhx-scheduler-today-marker-color);
 }
+.dhx_matrix_now_time {
+  background: var(--dhx-scheduler-today-marker-color);
+  opacity: 0.5;
+}
 .dhx_minical_icon {
   background: var(--dhx-scheduler-btn-background);
   color: var(--dhx-scheduler-btn-color);

@@ -1,7 +1,7 @@
 # dhtmlxScheduler #
 
 [![dhtmlx.com](https://img.shields.io/badge/made%20by-DHTMLX-blue)](https://dhtmlx.com/)
-[![npm: v.7.0.1](https://img.shields.io/badge/npm-v.7.0.1-blue.svg)](https://www.npmjs.com/package/dhtmlx-scheduler)
+[![npm: v.7.0.2](https://img.shields.io/badge/npm-v.7.0.2-blue.svg)](https://www.npmjs.com/package/dhtmlx-scheduler)
 [![License: GPL v2](https://img.shields.io/badge/license-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
 
 [DHTMLX Scheduler](https://dhtmlx.com/docs/products/dhtmlxScheduler) is a JavaScript library that allows you to add a Google-like scheduler to your web app or website.
@@ -42,17 +42,17 @@ And initialize:
 ~~~js
 scheduler.config.first_hour = 6;
 scheduler.config.last_hour = 19;
-scheduler.init('scheduler_here', new Date(2019, 3, 20), "week");
+scheduler.init('scheduler_here', new Date(2024, 3, 20), "week");
 scheduler.parse([
-	{ id:1, start_date: "2019-04-15 09:00", end_date: "2019-04-15 12:00", text:"English lesson" },
-	{ id:2, start_date: "2019-04-16 10:00", end_date: "2019-04-16 16:00", text:"Math exam" },
-	{ id:3, start_date: "2019-04-16 10:00", end_date: "2019-04-21 16:00", text:"Science lesson" },
-	{ id:4, start_date: "2019-04-17 16:00", end_date: "2019-04-17 17:00", text:"English lesson" },
-	{ id:5, start_date: "2019-04-18 09:00", end_date: "2019-04-18 17:00", text:"Usual event" }
+	{ id:1, start_date: "2024-04-15 09:00", end_date: "2024-04-15 12:00", text:"English lesson" },
+	{ id:2, start_date: "2024-04-16 10:00", end_date: "2024-04-16 16:00", text:"Math exam" },
+	{ id:3, start_date: "2024-04-16 10:00", end_date: "2024-04-21 16:00", text:"Science lesson" },
+	{ id:4, start_date: "2024-04-17 16:00", end_date: "2024-04-17 17:00", text:"English lesson" },
+	{ id:5, start_date: "2024-04-18 09:00", end_date: "2024-04-18 17:00", text:"Usual event" }
 ]);
 ~~~
 
-==> [Check the live demo](https://snippet.dhtmlx.com/5/71834aa3b)
+==> [Check the live demo](https://snippet.dhtmlx.com/jb8mc2c7?text=scheduler)
 
 ## Complete guides ##
 
@@ -87,11 +87,12 @@ scheduler.parse([
 
 ## License ##
 
-dhtmlxScheduler v.7.0.1 Standard
+dhtmlxScheduler v.7.0.2 Standard
 
-To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Individual, Commercial, Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at info@dhtmlx.com
+To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
-(c) XB Software
+(c) XB Software Ltd.
+
 
 ## Useful links ##
 

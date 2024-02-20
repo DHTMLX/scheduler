@@ -1,3 +1,13 @@
+### 7.0.2
+
+Compatibility regressions with DHTMLX Suite
+The regression affecting the mark_now marker in the Timeline view
+The theme initialization problem that resulted in the incorrect Scheduler layout display in some scenarios
+The issue where selected events in the Grid view lost their selection styling after sorting
+The issue in the Timeline's smart rendering mode that caused events appearing twice during drag and drop
+Corrections in the Greek locale
+Fixes of memory leaks to ensure Scheduler instances are properly released upon calling the destructor
+
 ### 7.0.1
 
 Regression in the Units view that caused layout issues when a scheduler was displayed on the current date

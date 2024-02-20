@@ -200,7 +200,7 @@ function extend$l(scheduler2) {
       element.style.height = value;
     }
     if (config.click) {
-      element.addEventListener("click", config.click);
+      scheduler2.event(element, "click", config.click);
     }
     if (config.html) {
       element.innerHTML = config.html;
@@ -628,9 +628,7 @@ function extend$j(scheduler2) {
   };
   scheduler2.set_sizes = function() {
     var w = this._x = this._obj.clientWidth - this.xy.margin_left;
-    var h = this._y = this._obj.clientHeight - this.xy.margin_top;
     var scale_x = this._table_view ? 0 : this.xy.scale_width + this.xy.scroll_width;
-    var scale_s = this._table_view ? -1 : this.xy.scale_width;
     var materialScalePlaceholder = this.$container.querySelector(".dhx_cal_scale_placeholder");
     if (scheduler2._is_material_skin()) {
       if (!materialScalePlaceholder) {
@@ -653,32 +651,22 @@ function extend$j(scheduler2) {
       }
     }
     this._data_width = w - scale_x;
-    if (!scheduler2._is_new_skin()) {
-      this.set_xy(this._els["dhx_cal_navline"][0], w, this.xy.nav_height, 0, 0);
-      this.set_xy(this._els["dhx_cal_header"][0], w - scale_x + 1, this.xy.scale_height, scale_s, this.xy.nav_height + 1);
-      var actual_height = this._els["dhx_cal_navline"][0].offsetHeight;
-      if (actual_height > 0)
-        this.xy.nav_height = actual_height;
-      var data_y = this.xy.scale_height + this.xy.nav_height;
-      this.set_xy(this._els["dhx_cal_data"][0], w, h - (data_y + 2), 0, data_y + 2);
-    } else {
-      this._els["dhx_cal_navline"][0].style.width = w + "px";
-      const header = this._els["dhx_cal_header"][0];
-      this.set_xy(header, this._data_width, this.xy.scale_height);
-      header.style.left = ``;
-      header.style.right = ``;
-      if (!this._table_view) {
-        if (this.config.rtl) {
-          header.style.right = `${this.xy.scale_width}px`;
-        } else {
-          header.style.left = `${this.xy.scale_width}px`;
-        }
+    this._els["dhx_cal_navline"][0].style.width = w + "px";
+    const header = this._els["dhx_cal_header"][0];
+    this.set_xy(header, this._data_width, this.xy.scale_height);
+    header.style.left = ``;
+    header.style.right = ``;
+    if (!this._table_view) {
+      if (this.config.rtl) {
+        header.style.right = `${this.xy.scale_width}px`;
       } else {
-        if (!this.config.rtl) {
-          header.style.left = `-1px`;
-        } else {
-          header.style.right = `-1px`;
-        }
+        header.style.left = `${this.xy.scale_width}px`;
+      }
+    } else {
+      if (!this.config.rtl) {
+        header.style.left = `-1px`;
+      } else {
+        header.style.right = `-1px`;
       }
     }
   };
@@ -1545,11 +1533,7 @@ function extend$j(scheduler2) {
       head.className += " dhx_scale_bar_border";
       left = left + 1;
     }
-    if (scheduler2._is_new_skin()) {
-      this.set_xy(head, width, this.xy.scale_height - 1, left, offset_top);
-    } else {
-      this.set_xy(head, width - 1, this.xy.scale_height - 2, left, offset_top);
-    }
+    this.set_xy(head, width, this.xy.scale_height - 1, left, offset_top);
     var columnHeaderText = this.templates[this._mode + "_scale_date"](date, this._mode);
     head.innerHTML = columnHeaderText;
     this._waiAria.dayHeaderAttr(head, columnHeaderText);
@@ -1622,37 +1606,35 @@ function extend$j(scheduler2) {
         if (this._ignores_detected && this._ignores[i]) {
           cls += " dhx_scale_ignore";
         }
-        if (this._is_new_skin()) {
-          for (let i2 = this.config.first_hour * 1; i2 < this.config.last_hour; i2++) {
-            const firstHalf = document.createElement("div");
-            firstHalf.className = "dhx_scale_time_slot dhx_scale_time_slot_hour_start";
-            firstHalf.style.height = this.config.hour_size_px / 2 + "px";
-            let slotDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), i2, 0);
-            firstHalf.setAttribute("data-slot-date", this.templates.format_date(slotDate));
-            let htmlContent = this.templates.time_slot_text(slotDate);
-            if (htmlContent) {
-              firstHalf.innerHTML = htmlContent;
-            }
-            let cssClass = this.templates.time_slot_class(slotDate);
-            if (cssClass) {
-              firstHalf.classList.add(cssClass);
-            }
-            scales.appendChild(firstHalf);
-            const secondHalf = document.createElement("div");
-            secondHalf.className = "dhx_scale_time_slot";
-            slotDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), i2, 30);
-            secondHalf.setAttribute("data-slot-date", this.templates.format_date(slotDate));
-            secondHalf.style.height = this.config.hour_size_px / 2 + "px";
-            htmlContent = this.templates.time_slot_text(slotDate);
-            if (htmlContent) {
-              secondHalf.innerHTML = htmlContent;
-            }
-            cssClass = this.templates.time_slot_class(slotDate);
-            if (cssClass) {
-              secondHalf.classList.add(cssClass);
-            }
-            scales.appendChild(secondHalf);
+        for (let i2 = this.config.first_hour * 1; i2 < this.config.last_hour; i2++) {
+          const firstHalf = document.createElement("div");
+          firstHalf.className = "dhx_scale_time_slot dhx_scale_time_slot_hour_start";
+          firstHalf.style.height = this.config.hour_size_px / 2 + "px";
+          let slotDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), i2, 0);
+          firstHalf.setAttribute("data-slot-date", this.templates.format_date(slotDate));
+          let htmlContent = this.templates.time_slot_text(slotDate);
+          if (htmlContent) {
+            firstHalf.innerHTML = htmlContent;
           }
+          let cssClass = this.templates.time_slot_class(slotDate);
+          if (cssClass) {
+            firstHalf.classList.add(cssClass);
+          }
+          scales.appendChild(firstHalf);
+          const secondHalf = document.createElement("div");
+          secondHalf.className = "dhx_scale_time_slot";
+          slotDate = new Date(d.getFullYear(), d.getMonth(), d.getDate(), i2, 30);
+          secondHalf.setAttribute("data-slot-date", this.templates.format_date(slotDate));
+          secondHalf.style.height = this.config.hour_size_px / 2 + "px";
+          htmlContent = this.templates.time_slot_text(slotDate);
+          if (htmlContent) {
+            secondHalf.innerHTML = htmlContent;
+          }
+          cssClass = this.templates.time_slot_class(slotDate);
+          if (cssClass) {
+            secondHalf.classList.add(cssClass);
+          }
+          scales.appendChild(secondHalf);
         }
         scales.className = cls + " " + this.templates.week_date_class(d, today);
         this._waiAria.dayColumnAttr(scales, d);
@@ -1705,11 +1687,6 @@ function extend$j(scheduler2) {
           this._els[dhx_multi_day][0].parentNode.removeChild(this._els[dhx_multi_day][0]);
           this._els[dhx_multi_day] = null;
         }
-        var navline = this._els["dhx_cal_navline"][0];
-        var top = navline.offsetHeight + this._els["dhx_cal_header"][0].offsetHeight + 1;
-        if (this._is_new_skin()) {
-          top = void 0;
-        }
         var c1 = document.createElement("div");
         c1.className = dhx_multi_day;
         c1.style.visibility = "hidden";
@@ -1717,13 +1694,13 @@ function extend$j(scheduler2) {
         var totalWidth = this._colsS[this._colsS.col_length];
         var offset = c.rtl ? this.xy.scale_width : this.xy.scroll_width;
         var hiddenWidth = Math.max(totalWidth + offset, 0);
-        this.set_xy(c1, hiddenWidth, 0, 0, top);
+        this.set_xy(c1, hiddenWidth, 0, 0);
         data_area2.parentNode.insertBefore(c1, data_area2);
         var c2 = c1.cloneNode(true);
         c2.className = dhx_multi_day + "_icon";
         c2.style.visibility = "hidden";
         c2.style.display = "none";
-        this.set_xy(c2, this.xy.scale_width + 1, 0, 0, top);
+        this.set_xy(c2, this.xy.scale_width + 1, 0, 0);
         c1.appendChild(c2);
         this._els[dhx_multi_day] = [c1, c2];
         scheduler2.event(this._els[dhx_multi_day][0], "click", this._click.dhx_cal_data);
@@ -3717,10 +3694,6 @@ function extend$c(scheduler2) {
               used_multi_day_height = Math.min(full_multi_day_height, this.config.multi_day_height_limit);
               used_multi_day_height_css = used_multi_day_height + "px";
             }
-            if (!scheduler2._is_new_skin()) {
-              data.style.top = this._els["dhx_cal_navline"][0].offsetHeight + this._els["dhx_cal_header"][0].offsetHeight + used_multi_day_height + "px";
-              data.style.height = this._obj.offsetHeight - parseInt(data.style.top, 10) - (this.xy.margin_top || 0) + "px";
-            }
             var multi_day_section = this._els["dhx_multi_day"][0];
             multi_day_section.style.height = used_multi_day_height_css;
             multi_day_section.style.visibility = h[0] == -1 ? "hidden" : "visible";
@@ -3736,9 +3709,6 @@ function extend$c(scheduler2) {
             }
             h[0] = 0;
             if (used_multi_day_height != full_multi_day_height) {
-              if (!scheduler2._is_new_skin()) {
-                data.style.top = parseInt(data.style.top) + 2 + "px";
-              }
               multi_day_section.style.overflowY = "auto";
               multi_day_icon.style.position = "fixed";
               multi_day_icon.style.top = "";
@@ -5464,9 +5434,7 @@ function extend$6(scheduler2) {
       var rtl = scheduler2.config.rtl;
       for (var i = 0; i < buttons.length; i++) {
         ariaAttr = this._waiAria.lightboxButtonAttrString(buttons[i]);
-        if (scheduler2._is_new_skin()) {
-          html += "<div class='dhx_cal_lcontrols_push_right'></div>";
-        }
+        html += "<div class='dhx_cal_lcontrols_push_right'></div>";
         html += "<div " + ariaAttr + " data-action='" + buttons[i] + "' class='dhx_btn_set dhx_" + (rtl ? "left" : "right") + "_btn_set " + buttons[i] + "_set'><div class='dhx_btn_inner " + buttons[i] + "'></div><div>" + scheduler2.locale.labels[buttons[i]] + "</div></div>";
       }
       html += "</div>";
@@ -5618,7 +5586,7 @@ function extend$5(scheduler2) {
     var source, tracker, timer, drag_mode, scroll_mode, action_mode;
     var dblclicktime = 0;
     function attachTouchEvent(element, name, callback) {
-      element.addEventListener(name, function(e) {
+      scheduler2.event(element, name, function(e) {
         if (scheduler2._is_lightbox_open()) {
           return true;
         } else {
@@ -5909,6 +5877,7 @@ function extend$3(scheduler2) {
     }
   }
   scheduler2._build_skin_info = function() {
+    monitorThemeChange();
     const styles = getComputedStyle(this.$container);
     const themeVar = styles.getPropertyValue("--dhx-scheduler-theme");
     let isCssVarTheme = !!themeVar;
@@ -5935,9 +5904,6 @@ function extend$3(scheduler2) {
         }
       }
     }
-  };
-  scheduler2._is_new_skin = function() {
-    return scheduler2._theme_info.cssVarTheme;
   };
   var calculatedMaterial;
   function checkIfMaterialSkin() {
@@ -6002,8 +5968,8 @@ function extend$3(scheduler2) {
       scheduler2.setCurrentView();
     }
   }
-  window.addEventListener("DOMContentLoaded", refreshAfterLoad);
-  window.addEventListener("load", refreshAfterLoad);
+  scheduler2.event(window, "DOMContentLoaded", refreshAfterLoad);
+  scheduler2.event(window, "load", refreshAfterLoad);
   scheduler2._border_box_events = function() {
     return checkIfBorderBoxStyling();
   };
@@ -6026,6 +5992,22 @@ function extend$3(scheduler2) {
     var html = "<span class='dhx_scale_h'>" + date.getHours() + "</span><span class='dhx_scale_m'>&nbsp;" + min + "</span>";
     return html;
   }
+  let monitorIntervalId = null;
+  function monitorThemeChange() {
+    const container = scheduler2.$container;
+    clearInterval(monitorIntervalId);
+    if (container) {
+      monitorIntervalId = setInterval(() => {
+        const csstheme = getComputedStyle(container).getPropertyValue("--dhx-scheduler-theme");
+        if (csstheme && csstheme !== scheduler2.skin) {
+          scheduler2.setSkin(csstheme);
+        }
+      }, 100);
+    }
+  }
+  scheduler2.attachEvent("onDestroy", function() {
+    clearInterval(monitorIntervalId);
+  });
   scheduler2._skin_init = function() {
     this._build_skin_info();
     if (!this.skin) {
@@ -6036,43 +6018,6 @@ function extend$3(scheduler2) {
       scheduler2.templates.hour_scale = flatSkinHourScale;
     } else if (scheduler2.templates.hour_scale === flatSkinHourScale) {
       scheduler2.templates.hour_scale = scheduler2.date.date_to_str(scheduler2.config.hour_date);
-    }
-    if (!this._theme_info.cssVarTheme) {
-      var set = 0;
-      if (scheduler2.skin && (scheduler2.skin === "classic" || scheduler2.skin === "glossy"))
-        set = 1;
-      if (scheduler2._is_material_skin()) {
-        var defaultButtonsLeft = scheduler2.config.buttons_left.$initial;
-        var defaultButtonsRight = scheduler2.config.buttons_right.$initial;
-        if (defaultButtonsLeft && scheduler2.config.buttons_left.slice().join() == defaultButtonsLeft && defaultButtonsRight && scheduler2.config.buttons_right.slice().join() == defaultButtonsRight) {
-          var tmp = scheduler2.config.buttons_left.slice();
-          scheduler2.config.buttons_left = scheduler2.config.buttons_right.slice();
-          scheduler2.config.buttons_right = tmp;
-        }
-        scheduler2.xy.event_header_height = 18;
-        scheduler2.xy.week_agenda_scale_height = 35;
-        scheduler2.xy.map_icon_width = 38;
-        scheduler2._lightbox_controls.defaults.textarea.height = 64;
-        scheduler2._lightbox_controls.defaults.time.height = "auto";
-      }
-      this._configure(scheduler2.config, scheduler2._skin_settings, set);
-      this._configure(scheduler2.xy, scheduler2._skin_xy, set);
-      if (scheduler2.skin === "flat") {
-        scheduler2.xy.scale_height = 35;
-        scheduler2.templates.hour_scale = function(date) {
-          var min = date.getMinutes();
-          min = min < 10 ? "0" + min : min;
-          var html = "<span class='dhx_scale_h'>" + date.getHours() + "</span><span class='dhx_scale_m'>&nbsp;" + min + "</span>";
-          return html;
-        };
-      }
-      if (set)
-        return;
-    }
-    if (!this._theme_info.cssVarTheme) {
-      var minic = scheduler2.config.minicalendar;
-      if (minic)
-        minic.padding = 14;
     }
     scheduler2.attachEvent("onTemplatesReady", function() {
       var date_to_str = scheduler2.date.date_to_str("%d");
@@ -6888,9 +6833,12 @@ DataProcessor.prototype = { setTransactionMode: function(mode, total) {
     this.fullSync();
   });
   var self = this;
-  global$1.setInterval(function() {
+  let intervalId = global$1.setInterval(function() {
     self.loadUpdate();
   }, interval);
+  this.attachEvent("onDestroy", function() {
+    clearInterval(intervalId);
+  });
 }, afterAutoUpdate: function(sid, action, tid, xml_node) {
   if (action == "collision") {
     this._need_update = true;
@@ -7352,7 +7300,7 @@ const cn = { date: { month_full: ["一月", "二月", "三月", "四月", "五�
 const cs = { date: { month_full: ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"], month_short: ["Led", "Ún", "Bře", "Dub", "Kvě", "Čer", "Čec", "Srp", "Září", "Říj", "List", "Pro"], day_full: ["Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"], day_short: ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"] }, labels: { dhx_cal_today_button: "Dnes", day_tab: "Den", week_tab: "Týden", month_tab: "Měsíc", new_event: "Nová událost", icon_save: "Uložit", icon_cancel: "Zpět", icon_details: "Detail", icon_edit: "Edituj", icon_delete: "Smazat", confirm_closing: "", confirm_deleting: "Událost bude trvale smazána, opravdu?", section_description: "Poznámky", section_time: "Doba platnosti", confirm_recurring: "Přejete si upravit celou řadu opakovaných událostí?", section_recurring: "Opakování události", button_recurring: "Vypnuto", button_recurring_open: "Zapnuto", button_edit_series: "Edit series", button_edit_occurrence: "Upravit instance", agenda_tab: "Program", date: "Datum", description: "Poznámka", year_tab: "Rok", full_day: "Full day", week_agenda_tab: "Program", grid_tab: "Mřížka", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Denně", repeat_radio_week: "Týdně", repeat_radio_month: "Měsíčně", repeat_radio_year: "Ročně", repeat_radio_day_type: "každý", repeat_text_day_count: "Den", repeat_radio_day_type2: "pracovní dny", repeat_week: "Opakuje každých", repeat_text_week_count: "Týdnů na:", repeat_radio_month_type: "u každého", repeat_radio_month_start: "na", repeat_text_month_day: "Den každého", repeat_text_month_count: "Měsíc", repeat_text_month_count2_before: "každý", repeat_text_month_count2_after: "Měsíc", repeat_year_label: "na", select_year_day2: "v", repeat_text_year_day: "Den v", select_year_month: "", repeat_radio_end: "bez data ukončení", repeat_text_occurences_count: "Události", repeat_radio_end2: "po", repeat_radio_end3: "Konec", month_for_recurring: ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"], day_for_recurring: ["Neděle ", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"] } };
 const da = { date: { month_full: ["Januar", "Februar", "Marts", "April", "Maj", "Juni", "Juli", "August", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"], day_short: ["Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"] }, labels: { dhx_cal_today_button: "Idag", day_tab: "Dag", week_tab: "Uge", month_tab: "Måned", new_event: "Ny begivenhed", icon_save: "Gem", icon_cancel: "Fortryd", icon_details: "Detaljer", icon_edit: "Tilret", icon_delete: "Slet", confirm_closing: "Dine rettelser vil gå tabt.. Er dy sikker?", confirm_deleting: "Bigivenheden vil blive slettet permanent. Er du sikker?", section_description: "Beskrivelse", section_time: "Tidsperiode", confirm_recurring: "Vil du tilrette hele serien af gentagne begivenheder?", section_recurring: "Gentag begivenhed", button_recurring: "Frakoblet", button_recurring_open: "Tilkoblet", button_edit_series: "Rediger serien", button_edit_occurrence: "Rediger en kopi", agenda_tab: "Dagsorden", date: "Dato", description: "Beskrivelse", year_tab: "År", week_agenda_tab: "Dagsorden", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daglig", repeat_radio_week: "Ugenlig", repeat_radio_month: "Månedlig", repeat_radio_year: "Årlig", repeat_radio_day_type: "Hver", repeat_text_day_count: "dag", repeat_radio_day_type2: "På hver arbejdsdag", repeat_week: " Gentager sig hver", repeat_text_week_count: "uge på følgende dage:", repeat_radio_month_type: "Hver den", repeat_radio_month_start: "Den", repeat_text_month_day: " i hver", repeat_text_month_count: "måned", repeat_text_month_count2_before: "hver", repeat_text_month_count2_after: "måned", repeat_year_label: "Den", select_year_day2: "i", repeat_text_year_day: "dag i", select_year_month: "", repeat_radio_end: "Ingen slutdato", repeat_text_occurences_count: "gentagelse", repeat_radio_end2: "Efter", repeat_radio_end3: "Slut", month_for_recurring: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"], day_for_recurring: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"] } };
 const de = { date: { month_full: [" Januar", " Februar", " März ", " April", " Mai", " Juni", " Juli", " August", " September ", " Oktober", " November ", " Dezember"], month_short: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"], day_full: ["Sonntag", "Montag", "Dienstag", " Mittwoch", " Donnerstag", "Freitag", "Samstag"], day_short: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"] }, labels: { dhx_cal_today_button: "Heute", day_tab: "Tag", week_tab: "Woche", month_tab: "Monat", new_event: "neuer Eintrag", icon_save: "Speichern", icon_cancel: "Abbrechen", icon_details: "Details", icon_edit: "Ändern", icon_delete: "Löschen", confirm_closing: "", confirm_deleting: "Der Eintrag wird gelöscht", section_description: "Beschreibung", section_time: "Zeitspanne", full_day: "Ganzer Tag", confirm_recurring: "Wollen Sie alle Einträge bearbeiten oder nur diesen einzelnen Eintrag?", section_recurring: "Wiederholung", button_recurring: "Aus", button_recurring_open: "An", button_edit_series: "Bearbeiten Sie die Serie", button_edit_occurrence: "Bearbeiten Sie eine Kopie", agenda_tab: "Agenda", date: "Datum", description: "Beschreibung", year_tab: "Jahre", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Täglich", repeat_radio_week: "Wöchentlich", repeat_radio_month: "Monatlich", repeat_radio_year: "Jährlich", repeat_radio_day_type: "jeden", repeat_text_day_count: "Tag", repeat_radio_day_type2: "an jedem Arbeitstag", repeat_week: " Wiederholt sich jede", repeat_text_week_count: "Woche am:", repeat_radio_month_type: "an jedem", repeat_radio_month_start: "am", repeat_text_month_day: "Tag eines jeden", repeat_text_month_count: "Monats", repeat_text_month_count2_before: "jeden", repeat_text_month_count2_after: "Monats", repeat_year_label: "am", select_year_day2: "im", repeat_text_year_day: "Tag im", select_year_month: "", repeat_radio_end: "kein Enddatum", repeat_text_occurences_count: "Ereignissen", repeat_radio_end3: "Schluß", repeat_radio_end2: "nach", month_for_recurring: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"], day_for_recurring: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"] } };
-const el = { date: { month_full: ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάϊος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"], month_short: ["ΙΑΝ", "ΦΕΒ", "ΜΑΡ", "ΑΠΡ", "ΜΑΙ", "ΙΟΥΝ", "ΙΟΥΛ", "ΑΥΓ", "ΣΕΠ", "ΟΚΤ", "ΝΟΕ", "ΔΕΚ"], day_full: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Κυριακή"], day_short: ["ΚΥ", "ΔΕ", "ΤΡ", "ΤΕ", "ΠΕ", "ΠΑ", "ΣΑ"] }, labels: { dhx_cal_today_button: "Σήμερα", day_tab: "Ημέρα", week_tab: "Εβδομάδα", month_tab: "Μήνας", new_event: "Νέο έργο", icon_save: "Αποθήκευση", icon_cancel: "Άκυρο", icon_details: "Λεπτομέρειες", icon_edit: "Επεξεργασία", icon_delete: "Διαγραφή", confirm_closing: "", confirm_deleting: "Το έργο θα διαγραφεί οριστικά. Θέλετε να συνεχίσετε;", section_description: "Περιγραφή", section_time: "Χρονική περίοδος", full_day: "Πλήρης Ημέρα", confirm_recurring: "Θέλετε να επεξεργασθείτε ολόκληρη την ομάδα των επαναλαμβανόμενων έργων;", section_recurring: "Επαναλαμβανόμενο έργο", button_recurring: "Ανενεργό", button_recurring_open: "Ενεργό", button_edit_series: "Επεξεργαστείτε τη σειρά", button_edit_occurrence: "Επεξεργασία ένα αντίγραφο", agenda_tab: "Ημερήσια Διάταξη", date: "Ημερομηνία", description: "Περιγραφή", year_tab: "Έτος", week_agenda_tab: "Ημερήσια Διάταξη", grid_tab: "Πλέγμα", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Ημερησίως", repeat_radio_week: "Εβδομαδιαίως", repeat_radio_month: "Μηνιαίως", repeat_radio_year: "Ετησίως", repeat_radio_day_type: "Κάθε", repeat_text_day_count: "ημέρα", repeat_radio_day_type2: "Κάθε εργάσιμη", repeat_week: " Επανάληψη κάθε", repeat_text_week_count: "εβδομάδα τις επόμενες ημέρες:", repeat_radio_month_type: "Επανάληψη", repeat_radio_month_start: "Την", repeat_text_month_day: "ημέρα κάθε", repeat_text_month_count: "μήνα", repeat_text_month_count2_before: "κάθε", repeat_text_month_count2_after: "μήνα", repeat_year_label: "Την", select_year_day2: "του", repeat_text_year_day: "ημέρα", select_year_month: "μήνα", repeat_radio_end: "Χωρίς ημερομηνία λήξεως", repeat_text_occurences_count: "επαναλήψεις", repeat_radio_end3: "Λήγει την", repeat_radio_end2: "Μετά από", month_for_recurring: ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάϊος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"], day_for_recurring: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"] } };
+const el = { date: { month_full: ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάϊος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"], month_short: ["ΙΑΝ", "ΦΕΒ", "ΜΑΡ", "ΑΠΡ", "ΜΑΙ", "ΙΟΥΝ", "ΙΟΥΛ", "ΑΥΓ", "ΣΕΠ", "ΟΚΤ", "ΝΟΕ", "ΔΕΚ"], day_full: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"], day_short: ["ΚΥ", "ΔΕ", "ΤΡ", "ΤΕ", "ΠΕ", "ΠΑ", "ΣΑ"] }, labels: { dhx_cal_today_button: "Σήμερα", day_tab: "Ημέρα", week_tab: "Εβδομάδα", month_tab: "Μήνας", new_event: "Νέο έργο", icon_save: "Αποθήκευση", icon_cancel: "Άκυρο", icon_details: "Λεπτομέρειες", icon_edit: "Επεξεργασία", icon_delete: "Διαγραφή", confirm_closing: "", confirm_deleting: "Το έργο θα διαγραφεί οριστικά. Θέλετε να συνεχίσετε;", section_description: "Περιγραφή", section_time: "Χρονική περίοδος", full_day: "Πλήρης Ημέρα", confirm_recurring: "Θέλετε να επεξεργασθείτε ολόκληρη την ομάδα των επαναλαμβανόμενων έργων;", section_recurring: "Επαναλαμβανόμενο έργο", button_recurring: "Ανενεργό", button_recurring_open: "Ενεργό", button_edit_series: "Επεξεργαστείτε τη σειρά", button_edit_occurrence: "Επεξεργασία ένα αντίγραφο", agenda_tab: "Ημερήσια Διάταξη", date: "Ημερομηνία", description: "Περιγραφή", year_tab: "Έτος", week_agenda_tab: "Ημερήσια Διάταξη", grid_tab: "Πλέγμα", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Ημερησίως", repeat_radio_week: "Εβδομαδιαίως", repeat_radio_month: "Μηνιαίως", repeat_radio_year: "Ετησίως", repeat_radio_day_type: "Κάθε", repeat_text_day_count: "ημέρα", repeat_radio_day_type2: "Κάθε εργάσιμη", repeat_week: " Επανάληψη κάθε", repeat_text_week_count: "εβδομάδα τις επόμενες ημέρες:", repeat_radio_month_type: "Επανάληψη", repeat_radio_month_start: "Την", repeat_text_month_day: "ημέρα κάθε", repeat_text_month_count: "μήνα", repeat_text_month_count2_before: "κάθε", repeat_text_month_count2_after: "μήνα", repeat_year_label: "Την", select_year_day2: "του", repeat_text_year_day: "ημέρα", select_year_month: "μήνα", repeat_radio_end: "Χωρίς ημερομηνία λήξεως", repeat_text_occurences_count: "επαναλήψεις", repeat_radio_end3: "Λήγει την", repeat_radio_end2: "Μετά από", month_for_recurring: ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάϊος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"], day_for_recurring: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"] } };
 const en = { date: { month_full: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], day_full: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], day_short: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] }, labels: { dhx_cal_today_button: "Today", day_tab: "Day", week_tab: "Week", month_tab: "Month", new_event: "New event", icon_save: "Save", icon_cancel: "Cancel", icon_details: "Details", icon_edit: "Edit", icon_delete: "Delete", confirm_closing: "", confirm_deleting: "Event will be deleted permanently, are you sure?", section_description: "Description", section_time: "Time period", full_day: "Full day", confirm_recurring: "Do you want to edit the whole set of repeated events?", section_recurring: "Repeat event", button_recurring: "Disabled", button_recurring_open: "Enabled", button_edit_series: "Edit series", button_edit_occurrence: "Edit occurrence", agenda_tab: "Agenda", date: "Date", description: "Description", year_tab: "Year", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daily", repeat_radio_week: "Weekly", repeat_radio_month: "Monthly", repeat_radio_year: "Yearly", repeat_radio_day_type: "Every", repeat_text_day_count: "day", repeat_radio_day_type2: "Every workday", repeat_week: " Repeat every", repeat_text_week_count: "week next days:", repeat_radio_month_type: "Repeat", repeat_radio_month_start: "On", repeat_text_month_day: "day every", repeat_text_month_count: "month", repeat_text_month_count2_before: "every", repeat_text_month_count2_after: "month", repeat_year_label: "On", select_year_day2: "of", repeat_text_year_day: "day", select_year_month: "month", repeat_radio_end: "No end date", repeat_text_occurences_count: "occurrences", repeat_radio_end2: "After", repeat_radio_end3: "End by", month_for_recurring: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], day_for_recurring: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] } };
 const es = { date: { month_full: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"], month_short: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"], day_full: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"], day_short: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"] }, labels: { dhx_cal_today_button: "Hoy", day_tab: "Día", week_tab: "Semana", month_tab: "Mes", new_event: "Nuevo evento", icon_save: "Guardar", icon_cancel: "Cancelar", icon_details: "Detalles", icon_edit: "Editar", icon_delete: "Eliminar", confirm_closing: "", confirm_deleting: "El evento se borrará definitivamente, ¿continuar?", section_description: "Descripción", section_time: "Período", full_day: "Todo el día", confirm_recurring: "¿Desea modificar el conjunto de eventos repetidos?", section_recurring: "Repita el evento", button_recurring: "Impedido", button_recurring_open: "Permitido", button_edit_series: "Editar la serie", button_edit_occurrence: "Editar este evento", agenda_tab: "Día", date: "Fecha", description: "Descripción", year_tab: "Año", week_agenda_tab: "Día", grid_tab: "Reja", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Diariamente", repeat_radio_week: "Semanalmente", repeat_radio_month: "Mensualmente", repeat_radio_year: "Anualmente", repeat_radio_day_type: "Cada", repeat_text_day_count: "dia", repeat_radio_day_type2: "Cada jornada de trabajo", repeat_week: " Repetir cada", repeat_text_week_count: "semana:", repeat_radio_month_type: "Repita", repeat_radio_month_start: "El", repeat_text_month_day: "dia cada ", repeat_text_month_count: "mes", repeat_text_month_count2_before: "cada", repeat_text_month_count2_after: "mes", repeat_year_label: "El", select_year_day2: "del", repeat_text_year_day: "dia", select_year_month: "mes", repeat_radio_end: "Sin fecha de finalización", repeat_text_occurences_count: "ocurrencias", repeat_radio_end3: "Fin", repeat_radio_end2: "Después de", month_for_recurring: ["Enero", "Febrero", "Маrzo", "Аbril", "Mayo", "Junio", "Julio", "Аgosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"], day_for_recurring: ["Domingo", "Lunes", "Martes", "Miércoles", "Jeuves", "Viernes", "Sabado"] } };
 const fi = { date: { month_full: ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kes&auml;kuu", "Hein&auml;kuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"], month_short: ["Tam", "Hel", "Maa", "Huh", "Tou", "Kes", "Hei", "Elo", "Syy", "Lok", "Mar", "Jou"], day_full: ["Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"], day_short: ["Su", "Ma", "Ti", "Ke", "To", "Pe", "La"] }, labels: { dhx_cal_today_button: "Tänään", day_tab: "Päivä", week_tab: "Viikko", month_tab: "Kuukausi", new_event: "Uusi tapahtuma", icon_save: "Tallenna", icon_cancel: "Peru", icon_details: "Tiedot", icon_edit: "Muokkaa", icon_delete: "Poista", confirm_closing: "", confirm_deleting: "Haluatko varmasti poistaa tapahtuman?", section_description: "Kuvaus", section_time: "Aikajakso", full_day: "Koko päivä", confirm_recurring: "Haluatko varmasti muokata toistuvan tapahtuman kaikkia jaksoja?", section_recurring: "Toista tapahtuma", button_recurring: "Ei k&auml;yt&ouml;ss&auml;", button_recurring_open: "K&auml;yt&ouml;ss&auml;", button_edit_series: "Muokkaa sarja", button_edit_occurrence: "Muokkaa kopio", agenda_tab: "Esityslista", date: "Päivämäärä", description: "Kuvaus", year_tab: "Vuoden", week_agenda_tab: "Esityslista", grid_tab: "Ritilä", drag_to_create: "Luo uusi vetämällä", drag_to_move: "Siirrä vetämällä", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "P&auml;ivitt&auml;in", repeat_radio_week: "Viikoittain", repeat_radio_month: "Kuukausittain", repeat_radio_year: "Vuosittain", repeat_radio_day_type: "Joka", repeat_text_day_count: "p&auml;iv&auml;", repeat_radio_day_type2: "Joka arkip&auml;iv&auml;", repeat_week: "Toista joka", repeat_text_week_count: "viikko n&auml;in&auml; p&auml;ivin&auml;:", repeat_radio_month_type: "Toista", repeat_radio_month_start: "", repeat_text_month_day: "p&auml;iv&auml;n&auml; joka", repeat_text_month_count: "kuukausi", repeat_text_month_count2_before: "joka", repeat_text_month_count2_after: "kuukausi", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "p&auml;iv&auml;", select_year_month: "kuukausi", repeat_radio_end: "Ei loppumisaikaa", repeat_text_occurences_count: "Toiston j&auml;lkeen", repeat_radio_end3: "Loppuu", repeat_radio_end2: "", month_for_recurring: ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kes&auml;kuu", "Hein&auml;kuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"], day_for_recurring: ["Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"] } };
@@ -7664,7 +7612,7 @@ class DatePicker {
   }
 }
 function factoryMethod(extensionManager) {
-  const scheduler2 = { version: "7.0.1" };
+  const scheduler2 = { version: "7.0.2" };
   extend$n(scheduler2);
   extend$i(scheduler2);
   extend$j(scheduler2);
@@ -11261,7 +11209,7 @@ function key_nav(scheduler2) {
         dispatcher.disable();
       }
     }
-    setInterval(function() {
+    const intervalId = setInterval(function() {
       if (!scheduler2.$container || !scheduler2.$keyboardNavigation.isChildOf(scheduler2.$container, document.body)) {
         return;
       }
@@ -11281,6 +11229,9 @@ function key_nav(scheduler2) {
         }, 100);
       }
     }, 500);
+    scheduler2.attachEvent("onDestroy", function() {
+      clearInterval(intervalId);
+    });
   })();
 }
 function layer(scheduler2) {
@@ -11931,6 +11882,9 @@ function limit(scheduler2) {
           return;
         scheduler2._mark_now();
       }, 6e4);
+    });
+    scheduler2.attachEvent("onDestroy", function() {
+      clearInterval(scheduler2._mark_now_timer);
     });
     scheduler2._mark_now = function(hide) {
       var dhx_now_time = "dhx_now_time";
@@ -15999,12 +15953,7 @@ function year_view(scheduler2) {
     var c = this.config;
     dataArea.scrollTop = 0;
     dataArea.innerHTML = "";
-    var dx = Math.floor(parseInt(dataArea.style.width) / c.year_x);
-    var dy = Math.floor((parseInt(dataArea.style.height) - scheduler2.xy.year_top) / c.year_y);
-    if (dy < 190) {
-      dy = 190;
-      dx = Math.floor((parseInt(dataArea.style.width) - scheduler2.xy.scroll_width) / c.year_x);
-    }
+    Math.floor((parseInt(dataArea.style.height) - scheduler2.xy.year_top) / c.year_y);
     var week_template = document.createElement("div");
     var dummy_date = this.date.week_start(scheduler2._currentDate());
     this._process_ignores(dummy_date, 7, "day", 1);
@@ -16028,15 +15977,11 @@ function year_view(scheduler2) {
       for (var j = 0; j < c.year_x; j++) {
         yearBox = document.createElement("div");
         yearBox.className = "dhx_year_box";
-        if (!this._is_new_skin()) {
-          yearBox.style.cssText = "position:absolute;";
-        }
         yearBox.setAttribute("date", this._helpers.formatDate(sd));
         yearBox.setAttribute("data-month-date", this._helpers.formatDate(sd));
         yearBox.innerHTML = "<div class='dhx_year_month'></div><div class='dhx_year_grid'><div class='dhx_year_week'>" + week_template.innerHTML + "</div><div class='dhx_year_body'></div></div>";
         var header = yearBox.querySelector(".dhx_year_month");
         var grid = yearBox.querySelector(".dhx_year_grid");
-        var weekHeader = yearBox.querySelector(".dhx_year_week");
         var body = yearBox.querySelector(".dhx_year_body");
         var headerId = scheduler2.uid();
         this._waiAria.yearHeader(header, headerId);
@@ -16049,12 +15994,6 @@ function year_view(scheduler2) {
           this._waiAria.yearDayCell(days[day]);
         }
         wrapper.appendChild(yearBox);
-        if (!this._is_new_skin()) {
-          weekHeader.style.height = weekHeader.childNodes[0].offsetHeight + "px";
-          var dt = Math.round((dy - 190) / 2);
-          yearBox.style.marginTop = dt + "px";
-          this.set_xy(yearBox, dx - 10, dy - dt - 10, dx * j + 5, dy * i + 5 + scheduler2.xy.year_top);
-        }
         week_starts[i * c.year_x + j] = (sd.getDay() - (this.config.start_on_monday ? 1 : 0) + 7) % 7;
         sd = this.date.add(sd, 1, "month");
       }
