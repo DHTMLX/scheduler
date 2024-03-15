@@ -1,3 +1,9 @@
+### 7.0.3
+
+Issue with textColor property not applying in the Month view has been resolved
+Fix for the color property not functioning in the Agenda view
+Corrected an error that occurred when using Keyboard Navigation in Day Timeline view.
+
 ### 7.0.2
 
 Compatibility regressions with DHTMLX Suite

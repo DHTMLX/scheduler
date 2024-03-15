@@ -4268,7 +4268,7 @@
         cs2 += " " + cse;
       }
       var bg_color = ev.color ? "--dhx-scheduler-event-background:" + ev.color + ";" : "";
-      var color = ev.textColor ? "--dhx-scheduler-event-text:" + ev.textColor + ";" : "";
+      var color = ev.textColor ? "--dhx-scheduler-event-color:" + ev.textColor + ";" : "";
       var style_text = ["position:absolute", "top:" + y + "px", "left:" + x + "px", "width:" + (x2 - x - (timed ? 1 : 0)) + "px", "height:" + (this.xy.bar_height - 2) + "px", color, bg_color, ev._text_style || ""].join(";");
       var html = "<div event_id='" + ev.id + "' " + this.config.event_attribute + "='" + ev.id + "' class='" + cs2 + "' style='" + style_text + "'" + this._waiAria.eventBarAttrString(ev) + ">";
       if (resizable) {
@@ -7616,7 +7616,7 @@
     }
   }
   function factoryMethod(extensionManager) {
-    const scheduler2 = { version: "7.0.2" };
+    const scheduler2 = { version: "7.0.3" };
     extend$n(scheduler2);
     extend$i(scheduler2);
     extend$j(scheduler2);
@@ -8067,7 +8067,13 @@
         const selectedId = scheduler2.getState().select_id;
         const cls = scheduler2.templates.event_class(calendarEvent.start_date, calendarEvent.end_date, calendarEvent);
         const description = scheduler2.templates.agenda_text(calendarEvent.start_date, calendarEvent.end_date, calendarEvent);
-        return `<div class="dhx_cal_agenda_event_line ${cls || ""} ${calendarEvent.id == selectedId ? "dhx_cal_agenda_event_line_selected" : ""}" ${scheduler2.config.event_attribute}="${calendarEvent.id}">
+        let style = "";
+        if (calendarEvent.color || calendarEvent.textColor) {
+          const bg = calendarEvent.color ? "--dhx-scheduler-event-background:" + calendarEvent.color + ";" : "";
+          const color = calendarEvent.textColor ? "--dhx-scheduler-event-color:" + calendarEvent.textColor + ";" : "";
+          style = ` style="${bg}${color}" `;
+        }
+        return `<div class="dhx_cal_agenda_event_line ${cls || ""} ${calendarEvent.id == selectedId ? "dhx_cal_agenda_event_line_selected" : ""}" ${style} ${scheduler2.config.event_attribute}="${calendarEvent.id}">
 	<div class="dhx_cal_agenda_event_line_marker"></div>
 	<div class="dhx_cal_agenda_event_line_time">${dates}</div>
 	<div class="dhx_cal_agenda_event_line_text">${description}</div>
@@ -9177,9 +9183,13 @@
       }
       if (section) {
         if (scheduler2.matrix && scheduler2.matrix[mode]) {
-          label += ", " + scheduler2.templates[mode + "_scale_label"](section.key, section.label, section);
+          const timeline = scheduler2.matrix[mode];
+          const sectionObject = timeline.y_unit[timeline.order[section]];
+          label += ", " + scheduler2.templates[mode + "_scale_label"](sectionObject.key, sectionObject.label, sectionObject);
         } else if (scheduler2._props && scheduler2._props[mode]) {
-          label += ", " + scheduler2.templates[mode + "_scale_text"](section.key, section.label, section);
+          const units = scheduler2._props[mode];
+          const sectionObject = units.options[units.order[section]];
+          label += ", " + scheduler2.templates[mode + "_scale_text"](sectionObject.key, sectionObject.label, sectionObject);
         }
       }
       for (var i = 0; i < divs.length; i++) {
@@ -9251,8 +9261,25 @@
       if (!(min_date < end_date && max_date > start_date))
         return blocks;
       var block = this.createElement();
-      var start_pos = scheduler2._timeline_getX({ start_date }, false, view_opts) - 1;
-      var end_pos = scheduler2._timeline_getX({ start_date: end_date }, false, view_opts) - 1;
+      let start_pos;
+      let end_pos;
+      function set_date_part(source, target) {
+        target.setDate(1);
+        target.setFullYear(source.getFullYear());
+        target.setMonth(source.getMonth());
+        target.setDate(source.getDate());
+      }
+      if (!scheduler2.getView().days) {
+        start_pos = scheduler2._timeline_getX({ start_date }, false, view_opts);
+        end_pos = scheduler2._timeline_getX({ start_date: end_date }, false, view_opts);
+      } else {
+        const tempStart = new Date(start_date);
+        set_date_part(scheduler2._min_date, tempStart);
+        const tempEnd = new Date(end_date);
+        set_date_part(scheduler2._min_date, tempEnd);
+        start_pos = scheduler2._timeline_getX({ start_date: tempStart }, false, view_opts);
+        end_pos = scheduler2._timeline_getX({ start_date: tempEnd }, false, view_opts);
+      }
       var height = view_opts._section_height[section] - 1 || view_opts.dy - 1;
       var top = 0;
       if (scheduler2._isRender("cell")) {
@@ -12184,6 +12211,9 @@
         return divs;
       };
       scheduler2.markTimespan = function(configuration) {
+        if (!this._els) {
+          throw new Error("`scheduler.markTimespan` can't be used before scheduler initialization. Place `scheduler.markTimespan` call after `scheduler.init`.");
+        }
         var rebuild_els = false;
         if (!this._els["dhx_cal_data"]) {
           scheduler2.get_elements();
