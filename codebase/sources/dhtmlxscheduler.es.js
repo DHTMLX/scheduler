@@ -520,14 +520,14 @@ function extend$j(scheduler2) {
     scheduler2._init_once = function() {
     };
   };
-  var layout = { navbar: { render: function(config) {
+  const layout = { navbar: { render: function(config) {
     return scheduler2._init_nav_bar(config);
   } }, header: { render: function(config) {
-    var element = document.createElement("div");
+    const element = document.createElement("div");
     element.className = "dhx_cal_header";
     return element;
   } }, dataArea: { render: function(config) {
-    var element = document.createElement("div");
+    const element = document.createElement("div");
     element.className = "dhx_cal_data";
     return element;
   } }, html_element: { render: function(config) {
@@ -537,25 +537,25 @@ function extend$j(scheduler2) {
     return !!(element.querySelector(".dhx_cal_header") && element.querySelector(".dhx_cal_data") && element.querySelector(".dhx_cal_navline"));
   }
   function createDefaultHeader(scheduler3) {
-    var views = ["day", "week", "month"];
-    var date = ["date"];
-    var nav = ["prev", "today", "next"];
+    const views = ["day", "week", "month"];
+    const date = ["date"];
+    const nav = ["prev", "today", "next"];
     if (scheduler3.matrix) {
-      for (var i in scheduler3.matrix) {
+      for (const i in scheduler3.matrix) {
         views.push(i);
       }
     }
     if (scheduler3._props) {
-      for (var i in scheduler3._props) {
+      for (const i in scheduler3._props) {
         views.push(i);
       }
     }
     if (scheduler3._grid && scheduler3._grid.names) {
-      for (var i in scheduler3._grid.names) {
+      for (const i in scheduler3._grid.names) {
         views.push(i);
       }
     }
-    var optionalViews = ["map", "agenda", "week_agenda", "year"];
+    const optionalViews = ["map", "agenda", "week_agenda", "year"];
     optionalViews.forEach(function(viewName) {
       if (scheduler3[viewName + "_view"]) {
         views.push(viewName);
@@ -697,16 +697,16 @@ function extend$j(scheduler2) {
     }
   };
   scheduler2.get_elements = function() {
-    var els = this._obj.getElementsByTagName("DIV");
-    for (var i = 0; i < els.length; i++) {
-      var class_name = scheduler2._getClassName(els[i]);
-      var attr_value = els[i].getAttribute("data-tab") || els[i].getAttribute("name") || "";
+    const els = this._obj.getElementsByTagName("DIV");
+    for (let i = 0; i < els.length; i++) {
+      let class_name = scheduler2._getClassName(els[i]);
+      const attr_value = els[i].getAttribute("data-tab") || els[i].getAttribute("name") || "";
       if (class_name)
         class_name = class_name.split(" ")[0];
       if (!this._els[class_name])
         this._els[class_name] = [];
       this._els[class_name].push(els[i]);
-      var label = scheduler2.locale.labels[attr_value + "_tab"] || scheduler2.locale.labels[attr_value || class_name];
+      let label = scheduler2.locale.labels[attr_value + "_tab"] || scheduler2.locale.labels[attr_value || class_name];
       if (typeof label !== "string" && attr_value && !els[i].innerHTML)
         label = attr_value.split("_")[0];
       if (label) {
@@ -715,14 +715,14 @@ function extend$j(scheduler2) {
       }
     }
   };
-  var domEventsScope = scheduler2._createDomEventScope();
+  const domEventsScope = scheduler2._createDomEventScope();
   scheduler2.unset_actions = function() {
     domEventsScope.detachAll();
   };
   scheduler2.set_actions = function() {
-    for (var a in this._els) {
+    for (const a in this._els) {
       if (this._click[a]) {
-        for (var i = 0; i < this._els[a].length; i++) {
+        for (let i = 0; i < this._els[a].length; i++) {
           const element = this._els[a][i];
           const handler = this._click[a].bind(element);
           domEventsScope.attach(element, "click", handler);
@@ -748,13 +748,11 @@ function extend$j(scheduler2) {
     domEventsScope.attach(this._obj, "dblclick", function(e) {
       scheduler2._on_dbl_click(e);
     });
-    domEventsScope.attach(this._obj, "contextmenu", function(e) {
+    domEventsScope.attach(this._obj, "contextmenu", function(event2) {
       if (scheduler2.checkEvent("onContextMenu")) {
-        e.preventDefault();
+        event2.preventDefault();
       }
-      var ev = e;
-      var src = ev.target || ev.srcElement;
-      var returnValue = scheduler2.callEvent("onContextMenu", [scheduler2._locate_event(src), ev]);
+      const returnValue = scheduler2.callEvent("onContextMenu", [scheduler2._locate_event(event2.target), event2]);
       return returnValue;
     });
   };
@@ -771,13 +769,15 @@ function extend$j(scheduler2) {
     this.callEvent("onEventSelected", [id2]);
   };
   scheduler2.unselect = function(id2) {
-    if (id2 && id2 != this._select_id)
+    if (id2 && id2 != this._select_id) {
       return;
-    var t = this._select_id;
+    }
+    const previousSelection = this._select_id;
     this._select_id = null;
-    if (t && this.getEvent(t))
-      this.updateEvent(t);
-    this.callEvent("onEventUnselected", [t]);
+    if (previousSelection && this.getEvent(previousSelection)) {
+      this.updateEvent(previousSelection);
+    }
+    this.callEvent("onEventUnselected", [previousSelection]);
   };
   scheduler2.getState = function() {
     return { mode: this._mode, date: new Date(this._date), min_date: new Date(this._min_date), max_date: new Date(this._max_date), editor_id: this._edit_id, lightbox_id: this._lightbox_id, new_event: this._new_event, select_id: this._select_id, expanded: this.expanded, drag_id: this._drag_id, drag_mode: this._drag_mode };
@@ -790,8 +790,7 @@ function extend$j(scheduler2) {
       scheduler2._ignore_next_click = false;
       return false;
     }
-    var trg = e.target;
-    var id2 = scheduler2._locate_event(trg);
+    const id2 = scheduler2._locate_event(e.target);
     if (!id2) {
       scheduler2.callEvent("onEmptyClick", [scheduler2.getActionData(e).date, e]);
     } else {
@@ -800,8 +799,8 @@ function extend$j(scheduler2) {
     }
     if (id2 && scheduler2.config.select) {
       scheduler2.select(id2);
-      const icon = trg.closest(".dhx_menu_icon");
-      var mask = scheduler2._getClassName(icon);
+      const icon = e.target.closest(".dhx_menu_icon");
+      const mask = scheduler2._getClassName(icon);
       if (mask.indexOf("_icon") != -1)
         scheduler2._click.buttons[mask.split(" ")[1].replace("icon_", "")](id2);
     } else {
@@ -813,7 +812,7 @@ function extend$j(scheduler2) {
   }, dhx_cal_prev_button: function() {
     scheduler2._click.dhx_cal_next_button(0, -1);
   }, dhx_cal_next_button: function(dummy, step) {
-    var def_step = 1;
+    let def_step = 1;
     if (scheduler2.config.rtl) {
       step = -step;
       def_step = -def_step;
@@ -824,12 +823,12 @@ function extend$j(scheduler2) {
       scheduler2.setCurrentView(scheduler2._currentDate());
     }
   }, dhx_cal_tab: function() {
-    var name = this.getAttribute("data-tab");
-    var deprecated_name = this.getAttribute("name");
-    var mode = name || deprecated_name.substring(0, deprecated_name.search("_tab"));
+    const name = this.getAttribute("data-tab");
+    const deprecated_name = this.getAttribute("name");
+    const mode = name || deprecated_name.substring(0, deprecated_name.search("_tab"));
     scheduler2.setCurrentView(scheduler2._date, mode);
   }, buttons: { delete: function(id2) {
-    var c = scheduler2.locale.labels.confirm_deleting;
+    const c = scheduler2.locale.labels.confirm_deleting;
     scheduler2._dhtmlx_confirm({ message: c, title: scheduler2.locale.labels.title_confirm_deleting, callback: function() {
       scheduler2.deleteEvent(id2);
     }, config: { ok: scheduler2.locale.labels.icon_delete } });
@@ -848,45 +847,47 @@ function extend$j(scheduler2) {
     if (!message2)
       return callback();
     config = config || {};
-    var opts = { ...config, text: message2 };
-    if (title)
+    const opts = { ...config, text: message2 };
+    if (title) {
       opts.title = title;
+    }
     if (callback) {
       opts.callback = function(result) {
-        if (result)
+        if (result) {
           callback();
+        }
       };
     }
     scheduler2.confirm(opts);
   };
   scheduler2.addEventNow = function(start, end, e) {
-    var base = {};
+    let base = {};
     if (scheduler2._isObject(start) && !scheduler2._isDate(start)) {
       base = start;
       start = null;
     }
-    var d = (this.config.event_duration || this.config.time_step) * 6e4;
+    const duration = (this.config.event_duration || this.config.time_step) * 6e4;
     if (!start)
-      start = base.start_date || Math.round(scheduler2._currentDate().valueOf() / d) * d;
-    var start_date = new Date(start);
+      start = base.start_date || Math.round(scheduler2._currentDate().valueOf() / duration) * duration;
+    let start_date = new Date(start);
     if (!end) {
-      var start_hour = this.config.first_hour;
+      let start_hour = this.config.first_hour;
       if (start_hour > start_date.getHours()) {
         start_date.setHours(start_hour);
         start = start_date.valueOf();
       }
-      end = start.valueOf() + d;
+      end = start.valueOf() + duration;
     }
-    var end_date = new Date(end);
+    let end_date = new Date(end);
     if (start_date.valueOf() == end_date.valueOf())
-      end_date.setTime(end_date.valueOf() + d);
+      end_date.setTime(end_date.valueOf() + duration);
     base.start_date = base.start_date || start_date;
     base.end_date = base.end_date || end_date;
     base.text = base.text || this.locale.labels.new_event;
     base.id = this._drag_id = base.id || this.uid();
     this._drag_mode = "new-size";
     this._loading = true;
-    var eventId = this.addEvent(base);
+    const eventId = this.addEvent(base);
     this.callEvent("onEventCreated", [this._drag_id, e]);
     this._loading = false;
     this._drag_event = {};
@@ -894,10 +895,10 @@ function extend$j(scheduler2) {
     return eventId;
   };
   scheduler2._on_dbl_click = function(e, src) {
-    src = src || (e.target || e.srcElement);
+    src = src || e.target;
     if (this.config.readonly)
       return;
-    var name = scheduler2._getClassName(src).split(" ")[0];
+    const name = scheduler2._getClassName(src).split(" ")[0];
     switch (name) {
       case "dhx_scale_holder":
       case "dhx_scale_holder_now":
@@ -913,8 +914,8 @@ function extend$j(scheduler2) {
       case "dhx_cal_agenda_event_line":
       case "dhx_grid_event":
       case "dhx_cal_event_line":
-      case "dhx_cal_event_clear":
-        var id2 = this._locate_event(src);
+      case "dhx_cal_event_clear": {
+        const id2 = this._locate_event(src);
         if (!this.callEvent("onDblClick", [id2, e]))
           return;
         if (this.config.details_on_dblclick || this._table_view || !this.getEvent(id2)._timed || !this.config.select)
@@ -922,25 +923,27 @@ function extend$j(scheduler2) {
         else
           this.edit(id2);
         break;
+      }
       case "dhx_time_block":
       case "dhx_cal_container":
         return;
-      default:
-        var t = this["dblclick_" + name];
-        if (t) {
-          t.call(this, e);
+      default: {
+        const viewHandler = this["dblclick_" + name];
+        if (viewHandler) {
+          viewHandler.call(this, e);
         } else {
           if (src.parentNode && src != this)
             return scheduler2._on_dbl_click(e, src.parentNode);
         }
         break;
+      }
     }
   };
   scheduler2._get_column_index = function(x_pos) {
-    var column = 0;
+    let column = 0;
     if (this._cols) {
-      var width = 0;
-      var i = 0;
+      let width = 0;
+      let i = 0;
       while (width + this._cols[i] < x_pos && i < this._cols.length) {
         width += this._cols[i];
         i++;
@@ -960,20 +963,20 @@ function extend$j(scheduler2) {
     if (!this._cols) {
       return pos;
     } else {
-      var column = this._get_column_index(pos.x);
+      const column = this._get_column_index(pos.x);
       pos.x = Math.min(this._cols.length - 1, Math.max(0, Math.ceil(column) - 1));
       pos.y = Math.max(0, Math.ceil(pos.y * 60 / (this.config.time_step * this.config.hour_size_px)) - 1) + this.config.first_hour * (60 / this.config.time_step);
       return pos;
     }
   };
   scheduler2._mouse_coords = function(ev) {
-    var pos;
-    var b = document.body;
-    var d = document.documentElement;
+    let pos;
+    const body = document.body;
+    const documentElement = document.documentElement;
     if (!this.$env.isIE && (ev.pageX || ev.pageY))
       pos = { x: ev.pageX, y: ev.pageY };
     else
-      pos = { x: ev.clientX + (b.scrollLeft || d.scrollLeft || 0) - b.clientLeft, y: ev.clientY + (b.scrollTop || d.scrollTop || 0) - b.clientTop };
+      pos = { x: ev.clientX + (body.scrollLeft || documentElement.scrollLeft || 0) - body.clientLeft, y: ev.clientY + (body.scrollTop || documentElement.scrollTop || 0) - body.clientTop };
     if (this.config.rtl && this._colsS) {
       pos.x = this.$container.querySelector(".dhx_cal_data").offsetWidth - pos.x;
       pos.x += this.$domHelpers.getAbsoluteLeft(this._obj);
@@ -983,20 +986,20 @@ function extend$j(scheduler2) {
     } else {
       pos.x -= this.$domHelpers.getAbsoluteLeft(this._obj) + (this._table_view ? 0 : this.xy.scale_width);
     }
-    var dataArea = this.$container.querySelector(".dhx_cal_data");
+    const dataArea = this.$container.querySelector(".dhx_cal_data");
     pos.y -= this.$domHelpers.getAbsoluteTop(dataArea) - this._els["dhx_cal_data"][0].scrollTop;
     pos.ev = ev;
-    var handler = this["mouse_" + this._mode];
+    const handler = this["mouse_" + this._mode];
     if (handler) {
       pos = handler.call(this, pos);
     } else {
       if (!this._table_view) {
         pos = this._week_indexes_from_pos(pos);
       } else {
-        var column = this._get_column_index(pos.x);
+        const column = this._get_column_index(pos.x);
         if (!this._cols || !this._colsS)
           return pos;
-        var dy = 0;
+        let dy = 0;
         for (dy = 1; dy < this._colsS.heights.length; dy++)
           if (this._colsS.heights[dy] > pos.y)
             break;
@@ -1018,11 +1021,11 @@ function extend$j(scheduler2) {
   };
   scheduler2._close_not_saved = function() {
     if ((/* @__PURE__ */ new Date()).valueOf() - (scheduler2._new_event || 0) > 500 && scheduler2._edit_id) {
-      var c = scheduler2.locale.labels.confirm_closing;
-      scheduler2._dhtmlx_confirm({ message: c, title: scheduler2.locale.labels.title_confirm_closing, callback: function() {
+      const confirmationText = scheduler2.locale.labels.confirm_closing;
+      scheduler2._dhtmlx_confirm({ message: confirmationText, title: scheduler2.locale.labels.title_confirm_closing, callback: function() {
         scheduler2.editStop(scheduler2.config.positive_closing);
       } });
-      if (c) {
+      if (confirmationText) {
         this._drag_id = this._drag_pos = this._drag_mode = null;
       }
     }
@@ -1037,26 +1040,28 @@ function extend$j(scheduler2) {
     if (!(old_pos && this._drag_pos)) {
       return true;
     }
-    var delay2 = 100, d_pos = 5;
+    const delay2 = 100;
+    const d_pos = 5;
     return !!(this._drag_pos.has_moved || !this._drag_pos.timestamp || new_pos.timestamp - this._drag_pos.timestamp > delay2 || diff(old_pos.ev.clientX, new_pos.ev.clientX, d_pos) || diff(old_pos.ev.clientY, new_pos.ev.clientY, d_pos));
   };
   scheduler2._correct_drag_start_date = function(start) {
-    var obj;
+    let obj;
     if (scheduler2.matrix)
       obj = scheduler2.matrix[scheduler2._mode];
     obj = obj || { x_step: 1, x_unit: "day" };
     start = new Date(start);
-    var len = 1;
+    let len = 1;
     if (obj._start_correction || obj._end_correction)
       len = (obj.last_hour || 0) * 60 - (start.getHours() * 60 + start.getMinutes()) || 1;
     return start * 1 + (scheduler2._get_fictional_event_length(start, len, obj) - len);
   };
   scheduler2._correct_drag_end_date = function(start, duration) {
-    var obj;
-    if (scheduler2.matrix)
+    let obj;
+    if (scheduler2.matrix) {
       obj = scheduler2.matrix[scheduler2._mode];
+    }
     obj = obj || { x_step: 1, x_unit: "day" };
-    var end = start * 1 + scheduler2._get_fictional_event_length(start, duration, obj);
+    const end = start * 1 + scheduler2._get_fictional_event_length(start, duration, obj);
     return new Date(end * 1 - (scheduler2._get_fictional_event_length(end, -1, obj, -1) + 1));
   };
   scheduler2._on_mouse_move = function(e) {
@@ -1980,9 +1985,9 @@ function extend$j(scheduler2) {
         const intervalStart = new Date(Math.max(check.valueOf(), startDate.valueOf()));
         const intervalEnd = endDate;
         const leftCellCutOffStart = new Date(intervalStart.getFullYear(), intervalStart.getMonth(), intervalStart.getDate(), config.first_hour);
-        const leftCellCutOffEnd = new Date(intervalStart.getFullYear(), intervalStart.getMonth(), intervalStart.getDate(), config.last_hour);
+        const leftCellCutOffEnd = new Date(intervalStart.getFullYear(), intervalStart.getMonth(), intervalStart.getDate(), config.last_hour || 24);
         const rightCellCutOffStart = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), config.first_hour);
-        const rightCellCutOffEnd = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), config.last_hour);
+        const rightCellCutOffEnd = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), config.last_hour || 24);
         if (intervalEnd.valueOf() > rightCellCutOffEnd.valueOf()) {
           excludedDuration += intervalEnd - rightCellCutOffEnd;
         }
@@ -2695,7 +2700,7 @@ if (Element.prototype.closest) {
   };
 }
 var isWindowAwailable = typeof window !== "undefined";
-const env = { isIE: isWindowAwailable && (navigator.userAgent.indexOf("MSIE") >= 0 || navigator.userAgent.indexOf("Trident") >= 0), isIE6: isWindowAwailable && (!XMLHttpRequest && navigator.userAgent.indexOf("MSIE") >= 0), isIE7: isWindowAwailable && (navigator.userAgent.indexOf("MSIE 7.0") >= 0 && navigator.userAgent.indexOf("Trident") < 0), isIE8: isWindowAwailable && (navigator.userAgent.indexOf("MSIE 8.0") >= 0 && navigator.userAgent.indexOf("Trident") >= 0), isOpera: isWindowAwailable && navigator.userAgent.indexOf("Opera") >= 0, isChrome: isWindowAwailable && navigator.userAgent.indexOf("Chrome") >= 0, isKHTML: isWindowAwailable && (navigator.userAgent.indexOf("Safari") >= 0 || navigator.userAgent.indexOf("Konqueror") >= 0), isFF: isWindowAwailable && navigator.userAgent.indexOf("Firefox") >= 0, isIPad: isWindowAwailable && navigator.userAgent.search(/iPad/gi) >= 0, isEdge: isWindowAwailable && navigator.userAgent.indexOf("Edge") != -1, isNode: !isWindowAwailable || typeof navigator == "undefined" };
+const env = { isIE: isWindowAwailable && (navigator.userAgent.indexOf("MSIE") >= 0 || navigator.userAgent.indexOf("Trident") >= 0), isOpera: isWindowAwailable && navigator.userAgent.indexOf("Opera") >= 0, isChrome: isWindowAwailable && navigator.userAgent.indexOf("Chrome") >= 0, isKHTML: isWindowAwailable && (navigator.userAgent.indexOf("Safari") >= 0 || navigator.userAgent.indexOf("Konqueror") >= 0), isFF: isWindowAwailable && navigator.userAgent.indexOf("Firefox") >= 0, isIPad: isWindowAwailable && navigator.userAgent.search(/iPad/gi) >= 0, isEdge: isWindowAwailable && navigator.userAgent.indexOf("Edge") != -1, isNode: !isWindowAwailable || typeof navigator == "undefined" };
 function extend$g(scheduler2) {
   scheduler2.destructor = function() {
     scheduler2.callEvent("onDestroy", []);
@@ -3017,10 +3022,10 @@ function extend$e(scheduler2) {
     };
   };
   var csp_str_to_date = function(format, utc) {
+    const mask = format.match(/%[a-zA-Z]/g);
     return function(date) {
       var set = [0, 0, 1, 0, 0, 0];
       var temp = date.match(/[a-zA-Z]+|[0-9]+/g);
-      var mask = format.match(/%[a-zA-Z]/g);
       for (var i = 0; i < mask.length; i++) {
         switch (mask[i]) {
           case "%j":
@@ -3067,18 +3072,23 @@ function extend$e(scheduler2) {
       return new Date(set[0], set[1], set[2], set[3], set[4], set[5]);
     };
   };
-  var canUseCsp = false;
-  (function() {
+  let cspEnabled = void 0;
+  function checkIfCSPEnabled() {
     try {
-      new Function("canUseCsp = false;");
+      new Function("cspEnabled = false;");
+      cspEnabled = false;
     } catch (e) {
-      canUseCsp = true;
+      cspEnabled = true;
     }
-  })();
+    return cspEnabled;
+  }
   function useCsp() {
     var result = false;
     if (scheduler2.config.csp === "auto") {
-      result = canUseCsp;
+      if (cspEnabled === void 0) {
+        cspEnabled = checkIfCSPEnabled();
+      }
+      result = cspEnabled;
     } else {
       result = scheduler2.config.csp;
     }
@@ -3093,14 +3103,6 @@ function extend$e(scheduler2) {
     var t = scheduler2.locale.date.month_full_hash = {};
     for (var i = 0; i < s.length; i++)
       t[s[i]] = i;
-  }, _bind_host_object: function(method) {
-    if (method.bind) {
-      return method.bind(scheduler2);
-    } else {
-      return function() {
-        return method.apply(scheduler2, arguments);
-      };
-    }
   }, date_part: function(date) {
     var old = new Date(date);
     date.setHours(0);
@@ -3224,7 +3226,7 @@ function extend$e(scheduler2) {
     if (utc)
       format = format.replace(/date\.get/g, "date.getUTC");
     var func = new Function("date", 'return "' + format + '";');
-    return scheduler2.date._bind_host_object(func);
+    return func.bind(scheduler2);
   }, str_to_date: function(format, utc, exactFormat) {
     var stringToDateMethod = useCsp() ? csp_str_to_date : generateStringToDate;
     var parseExactFormat = stringToDateMethod(format, utc);
@@ -3920,6 +3922,7 @@ function extend$c(scheduler2) {
       ev._sweek = Math.floor((this._correct_shift(sd.valueOf(), 1) - this._min_date.valueOf()) / (60 * 60 * 1e3 * 24 * cols));
       var isAnyCellVisible = scheduler2._is_any_multiday_cell_visible(sd, ed, ev);
       if (!isAnyCellVisible) {
+        start_date = null;
         continue;
       }
       var stack = weeks[ev._sweek];
@@ -4920,7 +4923,8 @@ function extend$6(scheduler2) {
     return node.innerHTML || "";
   }, focus: function(node) {
   } }, textarea: { render: function(sns) {
-    return "<div class='dhx_cal_ltext'><textarea></textarea></div>";
+    const placeholder = sns.placeholder ? `placeholder='${sns.placeholder}'` : "";
+    return `<div class='dhx_cal_ltext'><textarea ${placeholder}></textarea></div>`;
   }, set_value: function(node, value, ev) {
     scheduler2.form_blocks.textarea._get_input(node).value = value || "";
   }, get_value: function(node, ev) {
@@ -7612,7 +7616,7 @@ class DatePicker {
   }
 }
 function factoryMethod(extensionManager) {
-  const scheduler2 = { version: "7.0.3" };
+  const scheduler2 = { version: "7.0.4" };
   extend$n(scheduler2);
   extend$i(scheduler2);
   extend$j(scheduler2);
@@ -8039,6 +8043,11 @@ function agenda_view(scheduler2) {
         scheduler2._els["dhx_cal_data"][0].innerHTML = html;
       }
       scheduler2._els["dhx_cal_data"][0].scrollTop = scrollTop;
+      let t = scheduler2._els["dhx_cal_data"][0].querySelectorAll(".dhx_cal_agenda_event_line");
+      scheduler2._rendered = [];
+      for (var i = 0; i < t.length - 1; i++) {
+        scheduler2._rendered[i] = t[i];
+      }
     }
     function renderEmptyView() {
       return `<div class="dhx_cal_agenda_no_events">${scheduler2.locale.labels.agenda_tab}</div>`;
@@ -9332,7 +9341,7 @@ function marker(scheduler2) {
     div.style.width = scheduler2._cols[dayIndex] + "px";
     div.style.height = (scheduler2._colsS.heights[weekNumber + 1] - top || scheduler2._colsS.height) + "px";
     var container = scheduler2.$container.querySelector(".dhx_cal_data");
-    var datatable = container.querySelector("table");
+    var datatable = container.querySelector(".dhx_cal_month_table");
     if (datatable.nextSibling) {
       container.insertBefore(div, datatable.nextSibling);
     } else {
@@ -10918,7 +10927,17 @@ function scheduler_handlers(scheduler2) {
     function mousedownHandler(e) {
       if (!scheduler2.config.key_nav)
         return true;
-      var dataAreaClick = scheduler2.$keyboardNavigation.isChildOf(e.target || e.srcElement, scheduler2.$container.querySelector(".dhx_cal_data"));
+      const view = scheduler2.getView();
+      let dataAreaClick = false;
+      if (scheduler2.getState().mode === "month") {
+        dataAreaClick = scheduler2.$keyboardNavigation.isChildOf(e.target || e.srcElement, scheduler2.$container.querySelector(".dhx_cal_month_table"));
+      } else if (view && view.layout === "timeline") {
+        dataAreaClick = scheduler2.$keyboardNavigation.isChildOf(e.target || e.srcElement, scheduler2.$container.querySelector(".dhx_timeline_data_col"));
+      } else {
+        const listOfScales = scheduler2.$container.querySelectorAll(".dhx_scale_holder");
+        const arrOfScales = Array.from(listOfScales);
+        dataAreaClick = arrOfScales.some((scale) => scale === e.target.parentNode);
+      }
       var pos = scheduler2.getActionData(e);
       var focusNode;
       if (scheduler2._locate_event(e.target || e.srcElement)) {

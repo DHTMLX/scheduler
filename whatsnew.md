@@ -1,3 +1,11 @@
+### 7.0.4
+
+Add the placeholder setting for the textarea control
+Fix incorrect cell selection in Keyboard Navigation
+Fix the Quick Info popup in Agenda view
+Fix type definitions for the Agenda view templates
+Fix the incorrect display of multi-day events in Month view when start_on_monday is disabled and several columns are hidden from the view
+
 ### 7.0.3
 
 Issue with textColor property not applying in the Month view has been resolved

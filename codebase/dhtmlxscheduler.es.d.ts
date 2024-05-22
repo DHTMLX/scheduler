@@ -103,8 +103,9 @@ export interface SchedulerTemplates {
 
 	/**
 	 * specifies the content of the day cell of the Agenda view
+	 * @param date the date which needs formatting
 	*/
-	agenda_day(): void;
+	agenda_day(date: Date): string;
 
 	/**
 	 * specifies the text in the second column of the Agenda view
@@ -170,7 +171,7 @@ export interface SchedulerTemplates {
 	 * @param end the date when an event is scheduled to be completed
 	 * @param ev the event's object
 	*/
-	drag_marker_class(start: Date, end: Date, ev: any): void;
+	drag_marker_class(start: Date, end: Date, ev: any): string;
 
 	/**
 	 * specifies the content of the highlighted block  on the time scale
@@ -178,7 +179,7 @@ export interface SchedulerTemplates {
 	 * @param end the date when an event is scheduled to be completed
 	 * @param ev the event's object
 	*/
-	drag_marker_content(start: Date, end: Date, ev: any): void;
+	drag_marker_content(start: Date, end: Date, ev: any): string;
 
 	/**
 	 * specifies the date of an event. Applied to one-day events only
@@ -350,12 +351,12 @@ export interface SchedulerTemplates {
 	time_picker(): string;
 
 	/**
-	 * specifies the css class of background cell in Day/Week views
+	 * specifies the CSS class of the background cell in the Day/Week views
 	*/
 	time_slot_class(): void;
 
 	/**
-	 * specifies the content of background cell in Day/Week views
+	 * specifies the content of the background cell in the Day/Week views
 	*/
 	time_slot_text(): void;
 
@@ -1149,7 +1150,7 @@ export interface SchedulerConfigOptions {
 	timeline_swap_resize: boolean;
 
 	/**
-	 * sets the length of time, in milliseconds, before the tooltip hides
+	 * sets the length of time in milliseconds before the tooltip hides
 	*/
 	tooltip_hide_timeout: number;
 
@@ -1598,9 +1599,9 @@ export interface SchedulerStatic {
 	alert(config: any): HTMLElement;
 
 	/**
-	 * if the specified expression is false, an errorMessage is shown in the red popup at the top right corner of the screen
+	 * if the specified expression is false, an errorMessage is shown in a red popup at the top right corner of the screen
 	 * @param expression true to assert the expression, false - if assertion fails
-	 * @param errorMessage an error message that will be shown in the red popup
+	 * @param errorMessage an error message that will be shown in a red popup
 	*/
 	assert(expression: boolean, errorMessage: string): void;
 
@@ -1619,7 +1620,7 @@ export interface SchedulerStatic {
 	backbone(events: any): void;
 
 	/**
-	 * creates a new function that, when called, has its <i>this</i> keyword set to the provided value
+	 * creates a new function that when called has its <i>this</i> keyword set to the provided value
 	 * @param method the target function
 	 * @param thisArg the value to be passed as the <i>this</i> parameter to the target function when the bound function is called
 	*/
@@ -1700,14 +1701,14 @@ export interface SchedulerStatic {
 	confirm(config: any): HTMLElement;
 
 	/**
-	 * creates a deep copy of provided object
+	 * creates a deep copy of the provided object
 	 * @param event the object that needs to be copied
 	*/
 	copy(event: any): any;
 
 	/**
 	 * creates a new dataProcessor instance and attaches it to scheduler
-	 * @param config dataProcessor configuration object
+	 * @param config a dataProcessor configuration object
 	*/
 	createDataProcessor(config: any): any;
 
@@ -1765,7 +1766,7 @@ export interface SchedulerStatic {
 	destroyCalendar(name?: any): void;
 
 	/**
-	 * destroys the scheduler instance
+	 * destroys a scheduler instance
 	*/
 	destructor(): void;
 
@@ -2021,7 +2022,7 @@ export interface SchedulerStatic {
 	 * adds properties of the 'source' object into the 'target' object
 	 * @param target the target object
 	 * @param source the source object
-	 * @param force if true, properties of the 'source' will overwrite matching properties of the 'target', if there are any. If false, properties that already exist in the 'target' will be omitted
+	 * @param force if true, properties of the 'source' will overwrite the matching properties of the 'target', if there are any. If false, the properties that already exist in the 'target' will be omitted
 	*/
 	mixin(target: any, source: any, force: boolean): void;
 
@@ -2049,7 +2050,7 @@ export interface SchedulerStatic {
 	parse(data: any): void;
 
 	/**
-	 * activates specified extensions
+	 * activates the specified extensions
 	 * @param ext extensions that need to be activated
 	*/
 	plugins(ext: any): void;
@@ -2158,7 +2159,7 @@ export interface SchedulerStatic {
 
 	/**
 	 * sets the active skin
-	 * @param skin name of the skin. Allowed values: "terrace", "dark", "material", "flat", "contrast-white", "contrast-black"
+	 * @param skin the name of the skin. The allowed values are: "terrace", "dark", "material", "flat", "contrast-white", "contrast-black"
 	*/
 	setSkin(skin: string): void;
 
