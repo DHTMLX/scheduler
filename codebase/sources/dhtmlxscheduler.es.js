@@ -4034,7 +4034,7 @@ function extend$c(scheduler2) {
       parentWidth -= this.config.day_column_padding;
     }
     var width = Math.floor((parentWidth - menu_offset) / ev_count);
-    var left = ev_sorder * width + (ev_sorder > 0 ? 2 : 1);
+    var left = ev_sorder * width + 1;
     if (!ev._inner)
       width = width * (ev_count - ev_sorder);
     if (this.config.cascade_event_display) {
@@ -4149,7 +4149,7 @@ function extend$c(scheduler2) {
     if (this.config.cascade_event_display) {
       cs2 += " dhx_cal_event_cascade";
     }
-    var boxWidth = w;
+    var boxWidth = w - 1;
     var html = '<div event_id="' + id2 + '" ' + this.config.event_attribute + '="' + id2 + '" class="' + cs2 + '" style="position:absolute; top:' + y + "px; " + (this.config.rtl ? "right:" : "left:") + x + "px; width:" + boxWidth + "px; height:" + h + "px;" + (style || "") + '"></div>';
     d.innerHTML = html;
     var container = d.cloneNode(true).firstChild;
@@ -7496,6 +7496,7 @@ class DatePicker {
     const monthStart = scheduler2.date.month_start(new Date(date));
     const monthEnd = scheduler2.date.add(scheduler2.date.month_start(new Date(date)), 1, "month");
     let lastDate = scheduler2.date.add(scheduler2.date.month_start(new Date(date)), 1, "month");
+    const currentCalDate = scheduler2.date.date_part(scheduler2._currentDate());
     if (lastDate.getDay() !== 0) {
       lastDate = scheduler2.date.add(scheduler2.date.week_start(lastDate), 1, "week");
     }
@@ -7523,6 +7524,9 @@ class DatePicker {
       }
       if (currDate.getDay() === 0 || currDate.getDay() === 6) {
         dayElement.classList.add("dhx_cal_datepicker_weekend");
+      }
+      if (currDate.valueOf() == currentCalDate.valueOf()) {
+        dayElement.classList.add("dhx_now");
       }
       if (minSchedulerDate && maxSchedulerDate) {
         if (currDate.valueOf() >= minSchedulerDate.valueOf() && currDate.valueOf() < maxSchedulerDate.valueOf()) {
@@ -7616,7 +7620,7 @@ class DatePicker {
   }
 }
 function factoryMethod(extensionManager) {
-  const scheduler2 = { version: "7.0.4" };
+  const scheduler2 = { version: "7.0.5" };
   extend$n(scheduler2);
   extend$i(scheduler2);
   extend$j(scheduler2);

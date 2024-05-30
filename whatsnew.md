@@ -1,3 +1,9 @@
+### 7.0.5
+
+Fix the incorrect height of the Timeline sections when the event_dy:"full" setting is used
+Fix the missing "today" marker in the Year view
+Correct the positioning of events in the Day/Week views
+
 ### 7.0.4
 
 Add the placeholder setting for the textarea control

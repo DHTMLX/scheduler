@@ -3271,6 +3271,9 @@ div.dhx_timeline_label_column_header .dhx_timeline_label_content_wrapper {
   color: var(--dhx-scheduler-datepicker-cell-color);
   background: var(--dhx-scheduler-datepicker-cell-background);
 }
+.dhx_cal_datepicker_date.dhx_now {
+  --dhx-scheduler-datepicker-cell-background: var(--dhx-scheduler-timescale-today-background);
+}
 .dhx_cal_datepicker_weekend {
   --dhx-scheduler-datepicker-cell-color: var(--dhx-scheduler-datepicker-weekend-color);
   --dhx-scheduler-datepicker-cell-background: var(--dhx-scheduler-datepicker-weekend-background);

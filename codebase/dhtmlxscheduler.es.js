@@ -1825,23 +1825,24 @@ class at {
   _renderDayGrid(h) {
     const { date: a, currentRange: r, eventDates: d, minWeeks: i } = this.getState();
     let _ = r[0], o = r[1];
-    const t = d.reduce((p, y) => (p[this.scheduler.date.day_start(new Date(y)).valueOf()] = !0, p), {}), n = document.createElement("div");
+    const t = d.reduce((y, w) => (y[this.scheduler.date.day_start(new Date(w)).valueOf()] = !0, y), {}), n = document.createElement("div");
     this._renderDayGridHeader(n), h.appendChild(n);
     const s = this.scheduler, c = s.date.week_start(s.date.month_start(new Date(a))), u = s.date.month_start(new Date(a)), v = s.date.add(s.date.month_start(new Date(a)), 1, "month");
     let m = s.date.add(s.date.month_start(new Date(a)), 1, "month");
+    const l = s.date.date_part(s._currentDate());
     m.getDay() !== 0 && (m = s.date.add(s.date.week_start(m), 1, "week"));
-    let l = this._weeksBetween(c, m);
-    i && l < i && (m = s.date.add(m, i - l, "week"));
-    let f = c;
-    const g = document.createElement("div");
-    for (g.classList.add("dhx_cal_datepicker_days"), this._domEvents.attach(g, "click", (p) => {
-      const y = p.target.closest("[data-cell-date]"), w = new Date(y.getAttribute("data-cell-date"));
-      this.callEvent("onDateClick", [w, p]);
-    }); f.valueOf() < m.valueOf(); ) {
-      const p = document.createElement("div");
-      p.setAttribute("data-cell-date", s.templates.format_date(f)), p.setAttribute("data-day", f.getDay()), p.innerHTML = f.getDate(), f.valueOf() < u.valueOf() ? p.classList.add("dhx_before") : f.valueOf() >= v.valueOf() && p.classList.add("dhx_after"), f.getDay() !== 0 && f.getDay() !== 6 || p.classList.add("dhx_cal_datepicker_weekend"), _ && o && f.valueOf() >= _.valueOf() && f.valueOf() < o.valueOf() && p.classList.add("dhx_cal_datepicker_current"), t[f.valueOf()] && p.classList.add("dhx_cal_datepicker_event"), p.classList.add("dhx_cal_datepicker_date"), g.appendChild(p), f = s.date.add(f, 1, "day");
+    let f = this._weeksBetween(c, m);
+    i && f < i && (m = s.date.add(m, i - f, "week"));
+    let g = c;
+    const p = document.createElement("div");
+    for (p.classList.add("dhx_cal_datepicker_days"), this._domEvents.attach(p, "click", (y) => {
+      const w = y.target.closest("[data-cell-date]"), b = new Date(w.getAttribute("data-cell-date"));
+      this.callEvent("onDateClick", [b, y]);
+    }); g.valueOf() < m.valueOf(); ) {
+      const y = document.createElement("div");
+      y.setAttribute("data-cell-date", s.templates.format_date(g)), y.setAttribute("data-day", g.getDay()), y.innerHTML = g.getDate(), g.valueOf() < u.valueOf() ? y.classList.add("dhx_before") : g.valueOf() >= v.valueOf() && y.classList.add("dhx_after"), g.getDay() !== 0 && g.getDay() !== 6 || y.classList.add("dhx_cal_datepicker_weekend"), g.valueOf() == l.valueOf() && y.classList.add("dhx_now"), _ && o && g.valueOf() >= _.valueOf() && g.valueOf() < o.valueOf() && y.classList.add("dhx_cal_datepicker_current"), t[g.valueOf()] && y.classList.add("dhx_cal_datepicker_event"), y.classList.add("dhx_cal_datepicker_date"), p.appendChild(y), g = s.date.add(g, 1, "day");
     }
-    h.appendChild(g);
+    h.appendChild(p);
   }
   _renderMonthGrid(h) {
     const { date: a } = this.getState(), r = document.createElement("div");
@@ -1886,7 +1887,7 @@ class at {
   }
 }
 function nt(e) {
-  const h = { version: "7.0.4" };
+  const h = { version: "7.0.5" };
   (function(t) {
     var n = { agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html", grid: "https://docs.dhtmlx.com/scheduler/grid_view.html", map: "https://docs.dhtmlx.com/scheduler/map_view.html", unit: "https://docs.dhtmlx.com/scheduler/units_view.html", timeline: "https://docs.dhtmlx.com/scheduler/timeline_view.html", week_agenda: "https://docs.dhtmlx.com/scheduler/weekagenda_view.html", year: "https://docs.dhtmlx.com/scheduler/year_view.html", anythingElse: "https://docs.dhtmlx.com/scheduler/views.html" }, s = { agenda: "ext/dhtmlxscheduler_agenda_view.js", grid: "ext/dhtmlxscheduler_grid_view.js", map: "ext/dhtmlxscheduler_map_view.js", unit: "ext/dhtmlxscheduler_units.js", timeline: "ext/dhtmlxscheduler_timeline.js, ext/dhtmlxscheduler_treetimeline.js, ext/dhtmlxscheduler_daytimeline.js", week_agenda: "ext/dhtmlxscheduler_week_agenda.js", year: "ext/dhtmlxscheduler_year_view.js", limit: "ext/dhtmlxscheduler_limit.js" };
     t._commonErrorMessages = { unknownView: function(c) {
@@ -3209,7 +3210,7 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
           s = s || m;
           var l = this._calc_event_y(n, t.xy.min_event_height), f = l.top, g = l.height, p = n._count || 1, y = n._sorder || 0;
           c = c || m.clientWidth, this.config.day_column_padding && (c -= this.config.day_column_padding);
-          var w = Math.floor((c - v) / p), b = y * w + (y > 0 ? 2 : 1);
+          var w = Math.floor((c - v) / p), b = y * w + 1;
           if (n._inner || (w *= p - y), this.config.cascade_event_display) {
             var k = this.config.cascade_event_count, E = this.config.cascade_event_margin;
             b = y % k * E;
@@ -3249,7 +3250,7 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
       b.drag_id == n.id && (w += " dhx_cal_event_drag"), b.select_id == n.id && (w += " dhx_cal_event_selected");
       var k = t.templates.event_class(n.start_date, n.end_date, n);
       k && (w = w + " " + k), this.config.cascade_event_display && (w += " dhx_cal_event_cascade");
-      var E = u, D = '<div event_id="' + y + '" ' + this.config.event_attribute + '="' + y + '" class="' + w + '" style="position:absolute; top:' + c + "px; " + (this.config.rtl ? "right:" : "left:") + s + "px; width:" + E + "px; height:" + v + "px;" + (m || "") + '"></div>';
+      var E = u - 1, D = '<div event_id="' + y + '" ' + this.config.event_attribute + '="' + y + '" class="' + w + '" style="position:absolute; top:' + c + "px; " + (this.config.rtl ? "right:" : "left:") + s + "px; width:" + E + "px; height:" + v + "px;" + (m || "") + '"></div>';
       p.innerHTML = D;
       var x = p.cloneNode(!0).firstChild;
       if (!g && t.renderEvent(x, n, u, v, l, f))
