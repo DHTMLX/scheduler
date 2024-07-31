@@ -1,3 +1,19 @@
+### 7.1.0
+
+Storing recurring events in the RRULE format
+Map view supports different map providers
+The ability to undo an event's deletion
+The batchUpdate method for updating multiple events at once
+Scheduler highlights the original position of a calendar event during the drag and drop
+Fix the incorrect height of the Timeline view section when event_dy is set to "full"
+Fix the issue when dynamically changing the x_date property of the Timeline view did not affect the template
+Fix the header misalignment in the multiday Units view
+Fix the script error that occurred after the destructor is called when the drag_between extension is active
+Fix the incorrect behavior of the limit extension, which prevented editing recurring series
+Fix the performance issue with events drag and drop in the Tree Timeline view when the show_unassigned option is set to true
+Fix the incorrect behavior of the scrollable Timeline view when smart_rendering is set to false
+Fix the incorrect scroll position after a view change in a scrollable Timeline view
+
 ### 7.0.5
 
 Fix the incorrect height of the Timeline sections when the event_dy:"full" setting is used

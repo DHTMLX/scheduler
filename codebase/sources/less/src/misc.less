@@ -44,3 +44,47 @@
 		padding-bottom: 4px;
 	}
 }
+
+ 
+/* undo delete */
+
+.scheduler-info.scheduler-popup_after_delete{
+	cursor: default ;
+	border-radius: var(--dhx-scheduler-border-radius);
+	padding: 0;
+	width: 225px;
+    --dhx-scheduler-info-background: var(--dhx-scheduler-undo-delete-background);
+    --dhx-scheduler-info-color: var(--dhx-scheduler-undo-delete-color);
+}
+
+.dhx_info_message{
+	display: flex;
+	justify-content: space-between;
+	align-items: center; 
+	padding: 8px 12px;
+}
+
+.undo_popup_text{
+	text-align: center; 
+}
+
+.undo_button{
+    .button;
+    .button-link;
+}
+
+/* drag_highlight */
+ 
+.dhx_scheduler_month .dhx_marked_timespan.dhx_scheduler_dnd_marker {
+	display:block;
+	margin-top: -4px;
+}
+
+.dhx_marked_timespan.dhx_scheduler_dnd_marker {
+	justify-content: flex-start;
+	align-items: flex-start;
+}
+
+.dhx_scheduler_dnd_marker{
+	opacity: 0.5;
+}

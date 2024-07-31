@@ -474,7 +474,43 @@
         max-width: 165px;
     }
 
-    .dhx_lightbox_time_select{
+    .dhx_lightbox_time_select {
         width: 95px;
+    }
+}
+
+.dhx_form_rrule {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .dhx_form_repeat_custom,
+    .dhx_form_repeat_ends,
+    .dhx_form_repeat_ends_extra {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .dhx_form_repeat_ends_options {
+        display: flex;
+        gap: 8px;
+    }
+
+    label {
+        display: inline-flex;
+        align-items: center;
+        vertical-align: top;
+        gap: 4px;
+    }
+
+    input[type="number"] {
+        width: 80px;
+    }
+
+    .dhx_form_repeat_custom_week {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
     }
 }

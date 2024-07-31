@@ -25,6 +25,1199 @@ if (typeof window !== "undefined") {
   globalScope = global;
 }
 const global$1 = globalScope;
+function dragHighlightPos(scheduler2) {
+  let dndMarkers = [];
+  let dragStarted = false;
+  let eventNode = null;
+  let event2 = null;
+  function isEnabled2() {
+    return scheduler2.config.drag_highlight && scheduler2.markTimespan;
+  }
+  function checkViewName(viewName) {
+    const viewObj = scheduler2.getView(viewName);
+    if (viewObj) {
+      return viewObj.layout;
+    }
+    return viewName;
+  }
+  function checkSectionPropertyName(viewName) {
+    const viewObj = scheduler2.getView(viewName);
+    if (viewObj.y_property) {
+      return viewObj.y_property;
+    }
+    if (viewObj.map_to) {
+      return viewObj.map_to;
+    }
+  }
+  function setRequiredStylesToMarker(eventNode2, layout) {
+    switch (layout) {
+      case "month":
+        eventNode2.style.top = "";
+        eventNode2.style.left = "";
+        break;
+      case "timeline":
+        eventNode2.style.left = "";
+        eventNode2.style.marginLeft = "1px";
+        break;
+      default:
+        eventNode2.style.top = "";
+        break;
+    }
+  }
+  function createMarkerConfig(configSettings) {
+    const { event: event3, layout, viewName, sectionId, eventNode: eventNode2 } = configSettings;
+    setRequiredStylesToMarker(eventNode2, layout);
+    const sections = {};
+    let markerObject = { start_date: event3.start_date, end_date: event3.end_date, css: "dhx_scheduler_dnd_marker", html: eventNode2 };
+    if (layout == "timeline" || layout == "month") {
+      markerObject = { ...markerObject, end_date: scheduler2.date.add(event3.start_date, 1, "minute") };
+    }
+    if (sectionId) {
+      sections[viewName] = sectionId;
+      markerObject.sections = sections;
+    }
+    return markerObject;
+  }
+  function createViewMarker(settings) {
+    const { layout } = settings;
+    let markerConfigs;
+    switch (layout) {
+      case "month":
+        markerConfigs = getMonthViewMarkers(settings);
+        break;
+      case "timeline":
+      case "units":
+        markerConfigs = getTimelineAndUnitsViewMarkers(settings);
+        break;
+      default:
+        markerConfigs = getColumnViewMarkers(settings);
+        break;
+    }
+    markerConfigs.forEach((cfg) => {
+      dndMarkers.push(scheduler2.markTimespan(cfg));
+    });
+  }
+  function getColumnViewMarkers(settings) {
+    const { event: event3, layout, viewName, sectionId } = settings;
+    let columnViewMarkersArray = [];
+    let eventNodes = scheduler2.$container.querySelectorAll(`[${scheduler2.config.event_attribute}='${event3.id}']:not(.dhx_cal_select_menu):not(.dhx_drag_marker)`);
+    if (eventNodes) {
+      for (let i = 0; i < eventNodes.length; i++) {
+        let eventNodeClone = eventNodes[i].cloneNode(true);
+        let startDate = /* @__PURE__ */ new Date(+eventNodeClone.getAttribute("data-bar-start"));
+        let endDate = /* @__PURE__ */ new Date(+eventNodeClone.getAttribute("data-bar-end"));
+        let dates = { start_date: startDate, end_date: endDate };
+        const configSettings = { event: dates, layout, viewName, sectionId, eventNode: eventNodeClone };
+        columnViewMarkersArray.push(createMarkerConfig(configSettings));
+      }
+    }
+    return columnViewMarkersArray;
+  }
+  function getMonthViewMarkers(settings) {
+    let monthViewMarkersArray = [];
+    const { event: event3, layout, viewName, sectionId } = settings;
+    const weekDates = [];
+    let currDate = new Date(event3.start_date);
+    while (currDate.valueOf() < event3.end_date.valueOf()) {
+      let obj = { start_date: currDate };
+      weekDates.push(obj);
+      currDate = scheduler2.date.week_start(scheduler2.date.add(currDate, 1, "week"));
+    }
+    let cells = scheduler2.$container.querySelectorAll(`[${scheduler2.config.event_attribute}='${event3.id}']`);
+    for (let i = 0; i < cells.length; i++) {
+      const configSettings = { event: weekDates[i], layout, viewName, sectionId, eventNode: cells[i].cloneNode(true) };
+      monthViewMarkersArray.push(createMarkerConfig(configSettings));
+    }
+    return monthViewMarkersArray;
+  }
+  function getTimelineAndUnitsViewMarkers(settings) {
+    let unitMarkersArray = [];
+    const { event: event3, layout, viewName, eventNode: eventNode2 } = settings;
+    let sectionPropertyName = checkSectionPropertyName(viewName);
+    if (scheduler2.config.multisection && sectionPropertyName) {
+      const sections = String(event3[sectionPropertyName]).split(scheduler2.config.section_delimiter);
+      const formatedSections = sections.map((element) => String(element));
+      const elems = [];
+      for (let i = 0; i < formatedSections.length; i++) {
+        elems[i] = eventNode2.cloneNode(true);
+        const configSettings = { event: event3, layout, viewName, sectionId: formatedSections[i], eventNode: elems[i] };
+        unitMarkersArray.push(createMarkerConfig(configSettings));
+      }
+    }
+    return unitMarkersArray;
+  }
+  scheduler2.attachEvent("onBeforeDrag", function(id2, mode, e) {
+    if (isEnabled2()) {
+      dragStarted = true;
+      event2 = scheduler2.getEvent(id2);
+      eventNode = e.target.closest(`[${scheduler2.config.event_attribute}]`);
+      const viewName = scheduler2.getState().mode;
+      const layout = checkViewName(viewName);
+      if (layout == "units" && scheduler2.config.cascade_event_display) {
+        scheduler2.unselect(id2);
+        eventNode = e.target.closest(`[${scheduler2.config.event_attribute}]`);
+      }
+    }
+    return true;
+  });
+  scheduler2.attachEvent("onEventDrag", function(id2, mode, e) {
+    if (dragStarted && isEnabled2()) {
+      dragStarted = false;
+      const viewName = scheduler2.getState().mode;
+      const layout = checkViewName(viewName);
+      const sectionId = scheduler2.getActionData(e).section;
+      if (event2) {
+        const settings = { event: event2, layout, viewName, sectionId, eventNode };
+        createViewMarker(settings);
+      }
+    }
+  });
+  scheduler2.attachEvent("onDragEnd", function(id2, mode, e) {
+    for (let i = 0; i < dndMarkers.length; i++) {
+      scheduler2.unmarkTimespan(dndMarkers[i]);
+    }
+    dndMarkers = [];
+    eventNode = null;
+    event2 = null;
+  });
+}
+function undoDelete(scheduler2) {
+  scheduler2.attachEvent("onEventDeleted", function(id2, ev) {
+    let deletedEvent = scheduler2.copy(ev);
+    if (scheduler2.config.undo_deleted && !scheduler2.getState().new_event) {
+      scheduler2.message({ text: `<div class="dhx_info_message">
+                            <span class="undo_popup_text">Event deleted</span>
+                            <button class="undo_button" data-deleted-event-id="${ev.id}">Undo</button>
+                        </div>`, expire: 1e4, type: "popup_after_delete", callback: function(e) {
+        let undoBtn = e.target.closest(`[data-deleted-event-id="${ev.id}"]`);
+        if (undoBtn) {
+          scheduler2.addEvent(deletedEvent);
+          scheduler2.render();
+        }
+      } });
+    }
+  });
+}
+function limitPlugin(scheduler2) {
+  scheduler2.config.mark_now = true;
+  scheduler2.config.display_marked_timespans = true;
+  scheduler2.config.overwrite_marked_timespans = true;
+  var dhx_time_block = "dhx_time_block";
+  var default_timespan_type = "default";
+  var fix_options = function(options, days, zones) {
+    if (days instanceof Date && zones instanceof Date) {
+      options.start_date = days;
+      options.end_date = zones;
+    } else {
+      options.days = days;
+      options.zones = zones;
+    }
+    return options;
+  };
+  var get_resulting_options = function(days, zones, sections) {
+    var options = typeof days == "object" ? days : { days };
+    options.type = dhx_time_block;
+    options.css = "";
+    if (zones) {
+      if (sections)
+        options.sections = sections;
+      options = fix_options(options, days, zones);
+    }
+    return options;
+  };
+  scheduler2.blockTime = function(days, zones, sections) {
+    var options = get_resulting_options(days, zones, sections);
+    return scheduler2.addMarkedTimespan(options);
+  };
+  scheduler2.unblockTime = function(days, zones, sections) {
+    zones = zones || "fullday";
+    var options = get_resulting_options(days, zones, sections);
+    return scheduler2.deleteMarkedTimespan(options);
+  };
+  scheduler2.checkInMarkedTimespan = function(ev, timespan_type, on_overlap) {
+    timespan_type = timespan_type || default_timespan_type;
+    var res = true;
+    var temp_start_date = new Date(ev.start_date.valueOf());
+    var temp_end_date = scheduler2.date.add(temp_start_date, 1, "day");
+    var timespans = scheduler2._marked_timespans;
+    for (; temp_start_date < ev.end_date; temp_start_date = scheduler2.date.date_part(temp_end_date), temp_end_date = scheduler2.date.add(temp_start_date, 1, "day")) {
+      var day_value = +scheduler2.date.date_part(new Date(temp_start_date));
+      var day_index = temp_start_date.getDay();
+      var zones = getZones(ev, timespans, day_index, day_value, timespan_type);
+      if (zones) {
+        for (var i = 0; i < zones.length; i += 2) {
+          var eventStart = scheduler2._get_zone_minutes(temp_start_date);
+          var eventEnd = ev.end_date > temp_end_date || ev.end_date.getDate() != temp_start_date.getDate() ? 1440 : scheduler2._get_zone_minutes(ev.end_date);
+          var markerStart = zones[i];
+          var markerEnd = zones[i + 1];
+          if (markerStart < eventEnd && markerEnd > eventStart) {
+            if (typeof on_overlap == "function") {
+              res = on_overlap(ev, eventStart, eventEnd, markerStart, markerEnd);
+            } else {
+              res = false;
+            }
+            if (!res)
+              break;
+          }
+        }
+      }
+    }
+    return !res;
+  };
+  scheduler2.checkLimitViolation = function(event2) {
+    if (!event2)
+      return true;
+    if (!scheduler2.config.check_limits)
+      return true;
+    var s = scheduler2;
+    var c = s.config;
+    var evs = [];
+    if (event2.rec_type && event2._end_date || event2.rrule) {
+      const seriesEnd = event2._end_date || event2.end_date;
+      if (c.limit_start && c.limit_end) {
+        var recEventInLimits = seriesEnd.valueOf() >= c.limit_start.valueOf() && event2.start_date.valueOf() <= c.limit_end.valueOf();
+        return recEventInLimits;
+      } else
+        return true;
+    } else {
+      evs = [event2];
+    }
+    var complete_res = true;
+    for (var p = 0; p < evs.length; p++) {
+      var res = true;
+      var ev = evs[p];
+      ev._timed = scheduler2.isOneDayEvent(ev);
+      res = c.limit_start && c.limit_end ? ev.start_date.valueOf() >= c.limit_start.valueOf() && ev.end_date.valueOf() <= c.limit_end.valueOf() : true;
+      if (res) {
+        res = !scheduler2.checkInMarkedTimespan(ev, dhx_time_block, function(event3, eventStart, eventEnd, markerStart, markerEnd) {
+          var allow = true;
+          if (eventStart <= markerEnd && eventStart >= markerStart) {
+            if (markerEnd == 24 * 60 || eventEnd <= markerEnd) {
+              allow = false;
+            }
+            if (event3._timed && s._drag_id && s._drag_mode == "new-size") {
+              event3.start_date.setHours(0);
+              event3.start_date.setMinutes(markerEnd);
+            } else {
+              allow = false;
+            }
+          }
+          if (eventEnd >= markerStart && eventEnd <= markerEnd || eventStart < markerStart && eventEnd > markerEnd) {
+            if (event3._timed && s._drag_id && s._drag_mode == "new-size") {
+              event3.end_date.setHours(0);
+              event3.end_date.setMinutes(markerStart);
+            } else {
+              allow = false;
+            }
+          }
+          return allow;
+        });
+      }
+      if (!res) {
+        res = s.checkEvent("onLimitViolation") ? s.callEvent("onLimitViolation", [ev.id, ev]) : res;
+      }
+      complete_res = complete_res && res;
+    }
+    if (!complete_res) {
+      s._drag_id = null;
+      s._drag_mode = null;
+    }
+    return complete_res;
+  };
+  scheduler2._get_blocked_zones = function(timespans, property, day_index, day_value, timespan_type) {
+    var zones = [];
+    if (timespans && timespans[property]) {
+      var timeline_zones = timespans[property];
+      var blocked_timeline_zones = this._get_relevant_blocked_zones(day_index, day_value, timeline_zones, timespan_type);
+      for (var i = 0; i < blocked_timeline_zones.length; i++) {
+        zones = this._add_timespan_zones(zones, blocked_timeline_zones[i].zones);
+      }
+    }
+    return zones;
+  };
+  scheduler2._get_relevant_blocked_zones = function(day_index, day_value, zones, timespan_type) {
+    var resultZones;
+    if (scheduler2.config.overwrite_marked_timespans) {
+      resultZones = zones[day_value] && zones[day_value][timespan_type] ? zones[day_value][timespan_type] : zones[day_index] && zones[day_index][timespan_type] ? zones[day_index][timespan_type] : [];
+    } else {
+      resultZones = [];
+      if (zones[day_value] && zones[day_value][timespan_type]) {
+        resultZones = resultZones.concat(zones[day_value][timespan_type]);
+      }
+      if (zones[day_index] && zones[day_index][timespan_type]) {
+        resultZones = resultZones.concat(zones[day_index][timespan_type]);
+      }
+    }
+    return resultZones;
+  };
+  function getZones(ev, timespans, day_index, day_value, timespan_type) {
+    var s = scheduler2;
+    var zones = [];
+    var containers = { _props: "map_to", matrix: "y_property" };
+    for (var container in containers) {
+      var property = containers[container];
+      if (s[container]) {
+        for (var view in s[container]) {
+          var view_config = s[container][view];
+          var linker = view_config[property];
+          if (!ev[linker])
+            continue;
+          zones = s._add_timespan_zones(zones, scheduler2._get_blocked_zones(timespans[view], ev[linker], day_index, day_value, timespan_type));
+        }
+      }
+    }
+    zones = s._add_timespan_zones(zones, scheduler2._get_blocked_zones(timespans, "global", day_index, day_value, timespan_type));
+    return zones;
+  }
+  scheduler2._mark_now = function(hide) {
+    var dhx_now_time = "dhx_now_time";
+    if (!this._els[dhx_now_time]) {
+      this._els[dhx_now_time] = [];
+    }
+    var now = scheduler2._currentDate();
+    var cfg = this.config;
+    scheduler2._remove_mark_now();
+    if (!hide && cfg.mark_now && now < this._max_date && now > this._min_date && now.getHours() >= cfg.first_hour && now.getHours() < cfg.last_hour) {
+      var day_index = this.locate_holder_day(now);
+      this._els[dhx_now_time] = scheduler2._append_mark_now(day_index, now);
+    }
+  };
+  scheduler2._append_mark_now = function(day_index, now) {
+    var dhx_now_time = "dhx_now_time";
+    var zone_start = scheduler2._get_zone_minutes(now);
+    var options = { zones: [zone_start, zone_start + 1], css: dhx_now_time, type: dhx_now_time };
+    if (!this._table_view) {
+      if (this._props && this._props[this._mode]) {
+        var start_index, end_index;
+        var view = this._props[this._mode];
+        var units_l = view.size || view.options.length;
+        if (view.days > 1) {
+          if (view.size && view.options.length) {
+            day_index = (view.position + day_index) / view.options.length * view.size;
+          }
+          start_index = day_index;
+          end_index = day_index + units_l;
+        } else {
+          start_index = 0;
+          end_index = start_index + units_l;
+        }
+        var r_divs = [];
+        for (var i = start_index; i < end_index; i++) {
+          var t_day = i;
+          options.days = t_day;
+          var t_div = scheduler2._render_marked_timespan(options, null, t_day)[0];
+          r_divs.push(t_div);
+        }
+        return r_divs;
+      } else {
+        options.days = day_index;
+        return scheduler2._render_marked_timespan(options, null, day_index);
+      }
+    } else {
+      if (this._mode == "month") {
+        options.days = +scheduler2.date.date_part(now);
+        return scheduler2._render_marked_timespan(options, null, null);
+      }
+    }
+  };
+  scheduler2._remove_mark_now = function() {
+    var dhx_now_time = "dhx_now_time";
+    var els = this._els[dhx_now_time];
+    for (var i = 0; i < els.length; i++) {
+      var div = els[i];
+      var parent = div.parentNode;
+      if (parent) {
+        parent.removeChild(div);
+      }
+    }
+    this._els[dhx_now_time] = [];
+  };
+  scheduler2._marked_timespans = { global: {} };
+  scheduler2._get_zone_minutes = function(date) {
+    return date.getHours() * 60 + date.getMinutes();
+  };
+  scheduler2._prepare_timespan_options = function(config) {
+    var r_configs = [];
+    var temp_configs = [];
+    if (config.days == "fullweek")
+      config.days = [0, 1, 2, 3, 4, 5, 6];
+    if (config.days instanceof Array) {
+      var t_days = config.days.slice();
+      for (var i = 0; i < t_days.length; i++) {
+        var cloned_config = scheduler2._lame_clone(config);
+        cloned_config.days = t_days[i];
+        r_configs.push.apply(r_configs, scheduler2._prepare_timespan_options(cloned_config));
+      }
+      return r_configs;
+    }
+    if (!config || !(config.start_date && config.end_date && config.end_date > config.start_date || config.days !== void 0 && config.zones) && !config.type)
+      return r_configs;
+    var min = 0;
+    var max = 24 * 60;
+    if (config.zones == "fullday")
+      config.zones = [min, max];
+    if (config.zones && config.invert_zones) {
+      config.zones = scheduler2.invertZones(config.zones);
+    }
+    config.id = scheduler2.uid();
+    config.css = config.css || "";
+    config.type = config.type || default_timespan_type;
+    var sections = config.sections;
+    if (sections) {
+      for (var view_key in sections) {
+        if (sections.hasOwnProperty(view_key)) {
+          var ids = sections[view_key];
+          if (!(ids instanceof Array))
+            ids = [ids];
+          for (var i = 0; i < ids.length; i++) {
+            var t_config = scheduler2._lame_copy({}, config);
+            t_config.sections = {};
+            t_config.sections[view_key] = ids[i];
+            temp_configs.push(t_config);
+          }
+        }
+      }
+    } else {
+      temp_configs.push(config);
+    }
+    for (var k = 0; k < temp_configs.length; k++) {
+      var c_config = temp_configs[k];
+      var start_date = c_config.start_date;
+      var end_date = c_config.end_date;
+      if (start_date && end_date) {
+        var t_sd = scheduler2.date.date_part(new Date(start_date));
+        var t_ed = scheduler2.date.add(t_sd, 1, "day");
+        while (t_sd < end_date) {
+          var t_config = scheduler2._lame_copy({}, c_config);
+          delete t_config.start_date;
+          delete t_config.end_date;
+          t_config.days = t_sd.valueOf();
+          var zone_start = start_date > t_sd ? scheduler2._get_zone_minutes(start_date) : min;
+          var zone_end = end_date > t_ed || end_date.getDate() != t_sd.getDate() ? max : scheduler2._get_zone_minutes(end_date);
+          t_config.zones = [zone_start, zone_end];
+          r_configs.push(t_config);
+          t_sd = t_ed;
+          t_ed = scheduler2.date.add(t_ed, 1, "day");
+        }
+      } else {
+        if (c_config.days instanceof Date)
+          c_config.days = scheduler2.date.date_part(c_config.days).valueOf();
+        c_config.zones = config.zones.slice();
+        r_configs.push(c_config);
+      }
+    }
+    return r_configs;
+  };
+  scheduler2._get_dates_by_index = function(index, start, end) {
+    var dates = [];
+    start = scheduler2.date.date_part(new Date(start || scheduler2._min_date));
+    end = new Date(end || scheduler2._max_date);
+    var start_day = start.getDay();
+    var delta = index - start_day >= 0 ? index - start_day : 7 - start.getDay() + index;
+    var t_date = scheduler2.date.add(start, delta, "day");
+    for (; t_date < end; t_date = scheduler2.date.add(t_date, 1, "week")) {
+      dates.push(t_date);
+    }
+    return dates;
+  };
+  scheduler2._get_css_classes_by_config = function(config) {
+    var css_classes = [];
+    if (config.type == dhx_time_block) {
+      css_classes.push(dhx_time_block);
+      if (config.css)
+        css_classes.push(dhx_time_block + "_reset");
+    }
+    css_classes.push("dhx_marked_timespan", config.css);
+    return css_classes.join(" ");
+  };
+  scheduler2._get_block_by_config = function(config) {
+    var block = document.createElement("div");
+    if (config.html) {
+      if (typeof config.html == "string")
+        block.innerHTML = config.html;
+      else
+        block.appendChild(config.html);
+    }
+    return block;
+  };
+  scheduler2._render_marked_timespan = function(options, area, day) {
+    var blocks = [];
+    var c = scheduler2.config;
+    var min_date = this._min_date;
+    var max_date = this._max_date;
+    var day_value = false;
+    if (!c.display_marked_timespans)
+      return blocks;
+    if (!day && day !== 0) {
+      if (options.days < 7)
+        day = options.days;
+      else {
+        var date_to_display = new Date(options.days);
+        day_value = +date_to_display;
+        if (!(+max_date > +date_to_display && +min_date <= +date_to_display))
+          return blocks;
+        day = date_to_display.getDay();
+      }
+      var min_day = min_date.getDay();
+      if (min_day > day) {
+        day = 7 - (min_day - day);
+      } else {
+        day = day - min_day;
+      }
+    }
+    var zones = options.zones;
+    var css_classes = scheduler2._get_css_classes_by_config(options);
+    if (scheduler2._table_view && scheduler2._mode == "month") {
+      var areas = [];
+      var days = [];
+      if (!area) {
+        days = day_value ? [day_value] : scheduler2._get_dates_by_index(day);
+        for (var i = 0; i < days.length; i++) {
+          areas.push(this._scales[days[i]]);
+        }
+      } else {
+        areas.push(area);
+        days.push(day);
+      }
+      for (var i = 0; i < areas.length; i++) {
+        area = areas[i];
+        day = days[i];
+        var sday = this.locate_holder_day(day, false) % this._cols.length;
+        if (this._ignores[sday])
+          continue;
+        var block_proto = scheduler2._get_block_by_config(options);
+        block_proto.className = css_classes;
+        block_proto.style.top = "0px";
+        block_proto.style.height = "100%";
+        for (var k = 0; k < zones.length; k += 2) {
+          var start = zones[i];
+          var end = zones[i + 1];
+          if (end <= start)
+            return [];
+          var block = block_proto.cloneNode(true);
+          block.style.left = "0px";
+          block.style.width = "100%";
+          area.appendChild(block);
+          blocks.push(block);
+        }
+      }
+    } else {
+      var index = day;
+      if (this._ignores[this.locate_holder_day(day, false)])
+        return blocks;
+      if (this._props && this._props[this._mode] && options.sections && options.sections[this._mode]) {
+        var view = this._props[this._mode];
+        index = view.order[options.sections[this._mode]];
+        var inner_index = view.order[options.sections[this._mode]];
+        if (!(view.days > 1)) {
+          index = inner_index;
+          if (view.size && index > view.position + view.size) {
+            index = 0;
+          }
+        } else {
+          var units_l = view.size || view.options.length;
+          index = index * units_l + inner_index;
+        }
+      }
+      area = area ? area : scheduler2.locate_holder(index);
+      for (var i = 0; i < zones.length; i += 2) {
+        var start = Math.max(zones[i], c.first_hour * 60);
+        var end = Math.min(zones[i + 1], c.last_hour * 60);
+        if (end <= start) {
+          if (i + 2 < zones.length)
+            continue;
+          else
+            return [];
+        }
+        var block = scheduler2._get_block_by_config(options);
+        block.className = css_classes;
+        var all_hours_height = this.config.hour_size_px * 24 + 1;
+        var hour_ms = 60 * 60 * 1e3;
+        block.style.top = Math.round((start * 60 * 1e3 - this.config.first_hour * hour_ms) * this.config.hour_size_px / hour_ms) % all_hours_height + "px";
+        block.style.height = Math.max(Math.round((end - start) * 60 * 1e3 * this.config.hour_size_px / hour_ms) % all_hours_height, 1) + "px";
+        area.appendChild(block);
+        blocks.push(block);
+      }
+    }
+    return blocks;
+  };
+  scheduler2._mark_timespans = function() {
+    var data = this._els["dhx_cal_data"][0];
+    var divs = [];
+    if (scheduler2._table_view && scheduler2._mode == "month") {
+      for (var day in this._scales) {
+        var date = /* @__PURE__ */ new Date(+day);
+        divs.push.apply(divs, scheduler2._on_scale_add_marker(this._scales[day], date));
+      }
+    } else {
+      var date = new Date(scheduler2._min_date);
+      for (var i = 0, len = data.childNodes.length; i < len; i++) {
+        var area = data.childNodes[i];
+        if (area.firstChild && scheduler2._getClassName(area.firstChild).indexOf("dhx_scale_hour") > -1) {
+          continue;
+        }
+        divs.push.apply(divs, scheduler2._on_scale_add_marker(area, date));
+        date = scheduler2.date.add(date, 1, "day");
+      }
+    }
+    return divs;
+  };
+  scheduler2.markTimespan = function(configuration) {
+    if (!this._els) {
+      throw new Error("`scheduler.markTimespan` can't be used before scheduler initialization. Place `scheduler.markTimespan` call after `scheduler.init`.");
+    }
+    var rebuild_els = false;
+    if (!this._els["dhx_cal_data"]) {
+      scheduler2.get_elements();
+      rebuild_els = true;
+    }
+    var timespans_ids = scheduler2._marked_timespans_ids, timespan_types = scheduler2._marked_timespans_types, timespans = scheduler2._marked_timespans;
+    scheduler2.deleteMarkedTimespan();
+    scheduler2.addMarkedTimespan(configuration);
+    var divs = scheduler2._mark_timespans();
+    if (rebuild_els)
+      scheduler2._els = [];
+    scheduler2._marked_timespans_ids = timespans_ids;
+    scheduler2._marked_timespans_types = timespan_types;
+    scheduler2._marked_timespans = timespans;
+    return divs;
+  };
+  scheduler2.unmarkTimespan = function(divs) {
+    if (!divs)
+      return;
+    for (var i = 0; i < divs.length; i++) {
+      var div = divs[i];
+      if (div.parentNode) {
+        div.parentNode.removeChild(div);
+      }
+    }
+  };
+  scheduler2._addMarkerTimespanConfig = function(config) {
+    var global2 = "global";
+    var timespans = scheduler2._marked_timespans;
+    var id2 = config.id;
+    var ids = scheduler2._marked_timespans_ids;
+    if (!ids[id2])
+      ids[id2] = [];
+    var day = config.days;
+    var sections = config.sections;
+    var type = config.type;
+    config.id = id2;
+    if (sections) {
+      for (var view_key in sections) {
+        if (sections.hasOwnProperty(view_key)) {
+          if (!timespans[view_key])
+            timespans[view_key] = {};
+          var unit_id = sections[view_key];
+          var timespans_view = timespans[view_key];
+          if (!timespans_view[unit_id])
+            timespans_view[unit_id] = {};
+          if (!timespans_view[unit_id][day])
+            timespans_view[unit_id][day] = {};
+          if (!timespans_view[unit_id][day][type]) {
+            timespans_view[unit_id][day][type] = [];
+            if (!scheduler2._marked_timespans_types)
+              scheduler2._marked_timespans_types = {};
+            if (!scheduler2._marked_timespans_types[type])
+              scheduler2._marked_timespans_types[type] = true;
+          }
+          var day_configs = timespans_view[unit_id][day][type];
+          config._array = day_configs;
+          day_configs.push(config);
+          ids[id2].push(config);
+        }
+      }
+    } else {
+      if (!timespans[global2][day])
+        timespans[global2][day] = {};
+      if (!timespans[global2][day][type])
+        timespans[global2][day][type] = [];
+      if (!scheduler2._marked_timespans_types)
+        scheduler2._marked_timespans_types = {};
+      if (!scheduler2._marked_timespans_types[type])
+        scheduler2._marked_timespans_types[type] = true;
+      var day_configs = timespans[global2][day][type];
+      config._array = day_configs;
+      day_configs.push(config);
+      ids[id2].push(config);
+    }
+  };
+  scheduler2._marked_timespans_ids = {};
+  scheduler2.addMarkedTimespan = function(configuration) {
+    var configs = scheduler2._prepare_timespan_options(configuration);
+    if (!configs.length)
+      return;
+    var id2 = configs[0].id;
+    for (var i = 0; i < configs.length; i++) {
+      scheduler2._addMarkerTimespanConfig(configs[i]);
+    }
+    return id2;
+  };
+  scheduler2._add_timespan_zones = function(current_zones, zones) {
+    var resulting_zones = current_zones.slice();
+    zones = zones.slice();
+    if (!resulting_zones.length)
+      return zones;
+    for (var i = 0; i < resulting_zones.length; i += 2) {
+      var c_zone_start = resulting_zones[i];
+      var c_zone_end = resulting_zones[i + 1];
+      var isLast = i + 2 == resulting_zones.length;
+      for (var k = 0; k < zones.length; k += 2) {
+        var zone_start = zones[k];
+        var zone_end = zones[k + 1];
+        if (zone_end > c_zone_end && zone_start <= c_zone_end || zone_start < c_zone_start && zone_end >= c_zone_start) {
+          resulting_zones[i] = Math.min(c_zone_start, zone_start);
+          resulting_zones[i + 1] = Math.max(c_zone_end, zone_end);
+          i -= 2;
+        } else {
+          if (!isLast)
+            continue;
+          var offset = c_zone_start > zone_start ? 0 : 2;
+          resulting_zones.splice(i + offset, 0, zone_start, zone_end);
+        }
+        zones.splice(k--, 2);
+        break;
+      }
+    }
+    return resulting_zones;
+  };
+  scheduler2._subtract_timespan_zones = function(current_zones, zones) {
+    var resulting_zones = current_zones.slice();
+    for (var i = 0; i < resulting_zones.length; i += 2) {
+      var c_zone_start = resulting_zones[i];
+      var c_zone_end = resulting_zones[i + 1];
+      for (var k = 0; k < zones.length; k += 2) {
+        var zone_start = zones[k];
+        var zone_end = zones[k + 1];
+        if (zone_end > c_zone_start && zone_start < c_zone_end) {
+          var is_modified = false;
+          if (c_zone_start >= zone_start && c_zone_end <= zone_end) {
+            resulting_zones.splice(i, 2);
+          }
+          if (c_zone_start < zone_start) {
+            resulting_zones.splice(i, 2, c_zone_start, zone_start);
+            is_modified = true;
+          }
+          if (c_zone_end > zone_end) {
+            resulting_zones.splice(is_modified ? i + 2 : i, is_modified ? 0 : 2, zone_end, c_zone_end);
+          }
+          i -= 2;
+          break;
+        } else {
+          continue;
+        }
+      }
+    }
+    return resulting_zones;
+  };
+  scheduler2.invertZones = function(zones) {
+    return scheduler2._subtract_timespan_zones([0, 1440], zones.slice());
+  };
+  scheduler2._delete_marked_timespan_by_id = function(id2) {
+    var configs = scheduler2._marked_timespans_ids[id2];
+    if (configs) {
+      for (var i = 0; i < configs.length; i++) {
+        var config = configs[i];
+        var parent_array = config._array;
+        for (var k = 0; k < parent_array.length; k++) {
+          if (parent_array[k] == config) {
+            parent_array.splice(k, 1);
+            break;
+          }
+        }
+      }
+    }
+  };
+  scheduler2._delete_marked_timespan_by_config = function(config) {
+    var timespans = scheduler2._marked_timespans;
+    var sections = config.sections;
+    var day = config.days;
+    var type = config.type || default_timespan_type;
+    var viewspans;
+    if (sections) {
+      for (var view_key in sections) {
+        if (sections.hasOwnProperty(view_key) && timespans[view_key]) {
+          var unit_id = sections[view_key];
+          if (timespans[view_key][unit_id]) {
+            viewspans = timespans[view_key][unit_id];
+          }
+        }
+      }
+    } else {
+      viewspans = timespans.global;
+    }
+    if (viewspans) {
+      if (day !== void 0) {
+        if (viewspans[day] && viewspans[day][type]) {
+          scheduler2._addMarkerTimespanConfig(config);
+          scheduler2._delete_marked_timespans_list(viewspans[day][type], config);
+        }
+      } else {
+        for (var d in viewspans) {
+          if (viewspans[d][type]) {
+            var dayConfig = scheduler2._lame_clone(config);
+            config.days = d;
+            scheduler2._addMarkerTimespanConfig(dayConfig);
+            scheduler2._delete_marked_timespans_list(viewspans[d][type], config);
+          }
+        }
+      }
+    }
+  };
+  scheduler2._delete_marked_timespans_list = function(day_timespans, config) {
+    for (var i = 0; i < day_timespans.length; i++) {
+      var d_t = day_timespans[i];
+      var zones = scheduler2._subtract_timespan_zones(d_t.zones, config.zones);
+      if (zones.length)
+        d_t.zones = zones;
+      else {
+        day_timespans.splice(i, 1);
+        i--;
+        var related_zones = scheduler2._marked_timespans_ids[d_t.id];
+        for (var k = 0; k < related_zones.length; k++) {
+          if (related_zones[k] == d_t) {
+            related_zones.splice(k, 1);
+            break;
+          }
+        }
+      }
+    }
+  };
+  scheduler2.deleteMarkedTimespan = function(configuration) {
+    if (!arguments.length) {
+      scheduler2._marked_timespans = { global: {} };
+      scheduler2._marked_timespans_ids = {};
+      scheduler2._marked_timespans_types = {};
+    }
+    if (typeof configuration != "object") {
+      scheduler2._delete_marked_timespan_by_id(configuration);
+    } else {
+      if (!(configuration.start_date && configuration.end_date)) {
+        if (configuration.days === void 0 && !configuration.type)
+          configuration.days = "fullweek";
+        if (!configuration.zones)
+          configuration.zones = "fullday";
+      }
+      var types = [];
+      if (!configuration.type) {
+        for (var type in scheduler2._marked_timespans_types) {
+          types.push(type);
+        }
+      } else {
+        types.push(configuration.type);
+      }
+      var configs = scheduler2._prepare_timespan_options(configuration);
+      for (var i = 0; i < configs.length; i++) {
+        var config = configs[i];
+        for (var t = 0; t < types.length; t++) {
+          var typedConfig = scheduler2._lame_clone(config);
+          typedConfig.type = types[t];
+          scheduler2._delete_marked_timespan_by_config(typedConfig);
+        }
+      }
+    }
+  };
+  scheduler2._get_types_to_render = function(common2, specific) {
+    var types_to_render = common2 ? scheduler2._lame_copy({}, common2) : {};
+    for (var type in specific || {}) {
+      if (specific.hasOwnProperty(type)) {
+        types_to_render[type] = specific[type];
+      }
+    }
+    return types_to_render;
+  };
+  scheduler2._get_configs_to_render = function(types) {
+    var configs = [];
+    for (var type in types) {
+      if (types.hasOwnProperty(type)) {
+        configs.push.apply(configs, types[type]);
+      }
+    }
+    return configs;
+  };
+  scheduler2._on_scale_add_marker = function(area, day) {
+    if (scheduler2._table_view && scheduler2._mode != "month")
+      return;
+    var day_index = day.getDay();
+    var day_value = day.valueOf();
+    var mode = this._mode;
+    var timespans = scheduler2._marked_timespans;
+    var r_configs = [];
+    var divs = [];
+    if (this._props && this._props[mode]) {
+      var view = this._props[mode];
+      var units = view.options;
+      var index = scheduler2._get_unit_index(view, day);
+      var unit = units[index];
+      if (!(view.days > 1)) {
+        day = scheduler2.date.date_part(new Date(this._date));
+      } else {
+        var dx = 24 * 60 * 60 * 1e3;
+        var day_ind = Math.round((day - scheduler2._min_date) / dx);
+        var unitsPerDay = view.size || units.length;
+        day = scheduler2.date.add(scheduler2._min_date, Math.floor(day_ind / unitsPerDay), "day");
+        day = scheduler2.date.date_part(day);
+      }
+      day_index = day.getDay();
+      day_value = day.valueOf();
+      if (timespans[mode] && timespans[mode][unit.key]) {
+        var unit_zones = timespans[mode][unit.key];
+        var unit_types = scheduler2._get_types_to_render(unit_zones[day_index], unit_zones[day_value]);
+        r_configs.push.apply(r_configs, scheduler2._get_configs_to_render(unit_types));
+      }
+    }
+    var global_data = timespans["global"];
+    if (scheduler2.config.overwrite_marked_timespans) {
+      var day_types = global_data[day_value] || global_data[day_index];
+      r_configs.push.apply(r_configs, scheduler2._get_configs_to_render(day_types));
+    } else {
+      if (global_data[day_value]) {
+        r_configs.push.apply(r_configs, scheduler2._get_configs_to_render(global_data[day_value]));
+      }
+      if (global_data[day_index]) {
+        r_configs.push.apply(r_configs, scheduler2._get_configs_to_render(global_data[day_index]));
+      }
+    }
+    for (var i = 0; i < r_configs.length; i++) {
+      divs.push.apply(divs, scheduler2._render_marked_timespan(r_configs[i], area, day));
+    }
+    return divs;
+  };
+  scheduler2.attachEvent("onScaleAdd", function() {
+    scheduler2._on_scale_add_marker.apply(scheduler2, arguments);
+  });
+  scheduler2.dblclick_dhx_marked_timespan = function(e, src) {
+    scheduler2.callEvent("onScaleDblClick", [scheduler2.getActionData(e).date, src, e]);
+    if (scheduler2.config.dblclick_create) {
+      scheduler2.addEventNow(scheduler2.getActionData(e).date, null, e);
+    }
+  };
+}
+function createMethod(scheduler2) {
+  var methods = {};
+  var isActive = false;
+  function disableMethod(methodName, dummyMethod) {
+    dummyMethod = typeof dummyMethod == "function" ? dummyMethod : function() {
+    };
+    if (!methods[methodName]) {
+      methods[methodName] = this[methodName];
+      this[methodName] = dummyMethod;
+    }
+  }
+  function restoreMethod(methodName) {
+    if (methods[methodName]) {
+      this[methodName] = methods[methodName];
+      methods[methodName] = null;
+    }
+  }
+  function disableMethods(methodsHash) {
+    for (var i in methodsHash) {
+      disableMethod.call(this, i, methodsHash[i]);
+    }
+  }
+  function restoreMethods() {
+    for (var i in methods) {
+      restoreMethod.call(this, i);
+    }
+  }
+  function batchUpdatePayload(callback) {
+    try {
+      callback();
+    } catch (e) {
+      window.console.error(e);
+    }
+  }
+  scheduler2.$stateProvider.registerProvider("batchUpdate", function() {
+    return { batch_update: isActive };
+  }, false);
+  return function batchUpdate2(callback, noRedraw) {
+    if (isActive) {
+      batchUpdatePayload(callback);
+      return;
+    }
+    var call_dp = this._dp && this._dp.updateMode != "off";
+    var dp_mode;
+    if (call_dp) {
+      dp_mode = this._dp.updateMode;
+      this._dp.setUpdateMode("off");
+    }
+    const calls = { setModeDate: { date: null, mode: null }, needRender: false, needUpdateView: false, repaintEvents: {} };
+    const rememberModeDate = (date, mode) => {
+      if (date) {
+        calls.setModeDate.date = date;
+      }
+      if (mode) {
+        calls.setModeDate.mode = mode;
+      }
+    };
+    var methods2 = { render: (date, mode) => {
+      calls.needRender = true;
+      rememberModeDate(date, mode);
+    }, setCurrentView: (date, mode) => {
+      calls.needRender = true;
+      rememberModeDate(date, mode);
+    }, updateView: (date, mode) => {
+      calls.needUpdateView = true;
+      rememberModeDate(date, mode);
+    }, render_data: () => calls.needRender = true, render_view_data: (evs) => {
+      if (evs && evs.length) {
+        evs.forEach((e) => calls.repaintEvents[e.id] = true);
+      } else {
+        calls.needRender = true;
+      }
+    } };
+    disableMethods.call(this, methods2);
+    isActive = true;
+    this.callEvent("onBeforeBatchUpdate", []);
+    batchUpdatePayload(callback);
+    this.callEvent("onAfterBatchUpdate", []);
+    restoreMethods.call(this);
+    isActive = false;
+    if (!noRedraw) {
+      if (calls.needRender) {
+        scheduler2.render(calls.setModeDate.date, calls.setModeDate.mode);
+      } else if (calls.needUpdateView) {
+        scheduler2.updateView(calls.setModeDate.date, calls.setModeDate.mode);
+      } else {
+        for (const i in calls.repaintEvents) {
+          scheduler2.updateEvent(i);
+        }
+      }
+    }
+    if (call_dp) {
+      this._dp.setUpdateMode(dp_mode);
+      this._dp.sendData();
+    }
+  };
+}
+function batchUpdate(scheduler2) {
+  scheduler2.batchUpdate = createMethod(scheduler2);
+}
+function initPlugins(scheduler2) {
+  undoDelete(scheduler2);
+  dragHighlightPos(scheduler2);
+  limitPlugin(scheduler2);
+  batchUpdate(scheduler2);
+}
+var uidSeed = Date.now();
+function uid() {
+  return uidSeed++;
+}
+function isArray$1(obj) {
+  if (Array.isArray) {
+    return Array.isArray(obj);
+  } else {
+    return obj && obj.length !== void 0 && obj.pop && obj.push;
+  }
+}
+function isStringObject(obj) {
+  return obj && typeof obj === "object" && Function.prototype.toString.call(obj.constructor) === "function String() { [native code] }";
+}
+function isNumberObject(obj) {
+  return obj && typeof obj === "object" && Function.prototype.toString.call(obj.constructor) === "function Number() { [native code] }";
+}
+function isBooleanObject(obj) {
+  return obj && typeof obj === "object" && Function.prototype.toString.call(obj.constructor) === "function Boolean() { [native code] }";
+}
+function isDate$1(obj) {
+  if (obj && typeof obj === "object") {
+    return !!(obj.getFullYear && obj.getMonth && obj.getDate);
+  } else {
+    return false;
+  }
+}
+function defined(obj) {
+  return typeof obj != "undefined";
+}
+function delay(callback, timeout) {
+  var timer;
+  var result = function() {
+    result.$cancelTimeout();
+    result.$pending = true;
+    var args = Array.prototype.slice.call(arguments);
+    timer = setTimeout(function() {
+      callback.apply(this, args);
+      result.$pending = false;
+    }, timeout);
+  };
+  result.$pending = false;
+  result.$cancelTimeout = function() {
+    clearTimeout(timer);
+    result.$pending = false;
+  };
+  result.$execute = function() {
+    var args = Array.prototype.slice.call(arguments);
+    callback.apply(this, args);
+    result.$cancelTimeout();
+  };
+  return result;
+}
+const utils = { uid, mixin: function mixin(target, source, force) {
+  for (var f in source)
+    if (target[f] === void 0 || force)
+      target[f] = source[f];
+  return target;
+}, copy: function copy(object) {
+  var i, result;
+  if (object && typeof object == "object") {
+    switch (true) {
+      case isDate$1(object):
+        result = new Date(object);
+        break;
+      case isArray$1(object):
+        result = new Array(object.length);
+        for (i = 0; i < object.length; i++) {
+          result[i] = copy(object[i]);
+        }
+        break;
+      case isStringObject(object):
+        result = new String(object);
+        break;
+      case isNumberObject(object):
+        result = new Number(object);
+        break;
+      case isBooleanObject(object):
+        result = new Boolean(object);
+        break;
+      default:
+        result = {};
+        for (i in object) {
+          const varType = typeof object[i];
+          if (varType === "string" || varType === "number" || varType === "boolean") {
+            result[i] = object[i];
+          } else if (isDate$1(object[i])) {
+            result[i] = new Date(object[i]);
+          } else if (Object.prototype.hasOwnProperty.apply(object, [i]))
+            result[i] = copy(object[i]);
+        }
+        break;
+    }
+  }
+  return result || object;
+}, defined, isDate: isDate$1, delay };
+const StateService = function() {
+  const stateProviders = {};
+  function getState(name) {
+    const provider = stateProviders[name];
+    if (provider) {
+      return stateProviders[name].method();
+    } else {
+      const res = {};
+      for (const i in stateProviders) {
+        if (!stateProviders[i].internal)
+          utils.mixin(res, stateProviders[i].method(), true);
+      }
+      return res;
+    }
+  }
+  function registerProvider(name, provider, internal) {
+    stateProviders[name] = { method: provider, internal };
+  }
+  function unregisterProvider(name) {
+    delete stateProviders[name];
+  }
+  return { getState, registerProvider, unregisterProvider };
+};
 function assert(scheduler2) {
   return function assert2(check, message2) {
     if (!check) {
@@ -779,9 +1972,9 @@ function extend$j(scheduler2) {
     }
     this.callEvent("onEventUnselected", [previousSelection]);
   };
-  scheduler2.getState = function() {
+  scheduler2.$stateProvider.registerProvider("global", (function() {
     return { mode: this._mode, date: new Date(this._date), min_date: new Date(this._min_date), max_date: new Date(this._max_date), editor_id: this._edit_id, lightbox_id: this._lightbox_id, new_event: this._new_event, select_id: this._select_id, expanded: this.expanded, drag_id: this._drag_id, drag_mode: this._drag_mode };
-  };
+  }).bind(scheduler2));
   scheduler2._click = { dhx_cal_data: function(e) {
     if (scheduler2._ignore_next_click) {
       if (e.preventDefault)
@@ -2327,102 +3520,6 @@ function extend$h(scheduler2) {
     }
   })();
 }
-var uidSeed = Date.now();
-function uid() {
-  return uidSeed++;
-}
-function isArray(obj) {
-  if (Array.isArray) {
-    return Array.isArray(obj);
-  } else {
-    return obj && obj.length !== void 0 && obj.pop && obj.push;
-  }
-}
-function isStringObject(obj) {
-  return obj && typeof obj === "object" && Function.prototype.toString.call(obj.constructor) === "function String() { [native code] }";
-}
-function isNumberObject(obj) {
-  return obj && typeof obj === "object" && Function.prototype.toString.call(obj.constructor) === "function Number() { [native code] }";
-}
-function isBooleanObject(obj) {
-  return obj && typeof obj === "object" && Function.prototype.toString.call(obj.constructor) === "function Boolean() { [native code] }";
-}
-function isDate(obj) {
-  if (obj && typeof obj === "object") {
-    return !!(obj.getFullYear && obj.getMonth && obj.getDate);
-  } else {
-    return false;
-  }
-}
-function defined(obj) {
-  return typeof obj != "undefined";
-}
-function delay(callback, timeout) {
-  var timer;
-  var result = function() {
-    result.$cancelTimeout();
-    result.$pending = true;
-    var args = Array.prototype.slice.call(arguments);
-    timer = setTimeout(function() {
-      callback.apply(this, args);
-      result.$pending = false;
-    }, timeout);
-  };
-  result.$pending = false;
-  result.$cancelTimeout = function() {
-    clearTimeout(timer);
-    result.$pending = false;
-  };
-  result.$execute = function() {
-    var args = Array.prototype.slice.call(arguments);
-    callback.apply(this, args);
-    result.$cancelTimeout();
-  };
-  return result;
-}
-const utils = { uid, mixin: function mixin(target, source, force) {
-  for (var f in source)
-    if (target[f] === void 0 || force)
-      target[f] = source[f];
-  return target;
-}, copy: function copy(object) {
-  var i, result;
-  if (object && typeof object == "object") {
-    switch (true) {
-      case isDate(object):
-        result = new Date(object);
-        break;
-      case isArray(object):
-        result = new Array(object.length);
-        for (i = 0; i < object.length; i++) {
-          result[i] = copy(object[i]);
-        }
-        break;
-      case isStringObject(object):
-        result = new String(object);
-        break;
-      case isNumberObject(object):
-        result = new Number(object);
-        break;
-      case isBooleanObject(object):
-        result = new Boolean(object);
-        break;
-      default:
-        result = {};
-        for (i in object) {
-          const varType = typeof object[i];
-          if (varType === "string" || varType === "number" || varType === "boolean") {
-            result[i] = object[i];
-          } else if (isDate(object[i])) {
-            result[i] = new Date(object[i]);
-          } else if (Object.prototype.hasOwnProperty.apply(object, [i]))
-            result[i] = copy(object[i]);
-        }
-        break;
-    }
-  }
-  return result || object;
-}, defined, isDate, delay };
 function elementPosition(elem) {
   var top = 0, left = 0, right = 0, bottom = 0;
   if (elem.getBoundingClientRect) {
@@ -2451,7 +3548,7 @@ function elementPosition(elem) {
 function getRelativeEventPosition(ev, node) {
   var d = document.documentElement;
   var box = elementPosition(node);
-  return { x: ev.clientX + d.scrollLeft - d.clientLeft - box.x + node.scrollLeft, y: ev.clientY + d.scrollTop - d.clientTop - box.y + node.scrollTop };
+  return { x: ev.clientX - d.clientLeft - box.x + node.scrollLeft, y: ev.clientY - d.clientTop - box.y + node.scrollTop };
 }
 function getNodePosition(elem) {
   var top = 0, left = 0, right = 0, bottom = 0;
@@ -3288,7 +4385,7 @@ function extend$e(scheduler2) {
   } };
 }
 function extend$d(scheduler2) {
-  scheduler2.config = { default_date: "%j %M %Y", month_date: "%F %Y", load_date: "%Y-%m-%d", week_date: "%l", day_date: "%D %j", hour_date: "%H:%i", month_day: "%d", date_format: "%Y-%m-%d %H:%i", api_date: "%d-%m-%Y %H:%i", parse_exact_format: false, preserve_length: true, time_step: 5, displayed_event_color: "#ff4a4a", displayed_event_text_color: "#ffef80", wide_form: 0, day_column_padding: 8, use_select_menu_space: true, fix_tab_position: true, start_on_monday: true, first_hour: 0, last_hour: 24, readonly: false, drag_resize: true, drag_move: true, drag_create: true, drag_event_body: true, dblclick_create: true, details_on_dblclick: true, edit_on_create: true, details_on_create: true, header: null, hour_size_px: 44, resize_month_events: false, resize_month_timed: false, responsive_lightbox: false, separate_short_events: true, rtl: false, cascade_event_display: false, cascade_event_count: 4, cascade_event_margin: 30, multi_day: true, multi_day_height_limit: 200, drag_lightbox: true, preserve_scroll: true, select: true, server_utc: false, touch: true, touch_tip: true, touch_drag: 500, touch_swipe_dates: false, quick_info_detached: true, positive_closing: false, drag_highlight: true, limit_drag_out: false, icons_edit: ["icon_save", "icon_cancel"], icons_select: ["icon_details", "icon_edit", "icon_delete"], buttons_left: ["dhx_save_btn", "dhx_cancel_btn"], buttons_right: ["dhx_delete_btn"], lightbox: { sections: [{ name: "description", map_to: "text", type: "textarea", focus: true }, { name: "time", height: 72, type: "time", map_to: "auto" }] }, highlight_displayed_event: true, left_border: false, ajax_error: "alert", delay_render: 0, timeline_swap_resize: true, wai_aria_attributes: true, wai_aria_application_role: true, csp: "auto", event_attribute: "data-event-id", show_errors: true };
+  scheduler2.config = { default_date: "%j %M %Y", month_date: "%F %Y", load_date: "%Y-%m-%d", week_date: "%l", day_date: "%D %j", hour_date: "%H:%i", month_day: "%d", date_format: "%Y-%m-%d %H:%i", api_date: "%d-%m-%Y %H:%i", parse_exact_format: false, preserve_length: true, time_step: 5, displayed_event_color: "#ff4a4a", displayed_event_text_color: "#ffef80", wide_form: 0, day_column_padding: 8, use_select_menu_space: true, fix_tab_position: true, start_on_monday: true, first_hour: 0, last_hour: 24, readonly: false, drag_resize: true, drag_move: true, drag_create: true, drag_event_body: true, dblclick_create: true, details_on_dblclick: true, edit_on_create: true, details_on_create: true, header: null, hour_size_px: 44, resize_month_events: false, resize_month_timed: false, responsive_lightbox: false, separate_short_events: true, rtl: false, cascade_event_display: false, cascade_event_count: 4, cascade_event_margin: 30, multi_day: true, multi_day_height_limit: 200, drag_lightbox: true, preserve_scroll: true, select: true, undo_deleted: true, server_utc: false, touch: true, touch_tip: true, touch_drag: 500, touch_swipe_dates: false, quick_info_detached: true, positive_closing: false, drag_highlight: true, limit_drag_out: false, icons_edit: ["icon_save", "icon_cancel"], icons_select: ["icon_details", "icon_edit", "icon_delete"], buttons_left: ["dhx_save_btn", "dhx_cancel_btn"], buttons_right: ["dhx_delete_btn"], lightbox: { sections: [{ name: "description", map_to: "text", type: "textarea", focus: true }, { name: "time", height: 72, type: "time", map_to: "auto" }] }, highlight_displayed_event: true, left_border: false, ajax_error: "alert", delay_render: 0, timeline_swap_resize: true, wai_aria_attributes: true, wai_aria_application_role: true, csp: "auto", event_attribute: "data-event-id", show_errors: true };
   scheduler2.config.buttons_left.$initial = scheduler2.config.buttons_left.join();
   scheduler2.config.buttons_right.$initial = scheduler2.config.buttons_right.join();
   scheduler2._helpers = { parseDate: function parseDate(date) {
@@ -4150,7 +5247,10 @@ function extend$c(scheduler2) {
       cs2 += " dhx_cal_event_cascade";
     }
     var boxWidth = w - 1;
-    var html = '<div event_id="' + id2 + '" ' + this.config.event_attribute + '="' + id2 + '" class="' + cs2 + '" style="position:absolute; top:' + y + "px; " + (this.config.rtl ? "right:" : "left:") + x + "px; width:" + boxWidth + "px; height:" + h + "px;" + (style || "") + '"></div>';
+    var html = `<div event_id="${id2}" ${this.config.event_attribute}="${id2}" class="${cs2}"
+				style="position:absolute; top:${y}px; ${this.config.rtl ? "right:" : "left:"}${x}px; width:${boxWidth}px; height:${h}px; ${style || ""}" 
+				data-bar-start="${ev.start_date.valueOf()}" data-bar-end="${ev.end_date.valueOf()}">
+				</div>`;
     d.innerHTML = html;
     var container = d.cloneNode(true).firstChild;
     if (!bottom && scheduler2.renderEvent(container, ev, w, h, contentA, contentB)) {
@@ -4980,21 +6080,21 @@ function extend$6(scheduler2) {
         case "%Y":
           selectBoxClass = "dhx_lightbox_year_select";
           sns._time_format_order[3] = p;
-          var range;
+          var range2;
           var start_year;
           var end_year;
           if (sns.year_range) {
             if (!isNaN(sns.year_range)) {
-              range = sns.year_range;
+              range2 = sns.year_range;
             } else if (sns.year_range.push) {
               start_year = sns.year_range[0];
               end_year = sns.year_range[1];
             }
           }
-          range = range || 10;
-          var offset = offset || Math.floor(range / 2);
+          range2 = range2 || 10;
+          var offset = offset || Math.floor(range2 / 2);
           start_year = start_year || dt.getFullYear() - offset;
-          end_year = end_year || start_year + range;
+          end_year = end_year || start_year + range2;
           for (var i = start_year; i < end_year; i++)
             options += "<option value='" + i + "'>" + i + "</option>";
           break;
@@ -5476,7 +6576,7 @@ function extend$6(scheduler2) {
         if (typeof label_name !== "string") {
           label_name = sns[i].name;
         }
-        html += "<div id='" + sns[i].id + "' class='dhx_cal_lsection'>" + button + "<label>" + label_name + "</label></div>" + block.render.call(this, sns[i]);
+        html += "<div id='" + sns[i].id + "' class='dhx_cal_lsection dhx_cal_lsection_" + sns[i].name + "'>" + button + "<label>" + label_name + "</label></div>" + block.render.call(this, sns[i]);
         html += "</div>";
       }
       var ds = d.getElementsByTagName("div");
@@ -7069,7 +8169,10 @@ function message(scheduler2) {
     var message2 = document.createElement("div");
     message2.innerHTML = "<div>" + text.text + "</div>";
     message2.className = "scheduler-info dhtmlx-info scheduler-" + text.type + " dhtmlx-" + text.type;
-    scheduler2.event(message2, "click", function() {
+    scheduler2.event(message2, "click", function(e) {
+      if (text.callback) {
+        text.callback.call(this, e);
+      }
       messageBox.hide(text.id);
       text = null;
     });
@@ -7189,9 +8292,9 @@ function message(scheduler2) {
     }
     return text;
   }
-  function params(text, type, expire, id2) {
+  function params(text, type, expire, id2, callback2) {
     if (typeof text != "object")
-      text = { text, type, expire, id: id2 };
+      text = { text, type, expire, id: id2, callback: callback2 };
     text.id = text.id || utils.uid();
     text.expire = text.expire || messageBox.expire;
     return text;
@@ -7297,23 +8400,23 @@ function message(scheduler2) {
   });
   return { alert: alertBox, confirm: confirmBox, message: messageBox, modalbox: modalBox };
 }
-const ar = { date: { month_full: ["كانون الثاني", "شباط", "آذار", "نيسان", "أيار", "حزيران", "تموز", "آب", "أيلول", "تشرين الأول", "تشرين الثاني", "كانون الأول"], month_short: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"], day_full: ["الأحد", "الأثنين", "ألثلاثاء", "الأربعاء", "ألحميس", "ألجمعة", "السبت"], day_short: ["احد", "اثنين", "ثلاثاء", "اربعاء", "خميس", "جمعة", "سبت"] }, labels: { dhx_cal_today_button: "اليوم", day_tab: "يوم", week_tab: "أسبوع", month_tab: "شهر", new_event: "حدث جديد", icon_save: "اخزن", icon_cancel: "الغاء", icon_details: "تفاصيل", icon_edit: "تحرير", icon_delete: "حذف", confirm_closing: "التغييرات سوف تضيع, هل انت متأكد؟", confirm_deleting: "الحدث سيتم حذفها نهائيا ، هل أنت متأكد؟", section_description: "الوصف", section_time: "الفترة الزمنية", full_day: "طوال اليوم", confirm_recurring: "هل تريد تحرير مجموعة كاملة من الأحداث المتكررة؟", section_recurring: "تكرار الحدث", button_recurring: "تعطيل", button_recurring_open: "تمكين", button_edit_series: "تحرير سلسلة", button_edit_occurrence: "تعديل نسخة", grid_tab: "جدول", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute" } };
-const be = { date: { month_full: ["Студзень", "Люты", "Сакавік", "Красавік", "Maй", "Чэрвень", "Ліпень", "Жнівень", "Верасень", "Кастрычнік", "Лістапад", "Снежань"], month_short: ["Студз", "Лют", "Сак", "Крас", "Maй", "Чэр", "Ліп", "Жнів", "Вер", "Каст", "Ліст", "Снеж"], day_full: ["Нядзеля", "Панядзелак", "Аўторак", "Серада", "Чацвер", "Пятніца", "Субота"], day_short: ["Нд", "Пн", "Аўт", "Ср", "Чцв", "Пт", "Сб"] }, labels: { dhx_cal_today_button: "Сёння", day_tab: "Дзень", week_tab: "Тыдзень", month_tab: "Месяц", new_event: "Новая падзея", icon_save: "Захаваць", icon_cancel: "Адмяніць", icon_details: "Дэталі", icon_edit: "Змяніць", icon_delete: "Выдаліць", confirm_closing: "", confirm_deleting: "Падзея будзе выдалена незваротна, працягнуць?", section_description: "Апісанне", section_time: "Перыяд часу", full_day: "Увесь дзень", confirm_recurring: "Вы хочаце змяніць усю серыю паўтаральных падзей?", section_recurring: "Паўтарэнне", button_recurring: "Адключана", button_recurring_open: "Уключана", button_edit_series: "Рэдагаваць серыю", button_edit_occurrence: "Рэдагаваць асобнік", agenda_tab: "Спіс", date: "Дата", description: "Апісанне", year_tab: "Год", week_agenda_tab: "Спіс", grid_tab: "Спic", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Дзень", repeat_radio_week: "Тыдзень", repeat_radio_month: "Месяц", repeat_radio_year: "Год", repeat_radio_day_type: "Кожны", repeat_text_day_count: "дзень", repeat_radio_day_type2: "Кожны працоўны дзень", repeat_week: " Паўтараць кожны", repeat_text_week_count: "тыдзень", repeat_radio_month_type: "Паўтараць", repeat_radio_month_start: "", repeat_text_month_day: " чысла кожнага", repeat_text_month_count: "месяцу", repeat_text_month_count2_before: "кожны ", repeat_text_month_count2_after: "месяц", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "дзень", select_year_month: "", repeat_radio_end: "Без даты заканчэння", repeat_text_occurences_count: "паўтораў", repeat_radio_end2: "", repeat_radio_end3: "Да ", month_for_recurring: ["Студзеня", "Лютага", "Сакавіка", "Красавіка", "Мая", "Чэрвеня", "Ліпeня", "Жніўня", "Верасня", "Кастрычніка", "Лістапада", "Снежня"], day_for_recurring: ["Нядзелю", "Панядзелак", "Аўторак", "Сераду", "Чацвер", "Пятніцу", "Суботу"] } };
-const ca = { date: { month_full: ["Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"], month_short: ["Gen", "Feb", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Oct", "Nov", "Des"], day_full: ["Diumenge", "Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte"], day_short: ["Dg", "Dl", "Dm", "Dc", "Dj", "Dv", "Ds"] }, labels: { dhx_cal_today_button: "Hui", day_tab: "Dia", week_tab: "Setmana", month_tab: "Mes", new_event: "Nou esdeveniment", icon_save: "Guardar", icon_cancel: "Cancel·lar", icon_details: "Detalls", icon_edit: "Editar", icon_delete: "Esborrar", confirm_closing: "", confirm_deleting: "L'esdeveniment s'esborrarà definitivament, continuar ?", section_description: "Descripció", section_time: "Periode de temps", full_day: "Tot el dia", confirm_recurring: "¿Desitja modificar el conjunt d'esdeveniments repetits?", section_recurring: "Repeteixca l'esdeveniment", button_recurring: "Impedit", button_recurring_open: "Permés", button_edit_series: "Edit sèrie", button_edit_occurrence: "Edita Instància", agenda_tab: "Agenda", date: "Data", description: "Descripció", year_tab: "Any", week_agenda_tab: "Agenda", grid_tab: "Taula", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute" } };
-const cn = { date: { month_full: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], month_short: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], day_full: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"], day_short: ["日", "一", "二", "三", "四", "五", "六"] }, labels: { dhx_cal_today_button: "今天", day_tab: "日", week_tab: "周", month_tab: "月", new_event: "新建日程", icon_save: "保存", icon_cancel: "关闭", icon_details: "详细", icon_edit: "编辑", icon_delete: "删除", confirm_closing: "请确认是否撤销修改!", confirm_deleting: "是否删除日程?", section_description: "描述", section_time: "时间范围", full_day: "整天", confirm_recurring: "请确认是否将日程设为重复模式?", section_recurring: "重复周期", button_recurring: "禁用", button_recurring_open: "启用", button_edit_series: "编辑系列", button_edit_occurrence: "编辑实例", agenda_tab: "议程", date: "日期", description: "说明", year_tab: "今年", week_agenda_tab: "议程", grid_tab: "电网", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "按天", repeat_radio_week: "按周", repeat_radio_month: "按月", repeat_radio_year: "按年", repeat_radio_day_type: "每", repeat_text_day_count: "天", repeat_radio_day_type2: "每个工作日", repeat_week: " 重复 每", repeat_text_week_count: "星期的:", repeat_radio_month_type: "重复", repeat_radio_month_start: "在", repeat_text_month_day: "日 每", repeat_text_month_count: "月", repeat_text_month_count2_before: "每", repeat_text_month_count2_after: "月", repeat_year_label: "在", select_year_day2: "的", repeat_text_year_day: "日", select_year_month: "月", repeat_radio_end: "无结束日期", repeat_text_occurences_count: "次结束", repeat_radio_end2: "重复", repeat_radio_end3: "结束于", month_for_recurring: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], day_for_recurring: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"] } };
-const cs = { date: { month_full: ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"], month_short: ["Led", "Ún", "Bře", "Dub", "Kvě", "Čer", "Čec", "Srp", "Září", "Říj", "List", "Pro"], day_full: ["Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"], day_short: ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"] }, labels: { dhx_cal_today_button: "Dnes", day_tab: "Den", week_tab: "Týden", month_tab: "Měsíc", new_event: "Nová událost", icon_save: "Uložit", icon_cancel: "Zpět", icon_details: "Detail", icon_edit: "Edituj", icon_delete: "Smazat", confirm_closing: "", confirm_deleting: "Událost bude trvale smazána, opravdu?", section_description: "Poznámky", section_time: "Doba platnosti", confirm_recurring: "Přejete si upravit celou řadu opakovaných událostí?", section_recurring: "Opakování události", button_recurring: "Vypnuto", button_recurring_open: "Zapnuto", button_edit_series: "Edit series", button_edit_occurrence: "Upravit instance", agenda_tab: "Program", date: "Datum", description: "Poznámka", year_tab: "Rok", full_day: "Full day", week_agenda_tab: "Program", grid_tab: "Mřížka", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Denně", repeat_radio_week: "Týdně", repeat_radio_month: "Měsíčně", repeat_radio_year: "Ročně", repeat_radio_day_type: "každý", repeat_text_day_count: "Den", repeat_radio_day_type2: "pracovní dny", repeat_week: "Opakuje každých", repeat_text_week_count: "Týdnů na:", repeat_radio_month_type: "u každého", repeat_radio_month_start: "na", repeat_text_month_day: "Den každého", repeat_text_month_count: "Měsíc", repeat_text_month_count2_before: "každý", repeat_text_month_count2_after: "Měsíc", repeat_year_label: "na", select_year_day2: "v", repeat_text_year_day: "Den v", select_year_month: "", repeat_radio_end: "bez data ukončení", repeat_text_occurences_count: "Události", repeat_radio_end2: "po", repeat_radio_end3: "Konec", month_for_recurring: ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"], day_for_recurring: ["Neděle ", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"] } };
-const da = { date: { month_full: ["Januar", "Februar", "Marts", "April", "Maj", "Juni", "Juli", "August", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"], day_short: ["Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"] }, labels: { dhx_cal_today_button: "Idag", day_tab: "Dag", week_tab: "Uge", month_tab: "Måned", new_event: "Ny begivenhed", icon_save: "Gem", icon_cancel: "Fortryd", icon_details: "Detaljer", icon_edit: "Tilret", icon_delete: "Slet", confirm_closing: "Dine rettelser vil gå tabt.. Er dy sikker?", confirm_deleting: "Bigivenheden vil blive slettet permanent. Er du sikker?", section_description: "Beskrivelse", section_time: "Tidsperiode", confirm_recurring: "Vil du tilrette hele serien af gentagne begivenheder?", section_recurring: "Gentag begivenhed", button_recurring: "Frakoblet", button_recurring_open: "Tilkoblet", button_edit_series: "Rediger serien", button_edit_occurrence: "Rediger en kopi", agenda_tab: "Dagsorden", date: "Dato", description: "Beskrivelse", year_tab: "År", week_agenda_tab: "Dagsorden", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daglig", repeat_radio_week: "Ugenlig", repeat_radio_month: "Månedlig", repeat_radio_year: "Årlig", repeat_radio_day_type: "Hver", repeat_text_day_count: "dag", repeat_radio_day_type2: "På hver arbejdsdag", repeat_week: " Gentager sig hver", repeat_text_week_count: "uge på følgende dage:", repeat_radio_month_type: "Hver den", repeat_radio_month_start: "Den", repeat_text_month_day: " i hver", repeat_text_month_count: "måned", repeat_text_month_count2_before: "hver", repeat_text_month_count2_after: "måned", repeat_year_label: "Den", select_year_day2: "i", repeat_text_year_day: "dag i", select_year_month: "", repeat_radio_end: "Ingen slutdato", repeat_text_occurences_count: "gentagelse", repeat_radio_end2: "Efter", repeat_radio_end3: "Slut", month_for_recurring: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"], day_for_recurring: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"] } };
-const de = { date: { month_full: [" Januar", " Februar", " März ", " April", " Mai", " Juni", " Juli", " August", " September ", " Oktober", " November ", " Dezember"], month_short: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"], day_full: ["Sonntag", "Montag", "Dienstag", " Mittwoch", " Donnerstag", "Freitag", "Samstag"], day_short: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"] }, labels: { dhx_cal_today_button: "Heute", day_tab: "Tag", week_tab: "Woche", month_tab: "Monat", new_event: "neuer Eintrag", icon_save: "Speichern", icon_cancel: "Abbrechen", icon_details: "Details", icon_edit: "Ändern", icon_delete: "Löschen", confirm_closing: "", confirm_deleting: "Der Eintrag wird gelöscht", section_description: "Beschreibung", section_time: "Zeitspanne", full_day: "Ganzer Tag", confirm_recurring: "Wollen Sie alle Einträge bearbeiten oder nur diesen einzelnen Eintrag?", section_recurring: "Wiederholung", button_recurring: "Aus", button_recurring_open: "An", button_edit_series: "Bearbeiten Sie die Serie", button_edit_occurrence: "Bearbeiten Sie eine Kopie", agenda_tab: "Agenda", date: "Datum", description: "Beschreibung", year_tab: "Jahre", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Täglich", repeat_radio_week: "Wöchentlich", repeat_radio_month: "Monatlich", repeat_radio_year: "Jährlich", repeat_radio_day_type: "jeden", repeat_text_day_count: "Tag", repeat_radio_day_type2: "an jedem Arbeitstag", repeat_week: " Wiederholt sich jede", repeat_text_week_count: "Woche am:", repeat_radio_month_type: "an jedem", repeat_radio_month_start: "am", repeat_text_month_day: "Tag eines jeden", repeat_text_month_count: "Monats", repeat_text_month_count2_before: "jeden", repeat_text_month_count2_after: "Monats", repeat_year_label: "am", select_year_day2: "im", repeat_text_year_day: "Tag im", select_year_month: "", repeat_radio_end: "kein Enddatum", repeat_text_occurences_count: "Ereignissen", repeat_radio_end3: "Schluß", repeat_radio_end2: "nach", month_for_recurring: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"], day_for_recurring: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"] } };
-const el = { date: { month_full: ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάϊος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"], month_short: ["ΙΑΝ", "ΦΕΒ", "ΜΑΡ", "ΑΠΡ", "ΜΑΙ", "ΙΟΥΝ", "ΙΟΥΛ", "ΑΥΓ", "ΣΕΠ", "ΟΚΤ", "ΝΟΕ", "ΔΕΚ"], day_full: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"], day_short: ["ΚΥ", "ΔΕ", "ΤΡ", "ΤΕ", "ΠΕ", "ΠΑ", "ΣΑ"] }, labels: { dhx_cal_today_button: "Σήμερα", day_tab: "Ημέρα", week_tab: "Εβδομάδα", month_tab: "Μήνας", new_event: "Νέο έργο", icon_save: "Αποθήκευση", icon_cancel: "Άκυρο", icon_details: "Λεπτομέρειες", icon_edit: "Επεξεργασία", icon_delete: "Διαγραφή", confirm_closing: "", confirm_deleting: "Το έργο θα διαγραφεί οριστικά. Θέλετε να συνεχίσετε;", section_description: "Περιγραφή", section_time: "Χρονική περίοδος", full_day: "Πλήρης Ημέρα", confirm_recurring: "Θέλετε να επεξεργασθείτε ολόκληρη την ομάδα των επαναλαμβανόμενων έργων;", section_recurring: "Επαναλαμβανόμενο έργο", button_recurring: "Ανενεργό", button_recurring_open: "Ενεργό", button_edit_series: "Επεξεργαστείτε τη σειρά", button_edit_occurrence: "Επεξεργασία ένα αντίγραφο", agenda_tab: "Ημερήσια Διάταξη", date: "Ημερομηνία", description: "Περιγραφή", year_tab: "Έτος", week_agenda_tab: "Ημερήσια Διάταξη", grid_tab: "Πλέγμα", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Ημερησίως", repeat_radio_week: "Εβδομαδιαίως", repeat_radio_month: "Μηνιαίως", repeat_radio_year: "Ετησίως", repeat_radio_day_type: "Κάθε", repeat_text_day_count: "ημέρα", repeat_radio_day_type2: "Κάθε εργάσιμη", repeat_week: " Επανάληψη κάθε", repeat_text_week_count: "εβδομάδα τις επόμενες ημέρες:", repeat_radio_month_type: "Επανάληψη", repeat_radio_month_start: "Την", repeat_text_month_day: "ημέρα κάθε", repeat_text_month_count: "μήνα", repeat_text_month_count2_before: "κάθε", repeat_text_month_count2_after: "μήνα", repeat_year_label: "Την", select_year_day2: "του", repeat_text_year_day: "ημέρα", select_year_month: "μήνα", repeat_radio_end: "Χωρίς ημερομηνία λήξεως", repeat_text_occurences_count: "επαναλήψεις", repeat_radio_end3: "Λήγει την", repeat_radio_end2: "Μετά από", month_for_recurring: ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάϊος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"], day_for_recurring: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"] } };
-const en = { date: { month_full: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], day_full: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], day_short: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] }, labels: { dhx_cal_today_button: "Today", day_tab: "Day", week_tab: "Week", month_tab: "Month", new_event: "New event", icon_save: "Save", icon_cancel: "Cancel", icon_details: "Details", icon_edit: "Edit", icon_delete: "Delete", confirm_closing: "", confirm_deleting: "Event will be deleted permanently, are you sure?", section_description: "Description", section_time: "Time period", full_day: "Full day", confirm_recurring: "Do you want to edit the whole set of repeated events?", section_recurring: "Repeat event", button_recurring: "Disabled", button_recurring_open: "Enabled", button_edit_series: "Edit series", button_edit_occurrence: "Edit occurrence", agenda_tab: "Agenda", date: "Date", description: "Description", year_tab: "Year", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daily", repeat_radio_week: "Weekly", repeat_radio_month: "Monthly", repeat_radio_year: "Yearly", repeat_radio_day_type: "Every", repeat_text_day_count: "day", repeat_radio_day_type2: "Every workday", repeat_week: " Repeat every", repeat_text_week_count: "week next days:", repeat_radio_month_type: "Repeat", repeat_radio_month_start: "On", repeat_text_month_day: "day every", repeat_text_month_count: "month", repeat_text_month_count2_before: "every", repeat_text_month_count2_after: "month", repeat_year_label: "On", select_year_day2: "of", repeat_text_year_day: "day", select_year_month: "month", repeat_radio_end: "No end date", repeat_text_occurences_count: "occurrences", repeat_radio_end2: "After", repeat_radio_end3: "End by", month_for_recurring: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], day_for_recurring: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] } };
-const es = { date: { month_full: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"], month_short: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"], day_full: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"], day_short: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"] }, labels: { dhx_cal_today_button: "Hoy", day_tab: "Día", week_tab: "Semana", month_tab: "Mes", new_event: "Nuevo evento", icon_save: "Guardar", icon_cancel: "Cancelar", icon_details: "Detalles", icon_edit: "Editar", icon_delete: "Eliminar", confirm_closing: "", confirm_deleting: "El evento se borrará definitivamente, ¿continuar?", section_description: "Descripción", section_time: "Período", full_day: "Todo el día", confirm_recurring: "¿Desea modificar el conjunto de eventos repetidos?", section_recurring: "Repita el evento", button_recurring: "Impedido", button_recurring_open: "Permitido", button_edit_series: "Editar la serie", button_edit_occurrence: "Editar este evento", agenda_tab: "Día", date: "Fecha", description: "Descripción", year_tab: "Año", week_agenda_tab: "Día", grid_tab: "Reja", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Diariamente", repeat_radio_week: "Semanalmente", repeat_radio_month: "Mensualmente", repeat_radio_year: "Anualmente", repeat_radio_day_type: "Cada", repeat_text_day_count: "dia", repeat_radio_day_type2: "Cada jornada de trabajo", repeat_week: " Repetir cada", repeat_text_week_count: "semana:", repeat_radio_month_type: "Repita", repeat_radio_month_start: "El", repeat_text_month_day: "dia cada ", repeat_text_month_count: "mes", repeat_text_month_count2_before: "cada", repeat_text_month_count2_after: "mes", repeat_year_label: "El", select_year_day2: "del", repeat_text_year_day: "dia", select_year_month: "mes", repeat_radio_end: "Sin fecha de finalización", repeat_text_occurences_count: "ocurrencias", repeat_radio_end3: "Fin", repeat_radio_end2: "Después de", month_for_recurring: ["Enero", "Febrero", "Маrzo", "Аbril", "Mayo", "Junio", "Julio", "Аgosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"], day_for_recurring: ["Domingo", "Lunes", "Martes", "Miércoles", "Jeuves", "Viernes", "Sabado"] } };
-const fi = { date: { month_full: ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kes&auml;kuu", "Hein&auml;kuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"], month_short: ["Tam", "Hel", "Maa", "Huh", "Tou", "Kes", "Hei", "Elo", "Syy", "Lok", "Mar", "Jou"], day_full: ["Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"], day_short: ["Su", "Ma", "Ti", "Ke", "To", "Pe", "La"] }, labels: { dhx_cal_today_button: "Tänään", day_tab: "Päivä", week_tab: "Viikko", month_tab: "Kuukausi", new_event: "Uusi tapahtuma", icon_save: "Tallenna", icon_cancel: "Peru", icon_details: "Tiedot", icon_edit: "Muokkaa", icon_delete: "Poista", confirm_closing: "", confirm_deleting: "Haluatko varmasti poistaa tapahtuman?", section_description: "Kuvaus", section_time: "Aikajakso", full_day: "Koko päivä", confirm_recurring: "Haluatko varmasti muokata toistuvan tapahtuman kaikkia jaksoja?", section_recurring: "Toista tapahtuma", button_recurring: "Ei k&auml;yt&ouml;ss&auml;", button_recurring_open: "K&auml;yt&ouml;ss&auml;", button_edit_series: "Muokkaa sarja", button_edit_occurrence: "Muokkaa kopio", agenda_tab: "Esityslista", date: "Päivämäärä", description: "Kuvaus", year_tab: "Vuoden", week_agenda_tab: "Esityslista", grid_tab: "Ritilä", drag_to_create: "Luo uusi vetämällä", drag_to_move: "Siirrä vetämällä", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "P&auml;ivitt&auml;in", repeat_radio_week: "Viikoittain", repeat_radio_month: "Kuukausittain", repeat_radio_year: "Vuosittain", repeat_radio_day_type: "Joka", repeat_text_day_count: "p&auml;iv&auml;", repeat_radio_day_type2: "Joka arkip&auml;iv&auml;", repeat_week: "Toista joka", repeat_text_week_count: "viikko n&auml;in&auml; p&auml;ivin&auml;:", repeat_radio_month_type: "Toista", repeat_radio_month_start: "", repeat_text_month_day: "p&auml;iv&auml;n&auml; joka", repeat_text_month_count: "kuukausi", repeat_text_month_count2_before: "joka", repeat_text_month_count2_after: "kuukausi", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "p&auml;iv&auml;", select_year_month: "kuukausi", repeat_radio_end: "Ei loppumisaikaa", repeat_text_occurences_count: "Toiston j&auml;lkeen", repeat_radio_end3: "Loppuu", repeat_radio_end2: "", month_for_recurring: ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kes&auml;kuu", "Hein&auml;kuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"], day_for_recurring: ["Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"] } };
-const fr = { date: { month_full: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"], month_short: ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"], day_full: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"], day_short: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"] }, labels: { dhx_cal_today_button: "Aujourd'hui", day_tab: "Jour", week_tab: "Semaine", month_tab: "Mois", new_event: "Nouvel événement", icon_save: "Enregistrer", icon_cancel: "Annuler", icon_details: "Détails", icon_edit: "Modifier", icon_delete: "Effacer", confirm_closing: "", confirm_deleting: "L'événement sera effacé sans appel, êtes-vous sûr ?", section_description: "Description", section_time: "Période", full_day: "Journée complète", confirm_recurring: "Voulez-vous éditer toute une série d'évènements répétés?", section_recurring: "Périodicité", button_recurring: "Désactivé", button_recurring_open: "Activé", button_edit_series: "Modifier la série", button_edit_occurrence: "Modifier une copie", agenda_tab: "Jour", date: "Date", description: "Description", year_tab: "Année", week_agenda_tab: "Jour", grid_tab: "Grille", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Quotidienne", repeat_radio_week: "Hebdomadaire", repeat_radio_month: "Mensuelle", repeat_radio_year: "Annuelle", repeat_radio_day_type: "Chaque", repeat_text_day_count: "jour", repeat_radio_day_type2: "Chaque journée de travail", repeat_week: " Répéter toutes les", repeat_text_week_count: "semaine:", repeat_radio_month_type: "Répéter", repeat_radio_month_start: "Le", repeat_text_month_day: "jour chaque", repeat_text_month_count: "mois", repeat_text_month_count2_before: "chaque", repeat_text_month_count2_after: "mois", repeat_year_label: "Le", select_year_day2: "du", repeat_text_year_day: "jour", select_year_month: "mois", repeat_radio_end: "Pas de date d&quot;achèvement", repeat_text_occurences_count: "occurrences", repeat_radio_end3: "Fin", repeat_radio_end2: "Après", month_for_recurring: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"], day_for_recurring: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"] } };
-const he = { date: { month_full: ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"], month_short: ["ינו", "פבר", "מרץ", "אפר", "מאי", "יונ", "יול", "אוג", "ספט", "אוק", "נוב", "דצמ"], day_full: ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"], day_short: ["א", "ב", "ג", "ד", "ה", "ו", "ש"] }, labels: { dhx_cal_today_button: "היום", day_tab: "יום", week_tab: "שבוע", month_tab: "חודש", new_event: "ארוע חדש", icon_save: "שמור", icon_cancel: "בטל", icon_details: "פרטים", icon_edit: "ערוך", icon_delete: "מחק", confirm_closing: "", confirm_deleting: "ארוע ימחק סופית.להמשיך?", section_description: "תיאור", section_time: "תקופה", confirm_recurring: "האם ברצונך לשנות כל סדרת ארועים מתמשכים?", section_recurring: "להעתיק ארוע", button_recurring: "לא פעיל", button_recurring_open: "פעיל", full_day: "יום שלם", button_edit_series: "ערוך את הסדרה", button_edit_occurrence: "עריכת עותק", agenda_tab: "סדר יום", date: "תאריך", description: "תיאור", year_tab: "לשנה", week_agenda_tab: "סדר יום", grid_tab: "סורג", drag_to_create: "Drag to create", drag_to_move: "גרור כדי להזיז", message_ok: "OK", message_cancel: "בטל", next: "הבא", prev: "הקודם", year: "שנה", month: "חודש", day: "יום", hour: "שעה", minute: "דקה", repeat_radio_day: "יומי", repeat_radio_week: "שבועי", repeat_radio_month: "חודשי", repeat_radio_year: "שנתי", repeat_radio_day_type: "חזור כל", repeat_text_day_count: "ימים", repeat_radio_day_type2: "חזור כל יום עבודה", repeat_week: " חזור כל", repeat_text_week_count: "שבוע לפי ימים:", repeat_radio_month_type: "חזור כל", repeat_radio_month_start: "כל", repeat_text_month_day: "ימים כל", repeat_text_month_count: "חודשים", repeat_text_month_count2_before: "חזור כל", repeat_text_month_count2_after: "חודש", repeat_year_label: "כל", select_year_day2: "בחודש", repeat_text_year_day: "ימים", select_year_month: "חודש", repeat_radio_end: "לעולם לא מסתיים", repeat_text_occurences_count: "אירועים", repeat_radio_end3: "מסתיים ב", repeat_radio_end2: "אחרי", month_for_recurring: ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"], day_for_recurring: ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"] } };
-const hu = { date: { month_full: ["Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"], month_short: ["Jan", "Feb", "Már", "Ápr", "Máj", "Jún", "Júl", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Vasárnap", "Hétfõ", "Kedd", "Szerda", "Csütörtök", "Péntek", "szombat"], day_short: ["Va", "Hé", "Ke", "Sze", "Csü", "Pé", "Szo"] }, labels: { dhx_cal_today_button: "Ma", day_tab: "Nap", week_tab: "Hét", month_tab: "Hónap", new_event: "Új esemény", icon_save: "Mentés", icon_cancel: "Mégse", icon_details: "Részletek", icon_edit: "Szerkesztés", icon_delete: "Törlés", confirm_closing: "", confirm_deleting: "Az esemény törölve lesz, biztosan folytatja?", section_description: "Leírás", section_time: "Idõszak", full_day: "Egesz napos", confirm_recurring: "Biztosan szerkeszteni akarod az összes ismétlõdõ esemény beállítását?", section_recurring: "Esemény ismétlése", button_recurring: "Tiltás", button_recurring_open: "Engedélyezés", button_edit_series: "Edit series", button_edit_occurrence: "Szerkesztés bíróság", agenda_tab: "Napirend", date: "Dátum", description: "Leírás", year_tab: "Év", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute" } };
-const id = { date: { month_full: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"], month_short: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"], day_full: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"], day_short: ["Ming", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"] }, labels: { dhx_cal_today_button: "Hari Ini", day_tab: "Hari", week_tab: "Minggu", month_tab: "Bulan", new_event: "Acara Baru", icon_save: "Simpan", icon_cancel: "Batal", icon_details: "Detail", icon_edit: "Edit", icon_delete: "Hapus", confirm_closing: "", confirm_deleting: "Acara akan dihapus", section_description: "Keterangan", section_time: "Periode", full_day: "Hari penuh", confirm_recurring: "Apakah acara ini akan berulang?", section_recurring: "Acara Rutin", button_recurring: "Tidak Difungsikan", button_recurring_open: "Difungsikan", button_edit_series: "Mengedit seri", button_edit_occurrence: "Mengedit salinan", agenda_tab: "Agenda", date: "Tanggal", description: "Keterangan", year_tab: "Tahun", week_agenda_tab: "Agenda", grid_tab: "Tabel", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute" } };
-const it = { date: { month_full: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"], month_short: ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"], day_full: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"], day_short: ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"] }, labels: { dhx_cal_today_button: "Oggi", day_tab: "Giorno", week_tab: "Settimana", month_tab: "Mese", new_event: "Nuovo evento", icon_save: "Salva", icon_cancel: "Chiudi", icon_details: "Dettagli", icon_edit: "Modifica", icon_delete: "Elimina", confirm_closing: "", confirm_deleting: "L'evento sarà eliminato, siete sicuri?", section_description: "Descrizione", section_time: "Periodo di tempo", full_day: "Intera giornata", confirm_recurring: "Vuoi modificare l'intera serie di eventi?", section_recurring: "Ripetere l'evento", button_recurring: "Disattivato", button_recurring_open: "Attivato", button_edit_series: "Modificare la serie", button_edit_occurrence: "Modificare una copia", agenda_tab: "Agenda", date: "Data", description: "Descrizione", year_tab: "Anno", week_agenda_tab: "Agenda", grid_tab: "Griglia", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Quotidiano", repeat_radio_week: "Settimanale", repeat_radio_month: "Mensile", repeat_radio_year: "Annuale", repeat_radio_day_type: "Ogni", repeat_text_day_count: "giorno", repeat_radio_day_type2: "Ogni giornata lavorativa", repeat_week: " Ripetere ogni", repeat_text_week_count: "settimana:", repeat_radio_month_type: "Ripetere", repeat_radio_month_start: "Il", repeat_text_month_day: "giorno ogni", repeat_text_month_count: "mese", repeat_text_month_count2_before: "ogni", repeat_text_month_count2_after: "mese", repeat_year_label: "Il", select_year_day2: "del", repeat_text_year_day: "giorno", select_year_month: "mese", repeat_radio_end: "Senza data finale", repeat_text_occurences_count: "occorenze", repeat_radio_end3: "Fine", repeat_radio_end2: "Dopo", month_for_recurring: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Jiugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"], day_for_recurring: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Jovedì", "Venerdì", "Sabato"] } };
-const jp = { date: { month_full: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], month_short: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], day_full: ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"], day_short: ["日", "月", "火", "水", "木", "金", "土"] }, labels: { dhx_cal_today_button: "今日", day_tab: "日", week_tab: "週", month_tab: "月", new_event: "新イベント", icon_save: "保存", icon_cancel: "キャンセル", icon_details: "詳細", icon_edit: "編集", icon_delete: "削除", confirm_closing: "", confirm_deleting: "イベント完全に削除されます、宜しいですか？", section_description: "デスクリプション", section_time: "期間", confirm_recurring: "繰り返されているイベントを全て編集しますか？", section_recurring: "イベントを繰り返す", button_recurring: "無効", button_recurring_open: "有効", full_day: "終日", button_edit_series: "シリーズを編集します", button_edit_occurrence: "コピーを編集", agenda_tab: "議題は", date: "日付", description: "説明", year_tab: "今年", week_agenda_tab: "議題は", grid_tab: "グリッド", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute" } };
+const ar = { date: { month_full: ["كانون الثاني", "شباط", "آذار", "نيسان", "أيار", "حزيران", "تموز", "آب", "أيلول", "تشرين الأول", "تشرين الثاني", "كانون الأول"], month_short: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"], day_full: ["الأحد", "الأثنين", "ألثلاثاء", "الأربعاء", "ألحميس", "ألجمعة", "السبت"], day_short: ["احد", "اثنين", "ثلاثاء", "اربعاء", "خميس", "جمعة", "سبت"] }, labels: { dhx_cal_today_button: "اليوم", day_tab: "يوم", week_tab: "أسبوع", month_tab: "شهر", new_event: "حدث جديد", icon_save: "اخزن", icon_cancel: "الغاء", icon_details: "تفاصيل", icon_edit: "تحرير", icon_delete: "حذف", confirm_closing: "التغييرات سوف تضيع, هل انت متأكد؟", confirm_deleting: "الحدث سيتم حذفها نهائيا ، هل أنت متأكد؟", section_description: "الوصف", section_time: "الفترة الزمنية", full_day: "طوال اليوم", confirm_recurring: "هل تريد تحرير مجموعة كاملة من الأحداث المتكررة؟", section_recurring: "تكرار الحدث", button_recurring: "تعطيل", button_recurring_open: "تمكين", button_edit_series: "تحرير سلسلة", button_edit_occurrence: "تعديل نسخة", grid_tab: "جدول", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "يومي", repeat_radio_week: "أسبوعي", repeat_radio_month: "شهري", repeat_radio_year: "سنوي", repeat_radio_day_type: "كل", repeat_text_day_count: "يوم", repeat_radio_day_type2: "كل يوم عمل", repeat_week: " تكرار كل", repeat_text_week_count: "أسبوع في الأيام التالية:", repeat_radio_month_type: "تكرار", repeat_radio_month_start: "في", repeat_text_month_day: "يوم كل", repeat_text_month_count: "شهر", repeat_text_month_count2_before: "كل", repeat_text_month_count2_after: "شهر", repeat_year_label: "في", select_year_day2: "من", repeat_text_year_day: "يوم", select_year_month: "شهر", repeat_radio_end: "بدون تاريخ انتهاء", repeat_text_occurences_count: "تكرارات", repeat_radio_end2: "بعد", repeat_radio_end3: "ينتهي في", repeat_never: "أبداً", repeat_daily: "كل يوم", repeat_workdays: "كل يوم عمل", repeat_weekly: "كل أسبوع", repeat_monthly: "كل شهر", repeat_yearly: "كل سنة", repeat_custom: "تخصيص", repeat_freq_day: "يوم", repeat_freq_week: "أسبوع", repeat_freq_month: "شهر", repeat_freq_year: "سنة", repeat_on_date: "في التاريخ", repeat_ends: "ينتهي", month_for_recurring: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"], day_for_recurring: ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"] } };
+const be = { date: { month_full: ["Студзень", "Люты", "Сакавік", "Красавік", "Maй", "Чэрвень", "Ліпень", "Жнівень", "Верасень", "Кастрычнік", "Лістапад", "Снежань"], month_short: ["Студз", "Лют", "Сак", "Крас", "Maй", "Чэр", "Ліп", "Жнів", "Вер", "Каст", "Ліст", "Снеж"], day_full: ["Нядзеля", "Панядзелак", "Аўторак", "Серада", "Чацвер", "Пятніца", "Субота"], day_short: ["Нд", "Пн", "Аўт", "Ср", "Чцв", "Пт", "Сб"] }, labels: { dhx_cal_today_button: "Сёння", day_tab: "Дзень", week_tab: "Тыдзень", month_tab: "Месяц", new_event: "Новая падзея", icon_save: "Захаваць", icon_cancel: "Адмяніць", icon_details: "Дэталі", icon_edit: "Змяніць", icon_delete: "Выдаліць", confirm_closing: "", confirm_deleting: "Падзея будзе выдалена незваротна, працягнуць?", section_description: "Апісанне", section_time: "Перыяд часу", full_day: "Увесь дзень", confirm_recurring: "Вы хочаце змяніць усю серыю паўтаральных падзей?", section_recurring: "Паўтарэнне", button_recurring: "Адключана", button_recurring_open: "Уключана", button_edit_series: "Рэдагаваць серыю", button_edit_occurrence: "Рэдагаваць асобнік", agenda_tab: "Спіс", date: "Дата", description: "Апісанне", year_tab: "Год", week_agenda_tab: "Спіс", grid_tab: "Спic", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Дзень", repeat_radio_week: "Тыдзень", repeat_radio_month: "Месяц", repeat_radio_year: "Год", repeat_radio_day_type: "Кожны", repeat_text_day_count: "дзень", repeat_radio_day_type2: "Кожны працоўны дзень", repeat_week: " Паўтараць кожны", repeat_text_week_count: "тыдзень", repeat_radio_month_type: "Паўтараць", repeat_radio_month_start: "", repeat_text_month_day: " чысла кожнага", repeat_text_month_count: "месяцу", repeat_text_month_count2_before: "кожны ", repeat_text_month_count2_after: "месяц", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "дзень", select_year_month: "", repeat_radio_end: "Без даты заканчэння", repeat_text_occurences_count: "паўтораў", repeat_radio_end2: "", repeat_radio_end3: "Да ", repeat_never: "Ніколі", repeat_daily: "Кожны дзень", repeat_workdays: "Кожны працоўны дзень", repeat_weekly: "Кожны тыдзень", repeat_monthly: "Кожны месяц", repeat_yearly: "Кожны год", repeat_custom: "Наладжвальны", repeat_freq_day: "Дзень", repeat_freq_week: "Тыдзень", repeat_freq_month: "Месяц", repeat_freq_year: "Год", repeat_on_date: "На дату", repeat_ends: "Заканчваецца", month_for_recurring: ["Студзеня", "Лютага", "Сакавіка", "Красавіка", "Мая", "Чэрвеня", "Ліпeня", "Жніўня", "Верасня", "Кастрычніка", "Лістапада", "Снежня"], day_for_recurring: ["Нядзелю", "Панядзелак", "Аўторак", "Сераду", "Чацвер", "Пятніцу", "Суботу"] } };
+const ca = { date: { month_full: ["Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"], month_short: ["Gen", "Feb", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Oct", "Nov", "Des"], day_full: ["Diumenge", "Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte"], day_short: ["Dg", "Dl", "Dm", "Dc", "Dj", "Dv", "Ds"] }, labels: { dhx_cal_today_button: "Hui", day_tab: "Dia", week_tab: "Setmana", month_tab: "Mes", new_event: "Nou esdeveniment", icon_save: "Guardar", icon_cancel: "Cancel·lar", icon_details: "Detalls", icon_edit: "Editar", icon_delete: "Esborrar", confirm_closing: "", confirm_deleting: "L'esdeveniment s'esborrarà definitivament, continuar ?", section_description: "Descripció", section_time: "Periode de temps", full_day: "Tot el dia", confirm_recurring: "¿Desitja modificar el conjunt d'esdeveniments repetits?", section_recurring: "Repeteixca l'esdeveniment", button_recurring: "Impedit", button_recurring_open: "Permés", button_edit_series: "Edit sèrie", button_edit_occurrence: "Edita Instància", agenda_tab: "Agenda", date: "Data", description: "Descripció", year_tab: "Any", week_agenda_tab: "Agenda", grid_tab: "Taula", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Diari", repeat_radio_week: "Setmanal", repeat_radio_month: "Mensual", repeat_radio_year: "Anual", repeat_radio_day_type: "Cada", repeat_text_day_count: "dia", repeat_radio_day_type2: "Cada dia laborable", repeat_week: " Repetir cada", repeat_text_week_count: "setmana els dies següents:", repeat_radio_month_type: "Repetir", repeat_radio_month_start: "El", repeat_text_month_day: "dia cada", repeat_text_month_count: "mes", repeat_text_month_count2_before: "cada", repeat_text_month_count2_after: "mes", repeat_year_label: "El", select_year_day2: "de", repeat_text_year_day: "dia", select_year_month: "mes", repeat_radio_end: "Sense data de finalització", repeat_text_occurences_count: "ocurrències", repeat_radio_end2: "Després", repeat_radio_end3: "Finalitzar el", repeat_never: "Mai", repeat_daily: "Cada dia", repeat_workdays: "Cada dia laborable", repeat_weekly: "Cada setmana", repeat_monthly: "Cada mes", repeat_yearly: "Cada any", repeat_custom: "Personalitzat", repeat_freq_day: "Dia", repeat_freq_week: "Setmana", repeat_freq_month: "Mes", repeat_freq_year: "Any", repeat_on_date: "En la data", repeat_ends: "Finalitza", month_for_recurring: ["Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"], day_for_recurring: ["Diumenge", "Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte"] } };
+const cn = { date: { month_full: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], month_short: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], day_full: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"], day_short: ["日", "一", "二", "三", "四", "五", "六"] }, labels: { dhx_cal_today_button: "今天", day_tab: "日", week_tab: "周", month_tab: "月", new_event: "新建日程", icon_save: "保存", icon_cancel: "关闭", icon_details: "详细", icon_edit: "编辑", icon_delete: "删除", confirm_closing: "请确认是否撤销修改!", confirm_deleting: "是否删除日程?", section_description: "描述", section_time: "时间范围", full_day: "整天", confirm_recurring: "请确认是否将日程设为重复模式?", section_recurring: "重复周期", button_recurring: "禁用", button_recurring_open: "启用", button_edit_series: "编辑系列", button_edit_occurrence: "编辑实例", agenda_tab: "议程", date: "日期", description: "说明", year_tab: "今年", week_agenda_tab: "议程", grid_tab: "电网", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "按天", repeat_radio_week: "按周", repeat_radio_month: "按月", repeat_radio_year: "按年", repeat_radio_day_type: "每", repeat_text_day_count: "天", repeat_radio_day_type2: "每个工作日", repeat_week: " 重复 每", repeat_text_week_count: "星期的:", repeat_radio_month_type: "重复", repeat_radio_month_start: "在", repeat_text_month_day: "日 每", repeat_text_month_count: "月", repeat_text_month_count2_before: "每", repeat_text_month_count2_after: "月", repeat_year_label: "在", select_year_day2: "的", repeat_text_year_day: "日", select_year_month: "月", repeat_radio_end: "无结束日期", repeat_text_occurences_count: "次结束", repeat_radio_end2: "重复", repeat_radio_end3: "结束于", repeat_never: "从不", repeat_daily: "每天", repeat_workdays: "每个工作日", repeat_weekly: "每周", repeat_monthly: "每月", repeat_yearly: "每年", repeat_custom: "自定义", repeat_freq_day: "天", repeat_freq_week: "周", repeat_freq_month: "月", repeat_freq_year: "年", repeat_on_date: "在日期", repeat_ends: "结束", month_for_recurring: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], day_for_recurring: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"] } };
+const cs = { date: { month_full: ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"], month_short: ["Led", "Ún", "Bře", "Dub", "Kvě", "Čer", "Čec", "Srp", "Září", "Říj", "List", "Pro"], day_full: ["Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"], day_short: ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"] }, labels: { dhx_cal_today_button: "Dnes", day_tab: "Den", week_tab: "Týden", month_tab: "Měsíc", new_event: "Nová událost", icon_save: "Uložit", icon_cancel: "Zpět", icon_details: "Detail", icon_edit: "Edituj", icon_delete: "Smazat", confirm_closing: "", confirm_deleting: "Událost bude trvale smazána, opravdu?", section_description: "Poznámky", section_time: "Doba platnosti", confirm_recurring: "Přejete si upravit celou řadu opakovaných událostí?", section_recurring: "Opakování události", button_recurring: "Vypnuto", button_recurring_open: "Zapnuto", button_edit_series: "Edit series", button_edit_occurrence: "Upravit instance", agenda_tab: "Program", date: "Datum", description: "Poznámka", year_tab: "Rok", full_day: "Full day", week_agenda_tab: "Program", grid_tab: "Mřížka", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Denně", repeat_radio_week: "Týdně", repeat_radio_month: "Měsíčně", repeat_radio_year: "Ročně", repeat_radio_day_type: "každý", repeat_text_day_count: "Den", repeat_radio_day_type2: "pracovní dny", repeat_week: "Opakuje každých", repeat_text_week_count: "Týdnů na:", repeat_radio_month_type: "u každého", repeat_radio_month_start: "na", repeat_text_month_day: "Den každého", repeat_text_month_count: "Měsíc", repeat_text_month_count2_before: "každý", repeat_text_month_count2_after: "Měsíc", repeat_year_label: "na", select_year_day2: "v", repeat_text_year_day: "Den v", select_year_month: "", repeat_radio_end: "bez data ukončení", repeat_text_occurences_count: "Události", repeat_radio_end2: "po", repeat_radio_end3: "Konec", repeat_never: "Nikdy", repeat_daily: "Každý den", repeat_workdays: "Každý pracovní den", repeat_weekly: "Každý týden", repeat_monthly: "Každý měsíc", repeat_yearly: "Každý rok", repeat_custom: "Vlastní", repeat_freq_day: "Den", repeat_freq_week: "Týden", repeat_freq_month: "Měsíc", repeat_freq_year: "Rok", repeat_on_date: "Na datum", repeat_ends: "Končí", month_for_recurring: ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"], day_for_recurring: ["Neděle ", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"] } };
+const da = { date: { month_full: ["Januar", "Februar", "Marts", "April", "Maj", "Juni", "Juli", "August", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"], day_short: ["Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"] }, labels: { dhx_cal_today_button: "Idag", day_tab: "Dag", week_tab: "Uge", month_tab: "Måned", new_event: "Ny begivenhed", icon_save: "Gem", icon_cancel: "Fortryd", icon_details: "Detaljer", icon_edit: "Tilret", icon_delete: "Slet", confirm_closing: "Dine rettelser vil gå tabt.. Er dy sikker?", confirm_deleting: "Bigivenheden vil blive slettet permanent. Er du sikker?", section_description: "Beskrivelse", section_time: "Tidsperiode", confirm_recurring: "Vil du tilrette hele serien af gentagne begivenheder?", section_recurring: "Gentag begivenhed", button_recurring: "Frakoblet", button_recurring_open: "Tilkoblet", button_edit_series: "Rediger serien", button_edit_occurrence: "Rediger en kopi", agenda_tab: "Dagsorden", date: "Dato", description: "Beskrivelse", year_tab: "År", week_agenda_tab: "Dagsorden", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daglig", repeat_radio_week: "Ugenlig", repeat_radio_month: "Månedlig", repeat_radio_year: "Årlig", repeat_radio_day_type: "Hver", repeat_text_day_count: "dag", repeat_radio_day_type2: "På hver arbejdsdag", repeat_week: " Gentager sig hver", repeat_text_week_count: "uge på følgende dage:", repeat_radio_month_type: "Hver den", repeat_radio_month_start: "Den", repeat_text_month_day: " i hver", repeat_text_month_count: "måned", repeat_text_month_count2_before: "hver", repeat_text_month_count2_after: "måned", repeat_year_label: "Den", select_year_day2: "i", repeat_text_year_day: "dag i", select_year_month: "", repeat_radio_end: "Ingen slutdato", repeat_text_occurences_count: "gentagelse", repeat_radio_end2: "Efter", repeat_radio_end3: "Slut", repeat_never: "Aldrig", repeat_daily: "Hver dag", repeat_workdays: "Hver hverdag", repeat_weekly: "Hver uge", repeat_monthly: "Hver måned", repeat_yearly: "Hvert år", repeat_custom: "Brugerdefineret", repeat_freq_day: "Dag", repeat_freq_week: "Uge", repeat_freq_month: "Måned", repeat_freq_year: "År", repeat_on_date: "På dato", repeat_ends: "Slutter", month_for_recurring: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"], day_for_recurring: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"] } };
+const de = { date: { month_full: [" Januar", " Februar", " März ", " April", " Mai", " Juni", " Juli", " August", " September ", " Oktober", " November ", " Dezember"], month_short: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"], day_full: ["Sonntag", "Montag", "Dienstag", " Mittwoch", " Donnerstag", "Freitag", "Samstag"], day_short: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"] }, labels: { dhx_cal_today_button: "Heute", day_tab: "Tag", week_tab: "Woche", month_tab: "Monat", new_event: "neuer Eintrag", icon_save: "Speichern", icon_cancel: "Abbrechen", icon_details: "Details", icon_edit: "Ändern", icon_delete: "Löschen", confirm_closing: "", confirm_deleting: "Der Eintrag wird gelöscht", section_description: "Beschreibung", section_time: "Zeitspanne", full_day: "Ganzer Tag", confirm_recurring: "Wollen Sie alle Einträge bearbeiten oder nur diesen einzelnen Eintrag?", section_recurring: "Wiederholung", button_recurring: "Aus", button_recurring_open: "An", button_edit_series: "Bearbeiten Sie die Serie", button_edit_occurrence: "Bearbeiten Sie eine Kopie", agenda_tab: "Agenda", date: "Datum", description: "Beschreibung", year_tab: "Jahre", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Täglich", repeat_radio_week: "Wöchentlich", repeat_radio_month: "Monatlich", repeat_radio_year: "Jährlich", repeat_radio_day_type: "jeden", repeat_text_day_count: "Tag", repeat_radio_day_type2: "an jedem Arbeitstag", repeat_week: " Wiederholt sich jede", repeat_text_week_count: "Woche am:", repeat_radio_month_type: "an jedem", repeat_radio_month_start: "am", repeat_text_month_day: "Tag eines jeden", repeat_text_month_count: "Monats", repeat_text_month_count2_before: "jeden", repeat_text_month_count2_after: "Monats", repeat_year_label: "am", select_year_day2: "im", repeat_text_year_day: "Tag im", select_year_month: "", repeat_radio_end: "kein Enddatum", repeat_text_occurences_count: "Ereignissen", repeat_radio_end3: "Schluß", repeat_radio_end2: "nach", repeat_never: "Nie", repeat_daily: "Jeden Tag", repeat_workdays: "Jeden Werktag", repeat_weekly: "Jede Woche", repeat_monthly: "Jeden Monat", repeat_yearly: "Jedes Jahr", repeat_custom: "Benutzerdefiniert", repeat_freq_day: "Tag", repeat_freq_week: "Woche", repeat_freq_month: "Monat", repeat_freq_year: "Jahr", repeat_on_date: "Am Datum", repeat_ends: "Endet", month_for_recurring: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"], day_for_recurring: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"] } };
+const el = { date: { month_full: ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάϊος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"], month_short: ["ΙΑΝ", "ΦΕΒ", "ΜΑΡ", "ΑΠΡ", "ΜΑΙ", "ΙΟΥΝ", "ΙΟΥΛ", "ΑΥΓ", "ΣΕΠ", "ΟΚΤ", "ΝΟΕ", "ΔΕΚ"], day_full: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"], day_short: ["ΚΥ", "ΔΕ", "ΤΡ", "ΤΕ", "ΠΕ", "ΠΑ", "ΣΑ"] }, labels: { dhx_cal_today_button: "Σήμερα", day_tab: "Ημέρα", week_tab: "Εβδομάδα", month_tab: "Μήνας", new_event: "Νέο έργο", icon_save: "Αποθήκευση", icon_cancel: "Άκυρο", icon_details: "Λεπτομέρειες", icon_edit: "Επεξεργασία", icon_delete: "Διαγραφή", confirm_closing: "", confirm_deleting: "Το έργο θα διαγραφεί οριστικά. Θέλετε να συνεχίσετε;", section_description: "Περιγραφή", section_time: "Χρονική περίοδος", full_day: "Πλήρης Ημέρα", confirm_recurring: "Θέλετε να επεξεργασθείτε ολόκληρη την ομάδα των επαναλαμβανόμενων έργων;", section_recurring: "Επαναλαμβανόμενο έργο", button_recurring: "Ανενεργό", button_recurring_open: "Ενεργό", button_edit_series: "Επεξεργαστείτε τη σειρά", button_edit_occurrence: "Επεξεργασία ένα αντίγραφο", agenda_tab: "Ημερήσια Διάταξη", date: "Ημερομηνία", description: "Περιγραφή", year_tab: "Έτος", week_agenda_tab: "Ημερήσια Διάταξη", grid_tab: "Πλέγμα", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Ημερησίως", repeat_radio_week: "Εβδομαδιαίως", repeat_radio_month: "Μηνιαίως", repeat_radio_year: "Ετησίως", repeat_radio_day_type: "Κάθε", repeat_text_day_count: "ημέρα", repeat_radio_day_type2: "Κάθε εργάσιμη", repeat_week: " Επανάληψη κάθε", repeat_text_week_count: "εβδομάδα τις επόμενες ημέρες:", repeat_radio_month_type: "Επανάληψη", repeat_radio_month_start: "Την", repeat_text_month_day: "ημέρα κάθε", repeat_text_month_count: "μήνα", repeat_text_month_count2_before: "κάθε", repeat_text_month_count2_after: "μήνα", repeat_year_label: "Την", select_year_day2: "του", repeat_text_year_day: "ημέρα", select_year_month: "μήνα", repeat_radio_end: "Χωρίς ημερομηνία λήξεως", repeat_text_occurences_count: "επαναλήψεις", repeat_radio_end3: "Λήγει την", repeat_radio_end2: "Μετά από", repeat_never: "Ποτέ", repeat_daily: "Κάθε μέρα", repeat_workdays: "Κάθε εργάσιμη μέρα", repeat_weekly: "Κάθε εβδομάδα", repeat_monthly: "Κάθε μήνα", repeat_yearly: "Κάθε χρόνο", repeat_custom: "Προσαρμοσμένο", repeat_freq_day: "Ημέρα", repeat_freq_week: "Εβδομάδα", repeat_freq_month: "Μήνας", repeat_freq_year: "Χρόνος", repeat_on_date: "Σε ημερομηνία", repeat_ends: "Λήγει", month_for_recurring: ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάϊος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"], day_for_recurring: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"] } };
+const en = { date: { month_full: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], day_full: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], day_short: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] }, labels: { dhx_cal_today_button: "Today", day_tab: "Day", week_tab: "Week", month_tab: "Month", new_event: "New event", icon_save: "Save", icon_cancel: "Cancel", icon_details: "Details", icon_edit: "Edit", icon_delete: "Delete", confirm_closing: "", confirm_deleting: "Event will be deleted permanently, are you sure?", section_description: "Description", section_time: "Time period", full_day: "Full day", confirm_recurring: "Do you want to edit the whole set of repeated events?", section_recurring: "Repeat event", button_recurring: "Disabled", button_recurring_open: "Enabled", button_edit_series: "Edit series", button_edit_occurrence: "Edit occurrence", agenda_tab: "Agenda", date: "Date", description: "Description", year_tab: "Year", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daily", repeat_radio_week: "Weekly", repeat_radio_month: "Monthly", repeat_radio_year: "Yearly", repeat_radio_day_type: "Every", repeat_text_day_count: "day", repeat_radio_day_type2: "Every workday", repeat_week: " Repeat every", repeat_text_week_count: "week next days:", repeat_radio_month_type: "Repeat", repeat_radio_month_start: "On", repeat_text_month_day: "day every", repeat_text_month_count: "month", repeat_text_month_count2_before: "every", repeat_text_month_count2_after: "month", repeat_year_label: "On", select_year_day2: "of", repeat_text_year_day: "day", select_year_month: "month", repeat_radio_end: "No end date", repeat_text_occurences_count: "occurrences", repeat_radio_end2: "After", repeat_radio_end3: "End by", repeat_never: "Never", repeat_daily: "Every day", repeat_workdays: "Every weekday", repeat_weekly: "Every week", repeat_monthly: "Every month", repeat_yearly: "Every year", repeat_custom: "Custom", repeat_freq_day: "Day", repeat_freq_week: "Week", repeat_freq_month: "Month", repeat_freq_year: "Year", repeat_on_date: "On date", repeat_ends: "Ends", month_for_recurring: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], day_for_recurring: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] } };
+const es = { date: { month_full: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"], month_short: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"], day_full: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"], day_short: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"] }, labels: { dhx_cal_today_button: "Hoy", day_tab: "Día", week_tab: "Semana", month_tab: "Mes", new_event: "Nuevo evento", icon_save: "Guardar", icon_cancel: "Cancelar", icon_details: "Detalles", icon_edit: "Editar", icon_delete: "Eliminar", confirm_closing: "", confirm_deleting: "El evento se borrará definitivamente, ¿continuar?", section_description: "Descripción", section_time: "Período", full_day: "Todo el día", confirm_recurring: "¿Desea modificar el conjunto de eventos repetidos?", section_recurring: "Repita el evento", button_recurring: "Impedido", button_recurring_open: "Permitido", button_edit_series: "Editar la serie", button_edit_occurrence: "Editar este evento", agenda_tab: "Día", date: "Fecha", description: "Descripción", year_tab: "Año", week_agenda_tab: "Día", grid_tab: "Reja", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Diariamente", repeat_radio_week: "Semanalmente", repeat_radio_month: "Mensualmente", repeat_radio_year: "Anualmente", repeat_radio_day_type: "Cada", repeat_text_day_count: "dia", repeat_radio_day_type2: "Cada jornada de trabajo", repeat_week: " Repetir cada", repeat_text_week_count: "semana:", repeat_radio_month_type: "Repita", repeat_radio_month_start: "El", repeat_text_month_day: "dia cada ", repeat_text_month_count: "mes", repeat_text_month_count2_before: "cada", repeat_text_month_count2_after: "mes", repeat_year_label: "El", select_year_day2: "del", repeat_text_year_day: "dia", select_year_month: "mes", repeat_radio_end: "Sin fecha de finalización", repeat_text_occurences_count: "ocurrencias", repeat_radio_end3: "Fin", repeat_radio_end2: "Después de", repeat_never: "Nunca", repeat_daily: "Cada día", repeat_workdays: "Cada día laborable", repeat_weekly: "Cada semana", repeat_monthly: "Cada mes", repeat_yearly: "Cada año", repeat_custom: "Personalizado", repeat_freq_day: "Día", repeat_freq_week: "Semana", repeat_freq_month: "Mes", repeat_freq_year: "Año", repeat_on_date: "En la fecha", repeat_ends: "Termina", month_for_recurring: ["Enero", "Febrero", "Маrzo", "Аbril", "Mayo", "Junio", "Julio", "Аgosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"], day_for_recurring: ["Domingo", "Lunes", "Martes", "Miércoles", "Jeuves", "Viernes", "Sabado"] } };
+const fi = { date: { month_full: ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kes&auml;kuu", "Hein&auml;kuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"], month_short: ["Tam", "Hel", "Maa", "Huh", "Tou", "Kes", "Hei", "Elo", "Syy", "Lok", "Mar", "Jou"], day_full: ["Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"], day_short: ["Su", "Ma", "Ti", "Ke", "To", "Pe", "La"] }, labels: { dhx_cal_today_button: "Tänään", day_tab: "Päivä", week_tab: "Viikko", month_tab: "Kuukausi", new_event: "Uusi tapahtuma", icon_save: "Tallenna", icon_cancel: "Peru", icon_details: "Tiedot", icon_edit: "Muokkaa", icon_delete: "Poista", confirm_closing: "", confirm_deleting: "Haluatko varmasti poistaa tapahtuman?", section_description: "Kuvaus", section_time: "Aikajakso", full_day: "Koko päivä", confirm_recurring: "Haluatko varmasti muokata toistuvan tapahtuman kaikkia jaksoja?", section_recurring: "Toista tapahtuma", button_recurring: "Ei k&auml;yt&ouml;ss&auml;", button_recurring_open: "K&auml;yt&ouml;ss&auml;", button_edit_series: "Muokkaa sarja", button_edit_occurrence: "Muokkaa kopio", agenda_tab: "Esityslista", date: "Päivämäärä", description: "Kuvaus", year_tab: "Vuoden", week_agenda_tab: "Esityslista", grid_tab: "Ritilä", drag_to_create: "Luo uusi vetämällä", drag_to_move: "Siirrä vetämällä", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "P&auml;ivitt&auml;in", repeat_radio_week: "Viikoittain", repeat_radio_month: "Kuukausittain", repeat_radio_year: "Vuosittain", repeat_radio_day_type: "Joka", repeat_text_day_count: "p&auml;iv&auml;", repeat_radio_day_type2: "Joka arkip&auml;iv&auml;", repeat_week: "Toista joka", repeat_text_week_count: "viikko n&auml;in&auml; p&auml;ivin&auml;:", repeat_radio_month_type: "Toista", repeat_radio_month_start: "", repeat_text_month_day: "p&auml;iv&auml;n&auml; joka", repeat_text_month_count: "kuukausi", repeat_text_month_count2_before: "joka", repeat_text_month_count2_after: "kuukausi", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "p&auml;iv&auml;", select_year_month: "kuukausi", repeat_radio_end: "Ei loppumisaikaa", repeat_text_occurences_count: "Toiston j&auml;lkeen", repeat_radio_end3: "Loppuu", repeat_radio_end2: "", repeat_never: "Ei koskaan", repeat_daily: "Joka päivä", repeat_workdays: "Joka arkipäivä", repeat_weekly: "Joka viikko", repeat_monthly: "Joka kuukausi", repeat_yearly: "Joka vuosi", repeat_custom: "Mukautettu", repeat_freq_day: "Päivä", repeat_freq_week: "Viikko", repeat_freq_month: "Kuukausi", repeat_freq_year: "Vuosi", repeat_on_date: "Tiettynä päivänä", repeat_ends: "Päättyy", month_for_recurring: ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kes&auml;kuu", "Hein&auml;kuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"], day_for_recurring: ["Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"] } };
+const fr = { date: { month_full: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"], month_short: ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"], day_full: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"], day_short: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"] }, labels: { dhx_cal_today_button: "Aujourd'hui", day_tab: "Jour", week_tab: "Semaine", month_tab: "Mois", new_event: "Nouvel événement", icon_save: "Enregistrer", icon_cancel: "Annuler", icon_details: "Détails", icon_edit: "Modifier", icon_delete: "Effacer", confirm_closing: "", confirm_deleting: "L'événement sera effacé sans appel, êtes-vous sûr ?", section_description: "Description", section_time: "Période", full_day: "Journée complète", confirm_recurring: "Voulez-vous éditer toute une série d'évènements répétés?", section_recurring: "Périodicité", button_recurring: "Désactivé", button_recurring_open: "Activé", button_edit_series: "Modifier la série", button_edit_occurrence: "Modifier une copie", agenda_tab: "Jour", date: "Date", description: "Description", year_tab: "Année", week_agenda_tab: "Jour", grid_tab: "Grille", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Quotidienne", repeat_radio_week: "Hebdomadaire", repeat_radio_month: "Mensuelle", repeat_radio_year: "Annuelle", repeat_radio_day_type: "Chaque", repeat_text_day_count: "jour", repeat_radio_day_type2: "Chaque journée de travail", repeat_week: " Répéter toutes les", repeat_text_week_count: "semaine:", repeat_radio_month_type: "Répéter", repeat_radio_month_start: "Le", repeat_text_month_day: "jour chaque", repeat_text_month_count: "mois", repeat_text_month_count2_before: "chaque", repeat_text_month_count2_after: "mois", repeat_year_label: "Le", select_year_day2: "du", repeat_text_year_day: "jour", select_year_month: "mois", repeat_radio_end: "Pas de date d&quot;achèvement", repeat_text_occurences_count: "occurrences", repeat_radio_end3: "Fin", repeat_radio_end2: "Après", repeat_never: "Jamais", repeat_daily: "Chaque jour", repeat_workdays: "Chaque jour ouvrable", repeat_weekly: "Chaque semaine", repeat_monthly: "Chaque mois", repeat_yearly: "Chaque année", repeat_custom: "Personnalisé", repeat_freq_day: "Jour", repeat_freq_week: "Semaine", repeat_freq_month: "Mois", repeat_freq_year: "Année", repeat_on_date: "À la date", repeat_ends: "Se termine", month_for_recurring: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"], day_for_recurring: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"] } };
+const he = { date: { month_full: ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"], month_short: ["ינו", "פבר", "מרץ", "אפר", "מאי", "יונ", "יול", "אוג", "ספט", "אוק", "נוב", "דצמ"], day_full: ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"], day_short: ["א", "ב", "ג", "ד", "ה", "ו", "ש"] }, labels: { dhx_cal_today_button: "היום", day_tab: "יום", week_tab: "שבוע", month_tab: "חודש", new_event: "ארוע חדש", icon_save: "שמור", icon_cancel: "בטל", icon_details: "פרטים", icon_edit: "ערוך", icon_delete: "מחק", confirm_closing: "", confirm_deleting: "ארוע ימחק סופית.להמשיך?", section_description: "תיאור", section_time: "תקופה", confirm_recurring: "האם ברצונך לשנות כל סדרת ארועים מתמשכים?", section_recurring: "להעתיק ארוע", button_recurring: "לא פעיל", button_recurring_open: "פעיל", full_day: "יום שלם", button_edit_series: "ערוך את הסדרה", button_edit_occurrence: "עריכת עותק", agenda_tab: "סדר יום", date: "תאריך", description: "תיאור", year_tab: "לשנה", week_agenda_tab: "סדר יום", grid_tab: "סורג", drag_to_create: "Drag to create", drag_to_move: "גרור כדי להזיז", message_ok: "OK", message_cancel: "בטל", next: "הבא", prev: "הקודם", year: "שנה", month: "חודש", day: "יום", hour: "שעה", minute: "דקה", repeat_radio_day: "יומי", repeat_radio_week: "שבועי", repeat_radio_month: "חודשי", repeat_radio_year: "שנתי", repeat_radio_day_type: "חזור כל", repeat_text_day_count: "ימים", repeat_radio_day_type2: "חזור כל יום עבודה", repeat_week: " חזור כל", repeat_text_week_count: "שבוע לפי ימים:", repeat_radio_month_type: "חזור כל", repeat_radio_month_start: "כל", repeat_text_month_day: "ימים כל", repeat_text_month_count: "חודשים", repeat_text_month_count2_before: "חזור כל", repeat_text_month_count2_after: "חודש", repeat_year_label: "כל", select_year_day2: "בחודש", repeat_text_year_day: "ימים", select_year_month: "חודש", repeat_radio_end: "לעולם לא מסתיים", repeat_text_occurences_count: "אירועים", repeat_radio_end3: "מסתיים ב", repeat_radio_end2: "אחרי", repeat_never: "אף פעם", repeat_daily: "כל יום", repeat_workdays: "כל יום עבודה", repeat_weekly: "כל שבוע", repeat_monthly: "כל חודש", repeat_yearly: "כל שנה", repeat_custom: "מותאם אישית", repeat_freq_day: "יום", repeat_freq_week: "שבוע", repeat_freq_month: "חודש", repeat_freq_year: "שנה", repeat_on_date: "בתאריך", repeat_ends: "מסתיים", month_for_recurring: ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"], day_for_recurring: ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"] } };
+const hu = { date: { month_full: ["Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"], month_short: ["Jan", "Feb", "Már", "Ápr", "Máj", "Jún", "Júl", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Vasárnap", "Hétfõ", "Kedd", "Szerda", "Csütörtök", "Péntek", "szombat"], day_short: ["Va", "Hé", "Ke", "Sze", "Csü", "Pé", "Szo"] }, labels: { dhx_cal_today_button: "Ma", day_tab: "Nap", week_tab: "Hét", month_tab: "Hónap", new_event: "Új esemény", icon_save: "Mentés", icon_cancel: "Mégse", icon_details: "Részletek", icon_edit: "Szerkesztés", icon_delete: "Törlés", confirm_closing: "", confirm_deleting: "Az esemény törölve lesz, biztosan folytatja?", section_description: "Leírás", section_time: "Idõszak", full_day: "Egesz napos", confirm_recurring: "Biztosan szerkeszteni akarod az összes ismétlõdõ esemény beállítását?", section_recurring: "Esemény ismétlése", button_recurring: "Tiltás", button_recurring_open: "Engedélyezés", button_edit_series: "Edit series", button_edit_occurrence: "Szerkesztés bíróság", agenda_tab: "Napirend", date: "Dátum", description: "Leírás", year_tab: "Év", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Napi", repeat_radio_week: "Heti", repeat_radio_month: "Havi", repeat_radio_year: "Éves", repeat_radio_day_type: "Minden", repeat_text_day_count: "nap", repeat_radio_day_type2: "Minden munkanap", repeat_week: " Ismételje meg minden", repeat_text_week_count: "héten a következő napokon:", repeat_radio_month_type: "Ismétlés", repeat_radio_month_start: "Ekkor", repeat_text_month_day: "nap minden", repeat_text_month_count: "hónapban", repeat_text_month_count2_before: "minden", repeat_text_month_count2_after: "hónapban", repeat_year_label: "Ekkor", select_year_day2: "-án/-én", repeat_text_year_day: "nap", select_year_month: "hónap", repeat_radio_end: "Nincs befejezési dátum", repeat_text_occurences_count: "esemény", repeat_radio_end2: "Után", repeat_radio_end3: "Befejező dátum", repeat_never: "Soha", repeat_daily: "Minden nap", repeat_workdays: "Minden munkanap", repeat_weekly: "Minden héten", repeat_monthly: "Minden hónapban", repeat_yearly: "Minden évben", repeat_custom: "Egyedi", repeat_freq_day: "Nap", repeat_freq_week: "Hét", repeat_freq_month: "Hónap", repeat_freq_year: "Év", repeat_on_date: "Dátum szerint", repeat_ends: "Befejeződik", month_for_recurring: ["Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"], day_for_recurring: ["Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"] } };
+const id = { date: { month_full: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"], month_short: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"], day_full: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"], day_short: ["Ming", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"] }, labels: { dhx_cal_today_button: "Hari Ini", day_tab: "Hari", week_tab: "Minggu", month_tab: "Bulan", new_event: "Acara Baru", icon_save: "Simpan", icon_cancel: "Batal", icon_details: "Detail", icon_edit: "Edit", icon_delete: "Hapus", confirm_closing: "", confirm_deleting: "Acara akan dihapus", section_description: "Keterangan", section_time: "Periode", full_day: "Hari penuh", confirm_recurring: "Apakah acara ini akan berulang?", section_recurring: "Acara Rutin", button_recurring: "Tidak Difungsikan", button_recurring_open: "Difungsikan", button_edit_series: "Mengedit seri", button_edit_occurrence: "Mengedit salinan", agenda_tab: "Agenda", date: "Tanggal", description: "Keterangan", year_tab: "Tahun", week_agenda_tab: "Agenda", grid_tab: "Tabel", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Harian", repeat_radio_week: "Mingguan", repeat_radio_month: "Bulanan", repeat_radio_year: "Tahunan", repeat_radio_day_type: "Setiap", repeat_text_day_count: "hari", repeat_radio_day_type2: "Setiap hari kerja", repeat_week: " Ulangi setiap", repeat_text_week_count: "minggu pada hari berikut:", repeat_radio_month_type: "Ulangi", repeat_radio_month_start: "Pada", repeat_text_month_day: "hari setiap", repeat_text_month_count: "bulan", repeat_text_month_count2_before: "setiap", repeat_text_month_count2_after: "bulan", repeat_year_label: "Pada", select_year_day2: "dari", repeat_text_year_day: "hari", select_year_month: "bulan", repeat_radio_end: "Tanpa tanggal akhir", repeat_text_occurences_count: "kejadian", repeat_radio_end2: "Setelah", repeat_radio_end3: "Berakhir pada", repeat_never: "Tidak pernah", repeat_daily: "Setiap hari", repeat_workdays: "Setiap hari kerja", repeat_weekly: "Setiap minggu", repeat_monthly: "Setiap bulan", repeat_yearly: "Setiap tahun", repeat_custom: "Kustom", repeat_freq_day: "Hari", repeat_freq_week: "Minggu", repeat_freq_month: "Bulan", repeat_freq_year: "Tahun", repeat_on_date: "Pada tanggal", repeat_ends: "Berakhir", month_for_recurring: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"], day_for_recurring: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"] } };
+const it = { date: { month_full: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"], month_short: ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"], day_full: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"], day_short: ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"] }, labels: { dhx_cal_today_button: "Oggi", day_tab: "Giorno", week_tab: "Settimana", month_tab: "Mese", new_event: "Nuovo evento", icon_save: "Salva", icon_cancel: "Chiudi", icon_details: "Dettagli", icon_edit: "Modifica", icon_delete: "Elimina", confirm_closing: "", confirm_deleting: "L'evento sarà eliminato, siete sicuri?", section_description: "Descrizione", section_time: "Periodo di tempo", full_day: "Intera giornata", confirm_recurring: "Vuoi modificare l'intera serie di eventi?", section_recurring: "Ripetere l'evento", button_recurring: "Disattivato", button_recurring_open: "Attivato", button_edit_series: "Modificare la serie", button_edit_occurrence: "Modificare una copia", agenda_tab: "Agenda", date: "Data", description: "Descrizione", year_tab: "Anno", week_agenda_tab: "Agenda", grid_tab: "Griglia", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Quotidiano", repeat_radio_week: "Settimanale", repeat_radio_month: "Mensile", repeat_radio_year: "Annuale", repeat_radio_day_type: "Ogni", repeat_text_day_count: "giorno", repeat_radio_day_type2: "Ogni giornata lavorativa", repeat_week: " Ripetere ogni", repeat_text_week_count: "settimana:", repeat_radio_month_type: "Ripetere", repeat_radio_month_start: "Il", repeat_text_month_day: "giorno ogni", repeat_text_month_count: "mese", repeat_text_month_count2_before: "ogni", repeat_text_month_count2_after: "mese", repeat_year_label: "Il", select_year_day2: "del", repeat_text_year_day: "giorno", select_year_month: "mese", repeat_radio_end: "Senza data finale", repeat_text_occurences_count: "occorenze", repeat_radio_end3: "Fine", repeat_radio_end2: "Dopo", repeat_never: "Mai", repeat_daily: "Ogni giorno", repeat_workdays: "Ogni giorno feriale", repeat_weekly: "Ogni settimana", repeat_monthly: "Ogni mese", repeat_yearly: "Ogni anno", repeat_custom: "Personalizzato", repeat_freq_day: "Giorno", repeat_freq_week: "Settimana", repeat_freq_month: "Mese", repeat_freq_year: "Anno", repeat_on_date: "Alla data", repeat_ends: "Finisce", month_for_recurring: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Jiugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"], day_for_recurring: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Jovedì", "Venerdì", "Sabato"] } };
+const jp = { date: { month_full: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], month_short: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], day_full: ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"], day_short: ["日", "月", "火", "水", "木", "金", "土"] }, labels: { dhx_cal_today_button: "今日", day_tab: "日", week_tab: "週", month_tab: "月", new_event: "新イベント", icon_save: "保存", icon_cancel: "キャンセル", icon_details: "詳細", icon_edit: "編集", icon_delete: "削除", confirm_closing: "", confirm_deleting: "イベント完全に削除されます、宜しいですか？", section_description: "デスクリプション", section_time: "期間", confirm_recurring: "繰り返されているイベントを全て編集しますか？", section_recurring: "イベントを繰り返す", button_recurring: "無効", button_recurring_open: "有効", full_day: "終日", button_edit_series: "シリーズを編集します", button_edit_occurrence: "コピーを編集", agenda_tab: "議題は", date: "日付", description: "説明", year_tab: "今年", week_agenda_tab: "議題は", grid_tab: "グリッド", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "毎日", repeat_radio_week: "毎週", repeat_radio_month: "毎月", repeat_radio_year: "毎年", repeat_radio_day_type: "毎", repeat_text_day_count: "日", repeat_radio_day_type2: "毎営業日", repeat_week: " 繰り返し毎", repeat_text_week_count: "週 次の日:", repeat_radio_month_type: "繰り返し", repeat_radio_month_start: "オン", repeat_text_month_day: "日毎", repeat_text_month_count: "月", repeat_text_month_count2_before: "毎", repeat_text_month_count2_after: "月", repeat_year_label: "オン", select_year_day2: "の", repeat_text_year_day: "日", select_year_month: "月", repeat_radio_end: "終了日なし", repeat_text_occurences_count: "回数", repeat_radio_end2: "後", repeat_radio_end3: "終了日まで", repeat_never: "決して", repeat_daily: "毎日", repeat_workdays: "毎営業日", repeat_weekly: "毎週", repeat_monthly: "毎月", repeat_yearly: "毎年", repeat_custom: "カスタム", repeat_freq_day: "日", repeat_freq_week: "週", repeat_freq_month: "月", repeat_freq_year: "年", repeat_on_date: "日にち", repeat_ends: "終了", month_for_recurring: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], day_for_recurring: ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"] } };
 class LocaleManager {
   constructor(config) {
     this._locales = {};
@@ -7328,18 +8431,18 @@ class LocaleManager {
     return this._locales[name];
   }
 }
-const nb = { date: { month_full: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], month_short: ["Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des"], day_full: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"], day_short: ["Søn", "Mon", "Tir", "Ons", "Tor", "Fre", "Lør"] }, labels: { dhx_cal_today_button: "I dag", day_tab: "Dag", week_tab: "Uke", month_tab: "Måned", new_event: "Ny hendelse", icon_save: "Lagre", icon_cancel: "Avbryt", icon_details: "Detaljer", icon_edit: "Rediger", icon_delete: "Slett", confirm_closing: "", confirm_deleting: "Hendelsen vil bli slettet permanent. Er du sikker?", section_description: "Beskrivelse", section_time: "Tidsperiode", confirm_recurring: "Vil du forandre hele dette settet av repeterende hendelser?", section_recurring: "Repeter hendelsen", button_recurring: "Av", button_recurring_open: "På", button_edit_series: "Rediger serien", button_edit_occurrence: "Redigere en kopi", agenda_tab: "Agenda", date: "Dato", description: "Beskrivelse", year_tab: "År", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daglig", repeat_radio_week: "Ukentlig", repeat_radio_month: "Månedlig", repeat_radio_year: "Årlig", repeat_radio_day_type: "Hver", repeat_text_day_count: "dag", repeat_radio_day_type2: "Alle hverdager", repeat_week: " Gjentas hver", repeat_text_week_count: "uke på:", repeat_radio_month_type: "På hver", repeat_radio_month_start: "På", repeat_text_month_day: "dag hver", repeat_text_month_count: "måned", repeat_text_month_count2_before: "hver", repeat_text_month_count2_after: "måned", repeat_year_label: "på", select_year_day2: "i", repeat_text_year_day: "dag i", select_year_month: "", repeat_radio_end: "Ingen sluttdato", repeat_text_occurences_count: "forekomst", repeat_radio_end3: "Stop den", repeat_radio_end2: "Etter", month_for_recurring: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], day_for_recurring: ["Sondag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"] } };
-const nl = { date: { month_full: ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "mrt", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"], day_short: ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"] }, labels: { dhx_cal_today_button: "Vandaag", day_tab: "Dag", week_tab: "Week", month_tab: "Maand", new_event: "Nieuw item", icon_save: "Opslaan", icon_cancel: "Annuleren", icon_details: "Details", icon_edit: "Bewerken", icon_delete: "Verwijderen", confirm_closing: "", confirm_deleting: "Item zal permanent worden verwijderd, doorgaan?", section_description: "Beschrijving", section_time: "Tijd periode", full_day: "Hele dag", confirm_recurring: "Wilt u alle terugkerende items bijwerken?", section_recurring: "Item herhalen", button_recurring: "Uit", button_recurring_open: "Aan", button_edit_series: "Bewerk de serie", button_edit_occurrence: "Bewerk een kopie", agenda_tab: "Agenda", date: "Datum", description: "Omschrijving", year_tab: "Jaar", week_agenda_tab: "Agenda", grid_tab: "Tabel", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Dagelijks", repeat_radio_week: "Wekelijks", repeat_radio_month: "Maandelijks", repeat_radio_year: "Jaarlijks", repeat_radio_day_type: "Elke", repeat_text_day_count: "dag(en)", repeat_radio_day_type2: "Elke werkdag", repeat_week: " Herhaal elke", repeat_text_week_count: "week op de volgende dagen:", repeat_radio_month_type: "Herhaal", repeat_radio_month_start: "Op", repeat_text_month_day: "dag iedere", repeat_text_month_count: "maanden", repeat_text_month_count2_before: "iedere", repeat_text_month_count2_after: "maanden", repeat_year_label: "Op", select_year_day2: "van", repeat_text_year_day: "dag", select_year_month: "maand", repeat_radio_end: "Geen eind datum", repeat_text_occurences_count: "keren", repeat_radio_end3: "Eindigd per", repeat_radio_end2: "Na", month_for_recurring: ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"], day_for_recurring: ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"] } };
-const no = { date: { month_full: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], month_short: ["Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des"], day_full: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"], day_short: ["Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"] }, labels: { dhx_cal_today_button: "Idag", day_tab: "Dag", week_tab: "Uke", month_tab: "Måned", new_event: "Ny", icon_save: "Lagre", icon_cancel: "Avbryt", icon_details: "Detaljer", icon_edit: "Endre", icon_delete: "Slett", confirm_closing: "Endringer blir ikke lagret, er du sikker?", confirm_deleting: "Oppføringen vil bli slettet, er du sikker?", section_description: "Beskrivelse", section_time: "Tidsperiode", full_day: "Full dag", confirm_recurring: "Vil du endre hele settet med repeterende oppføringer?", section_recurring: "Repeterende oppføring", button_recurring: "Ikke aktiv", button_recurring_open: "Aktiv", button_edit_series: "Rediger serien", button_edit_occurrence: "Redigere en kopi", agenda_tab: "Agenda", date: "Dato", description: "Beskrivelse", year_tab: "År", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute" } };
-const pl = { date: { month_full: ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"], month_short: ["Sty", "Lut", "Mar", "Kwi", "Maj", "Cze", "Lip", "Sie", "Wrz", "Paź", "Lis", "Gru"], day_full: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"], day_short: ["Nie", "Pon", "Wto", "Śro", "Czw", "Pią", "Sob"] }, labels: { dhx_cal_today_button: "Dziś", day_tab: "Dzień", week_tab: "Tydzień", month_tab: "Miesiąc", new_event: "Nowe zdarzenie", icon_save: "Zapisz", icon_cancel: "Anuluj", icon_details: "Szczegóły", icon_edit: "Edytuj", icon_delete: "Usuń", confirm_closing: "", confirm_deleting: "Zdarzenie zostanie usunięte na zawsze, kontynuować?", section_description: "Opis", section_time: "Okres czasu", full_day: "Cały dzień", confirm_recurring: "Czy chcesz edytować cały zbiór powtarzających się zdarzeń?", section_recurring: "Powtórz zdarzenie", button_recurring: "Nieaktywne", button_recurring_open: "Aktywne", button_edit_series: "Edytuj serię", button_edit_occurrence: "Edytuj kopię", agenda_tab: "Agenda", date: "Data", description: "Opis", year_tab: "Rok", week_agenda_tab: "Agenda", grid_tab: "Tabela", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Codziennie", repeat_radio_week: "Co tydzie", repeat_radio_month: "Co miesic", repeat_radio_year: "Co rok", repeat_radio_day_type: "Kadego", repeat_text_day_count: "dnia", repeat_radio_day_type2: "Kadego dnia roboczego", repeat_week: " Powtarzaj kadego", repeat_text_week_count: "tygodnia w dni:", repeat_radio_month_type: "Powtrz", repeat_radio_month_start: "W", repeat_text_month_day: "dnia kadego", repeat_text_month_count: "miesica", repeat_text_month_count2_before: "kadego", repeat_text_month_count2_after: "miesica", repeat_year_label: "W", select_year_day2: "miesica", repeat_text_year_day: "dnia miesica", select_year_month: "", repeat_radio_end: "Bez daty kocowej", repeat_text_occurences_count: "wystpieniu/ach", repeat_radio_end3: "Zakocz w", repeat_radio_end2: "Po", month_for_recurring: ["Stycznia", "Lutego", "Marca", "Kwietnia", "Maja", "Czerwca", "Lipca", "Sierpnia", "Wrzenia", "Padziernka", "Listopada", "Grudnia"], day_for_recurring: ["Niedziela", "Poniedziaek", "Wtorek", "roda", "Czwartek", "Pitek", "Sobota"] } };
-const pt = { date: { month_full: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"], month_short: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"], day_full: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"], day_short: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"] }, labels: { dhx_cal_today_button: "Hoje", day_tab: "Dia", week_tab: "Semana", month_tab: "Mês", new_event: "Novo evento", icon_save: "Salvar", icon_cancel: "Cancelar", icon_details: "Detalhes", icon_edit: "Editar", icon_delete: "Deletar", confirm_closing: "", confirm_deleting: "Tem certeza que deseja excluir?", section_description: "Descrição", section_time: "Período de tempo", full_day: "Dia inteiro", confirm_recurring: "Deseja editar todos esses eventos repetidos?", section_recurring: "Repetir evento", button_recurring: "Desabilitar", button_recurring_open: "Habilitar", button_edit_series: "Editar a série", button_edit_occurrence: "Editar uma cópia", agenda_tab: "Dia", date: "Data", description: "Descrição", year_tab: "Ano", week_agenda_tab: "Dia", grid_tab: "Grade", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Diário", repeat_radio_week: "Semanal", repeat_radio_month: "Mensal", repeat_radio_year: "Anual", repeat_radio_day_type: "Cada", repeat_text_day_count: "dia(s)", repeat_radio_day_type2: "Cada trabalho diário", repeat_week: " Repita cada", repeat_text_week_count: "semana:", repeat_radio_month_type: "Repetir", repeat_radio_month_start: "Em", repeat_text_month_day: "todo dia", repeat_text_month_count: "mês", repeat_text_month_count2_before: "todo", repeat_text_month_count2_after: "mês", repeat_year_label: "Em", select_year_day2: "of", repeat_text_year_day: "dia", select_year_month: "mês", repeat_radio_end: "Sem data final", repeat_text_occurences_count: "ocorrências", repeat_radio_end3: "Fim", repeat_radio_end2: "Depois", month_for_recurring: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"], day_for_recurring: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"] } };
-const ro = { date: { month_full: ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "November", "December"], month_short: ["Ian", "Feb", "Mar", "Apr", "Mai", "Iun", "Iul", "Aug", "Sep", "Oct", "Nov", "Dec"], day_full: ["Duminica", "Luni", "Marti", "Miercuri", "Joi", "Vineri", "Sambata"], day_short: ["Du", "Lu", "Ma", "Mi", "Jo", "Vi", "Sa"] }, labels: { dhx_cal_today_button: "Astazi", day_tab: "Zi", week_tab: "Saptamana", month_tab: "Luna", new_event: "Eveniment nou", icon_save: "Salveaza", icon_cancel: "Anuleaza", icon_details: "Detalii", icon_edit: "Editeaza", icon_delete: "Sterge", confirm_closing: "Schimbarile nu vor fi salvate, esti sigur?", confirm_deleting: "Evenimentul va fi sters permanent, esti sigur?", section_description: "Descriere", section_time: "Interval", full_day: "Toata ziua", confirm_recurring: "Vrei sa editezi toata seria de evenimente repetate?", section_recurring: "Repetare", button_recurring: "Dezactivata", button_recurring_open: "Activata", button_edit_series: "Editeaza serie", button_edit_occurrence: "Editeaza doar intrare", agenda_tab: "Agenda", date: "Data", description: "Descriere", year_tab: "An", week_agenda_tab: "Agenda", grid_tab: "Lista", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Zilnic", repeat_radio_week: "Saptamanal", repeat_radio_month: "Lunar", repeat_radio_year: "Anual", repeat_radio_day_type: "La fiecare", repeat_text_day_count: "zi(le)", repeat_radio_day_type2: "Fiecare zi lucratoare", repeat_week: " Repeta la fiecare", repeat_text_week_count: "saptamana in urmatoarele zile:", repeat_radio_month_type: "Repeta in", repeat_radio_month_start: "In a", repeat_text_month_day: "zi la fiecare", repeat_text_month_count: "luni", repeat_text_month_count2_before: "la fiecare", repeat_text_month_count2_after: "luni", repeat_year_label: "In", select_year_day2: "a lunii", repeat_text_year_day: "zi a lunii", select_year_month: "", repeat_radio_end: "Fara data de sfarsit", repeat_text_occurences_count: "evenimente", repeat_radio_end3: "La data", repeat_radio_end2: "Dupa", month_for_recurring: ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"], day_for_recurring: ["Duminica", "Luni", "Marti", "Miercuri", "Joi", "Vineri", "Sambata"] } };
-const ru = { date: { month_full: ["Январь", "Февраль", "Март", "Апрель", "Maй", "Июнь", "Июль", "Август", "Сентябрь", "Oктябрь", "Ноябрь", "Декабрь"], month_short: ["Янв", "Фев", "Maр", "Aпр", "Maй", "Июн", "Июл", "Aвг", "Сен", "Окт", "Ноя", "Дек"], day_full: ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"], day_short: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"] }, labels: { dhx_cal_today_button: "Сегодня", day_tab: "День", week_tab: "Неделя", month_tab: "Месяц", new_event: "Новое событие", icon_save: "Сохранить", icon_cancel: "Отменить", icon_details: "Детали", icon_edit: "Изменить", icon_delete: "Удалить", confirm_closing: "", confirm_deleting: "Событие будет удалено безвозвратно, продолжить?", section_description: "Описание", section_time: "Период времени", full_day: "Весь день", confirm_recurring: "Вы хотите изменить всю серию повторяющихся событий?", section_recurring: "Повторение", button_recurring: "Отключено", button_recurring_open: "Включено", button_edit_series: "Редактировать серию", button_edit_occurrence: "Редактировать экземпляр", agenda_tab: "Список", date: "Дата", description: "Описание", year_tab: "Год", week_agenda_tab: "Список", grid_tab: "Таблица", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "День", repeat_radio_week: "Неделя", repeat_radio_month: "Месяц", repeat_radio_year: "Год", repeat_radio_day_type: "Каждый", repeat_text_day_count: "день", repeat_radio_day_type2: "Каждый рабочий день", repeat_week: " Повторять каждую", repeat_text_week_count: "неделю , в:", repeat_radio_month_type: "Повторять", repeat_radio_month_start: "", repeat_text_month_day: " числа каждый ", repeat_text_month_count: "месяц", repeat_text_month_count2_before: "каждый ", repeat_text_month_count2_after: "месяц", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "день", select_year_month: "", repeat_radio_end: "Без даты окончания", repeat_text_occurences_count: "повторений", repeat_radio_end3: "До ", repeat_radio_end2: "", month_for_recurring: ["Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"], day_for_recurring: ["Воскресенье", "Понедельник", "Вторник", "Среду", "Четверг", "Пятницу", "Субботу"] } };
-const si = { date: { month_full: ["Januar", "Februar", "Marec", "April", "Maj", "Junij", "Julij", "Avgust", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Nedelja", "Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek", "Sobota"], day_short: ["Ned", "Pon", "Tor", "Sre", "Čet", "Pet", "Sob"] }, labels: { dhx_cal_today_button: "Danes", day_tab: "Dan", week_tab: "Teden", month_tab: "Mesec", new_event: "Nov dogodek", icon_save: "Shrani", icon_cancel: "Prekliči", icon_details: "Podrobnosti", icon_edit: "Uredi", icon_delete: "Izbriši", confirm_closing: "", confirm_deleting: "Dogodek bo izbrisan. Želite nadaljevati?", section_description: "Opis", section_time: "Časovni okvir", full_day: "Ves dan", confirm_recurring: "Želite urediti celoten set ponavljajočih dogodkov?", section_recurring: "Ponovi dogodek", button_recurring: "Onemogočeno", button_recurring_open: "Omogočeno", button_edit_series: "Edit series", button_edit_occurrence: "Edit occurrence", agenda_tab: "Zadeva", date: "Datum", description: "Opis", year_tab: "Leto", week_agenda_tab: "Zadeva", grid_tab: "Miza", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute" } };
-const sk = { date: { month_full: ["Január", "Február", "Marec", "Apríl", "Máj", "Jún", "Júl", "August", "September", "Október", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Máj", "Jún", "Júl", "Aug", "Sept", "Okt", "Nov", "Dec"], day_full: ["Nedeľa", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"], day_short: ["Ne", "Po", "Ut", "St", "Št", "Pi", "So"] }, labels: { dhx_cal_today_button: "Dnes", day_tab: "Deň", week_tab: "Týždeň", month_tab: "Mesiac", new_event: "Nová udalosť", icon_save: "Uložiť", icon_cancel: "Späť", icon_details: "Detail", icon_edit: "Edituj", icon_delete: "Zmazať", confirm_closing: "Vaše zmeny nebudú uložené. Skutočne?", confirm_deleting: "Udalosť bude natrvalo vymazaná. Skutočne?", section_description: "Poznámky", section_time: "Doba platnosti", confirm_recurring: "Prajete si upraviť celú radu opakovaných udalostí?", section_recurring: "Opakovanie udalosti", button_recurring: "Vypnuté", button_recurring_open: "Zapnuté", button_edit_series: "Upraviť opakovania", button_edit_occurrence: "Upraviť inštancie", agenda_tab: "Program", date: "Dátum", description: "Poznámka", year_tab: "Rok", full_day: "Celý deň", week_agenda_tab: "Program", grid_tab: "Mriežka", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Denne", repeat_radio_week: "Týždenne", repeat_radio_month: "Mesaène", repeat_radio_year: "Roène", repeat_radio_day_type: "Každý", repeat_text_day_count: "deò", repeat_radio_day_type2: "Každý prac. deò", repeat_week: "Opakova každý", repeat_text_week_count: "týždeò v dòoch:", repeat_radio_month_type: "Opakova", repeat_radio_month_start: "On", repeat_text_month_day: "deò každý", repeat_text_month_count: "mesiac", repeat_text_month_count2_before: "každý", repeat_text_month_count2_after: "mesiac", repeat_year_label: "On", select_year_day2: "poèas", repeat_text_year_day: "deò", select_year_month: "mesiac", repeat_radio_end: "Bez dátumu ukonèenia", repeat_text_occurences_count: "udalostiach", repeat_radio_end3: "Ukonèi", repeat_radio_end2: "Po", month_for_recurring: ["Január", "Február", "Marec", "Apríl", "Máj", "Jún", "Júl", "August", "September", "Október", "November", "December"], day_for_recurring: ["Nede¾a", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"] } };
-const sv = { date: { month_full: ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"], day_short: ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"] }, labels: { dhx_cal_today_button: "Idag", day_tab: "Dag", week_tab: "Vecka", month_tab: "Månad", new_event: "Ny händelse", icon_save: "Spara", icon_cancel: "Ångra", icon_details: "Detaljer", icon_edit: "Ändra", icon_delete: "Ta bort", confirm_closing: "", confirm_deleting: "Är du säker på att du vill ta bort händelsen permanent?", section_description: "Beskrivning", section_time: "Tid", full_day: "Hela dagen", confirm_recurring: "Vill du redigera hela serien med repeterande händelser?", section_recurring: "Upprepa händelse", button_recurring: "Inaktiverat", button_recurring_open: "Aktiverat", button_edit_series: "Redigera serien", button_edit_occurrence: "Redigera en kopia", agenda_tab: "Dagordning", date: "Datum", description: "Beskrivning", year_tab: "År", week_agenda_tab: "Dagordning", grid_tab: "Galler", drag_to_create: "Dra för att skapa ny", drag_to_move: "Dra för att flytta", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Dagligen", repeat_radio_week: "Veckovis", repeat_radio_month: "Månadsvis", repeat_radio_year: "Årligen", repeat_radio_day_type: "Var", repeat_text_day_count: "dag", repeat_radio_day_type2: "Varje arbetsdag", repeat_week: " Upprepa var", repeat_text_week_count: "vecka dessa dagar:", repeat_radio_month_type: "Upprepa", repeat_radio_month_start: "Den", repeat_text_month_day: "dagen var", repeat_text_month_count: "månad", repeat_text_month_count2_before: "var", repeat_text_month_count2_after: "månad", repeat_year_label: "Den", select_year_day2: "i", repeat_text_year_day: "dag i", select_year_month: "månad", repeat_radio_end: "Inget slutdatum", repeat_text_occurences_count: "upprepningar", repeat_radio_end3: "Sluta efter", repeat_radio_end2: "Efter", month_for_recurring: ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"], day_for_recurring: ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"] } };
-const tr = { date: { month_full: ["Ocak", "Þubat", "Mart", "Nisan", "Mayýs", "Haziran", "Temmuz", "Aðustos", "Eylül", "Ekim", "Kasým", "Aralýk"], month_short: ["Oca", "Þub", "Mar", "Nis", "May", "Haz", "Tem", "Aðu", "Eyl", "Eki", "Kas", "Ara"], day_full: ["Pazar", "Pazartes,", "Salý", "Çarþamba", "Perþembe", "Cuma", "Cumartesi"], day_short: ["Paz", "Pts", "Sal", "Çar", "Per", "Cum", "Cts"] }, labels: { dhx_cal_today_button: "Bugün", day_tab: "Gün", week_tab: "Hafta", month_tab: "Ay", new_event: "Uygun", icon_save: "Kaydet", icon_cancel: "Ýptal", icon_details: "Detaylar", icon_edit: "Düzenle", icon_delete: "Sil", confirm_closing: "", confirm_deleting: "Etkinlik silinecek, devam?", section_description: "Açýklama", section_time: "Zaman aralýðý", full_day: "Tam gün", confirm_recurring: "Tüm tekrar eden etkinlikler silinecek, devam?", section_recurring: "Etkinliði tekrarla", button_recurring: "Pasif", button_recurring_open: "Aktif", button_edit_series: "Dizi düzenleme", button_edit_occurrence: "Bir kopyasını düzenleyin", agenda_tab: "Ajanda", date: "Tarih", description: "Açýklama", year_tab: "Yýl", week_agenda_tab: "Ajanda", grid_tab: "Izgara", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute" } };
-const ua = { date: { month_full: ["Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень", "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"], month_short: ["Січ", "Лют", "Бер", "Кві", "Тра", "Чер", "Лип", "Сер", "Вер", "Жов", "Лис", "Гру"], day_full: ["Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота"], day_short: ["Нед", "Пон", "Вів", "Сер", "Чет", "Птн", "Суб"] }, labels: { dhx_cal_today_button: "Сьогодні", day_tab: "День", week_tab: "Тиждень", month_tab: "Місяць", new_event: "Нова подія", icon_save: "Зберегти", icon_cancel: "Відміна", icon_details: "Деталі", icon_edit: "Редагувати", icon_delete: "Вилучити", confirm_closing: "", confirm_deleting: "Подія вилучиться назавжди. Ви впевнені?", section_description: "Опис", section_time: "Часовий проміжок", full_day: "Весь день", confirm_recurring: "Хочете редагувати весь перелік повторюваних подій?", section_recurring: "Повторювана подія", button_recurring: "Відключено", button_recurring_open: "Включено", button_edit_series: "Редагувати серію", button_edit_occurrence: "Редагувати примірник", agenda_tab: "Перелік", date: "Дата", description: "Опис", year_tab: "Рік", week_agenda_tab: "Перелік", grid_tab: "Таблиця", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "День", repeat_radio_week: "Тиждень", repeat_radio_month: "Місяць", repeat_radio_year: "Рік", repeat_radio_day_type: "Кожний", repeat_text_day_count: "день", repeat_radio_day_type2: "Кожний робочий день", repeat_week: " Повторювати кожен", repeat_text_week_count: "тиждень , по:", repeat_radio_month_type: "Повторювати", repeat_radio_month_start: "", repeat_text_month_day: " числа кожний ", repeat_text_month_count: "місяць", repeat_text_month_count2_before: "кожен ", repeat_text_month_count2_after: "місяць", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "день", select_year_month: "", repeat_radio_end: "Без дати закінчення", repeat_text_occurences_count: "повторень", repeat_radio_end3: "До ", repeat_radio_end2: "", month_for_recurring: ["січня", "лютого", "березня", "квітня", "травня", "червня", "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"], day_for_recurring: ["Неділям", "Понеділкам", "Вівторкам", "Середам", "Четвергам", "П'ятницям", "Суботам"] } };
+const nb = { date: { month_full: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], month_short: ["Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des"], day_full: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"], day_short: ["Søn", "Mon", "Tir", "Ons", "Tor", "Fre", "Lør"] }, labels: { dhx_cal_today_button: "I dag", day_tab: "Dag", week_tab: "Uke", month_tab: "Måned", new_event: "Ny hendelse", icon_save: "Lagre", icon_cancel: "Avbryt", icon_details: "Detaljer", icon_edit: "Rediger", icon_delete: "Slett", confirm_closing: "", confirm_deleting: "Hendelsen vil bli slettet permanent. Er du sikker?", section_description: "Beskrivelse", section_time: "Tidsperiode", confirm_recurring: "Vil du forandre hele dette settet av repeterende hendelser?", section_recurring: "Repeter hendelsen", button_recurring: "Av", button_recurring_open: "På", button_edit_series: "Rediger serien", button_edit_occurrence: "Redigere en kopi", agenda_tab: "Agenda", date: "Dato", description: "Beskrivelse", year_tab: "År", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daglig", repeat_radio_week: "Ukentlig", repeat_radio_month: "Månedlig", repeat_radio_year: "Årlig", repeat_radio_day_type: "Hver", repeat_text_day_count: "dag", repeat_radio_day_type2: "Alle hverdager", repeat_week: " Gjentas hver", repeat_text_week_count: "uke på:", repeat_radio_month_type: "På hver", repeat_radio_month_start: "På", repeat_text_month_day: "dag hver", repeat_text_month_count: "måned", repeat_text_month_count2_before: "hver", repeat_text_month_count2_after: "måned", repeat_year_label: "på", select_year_day2: "i", repeat_text_year_day: "dag i", select_year_month: "", repeat_radio_end: "Ingen sluttdato", repeat_text_occurences_count: "forekomst", repeat_radio_end3: "Stop den", repeat_radio_end2: "Etter", repeat_never: "Aldri", repeat_daily: "Hver dag", repeat_workdays: "Hver ukedag", repeat_weekly: "Hver uke", repeat_monthly: "Hver måned", repeat_yearly: "Hvert år", repeat_custom: "Tilpasset", repeat_freq_day: "Dag", repeat_freq_week: "Uke", repeat_freq_month: "Måned", repeat_freq_year: "År", repeat_on_date: "På dato", repeat_ends: "Slutter", month_for_recurring: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], day_for_recurring: ["Sondag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"] } };
+const nl = { date: { month_full: ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "mrt", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"], day_short: ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"] }, labels: { dhx_cal_today_button: "Vandaag", day_tab: "Dag", week_tab: "Week", month_tab: "Maand", new_event: "Nieuw item", icon_save: "Opslaan", icon_cancel: "Annuleren", icon_details: "Details", icon_edit: "Bewerken", icon_delete: "Verwijderen", confirm_closing: "", confirm_deleting: "Item zal permanent worden verwijderd, doorgaan?", section_description: "Beschrijving", section_time: "Tijd periode", full_day: "Hele dag", confirm_recurring: "Wilt u alle terugkerende items bijwerken?", section_recurring: "Item herhalen", button_recurring: "Uit", button_recurring_open: "Aan", button_edit_series: "Bewerk de serie", button_edit_occurrence: "Bewerk een kopie", agenda_tab: "Agenda", date: "Datum", description: "Omschrijving", year_tab: "Jaar", week_agenda_tab: "Agenda", grid_tab: "Tabel", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Dagelijks", repeat_radio_week: "Wekelijks", repeat_radio_month: "Maandelijks", repeat_radio_year: "Jaarlijks", repeat_radio_day_type: "Elke", repeat_text_day_count: "dag(en)", repeat_radio_day_type2: "Elke werkdag", repeat_week: " Herhaal elke", repeat_text_week_count: "week op de volgende dagen:", repeat_radio_month_type: "Herhaal", repeat_radio_month_start: "Op", repeat_text_month_day: "dag iedere", repeat_text_month_count: "maanden", repeat_text_month_count2_before: "iedere", repeat_text_month_count2_after: "maanden", repeat_year_label: "Op", select_year_day2: "van", repeat_text_year_day: "dag", select_year_month: "maand", repeat_radio_end: "Geen eind datum", repeat_text_occurences_count: "keren", repeat_radio_end3: "Eindigd per", repeat_radio_end2: "Na", repeat_never: "Nooit", repeat_daily: "Elke dag", repeat_workdays: "Elke werkdag", repeat_weekly: "Elke week", repeat_monthly: "Elke maand", repeat_yearly: "Elk jaar", repeat_custom: "Aangepast", repeat_freq_day: "Dag", repeat_freq_week: "Week", repeat_freq_month: "Maand", repeat_freq_year: "Jaar", repeat_on_date: "Op datum", repeat_ends: "Eindigt", month_for_recurring: ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"], day_for_recurring: ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"] } };
+const no = { date: { month_full: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], month_short: ["Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des"], day_full: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"], day_short: ["Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"] }, labels: { dhx_cal_today_button: "Idag", day_tab: "Dag", week_tab: "Uke", month_tab: "Måned", new_event: "Ny", icon_save: "Lagre", icon_cancel: "Avbryt", icon_details: "Detaljer", icon_edit: "Endre", icon_delete: "Slett", confirm_closing: "Endringer blir ikke lagret, er du sikker?", confirm_deleting: "Oppføringen vil bli slettet, er du sikker?", section_description: "Beskrivelse", section_time: "Tidsperiode", full_day: "Full dag", confirm_recurring: "Vil du endre hele settet med repeterende oppføringer?", section_recurring: "Repeterende oppføring", button_recurring: "Ikke aktiv", button_recurring_open: "Aktiv", button_edit_series: "Rediger serien", button_edit_occurrence: "Redigere en kopi", agenda_tab: "Agenda", date: "Dato", description: "Beskrivelse", year_tab: "År", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daglig", repeat_radio_week: "Ukentlig", repeat_radio_month: "Månedlig", repeat_radio_year: "Årlig", repeat_radio_day_type: "Hver", repeat_text_day_count: "dag", repeat_radio_day_type2: "Hver arbeidsdag", repeat_week: " Gjenta hver", repeat_text_week_count: "uke neste dager:", repeat_radio_month_type: "Gjenta", repeat_radio_month_start: "På", repeat_text_month_day: "dag hver", repeat_text_month_count: "måned", repeat_text_month_count2_before: "hver", repeat_text_month_count2_after: "måned", repeat_year_label: "På", select_year_day2: "av", repeat_text_year_day: "dag", select_year_month: "måned", repeat_radio_end: "Ingen sluttdato", repeat_text_occurences_count: "forekomster", repeat_radio_end2: "Etter", repeat_radio_end3: "Slutt innen", repeat_never: "Aldri", repeat_daily: "Hver dag", repeat_workdays: "Hver ukedag", repeat_weekly: "Hver uke", repeat_monthly: "Hver måned", repeat_yearly: "Hvert år", repeat_custom: "Tilpasset", repeat_freq_day: "Dag", repeat_freq_week: "Uke", repeat_freq_month: "Måned", repeat_freq_year: "År", repeat_on_date: "På dato", repeat_ends: "Slutter", month_for_recurring: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], day_for_recurring: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"] } };
+const pl = { date: { month_full: ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"], month_short: ["Sty", "Lut", "Mar", "Kwi", "Maj", "Cze", "Lip", "Sie", "Wrz", "Paź", "Lis", "Gru"], day_full: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"], day_short: ["Nie", "Pon", "Wto", "Śro", "Czw", "Pią", "Sob"] }, labels: { dhx_cal_today_button: "Dziś", day_tab: "Dzień", week_tab: "Tydzień", month_tab: "Miesiąc", new_event: "Nowe zdarzenie", icon_save: "Zapisz", icon_cancel: "Anuluj", icon_details: "Szczegóły", icon_edit: "Edytuj", icon_delete: "Usuń", confirm_closing: "", confirm_deleting: "Zdarzenie zostanie usunięte na zawsze, kontynuować?", section_description: "Opis", section_time: "Okres czasu", full_day: "Cały dzień", confirm_recurring: "Czy chcesz edytować cały zbiór powtarzających się zdarzeń?", section_recurring: "Powtórz zdarzenie", button_recurring: "Nieaktywne", button_recurring_open: "Aktywne", button_edit_series: "Edytuj serię", button_edit_occurrence: "Edytuj kopię", agenda_tab: "Agenda", date: "Data", description: "Opis", year_tab: "Rok", week_agenda_tab: "Agenda", grid_tab: "Tabela", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Codziennie", repeat_radio_week: "Co tydzie", repeat_radio_month: "Co miesic", repeat_radio_year: "Co rok", repeat_radio_day_type: "Kadego", repeat_text_day_count: "dnia", repeat_radio_day_type2: "Kadego dnia roboczego", repeat_week: " Powtarzaj kadego", repeat_text_week_count: "tygodnia w dni:", repeat_radio_month_type: "Powtrz", repeat_radio_month_start: "W", repeat_text_month_day: "dnia kadego", repeat_text_month_count: "miesica", repeat_text_month_count2_before: "kadego", repeat_text_month_count2_after: "miesica", repeat_year_label: "W", select_year_day2: "miesica", repeat_text_year_day: "dnia miesica", select_year_month: "", repeat_radio_end: "Bez daty kocowej", repeat_text_occurences_count: "wystpieniu/ach", repeat_radio_end3: "Zakocz w", repeat_radio_end2: "Po", repeat_never: "Nigdy", repeat_daily: "Codziennie", repeat_workdays: "Każdy dzień roboczy", repeat_weekly: "Co tydzień", repeat_monthly: "Co miesiąc", repeat_yearly: "Co rok", repeat_custom: "Niestandardowy", repeat_freq_day: "Dzień", repeat_freq_week: "Tydzień", repeat_freq_month: "Miesiąc", repeat_freq_year: "Rok", repeat_on_date: "W dniu", repeat_ends: "Kończy się", month_for_recurring: ["Stycznia", "Lutego", "Marca", "Kwietnia", "Maja", "Czerwca", "Lipca", "Sierpnia", "Wrzenia", "Padziernka", "Listopada", "Grudnia"], day_for_recurring: ["Niedziela", "Poniedziaek", "Wtorek", "roda", "Czwartek", "Pitek", "Sobota"] } };
+const pt = { date: { month_full: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"], month_short: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"], day_full: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"], day_short: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"] }, labels: { dhx_cal_today_button: "Hoje", day_tab: "Dia", week_tab: "Semana", month_tab: "Mês", new_event: "Novo evento", icon_save: "Salvar", icon_cancel: "Cancelar", icon_details: "Detalhes", icon_edit: "Editar", icon_delete: "Deletar", confirm_closing: "", confirm_deleting: "Tem certeza que deseja excluir?", section_description: "Descrição", section_time: "Período de tempo", full_day: "Dia inteiro", confirm_recurring: "Deseja editar todos esses eventos repetidos?", section_recurring: "Repetir evento", button_recurring: "Desabilitar", button_recurring_open: "Habilitar", button_edit_series: "Editar a série", button_edit_occurrence: "Editar uma cópia", agenda_tab: "Dia", date: "Data", description: "Descrição", year_tab: "Ano", week_agenda_tab: "Dia", grid_tab: "Grade", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Diário", repeat_radio_week: "Semanal", repeat_radio_month: "Mensal", repeat_radio_year: "Anual", repeat_radio_day_type: "Cada", repeat_text_day_count: "dia(s)", repeat_radio_day_type2: "Cada trabalho diário", repeat_week: " Repita cada", repeat_text_week_count: "semana:", repeat_radio_month_type: "Repetir", repeat_radio_month_start: "Em", repeat_text_month_day: "todo dia", repeat_text_month_count: "mês", repeat_text_month_count2_before: "todo", repeat_text_month_count2_after: "mês", repeat_year_label: "Em", select_year_day2: "of", repeat_text_year_day: "dia", select_year_month: "mês", repeat_radio_end: "Sem data final", repeat_text_occurences_count: "ocorrências", repeat_radio_end3: "Fim", repeat_radio_end2: "Depois", repeat_never: "Nunca", repeat_daily: "Todos os dias", repeat_workdays: "Todos os dias úteis", repeat_weekly: "Toda semana", repeat_monthly: "Todo mês", repeat_yearly: "Todo ano", repeat_custom: "Personalizado", repeat_freq_day: "Dia", repeat_freq_week: "Semana", repeat_freq_month: "Mês", repeat_freq_year: "Ano", repeat_on_date: "Na data", repeat_ends: "Termina", month_for_recurring: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"], day_for_recurring: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"] } };
+const ro = { date: { month_full: ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "November", "December"], month_short: ["Ian", "Feb", "Mar", "Apr", "Mai", "Iun", "Iul", "Aug", "Sep", "Oct", "Nov", "Dec"], day_full: ["Duminica", "Luni", "Marti", "Miercuri", "Joi", "Vineri", "Sambata"], day_short: ["Du", "Lu", "Ma", "Mi", "Jo", "Vi", "Sa"] }, labels: { dhx_cal_today_button: "Astazi", day_tab: "Zi", week_tab: "Saptamana", month_tab: "Luna", new_event: "Eveniment nou", icon_save: "Salveaza", icon_cancel: "Anuleaza", icon_details: "Detalii", icon_edit: "Editeaza", icon_delete: "Sterge", confirm_closing: "Schimbarile nu vor fi salvate, esti sigur?", confirm_deleting: "Evenimentul va fi sters permanent, esti sigur?", section_description: "Descriere", section_time: "Interval", full_day: "Toata ziua", confirm_recurring: "Vrei sa editezi toata seria de evenimente repetate?", section_recurring: "Repetare", button_recurring: "Dezactivata", button_recurring_open: "Activata", button_edit_series: "Editeaza serie", button_edit_occurrence: "Editeaza doar intrare", agenda_tab: "Agenda", date: "Data", description: "Descriere", year_tab: "An", week_agenda_tab: "Agenda", grid_tab: "Lista", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Zilnic", repeat_radio_week: "Saptamanal", repeat_radio_month: "Lunar", repeat_radio_year: "Anual", repeat_radio_day_type: "La fiecare", repeat_text_day_count: "zi(le)", repeat_radio_day_type2: "Fiecare zi lucratoare", repeat_week: " Repeta la fiecare", repeat_text_week_count: "saptamana in urmatoarele zile:", repeat_radio_month_type: "Repeta in", repeat_radio_month_start: "In a", repeat_text_month_day: "zi la fiecare", repeat_text_month_count: "luni", repeat_text_month_count2_before: "la fiecare", repeat_text_month_count2_after: "luni", repeat_year_label: "In", select_year_day2: "a lunii", repeat_text_year_day: "zi a lunii", select_year_month: "", repeat_radio_end: "Fara data de sfarsit", repeat_text_occurences_count: "evenimente", repeat_radio_end3: "La data", repeat_radio_end2: "Dupa", repeat_never: "Niciodată", repeat_daily: "În fiecare zi", repeat_workdays: "În fiecare zi lucrătoare", repeat_weekly: "În fiecare săptămână", repeat_monthly: "În fiecare lună", repeat_yearly: "În fiecare an", repeat_custom: "Personalizat", repeat_freq_day: "Zi", repeat_freq_week: "Săptămână", repeat_freq_month: "Lună", repeat_freq_year: "An", repeat_on_date: "La data", repeat_ends: "Se termină", month_for_recurring: ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"], day_for_recurring: ["Duminica", "Luni", "Marti", "Miercuri", "Joi", "Vineri", "Sambata"] } };
+const ru = { date: { month_full: ["Январь", "Февраль", "Март", "Апрель", "Maй", "Июнь", "Июль", "Август", "Сентябрь", "Oктябрь", "Ноябрь", "Декабрь"], month_short: ["Янв", "Фев", "Maр", "Aпр", "Maй", "Июн", "Июл", "Aвг", "Сен", "Окт", "Ноя", "Дек"], day_full: ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"], day_short: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"] }, labels: { dhx_cal_today_button: "Сегодня", day_tab: "День", week_tab: "Неделя", month_tab: "Месяц", new_event: "Новое событие", icon_save: "Сохранить", icon_cancel: "Отменить", icon_details: "Детали", icon_edit: "Изменить", icon_delete: "Удалить", confirm_closing: "", confirm_deleting: "Событие будет удалено безвозвратно, продолжить?", section_description: "Описание", section_time: "Период времени", full_day: "Весь день", confirm_recurring: "Вы хотите изменить всю серию повторяющихся событий?", section_recurring: "Повторение", button_recurring: "Отключено", button_recurring_open: "Включено", button_edit_series: "Редактировать серию", button_edit_occurrence: "Редактировать экземпляр", agenda_tab: "Список", date: "Дата", description: "Описание", year_tab: "Год", week_agenda_tab: "Список", grid_tab: "Таблица", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "День", repeat_radio_week: "Неделя", repeat_radio_month: "Месяц", repeat_radio_year: "Год", repeat_radio_day_type: "Каждый", repeat_text_day_count: "день", repeat_radio_day_type2: "Каждый рабочий день", repeat_week: " Повторять каждую", repeat_text_week_count: "неделю , в:", repeat_radio_month_type: "Повторять", repeat_radio_month_start: "", repeat_text_month_day: " числа каждый ", repeat_text_month_count: "месяц", repeat_text_month_count2_before: "каждый ", repeat_text_month_count2_after: "месяц", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "день", select_year_month: "", repeat_radio_end: "Без даты окончания", repeat_text_occurences_count: "повторений", repeat_radio_end3: "До ", repeat_radio_end2: "", repeat_never: "Никогда", repeat_daily: "Каждый день", repeat_workdays: "Каждый будний день", repeat_weekly: "Каждую неделю", repeat_monthly: "Каждый месяц", repeat_yearly: "Каждый год", repeat_custom: "Настроить", repeat_freq_day: "День", repeat_freq_week: "Неделя", repeat_freq_month: "Месяц", repeat_freq_year: "Год", repeat_on_date: "В дату", repeat_ends: "Заканчивается", month_for_recurring: ["Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"], day_for_recurring: ["Воскресенье", "Понедельник", "Вторник", "Среду", "Четверг", "Пятницу", "Субботу"] } };
+const si = { date: { month_full: ["Januar", "Februar", "Marec", "April", "Maj", "Junij", "Julij", "Avgust", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Nedelja", "Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek", "Sobota"], day_short: ["Ned", "Pon", "Tor", "Sre", "Čet", "Pet", "Sob"] }, labels: { dhx_cal_today_button: "Danes", day_tab: "Dan", week_tab: "Teden", month_tab: "Mesec", new_event: "Nov dogodek", icon_save: "Shrani", icon_cancel: "Prekliči", icon_details: "Podrobnosti", icon_edit: "Uredi", icon_delete: "Izbriši", confirm_closing: "", confirm_deleting: "Dogodek bo izbrisan. Želite nadaljevati?", section_description: "Opis", section_time: "Časovni okvir", full_day: "Ves dan", confirm_recurring: "Želite urediti celoten set ponavljajočih dogodkov?", section_recurring: "Ponovi dogodek", button_recurring: "Onemogočeno", button_recurring_open: "Omogočeno", button_edit_series: "Edit series", button_edit_occurrence: "Edit occurrence", agenda_tab: "Zadeva", date: "Datum", description: "Opis", year_tab: "Leto", week_agenda_tab: "Zadeva", grid_tab: "Miza", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Dnevno", repeat_radio_week: "Tedensko", repeat_radio_month: "Mesečno", repeat_radio_year: "Letno", repeat_radio_day_type: "Vsak", repeat_text_day_count: "dan", repeat_radio_day_type2: "Vsak delovni dan", repeat_week: " Ponavljaj vsak", repeat_text_week_count: "teden na naslednje dni:", repeat_radio_month_type: "Ponavljaj", repeat_radio_month_start: "Na", repeat_text_month_day: "dan vsak", repeat_text_month_count: "mesec", repeat_text_month_count2_before: "vsak", repeat_text_month_count2_after: "mesec", repeat_year_label: "Na", select_year_day2: "od", repeat_text_year_day: "dan", select_year_month: "mesec", repeat_radio_end: "Brez končnega datuma", repeat_text_occurences_count: "pojavitve", repeat_radio_end2: "Po", repeat_radio_end3: "Končaj do", repeat_never: "Nikoli", repeat_daily: "Vsak dan", repeat_workdays: "Vsak delovni dan", repeat_weekly: "Vsak teden", repeat_monthly: "Vsak mesec", repeat_yearly: "Vsako leto", repeat_custom: "Po meri", repeat_freq_day: "Dan", repeat_freq_week: "Teden", repeat_freq_month: "Mesec", repeat_freq_year: "Leto", repeat_on_date: "Na datum", repeat_ends: "Konča se", month_for_recurring: ["Januar", "Februar", "Marec", "April", "Maj", "Junij", "Julij", "Avgust", "September", "Oktober", "November", "December"], day_for_recurring: ["Nedelja", "Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek", "Sobota"] } };
+const sk = { date: { month_full: ["Január", "Február", "Marec", "Apríl", "Máj", "Jún", "Júl", "August", "September", "Október", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Máj", "Jún", "Júl", "Aug", "Sept", "Okt", "Nov", "Dec"], day_full: ["Nedeľa", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"], day_short: ["Ne", "Po", "Ut", "St", "Št", "Pi", "So"] }, labels: { dhx_cal_today_button: "Dnes", day_tab: "Deň", week_tab: "Týždeň", month_tab: "Mesiac", new_event: "Nová udalosť", icon_save: "Uložiť", icon_cancel: "Späť", icon_details: "Detail", icon_edit: "Edituj", icon_delete: "Zmazať", confirm_closing: "Vaše zmeny nebudú uložené. Skutočne?", confirm_deleting: "Udalosť bude natrvalo vymazaná. Skutočne?", section_description: "Poznámky", section_time: "Doba platnosti", confirm_recurring: "Prajete si upraviť celú radu opakovaných udalostí?", section_recurring: "Opakovanie udalosti", button_recurring: "Vypnuté", button_recurring_open: "Zapnuté", button_edit_series: "Upraviť opakovania", button_edit_occurrence: "Upraviť inštancie", agenda_tab: "Program", date: "Dátum", description: "Poznámka", year_tab: "Rok", full_day: "Celý deň", week_agenda_tab: "Program", grid_tab: "Mriežka", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Denne", repeat_radio_week: "Týždenne", repeat_radio_month: "Mesaène", repeat_radio_year: "Roène", repeat_radio_day_type: "Každý", repeat_text_day_count: "deò", repeat_radio_day_type2: "Každý prac. deò", repeat_week: "Opakova každý", repeat_text_week_count: "týždeò v dòoch:", repeat_radio_month_type: "Opakova", repeat_radio_month_start: "On", repeat_text_month_day: "deò každý", repeat_text_month_count: "mesiac", repeat_text_month_count2_before: "každý", repeat_text_month_count2_after: "mesiac", repeat_year_label: "On", select_year_day2: "poèas", repeat_text_year_day: "deò", select_year_month: "mesiac", repeat_radio_end: "Bez dátumu ukonèenia", repeat_text_occurences_count: "udalostiach", repeat_radio_end3: "Ukonèi", repeat_radio_end2: "Po", repeat_never: "Nikdy", repeat_daily: "Každý deň", repeat_workdays: "Každý pracovný deň", repeat_weekly: "Každý týždeň", repeat_monthly: "Každý mesiac", repeat_yearly: "Každý rok", repeat_custom: "Vlastné", repeat_freq_day: "Deň", repeat_freq_week: "Týždeň", repeat_freq_month: "Mesiac", repeat_freq_year: "Rok", repeat_on_date: "Na dátum", repeat_ends: "Koniec", month_for_recurring: ["Január", "Február", "Marec", "Apríl", "Máj", "Jún", "Júl", "August", "September", "Október", "November", "December"], day_for_recurring: ["Nede¾a", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"] } };
+const sv = { date: { month_full: ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"], day_short: ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"] }, labels: { dhx_cal_today_button: "Idag", day_tab: "Dag", week_tab: "Vecka", month_tab: "Månad", new_event: "Ny händelse", icon_save: "Spara", icon_cancel: "Ångra", icon_details: "Detaljer", icon_edit: "Ändra", icon_delete: "Ta bort", confirm_closing: "", confirm_deleting: "Är du säker på att du vill ta bort händelsen permanent?", section_description: "Beskrivning", section_time: "Tid", full_day: "Hela dagen", confirm_recurring: "Vill du redigera hela serien med repeterande händelser?", section_recurring: "Upprepa händelse", button_recurring: "Inaktiverat", button_recurring_open: "Aktiverat", button_edit_series: "Redigera serien", button_edit_occurrence: "Redigera en kopia", agenda_tab: "Dagordning", date: "Datum", description: "Beskrivning", year_tab: "År", week_agenda_tab: "Dagordning", grid_tab: "Galler", drag_to_create: "Dra för att skapa ny", drag_to_move: "Dra för att flytta", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Dagligen", repeat_radio_week: "Veckovis", repeat_radio_month: "Månadsvis", repeat_radio_year: "Årligen", repeat_radio_day_type: "Var", repeat_text_day_count: "dag", repeat_radio_day_type2: "Varje arbetsdag", repeat_week: " Upprepa var", repeat_text_week_count: "vecka dessa dagar:", repeat_radio_month_type: "Upprepa", repeat_radio_month_start: "Den", repeat_text_month_day: "dagen var", repeat_text_month_count: "månad", repeat_text_month_count2_before: "var", repeat_text_month_count2_after: "månad", repeat_year_label: "Den", select_year_day2: "i", repeat_text_year_day: "dag i", select_year_month: "månad", repeat_radio_end: "Inget slutdatum", repeat_text_occurences_count: "upprepningar", repeat_radio_end3: "Sluta efter", repeat_radio_end2: "Efter", repeat_never: "Aldrig", repeat_daily: "Varje dag", repeat_workdays: "Varje vardag", repeat_weekly: "Varje vecka", repeat_monthly: "Varje månad", repeat_yearly: "Varje år", repeat_custom: "Anpassad", repeat_freq_day: "Dag", repeat_freq_week: "Vecka", repeat_freq_month: "Månad", repeat_freq_year: "År", repeat_on_date: "På datum", repeat_ends: "Slutar", month_for_recurring: ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"], day_for_recurring: ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"] } };
+const tr = { date: { month_full: ["Ocak", "Þubat", "Mart", "Nisan", "Mayýs", "Haziran", "Temmuz", "Aðustos", "Eylül", "Ekim", "Kasým", "Aralýk"], month_short: ["Oca", "Þub", "Mar", "Nis", "May", "Haz", "Tem", "Aðu", "Eyl", "Eki", "Kas", "Ara"], day_full: ["Pazar", "Pazartes,", "Salý", "Çarþamba", "Perþembe", "Cuma", "Cumartesi"], day_short: ["Paz", "Pts", "Sal", "Çar", "Per", "Cum", "Cts"] }, labels: { dhx_cal_today_button: "Bugün", day_tab: "Gün", week_tab: "Hafta", month_tab: "Ay", new_event: "Uygun", icon_save: "Kaydet", icon_cancel: "Ýptal", icon_details: "Detaylar", icon_edit: "Düzenle", icon_delete: "Sil", confirm_closing: "", confirm_deleting: "Etkinlik silinecek, devam?", section_description: "Açýklama", section_time: "Zaman aralýðý", full_day: "Tam gün", confirm_recurring: "Tüm tekrar eden etkinlikler silinecek, devam?", section_recurring: "Etkinliði tekrarla", button_recurring: "Pasif", button_recurring_open: "Aktif", button_edit_series: "Dizi düzenleme", button_edit_occurrence: "Bir kopyasını düzenleyin", agenda_tab: "Ajanda", date: "Tarih", description: "Açýklama", year_tab: "Yýl", week_agenda_tab: "Ajanda", grid_tab: "Izgara", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Günlük", repeat_radio_week: "Haftalık", repeat_radio_month: "Aylık", repeat_radio_year: "Yıllık", repeat_radio_day_type: "Her", repeat_text_day_count: "gün", repeat_radio_day_type2: "Her iş günü", repeat_week: " Tekrar her", repeat_text_week_count: "hafta şu günlerde:", repeat_radio_month_type: "Tekrar et", repeat_radio_month_start: "Tarihinde", repeat_text_month_day: "gün her", repeat_text_month_count: "ay", repeat_text_month_count2_before: "her", repeat_text_month_count2_after: "ay", repeat_year_label: "Tarihinde", select_year_day2: "ayın", repeat_text_year_day: "günü", select_year_month: "ay", repeat_radio_end: "Bitiş tarihi yok", repeat_text_occurences_count: "olay", repeat_radio_end2: "Sonra", repeat_radio_end3: "Tarihinde bitir", repeat_never: "Asla", repeat_daily: "Her gün", repeat_workdays: "Her iş günü", repeat_weekly: "Her hafta", repeat_monthly: "Her ay", repeat_yearly: "Her yıl", repeat_custom: "Özel", repeat_freq_day: "Gün", repeat_freq_week: "Hafta", repeat_freq_month: "Ay", repeat_freq_year: "Yıl", repeat_on_date: "Tarihinde", repeat_ends: "Biter", month_for_recurring: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"], day_for_recurring: ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"] } };
+const ua = { date: { month_full: ["Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень", "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"], month_short: ["Січ", "Лют", "Бер", "Кві", "Тра", "Чер", "Лип", "Сер", "Вер", "Жов", "Лис", "Гру"], day_full: ["Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота"], day_short: ["Нед", "Пон", "Вів", "Сер", "Чет", "Птн", "Суб"] }, labels: { dhx_cal_today_button: "Сьогодні", day_tab: "День", week_tab: "Тиждень", month_tab: "Місяць", new_event: "Нова подія", icon_save: "Зберегти", icon_cancel: "Відміна", icon_details: "Деталі", icon_edit: "Редагувати", icon_delete: "Вилучити", confirm_closing: "", confirm_deleting: "Подія вилучиться назавжди. Ви впевнені?", section_description: "Опис", section_time: "Часовий проміжок", full_day: "Весь день", confirm_recurring: "Хочете редагувати весь перелік повторюваних подій?", section_recurring: "Повторювана подія", button_recurring: "Відключено", button_recurring_open: "Включено", button_edit_series: "Редагувати серію", button_edit_occurrence: "Редагувати примірник", agenda_tab: "Перелік", date: "Дата", description: "Опис", year_tab: "Рік", week_agenda_tab: "Перелік", grid_tab: "Таблиця", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "День", repeat_radio_week: "Тиждень", repeat_radio_month: "Місяць", repeat_radio_year: "Рік", repeat_radio_day_type: "Кожний", repeat_text_day_count: "день", repeat_radio_day_type2: "Кожний робочий день", repeat_week: " Повторювати кожен", repeat_text_week_count: "тиждень , по:", repeat_radio_month_type: "Повторювати", repeat_radio_month_start: "", repeat_text_month_day: " числа кожний ", repeat_text_month_count: "місяць", repeat_text_month_count2_before: "кожен ", repeat_text_month_count2_after: "місяць", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "день", select_year_month: "", repeat_radio_end: "Без дати закінчення", repeat_text_occurences_count: "повторень", repeat_radio_end3: "До ", repeat_radio_end2: "", repeat_never: "Ніколи", repeat_daily: "Щодня", repeat_workdays: "Щодня в робочі дні", repeat_weekly: "Щотижня", repeat_monthly: "Щомісяця", repeat_yearly: "Щороку", repeat_custom: "Налаштоване", repeat_freq_day: "День", repeat_freq_week: "Тиждень", repeat_freq_month: "Місяць", repeat_freq_year: "Рік", repeat_on_date: "На дату", repeat_ends: "Закінчується", month_for_recurring: ["січня", "лютого", "березня", "квітня", "травня", "червня", "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"], day_for_recurring: ["Неділям", "Понеділкам", "Вівторкам", "Середам", "Четвергам", "П'ятницям", "Суботам"] } };
 function i18nFactory() {
   return new LocaleManager({ en, ar, be, ca, cn, cs, da, de, el, es, fi, fr, he, hu, id, it, jp, nb, nl, no, pl, pt, ro, ru, si, sk, sv, tr, ua });
 }
@@ -7620,7 +8723,9 @@ class DatePicker {
   }
 }
 function factoryMethod(extensionManager) {
-  const scheduler2 = { version: "7.0.5" };
+  const scheduler2 = { version: "7.1.0" };
+  scheduler2.$stateProvider = StateService();
+  scheduler2.getState = scheduler2.$stateProvider.getState;
   extend$n(scheduler2);
   extend$i(scheduler2);
   extend$j(scheduler2);
@@ -7691,6 +8796,7 @@ function factoryMethod(extensionManager) {
     }
   }, getLocale: i18n.getLocale };
   scheduler2.i18n.setLocale("en");
+  initPlugins(scheduler2);
   scheduler2.ext = {};
   const activePlugins = {};
   scheduler2.plugins = function(config) {
@@ -9445,9 +10551,9 @@ function scheduler_node(scheduler2) {
       return a.id > b.id ? 1 : -1;
     return a.start_date.valueOf() > b.start_date.valueOf() ? 1 : -1;
   }, _pickEvent: function(from, to, startId, reverse) {
-    var range = scheduler2.getState();
-    from = new Date(Math.max(range.min_date.valueOf(), from.valueOf()));
-    to = new Date(Math.min(range.max_date.valueOf(), to.valueOf()));
+    var range2 = scheduler2.getState();
+    from = new Date(Math.max(range2.min_date.valueOf(), from.valueOf()));
+    to = new Date(Math.min(range2.max_date.valueOf(), to.valueOf()));
     var evs = scheduler2.getEvents(from, to);
     evs.sort(this._compareEvents);
     if (reverse) {
@@ -10123,8 +11229,8 @@ function time_slot(scheduler2) {
   }, findVisibleColumn: function(start, dir) {
     var date = start;
     dir = dir || 1;
-    var range = scheduler2.getState();
-    while (!this.isDateVisible(date) && (dir > 0 && date.valueOf() <= range.max_date.valueOf() || dir < 0 && date.valueOf() >= range.min_date.valueOf())) {
+    var range2 = scheduler2.getState();
+    while (!this.isDateVisible(date) && (dir > 0 && date.valueOf() <= range2.max_date.valueOf() || dir < 0 && date.valueOf() >= range2.min_date.valueOf())) {
       date = this.nextDateColumn(date, dir);
     }
     return date;
@@ -10213,13 +11319,13 @@ function time_slot(scheduler2) {
         next = slot;
         break;
     }
-    var range = scheduler2.getState();
-    if (next.start_date.valueOf() < range.min_date.valueOf()) {
-      next.start_date = this.findVisibleColumn(range.min_date);
+    var range2 = scheduler2.getState();
+    if (next.start_date.valueOf() < range2.min_date.valueOf()) {
+      next.start_date = this.findVisibleColumn(range2.min_date);
       next.start_date.setHours(scheduler2.config.first_hour);
     }
-    if (next.end_date.valueOf() > range.max_date.valueOf()) {
-      next.end_date = this.findVisibleColumn(range.max_date, -1);
+    if (next.end_date.valueOf() > range2.max_date.valueOf()) {
+      next.end_date = this.findVisibleColumn(range2.max_date, -1);
     }
     return scheduler2.$keyboardNavigation.TimeSlot.prototype.clone(next);
   }, extendTimelineSlot: function(slot, direction) {
@@ -11647,43 +12753,9 @@ function limit(scheduler2) {
   scheduler2.config.limit_end = null;
   scheduler2.config.limit_view = false;
   scheduler2.config.check_limits = true;
-  scheduler2.config.mark_now = true;
-  scheduler2.config.display_marked_timespans = true;
-  scheduler2.config.overwrite_marked_timespans = true;
   scheduler2._temp_limit_scope = function() {
     var before = null;
     var dhx_time_block = "dhx_time_block";
-    var default_timespan_type = "default";
-    var fix_options = function(options, days, zones) {
-      if (days instanceof Date && zones instanceof Date) {
-        options.start_date = days;
-        options.end_date = zones;
-      } else {
-        options.days = days;
-        options.zones = zones;
-      }
-      return options;
-    };
-    var get_resulting_options = function(days, zones, sections) {
-      var options = typeof days == "object" ? days : { days };
-      options.type = dhx_time_block;
-      options.css = "";
-      if (zones) {
-        if (sections)
-          options.sections = sections;
-        options = fix_options(options, days, zones);
-      }
-      return options;
-    };
-    scheduler2.blockTime = function(days, zones, sections) {
-      var options = get_resulting_options(days, zones, sections);
-      return scheduler2.addMarkedTimespan(options);
-    };
-    scheduler2.unblockTime = function(days, zones, sections) {
-      zones = zones || "fullday";
-      var options = get_resulting_options(days, zones, sections);
-      return scheduler2.deleteMarkedTimespan(options);
-    };
     scheduler2.attachEvent("onBeforeViewChange", function(om, od, nm, nd) {
       function isBlocked(date, mode) {
         var limit_start = scheduler2.config.limit_start, limit_end = scheduler2.config.limit_end, date_end = scheduler2.date.add(date, 1, mode);
@@ -11705,156 +12777,21 @@ function limit(scheduler2) {
       }
       return true;
     });
-    scheduler2.checkInMarkedTimespan = function(ev, timespan_type, on_overlap) {
-      timespan_type = timespan_type || default_timespan_type;
-      var res = true;
-      var temp_start_date = new Date(ev.start_date.valueOf());
-      var temp_end_date = scheduler2.date.add(temp_start_date, 1, "day");
-      var timespans = scheduler2._marked_timespans;
-      for (; temp_start_date < ev.end_date; temp_start_date = scheduler2.date.date_part(temp_end_date), temp_end_date = scheduler2.date.add(temp_start_date, 1, "day")) {
-        var day_value = +scheduler2.date.date_part(new Date(temp_start_date));
-        var day_index = temp_start_date.getDay();
-        var zones = getZones(ev, timespans, day_index, day_value, timespan_type);
-        if (zones) {
-          for (var i = 0; i < zones.length; i += 2) {
-            var eventStart = scheduler2._get_zone_minutes(temp_start_date);
-            var eventEnd = ev.end_date > temp_end_date || ev.end_date.getDate() != temp_start_date.getDate() ? 1440 : scheduler2._get_zone_minutes(ev.end_date);
-            var markerStart = zones[i];
-            var markerEnd = zones[i + 1];
-            if (markerStart < eventEnd && markerEnd > eventStart) {
-              if (typeof on_overlap == "function") {
-                res = on_overlap(ev, eventStart, eventEnd, markerStart, markerEnd);
-              } else {
-                res = false;
-              }
-              if (!res)
-                break;
-            }
-          }
-        }
-      }
-      return !res;
-    };
-    var blocker = scheduler2.checkLimitViolation = function(event2) {
-      if (!event2)
-        return true;
-      if (!scheduler2.config.check_limits)
-        return true;
-      var s = scheduler2;
-      var c = s.config;
-      var evs = [];
-      if (event2.rec_type) {
-        var dates = scheduler2.getRecDates(event2);
-        for (var i = 0; i < dates.length; i++) {
-          var ev = scheduler2._copy_event(event2);
-          scheduler2._lame_copy(ev, dates[i]);
-          evs.push(ev);
-        }
-      } else {
-        evs = [event2];
-      }
-      var complete_res = true;
-      for (var p = 0; p < evs.length; p++) {
-        var res = true;
-        var ev = evs[p];
-        ev._timed = scheduler2.isOneDayEvent(ev);
-        res = c.limit_start && c.limit_end ? ev.start_date.valueOf() >= c.limit_start.valueOf() && ev.end_date.valueOf() <= c.limit_end.valueOf() : true;
-        if (res) {
-          res = !scheduler2.checkInMarkedTimespan(ev, dhx_time_block, function(event3, eventStart, eventEnd, markerStart, markerEnd) {
-            var allow = true;
-            if (eventStart <= markerEnd && eventStart >= markerStart) {
-              if (markerEnd == 24 * 60 || eventEnd <= markerEnd) {
-                allow = false;
-              }
-              if (event3._timed && s._drag_id && s._drag_mode == "new-size") {
-                event3.start_date.setHours(0);
-                event3.start_date.setMinutes(markerEnd);
-              } else {
-                allow = false;
-              }
-            }
-            if (eventEnd >= markerStart && eventEnd <= markerEnd || eventStart < markerStart && eventEnd > markerEnd) {
-              if (event3._timed && s._drag_id && s._drag_mode == "new-size") {
-                event3.end_date.setHours(0);
-                event3.end_date.setMinutes(markerStart);
-              } else {
-                allow = false;
-              }
-            }
-            return allow;
-          });
-        }
-        if (!res) {
-          res = s.checkEvent("onLimitViolation") ? s.callEvent("onLimitViolation", [ev.id, ev]) : res;
-        }
-        complete_res = complete_res && res;
-      }
-      if (!complete_res) {
-        s._drag_id = null;
-        s._drag_mode = null;
-      }
-      return complete_res;
-    };
-    scheduler2._get_blocked_zones = function(timespans, property, day_index, day_value, timespan_type) {
-      var zones = [];
-      if (timespans && timespans[property]) {
-        var timeline_zones = timespans[property];
-        var blocked_timeline_zones = this._get_relevant_blocked_zones(day_index, day_value, timeline_zones, timespan_type);
-        for (var i = 0; i < blocked_timeline_zones.length; i++) {
-          zones = this._add_timespan_zones(zones, blocked_timeline_zones[i].zones);
-        }
-      }
-      return zones;
-    };
-    scheduler2._get_relevant_blocked_zones = function(day_index, day_value, zones, timespan_type) {
-      var resultZones;
-      if (scheduler2.config.overwrite_marked_timespans) {
-        resultZones = zones[day_value] && zones[day_value][timespan_type] ? zones[day_value][timespan_type] : zones[day_index] && zones[day_index][timespan_type] ? zones[day_index][timespan_type] : [];
-      } else {
-        resultZones = [];
-        if (zones[day_value] && zones[day_value][timespan_type]) {
-          resultZones = resultZones.concat(zones[day_value][timespan_type]);
-        }
-        if (zones[day_index] && zones[day_index][timespan_type]) {
-          resultZones = resultZones.concat(zones[day_index][timespan_type]);
-        }
-      }
-      return resultZones;
-    };
-    function getZones(ev, timespans, day_index, day_value, timespan_type) {
-      var s = scheduler2;
-      var zones = [];
-      var containers = { _props: "map_to", matrix: "y_property" };
-      for (var container in containers) {
-        var property = containers[container];
-        if (s[container]) {
-          for (var view in s[container]) {
-            var view_config = s[container][view];
-            var linker = view_config[property];
-            if (!ev[linker])
-              continue;
-            zones = s._add_timespan_zones(zones, scheduler2._get_blocked_zones(timespans[view], ev[linker], day_index, day_value, timespan_type));
-          }
-        }
-      }
-      zones = s._add_timespan_zones(zones, scheduler2._get_blocked_zones(timespans, "global", day_index, day_value, timespan_type));
-      return zones;
-    }
     scheduler2.attachEvent("onMouseDown", function(classname) {
       return !(classname == dhx_time_block);
     });
     scheduler2.attachEvent("onBeforeDrag", function(id2) {
       if (!id2)
         return true;
-      return blocker(scheduler2.getEvent(id2));
+      return scheduler2.checkLimitViolation(scheduler2.getEvent(id2));
     });
     scheduler2.attachEvent("onClick", function(event_id, native_event_object) {
-      return blocker(scheduler2.getEvent(event_id));
+      return scheduler2.checkLimitViolation(scheduler2.getEvent(event_id));
     });
     scheduler2.attachEvent("onBeforeLightbox", function(id2) {
       var ev = scheduler2.getEvent(id2);
       before = [ev.start_date, ev.end_date];
-      return blocker(ev);
+      return scheduler2.checkLimitViolation(ev);
     });
     scheduler2.attachEvent("onEventSave", function(id2, data, is_new_event) {
       if (!(data.start_date && data.end_date)) {
@@ -11865,15 +12802,15 @@ function limit(scheduler2) {
       if (data.rec_type) {
         var data_copy = scheduler2._lame_clone(data);
         scheduler2._roll_back_dates(data_copy);
-        return blocker(data_copy);
+        return scheduler2.checkLimitViolation(data_copy);
       }
-      return blocker(data);
+      return scheduler2.checkLimitViolation(data);
     });
     scheduler2.attachEvent("onEventAdded", function(id2) {
       if (!id2)
         return true;
       var ev = scheduler2.getEvent(id2);
-      if (!blocker(ev) && scheduler2.config.limit_start && scheduler2.config.limit_end) {
+      if (!scheduler2.checkLimitViolation(ev) && scheduler2.config.limit_start && scheduler2.config.limit_end) {
         if (ev.start_date < scheduler2.config.limit_start) {
           ev.start_date = new Date(scheduler2.config.limit_start);
         }
@@ -11897,7 +12834,7 @@ function limit(scheduler2) {
       if (!id2)
         return true;
       var ev = scheduler2.getEvent(id2);
-      if (!blocker(ev)) {
+      if (!scheduler2.checkLimitViolation(ev)) {
         if (!before)
           return false;
         ev.start_date = before[0];
@@ -11907,12 +12844,12 @@ function limit(scheduler2) {
       return true;
     });
     scheduler2.attachEvent("onBeforeEventChanged", function(ev, native_object, is_new) {
-      return blocker(ev);
+      return scheduler2.checkLimitViolation(ev);
     });
     scheduler2.attachEvent("onBeforeEventCreated", function(ev) {
       var start_date = scheduler2.getActionData(ev).date;
       var event2 = { _timed: true, start_date, end_date: scheduler2.date.add(start_date, scheduler2.config.time_step, "minute") };
-      return blocker(event2);
+      return scheduler2.checkLimitViolation(event2);
     });
     scheduler2.attachEvent("onViewChange", function() {
       scheduler2._mark_now();
@@ -11936,658 +12873,391 @@ function limit(scheduler2) {
     scheduler2.attachEvent("onDestroy", function() {
       clearInterval(scheduler2._mark_now_timer);
     });
-    scheduler2._mark_now = function(hide) {
-      var dhx_now_time = "dhx_now_time";
-      if (!this._els[dhx_now_time]) {
-        this._els[dhx_now_time] = [];
-      }
-      var now = scheduler2._currentDate();
-      var cfg = this.config;
-      scheduler2._remove_mark_now();
-      if (!hide && cfg.mark_now && now < this._max_date && now > this._min_date && now.getHours() >= cfg.first_hour && now.getHours() < cfg.last_hour) {
-        var day_index = this.locate_holder_day(now);
-        this._els[dhx_now_time] = scheduler2._append_mark_now(day_index, now);
-      }
-    };
-    scheduler2._append_mark_now = function(day_index, now) {
-      var dhx_now_time = "dhx_now_time";
-      var zone_start = scheduler2._get_zone_minutes(now);
-      var options = { zones: [zone_start, zone_start + 1], css: dhx_now_time, type: dhx_now_time };
-      if (!this._table_view) {
-        if (this._props && this._props[this._mode]) {
-          var start_index, end_index;
-          var view = this._props[this._mode];
-          var units_l = view.size || view.options.length;
-          if (view.days > 1) {
-            if (view.size && view.options.length) {
-              day_index = (view.position + day_index) / view.options.length * view.size;
-            }
-            start_index = day_index;
-            end_index = day_index + units_l;
-          } else {
-            start_index = 0;
-            end_index = start_index + units_l;
-          }
-          var r_divs = [];
-          for (var i = start_index; i < end_index; i++) {
-            var t_day = i;
-            options.days = t_day;
-            var t_div = scheduler2._render_marked_timespan(options, null, t_day)[0];
-            r_divs.push(t_div);
-          }
-          return r_divs;
-        } else {
-          options.days = day_index;
-          return scheduler2._render_marked_timespan(options, null, day_index);
-        }
-      } else {
-        if (this._mode == "month") {
-          options.days = +scheduler2.date.date_part(now);
-          return scheduler2._render_marked_timespan(options, null, null);
-        }
-      }
-    };
-    scheduler2._remove_mark_now = function() {
-      var dhx_now_time = "dhx_now_time";
-      var els = this._els[dhx_now_time];
-      for (var i = 0; i < els.length; i++) {
-        var div = els[i];
-        var parent = div.parentNode;
-        if (parent) {
-          parent.removeChild(div);
-        }
-      }
-      this._els[dhx_now_time] = [];
-    };
-    scheduler2._marked_timespans = { global: {} };
-    scheduler2._get_zone_minutes = function(date) {
-      return date.getHours() * 60 + date.getMinutes();
-    };
-    scheduler2._prepare_timespan_options = function(config) {
-      var r_configs = [];
-      var temp_configs = [];
-      if (config.days == "fullweek")
-        config.days = [0, 1, 2, 3, 4, 5, 6];
-      if (config.days instanceof Array) {
-        var t_days = config.days.slice();
-        for (var i = 0; i < t_days.length; i++) {
-          var cloned_config = scheduler2._lame_clone(config);
-          cloned_config.days = t_days[i];
-          r_configs.push.apply(r_configs, scheduler2._prepare_timespan_options(cloned_config));
-        }
-        return r_configs;
-      }
-      if (!config || !(config.start_date && config.end_date && config.end_date > config.start_date || config.days !== void 0 && config.zones) && !config.type)
-        return r_configs;
-      var min = 0;
-      var max = 24 * 60;
-      if (config.zones == "fullday")
-        config.zones = [min, max];
-      if (config.zones && config.invert_zones) {
-        config.zones = scheduler2.invertZones(config.zones);
-      }
-      config.id = scheduler2.uid();
-      config.css = config.css || "";
-      config.type = config.type || default_timespan_type;
-      var sections = config.sections;
-      if (sections) {
-        for (var view_key in sections) {
-          if (sections.hasOwnProperty(view_key)) {
-            var ids = sections[view_key];
-            if (!(ids instanceof Array))
-              ids = [ids];
-            for (var i = 0; i < ids.length; i++) {
-              var t_config = scheduler2._lame_copy({}, config);
-              t_config.sections = {};
-              t_config.sections[view_key] = ids[i];
-              temp_configs.push(t_config);
-            }
-          }
-        }
-      } else {
-        temp_configs.push(config);
-      }
-      for (var k = 0; k < temp_configs.length; k++) {
-        var c_config = temp_configs[k];
-        var start_date = c_config.start_date;
-        var end_date = c_config.end_date;
-        if (start_date && end_date) {
-          var t_sd = scheduler2.date.date_part(new Date(start_date));
-          var t_ed = scheduler2.date.add(t_sd, 1, "day");
-          while (t_sd < end_date) {
-            var t_config = scheduler2._lame_copy({}, c_config);
-            delete t_config.start_date;
-            delete t_config.end_date;
-            t_config.days = t_sd.valueOf();
-            var zone_start = start_date > t_sd ? scheduler2._get_zone_minutes(start_date) : min;
-            var zone_end = end_date > t_ed || end_date.getDate() != t_sd.getDate() ? max : scheduler2._get_zone_minutes(end_date);
-            t_config.zones = [zone_start, zone_end];
-            r_configs.push(t_config);
-            t_sd = t_ed;
-            t_ed = scheduler2.date.add(t_ed, 1, "day");
-          }
-        } else {
-          if (c_config.days instanceof Date)
-            c_config.days = scheduler2.date.date_part(c_config.days).valueOf();
-          c_config.zones = config.zones.slice();
-          r_configs.push(c_config);
-        }
-      }
-      return r_configs;
-    };
-    scheduler2._get_dates_by_index = function(index, start, end) {
-      var dates = [];
-      start = scheduler2.date.date_part(new Date(start || scheduler2._min_date));
-      end = new Date(end || scheduler2._max_date);
-      var start_day = start.getDay();
-      var delta = index - start_day >= 0 ? index - start_day : 7 - start.getDay() + index;
-      var t_date = scheduler2.date.add(start, delta, "day");
-      for (; t_date < end; t_date = scheduler2.date.add(t_date, 1, "week")) {
-        dates.push(t_date);
-      }
-      return dates;
-    };
-    scheduler2._get_css_classes_by_config = function(config) {
-      var css_classes = [];
-      if (config.type == dhx_time_block) {
-        css_classes.push(dhx_time_block);
-        if (config.css)
-          css_classes.push(dhx_time_block + "_reset");
-      }
-      css_classes.push("dhx_marked_timespan", config.css);
-      return css_classes.join(" ");
-    };
-    scheduler2._get_block_by_config = function(config) {
-      var block = document.createElement("div");
-      if (config.html) {
-        if (typeof config.html == "string")
-          block.innerHTML = config.html;
-        else
-          block.appendChild(config.html);
-      }
-      return block;
-    };
-    scheduler2._render_marked_timespan = function(options, area, day) {
-      var blocks = [];
-      var c = scheduler2.config;
-      var min_date = this._min_date;
-      var max_date = this._max_date;
-      var day_value = false;
-      if (!c.display_marked_timespans)
-        return blocks;
-      if (!day && day !== 0) {
-        if (options.days < 7)
-          day = options.days;
-        else {
-          var date_to_display = new Date(options.days);
-          day_value = +date_to_display;
-          if (!(+max_date > +date_to_display && +min_date <= +date_to_display))
-            return blocks;
-          day = date_to_display.getDay();
-        }
-        var min_day = min_date.getDay();
-        if (min_day > day) {
-          day = 7 - (min_day - day);
-        } else {
-          day = day - min_day;
-        }
-      }
-      var zones = options.zones;
-      var css_classes = scheduler2._get_css_classes_by_config(options);
-      if (scheduler2._table_view && scheduler2._mode == "month") {
-        var areas = [];
-        var days = [];
-        if (!area) {
-          days = day_value ? [day_value] : scheduler2._get_dates_by_index(day);
-          for (var i = 0; i < days.length; i++) {
-            areas.push(this._scales[days[i]]);
-          }
-        } else {
-          areas.push(area);
-          days.push(day);
-        }
-        for (var i = 0; i < areas.length; i++) {
-          area = areas[i];
-          day = days[i];
-          var sday = this.locate_holder_day(day, false) % this._cols.length;
-          if (this._ignores[sday])
-            continue;
-          var block_proto = scheduler2._get_block_by_config(options);
-          block_proto.className = css_classes;
-          block_proto.style.top = "0px";
-          block_proto.style.height = "100%";
-          for (var k = 0; k < zones.length; k += 2) {
-            var start = zones[i];
-            var end = zones[i + 1];
-            if (end <= start)
-              return [];
-            var block = block_proto.cloneNode(true);
-            block.style.left = "0px";
-            block.style.width = "100%";
-            area.appendChild(block);
-            blocks.push(block);
-          }
-        }
-      } else {
-        var index = day;
-        if (this._ignores[this.locate_holder_day(day, false)])
-          return blocks;
-        if (this._props && this._props[this._mode] && options.sections && options.sections[this._mode]) {
-          var view = this._props[this._mode];
-          index = view.order[options.sections[this._mode]];
-          var inner_index = view.order[options.sections[this._mode]];
-          if (!(view.days > 1)) {
-            index = inner_index;
-            if (view.size && index > view.position + view.size) {
-              index = 0;
-            }
-          } else {
-            var units_l = view.size || view.options.length;
-            index = index * units_l + inner_index;
-          }
-        }
-        area = area ? area : scheduler2.locate_holder(index);
-        for (var i = 0; i < zones.length; i += 2) {
-          var start = Math.max(zones[i], c.first_hour * 60);
-          var end = Math.min(zones[i + 1], c.last_hour * 60);
-          if (end <= start) {
-            if (i + 2 < zones.length)
-              continue;
-            else
-              return [];
-          }
-          var block = scheduler2._get_block_by_config(options);
-          block.className = css_classes;
-          var all_hours_height = this.config.hour_size_px * 24 + 1;
-          var hour_ms = 60 * 60 * 1e3;
-          block.style.top = Math.round((start * 60 * 1e3 - this.config.first_hour * hour_ms) * this.config.hour_size_px / hour_ms) % all_hours_height + "px";
-          block.style.height = Math.max(Math.round((end - start) * 60 * 1e3 * this.config.hour_size_px / hour_ms) % all_hours_height, 1) + "px";
-          area.appendChild(block);
-          blocks.push(block);
-        }
-      }
-      return blocks;
-    };
-    scheduler2._mark_timespans = function() {
-      var data = this._els["dhx_cal_data"][0];
-      var divs = [];
-      if (scheduler2._table_view && scheduler2._mode == "month") {
-        for (var day in this._scales) {
-          var date = /* @__PURE__ */ new Date(+day);
-          divs.push.apply(divs, scheduler2._on_scale_add_marker(this._scales[day], date));
-        }
-      } else {
-        var date = new Date(scheduler2._min_date);
-        for (var i = 0, len = data.childNodes.length; i < len; i++) {
-          var area = data.childNodes[i];
-          if (area.firstChild && scheduler2._getClassName(area.firstChild).indexOf("dhx_scale_hour") > -1) {
-            continue;
-          }
-          divs.push.apply(divs, scheduler2._on_scale_add_marker(area, date));
-          date = scheduler2.date.add(date, 1, "day");
-        }
-      }
-      return divs;
-    };
-    scheduler2.markTimespan = function(configuration) {
-      if (!this._els) {
-        throw new Error("`scheduler.markTimespan` can't be used before scheduler initialization. Place `scheduler.markTimespan` call after `scheduler.init`.");
-      }
-      var rebuild_els = false;
-      if (!this._els["dhx_cal_data"]) {
-        scheduler2.get_elements();
-        rebuild_els = true;
-      }
-      var timespans_ids = scheduler2._marked_timespans_ids, timespan_types = scheduler2._marked_timespans_types, timespans = scheduler2._marked_timespans;
-      scheduler2.deleteMarkedTimespan();
-      scheduler2.addMarkedTimespan(configuration);
-      var divs = scheduler2._mark_timespans();
-      if (rebuild_els)
-        scheduler2._els = [];
-      scheduler2._marked_timespans_ids = timespans_ids;
-      scheduler2._marked_timespans_types = timespan_types;
-      scheduler2._marked_timespans = timespans;
-      return divs;
-    };
-    scheduler2.unmarkTimespan = function(divs) {
-      if (!divs)
-        return;
-      for (var i = 0; i < divs.length; i++) {
-        var div = divs[i];
-        if (div.parentNode) {
-          div.parentNode.removeChild(div);
-        }
-      }
-    };
-    scheduler2._addMarkerTimespanConfig = function(config) {
-      var global2 = "global";
-      var timespans = scheduler2._marked_timespans;
-      var id2 = config.id;
-      var ids = scheduler2._marked_timespans_ids;
-      if (!ids[id2])
-        ids[id2] = [];
-      var day = config.days;
-      var sections = config.sections;
-      var type = config.type;
-      config.id = id2;
-      if (sections) {
-        for (var view_key in sections) {
-          if (sections.hasOwnProperty(view_key)) {
-            if (!timespans[view_key])
-              timespans[view_key] = {};
-            var unit_id = sections[view_key];
-            var timespans_view = timespans[view_key];
-            if (!timespans_view[unit_id])
-              timespans_view[unit_id] = {};
-            if (!timespans_view[unit_id][day])
-              timespans_view[unit_id][day] = {};
-            if (!timespans_view[unit_id][day][type]) {
-              timespans_view[unit_id][day][type] = [];
-              if (!scheduler2._marked_timespans_types)
-                scheduler2._marked_timespans_types = {};
-              if (!scheduler2._marked_timespans_types[type])
-                scheduler2._marked_timespans_types[type] = true;
-            }
-            var day_configs = timespans_view[unit_id][day][type];
-            config._array = day_configs;
-            day_configs.push(config);
-            ids[id2].push(config);
-          }
-        }
-      } else {
-        if (!timespans[global2][day])
-          timespans[global2][day] = {};
-        if (!timespans[global2][day][type])
-          timespans[global2][day][type] = [];
-        if (!scheduler2._marked_timespans_types)
-          scheduler2._marked_timespans_types = {};
-        if (!scheduler2._marked_timespans_types[type])
-          scheduler2._marked_timespans_types[type] = true;
-        var day_configs = timespans[global2][day][type];
-        config._array = day_configs;
-        day_configs.push(config);
-        ids[id2].push(config);
-      }
-    };
-    scheduler2._marked_timespans_ids = {};
-    scheduler2.addMarkedTimespan = function(configuration) {
-      var configs = scheduler2._prepare_timespan_options(configuration);
-      if (!configs.length)
-        return;
-      var id2 = configs[0].id;
-      for (var i = 0; i < configs.length; i++) {
-        scheduler2._addMarkerTimespanConfig(configs[i]);
-      }
-      return id2;
-    };
-    scheduler2._add_timespan_zones = function(current_zones, zones) {
-      var resulting_zones = current_zones.slice();
-      zones = zones.slice();
-      if (!resulting_zones.length)
-        return zones;
-      for (var i = 0; i < resulting_zones.length; i += 2) {
-        var c_zone_start = resulting_zones[i];
-        var c_zone_end = resulting_zones[i + 1];
-        var isLast = i + 2 == resulting_zones.length;
-        for (var k = 0; k < zones.length; k += 2) {
-          var zone_start = zones[k];
-          var zone_end = zones[k + 1];
-          if (zone_end > c_zone_end && zone_start <= c_zone_end || zone_start < c_zone_start && zone_end >= c_zone_start) {
-            resulting_zones[i] = Math.min(c_zone_start, zone_start);
-            resulting_zones[i + 1] = Math.max(c_zone_end, zone_end);
-            i -= 2;
-          } else {
-            if (!isLast)
-              continue;
-            var offset = c_zone_start > zone_start ? 0 : 2;
-            resulting_zones.splice(i + offset, 0, zone_start, zone_end);
-          }
-          zones.splice(k--, 2);
-          break;
-        }
-      }
-      return resulting_zones;
-    };
-    scheduler2._subtract_timespan_zones = function(current_zones, zones) {
-      var resulting_zones = current_zones.slice();
-      for (var i = 0; i < resulting_zones.length; i += 2) {
-        var c_zone_start = resulting_zones[i];
-        var c_zone_end = resulting_zones[i + 1];
-        for (var k = 0; k < zones.length; k += 2) {
-          var zone_start = zones[k];
-          var zone_end = zones[k + 1];
-          if (zone_end > c_zone_start && zone_start < c_zone_end) {
-            var is_modified = false;
-            if (c_zone_start >= zone_start && c_zone_end <= zone_end) {
-              resulting_zones.splice(i, 2);
-            }
-            if (c_zone_start < zone_start) {
-              resulting_zones.splice(i, 2, c_zone_start, zone_start);
-              is_modified = true;
-            }
-            if (c_zone_end > zone_end) {
-              resulting_zones.splice(is_modified ? i + 2 : i, is_modified ? 0 : 2, zone_end, c_zone_end);
-            }
-            i -= 2;
-            break;
-          } else {
-            continue;
-          }
-        }
-      }
-      return resulting_zones;
-    };
-    scheduler2.invertZones = function(zones) {
-      return scheduler2._subtract_timespan_zones([0, 1440], zones.slice());
-    };
-    scheduler2._delete_marked_timespan_by_id = function(id2) {
-      var configs = scheduler2._marked_timespans_ids[id2];
-      if (configs) {
-        for (var i = 0; i < configs.length; i++) {
-          var config = configs[i];
-          var parent_array = config._array;
-          for (var k = 0; k < parent_array.length; k++) {
-            if (parent_array[k] == config) {
-              parent_array.splice(k, 1);
-              break;
-            }
-          }
-        }
-      }
-    };
-    scheduler2._delete_marked_timespan_by_config = function(config) {
-      var timespans = scheduler2._marked_timespans;
-      var sections = config.sections;
-      var day = config.days;
-      var type = config.type || default_timespan_type;
-      var viewspans;
-      if (sections) {
-        for (var view_key in sections) {
-          if (sections.hasOwnProperty(view_key) && timespans[view_key]) {
-            var unit_id = sections[view_key];
-            if (timespans[view_key][unit_id]) {
-              viewspans = timespans[view_key][unit_id];
-            }
-          }
-        }
-      } else {
-        viewspans = timespans.global;
-      }
-      if (viewspans) {
-        if (day !== void 0) {
-          if (viewspans[day] && viewspans[day][type]) {
-            scheduler2._addMarkerTimespanConfig(config);
-            scheduler2._delete_marked_timespans_list(viewspans[day][type], config);
-          }
-        } else {
-          for (var d in viewspans) {
-            if (viewspans[d][type]) {
-              var dayConfig = scheduler2._lame_clone(config);
-              config.days = d;
-              scheduler2._addMarkerTimespanConfig(dayConfig);
-              scheduler2._delete_marked_timespans_list(viewspans[d][type], config);
-            }
-          }
-        }
-      }
-    };
-    scheduler2._delete_marked_timespans_list = function(day_timespans, config) {
-      for (var i = 0; i < day_timespans.length; i++) {
-        var d_t = day_timespans[i];
-        var zones = scheduler2._subtract_timespan_zones(d_t.zones, config.zones);
-        if (zones.length)
-          d_t.zones = zones;
-        else {
-          day_timespans.splice(i, 1);
-          i--;
-          var related_zones = scheduler2._marked_timespans_ids[d_t.id];
-          for (var k = 0; k < related_zones.length; k++) {
-            if (related_zones[k] == d_t) {
-              related_zones.splice(k, 1);
-              break;
-            }
-          }
-        }
-      }
-    };
-    scheduler2.deleteMarkedTimespan = function(configuration) {
-      if (!arguments.length) {
-        scheduler2._marked_timespans = { global: {} };
-        scheduler2._marked_timespans_ids = {};
-        scheduler2._marked_timespans_types = {};
-      }
-      if (typeof configuration != "object") {
-        scheduler2._delete_marked_timespan_by_id(configuration);
-      } else {
-        if (!(configuration.start_date && configuration.end_date)) {
-          if (configuration.days === void 0 && !configuration.type)
-            configuration.days = "fullweek";
-          if (!configuration.zones)
-            configuration.zones = "fullday";
-        }
-        var types = [];
-        if (!configuration.type) {
-          for (var type in scheduler2._marked_timespans_types) {
-            types.push(type);
-          }
-        } else {
-          types.push(configuration.type);
-        }
-        var configs = scheduler2._prepare_timespan_options(configuration);
-        for (var i = 0; i < configs.length; i++) {
-          var config = configs[i];
-          for (var t = 0; t < types.length; t++) {
-            var typedConfig = scheduler2._lame_clone(config);
-            typedConfig.type = types[t];
-            scheduler2._delete_marked_timespan_by_config(typedConfig);
-          }
-        }
-      }
-    };
-    scheduler2._get_types_to_render = function(common, specific) {
-      var types_to_render = common ? scheduler2._lame_copy({}, common) : {};
-      for (var type in specific || {}) {
-        if (specific.hasOwnProperty(type)) {
-          types_to_render[type] = specific[type];
-        }
-      }
-      return types_to_render;
-    };
-    scheduler2._get_configs_to_render = function(types) {
-      var configs = [];
-      for (var type in types) {
-        if (types.hasOwnProperty(type)) {
-          configs.push.apply(configs, types[type]);
-        }
-      }
-      return configs;
-    };
-    scheduler2._on_scale_add_marker = function(area, day) {
-      if (scheduler2._table_view && scheduler2._mode != "month")
-        return;
-      var day_index = day.getDay();
-      var day_value = day.valueOf();
-      var mode = this._mode;
-      var timespans = scheduler2._marked_timespans;
-      var r_configs = [];
-      var divs = [];
-      if (this._props && this._props[mode]) {
-        var view = this._props[mode];
-        var units = view.options;
-        var index = scheduler2._get_unit_index(view, day);
-        var unit = units[index];
-        if (!(view.days > 1)) {
-          day = scheduler2.date.date_part(new Date(this._date));
-        } else {
-          var dx = 24 * 60 * 60 * 1e3;
-          var day_ind = Math.round((day - scheduler2._min_date) / dx);
-          var unitsPerDay = view.size || units.length;
-          day = scheduler2.date.add(scheduler2._min_date, Math.floor(day_ind / unitsPerDay), "day");
-          day = scheduler2.date.date_part(day);
-        }
-        day_index = day.getDay();
-        day_value = day.valueOf();
-        if (timespans[mode] && timespans[mode][unit.key]) {
-          var unit_zones = timespans[mode][unit.key];
-          var unit_types = scheduler2._get_types_to_render(unit_zones[day_index], unit_zones[day_value]);
-          r_configs.push.apply(r_configs, scheduler2._get_configs_to_render(unit_types));
-        }
-      }
-      var global_data = timespans["global"];
-      if (scheduler2.config.overwrite_marked_timespans) {
-        var day_types = global_data[day_value] || global_data[day_index];
-        r_configs.push.apply(r_configs, scheduler2._get_configs_to_render(day_types));
-      } else {
-        if (global_data[day_value]) {
-          r_configs.push.apply(r_configs, scheduler2._get_configs_to_render(global_data[day_value]));
-        }
-        if (global_data[day_index]) {
-          r_configs.push.apply(r_configs, scheduler2._get_configs_to_render(global_data[day_index]));
-        }
-      }
-      for (var i = 0; i < r_configs.length; i++) {
-        divs.push.apply(divs, scheduler2._render_marked_timespan(r_configs[i], area, day));
-      }
-      return divs;
-    };
-    scheduler2.attachEvent("onScaleAdd", function() {
-      scheduler2._on_scale_add_marker.apply(scheduler2, arguments);
-    });
-    scheduler2.dblclick_dhx_marked_timespan = function(e, src) {
-      scheduler2.callEvent("onScaleDblClick", [scheduler2.getActionData(e).date, src, e]);
-      if (scheduler2.config.dblclick_create) {
-        scheduler2.addEventNow(scheduler2.getActionData(e).date, null, e);
-      }
-    };
   };
   scheduler2._temp_limit_scope();
 }
+class GoogleMapAdapter {
+  constructor(scheduler2) {
+    this.map = null;
+    this._markers = [];
+    this.scheduler = scheduler2;
+  }
+  onEventClick(event2) {
+    if (this._markers && this._markers.length > 0) {
+      for (let i = 0; i < this._markers.length; i++) {
+        if (event2.id == this._markers[i].event.id) {
+          let zoom = this.settings.zoom_after_resolve || this.settings.initial_zoom;
+          if (event2.lat && event2.lng) {
+            this.map.setCenter({ lat: event2.lat, lng: event2.lng });
+            this.map.setZoom(zoom);
+          } else {
+            this.map.setCenter({ lat: this.settings.error_position.lat, lng: this.settings.error_position.lng });
+            this.map.setZoom(zoom);
+          }
+          google.maps.event.trigger(this._markers[i].marker, "click");
+        }
+      }
+    }
+  }
+  initialize(container, options) {
+    this.settings = options;
+    let scheduler2 = this.scheduler;
+    let mapOptions = { center: { lat: options.initial_position.lat, lng: options.initial_position.lng }, zoom: options.initial_zoom, mapId: container.id, scrollwheel: true, mapTypeId: options.type };
+    if (this.map === null) {
+      this.map = new google.maps.Map(container, mapOptions);
+    } else {
+      let map = this.map;
+      container.appendChild(this.map.__gm.messageOverlay);
+      container.appendChild(this.map.__gm.outerContainer);
+      setTimeout(function() {
+        map.setOptions({ container: container.id });
+      }, 500);
+    }
+    google.maps.event.addListener(this.map, "dblclick", function(event2) {
+      const geocoder = new google.maps.Geocoder();
+      if (!scheduler2.config.readonly && scheduler2.config.dblclick_create) {
+        let point = event2.latLng;
+        geocoder.geocode({ latLng: point }, function(results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+            point = results[0].geometry.location;
+            scheduler2.addEventNow({ lat: point.lat(), lng: point.lng(), event_location: results[0].formatted_address, start_date: scheduler2.getState().date, end_date: scheduler2.date.add(scheduler2.getState().date, scheduler2.config.time_step, "minute") });
+          } else {
+            console.error("Geocode was not successful for the following reason: " + status);
+          }
+        });
+      }
+    });
+  }
+  destroy(container) {
+    google.maps.event.clearInstanceListeners(window);
+    google.maps.event.clearInstanceListeners(document);
+    google.maps.event.clearInstanceListeners(container);
+    while (container.firstChild) {
+      container.firstChild.remove();
+    }
+    container.innerHTML = "";
+  }
+  async addEventMarker(event2) {
+    let config = { title: event2.text, position: {}, map: {} };
+    if (event2.lat && event2.lng) {
+      config.position = { lat: event2.lat, lng: event2.lng };
+    } else {
+      config.position = { lat: this.settings.error_position.lat, lng: this.settings.error_position.lng };
+    }
+    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+    let marker2;
+    if (this.scheduler.ext.mapView.createMarker) {
+      config.map = this.map;
+      marker2 = this.scheduler.ext.mapView.createMarker(config);
+    } else {
+      marker2 = new AdvancedMarkerElement(config);
+      marker2.map = this.map;
+    }
+    marker2.setMap(this.map);
+    if (event2["!nativeeditor_status"] == "true_deleted") {
+      marker2.setMap(null);
+    }
+    google.maps.event.addListener(marker2, "click", () => {
+      if (this.infoWindow) {
+        this.infoWindow.close();
+      }
+      this.infoWindow = new google.maps.InfoWindow({ maxWidth: this.settings.info_window_max_width });
+      this.infoWindow.setContent(this.scheduler.templates.map_info_content(event2));
+      this.infoWindow.open({ anchor: marker2, map: this.map });
+    });
+    let markerInfo = { event: event2, ...config, marker: marker2 };
+    this._markers.push(markerInfo);
+  }
+  removeEventMarker(eventId) {
+    for (let i = 0; i < this._markers.length; i++) {
+      if (eventId == this._markers[i].event.id) {
+        this._markers[i].marker.setVisible(false);
+        this._markers[i].marker.setMap(null);
+        this._markers[i].marker.setPosition(null);
+        this._markers[i].marker = null;
+        this._markers.splice(i, 1);
+        i--;
+      }
+    }
+  }
+  updateEventMarker(event2) {
+    for (let i = 0; i < this._markers.length; i++) {
+      if (this._markers[i].event.id == event2.id) {
+        this._markers[i].event = event2;
+        this._markers[i].position.lat = event2.lat;
+        this._markers[i].position.lng = event2.lng;
+        this._markers[i].text = event2.text;
+        let latlng = new google.maps.LatLng(event2.lat, event2.lng);
+        this._markers[i].marker.setPosition(latlng);
+      }
+    }
+  }
+  clearEventMarkers() {
+    if (this._markers.length > 0) {
+      for (let i = 0; i < this._markers.length; i++) {
+        this._markers[i].marker.setMap(null);
+      }
+      this._markers = [];
+    }
+  }
+  setView(latitude, longitude, zoom) {
+    this.map.setCenter({ lat: latitude, lng: longitude });
+    this.map.setZoom(zoom);
+  }
+  async resolveAddress(string) {
+    const geocoder = new google.maps.Geocoder();
+    let position = await new Promise((resolve) => {
+      geocoder.geocode({ address: string }, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+          resolve({ lat: results[0].geometry.location.lat(), lng: results[0].geometry.location.lng() });
+        } else {
+          console.error("Geocode was not successful for the following reason: " + status);
+          resolve({});
+        }
+      });
+    });
+    return position;
+  }
+}
+class OpenStreetMapAdapter {
+  constructor(scheduler2) {
+    this.map = null;
+    this._markers = [];
+    this.scheduler = scheduler2;
+  }
+  onEventClick(event2) {
+    if (this._markers && this._markers.length > 0) {
+      for (let i = 0; i < this._markers.length; i++) {
+        if (event2.id == this._markers[i].event.id) {
+          this._markers[i].marker.openPopup();
+          this._markers[i].marker.closeTooltip();
+          if (event2.lat && event2.lng) {
+            this.setView(event2.lat, event2.lng, this.settings.zoom_after_resolve || this.settings.initial_zoom);
+          } else {
+            this.setView(this.settings.error_position.lat, this.settings.error_position.lng, this.settings.zoom_after_resolve || this.settings.initial_zoom);
+          }
+        }
+      }
+    }
+  }
+  initialize(container, options) {
+    let scheduler2 = this.scheduler;
+    let mapWrapper = document.createElement("div");
+    mapWrapper.className = "mapWrapper";
+    mapWrapper.id = "mapWrapper";
+    mapWrapper.style.width = container.style.width;
+    mapWrapper.style.height = container.style.height;
+    container.appendChild(mapWrapper);
+    let map = L.map(mapWrapper, { center: L.latLng(options.initial_position.lat, options.initial_position.lng), zoom: options.initial_zoom, keyboard: false });
+    L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+    map.on("dblclick", async function(e) {
+      const settings = { method: "GET", headers: { "Accept-Language": "en" } };
+      let response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${e.latlng.lat}&lon=${e.latlng.lng}&format=json`, settings).then((response2) => response2.json());
+      if (response.address) {
+        let address = response.address.country;
+        scheduler2.addEventNow({ lat: e.latlng.lat, lng: e.latlng.lng, event_location: address, start_date: scheduler2.getState().date, end_date: scheduler2.date.add(scheduler2.getState().date, scheduler2.config.time_step, "minute") });
+      } else {
+        console.error("unable recieve a position of the event", response.error);
+      }
+    });
+    this.map = map;
+    this.settings = options;
+  }
+  destroy(container) {
+    this.map.remove();
+    while (container.firstChild) {
+      container.firstChild.remove();
+    }
+    container.innerHTML = "";
+  }
+  addEventMarker(event2) {
+    const myIcon = L.icon({ iconUrl: "https://unpkg.com/leaflet@1.0.3/dist/images/marker-icon.png", iconSize: [25, 41], shadowSize: [30, 65], iconAnchor: [12, 41], shadowAnchor: [7, 65] });
+    let popupConfig = { minWidth: 180, maxWidth: this.settings.info_window_max_width };
+    const markerPopup = L.popup(popupConfig).setContent(this.scheduler.templates.map_info_content(event2));
+    const tooltip2 = L.tooltip().setContent(event2.text);
+    let markerConfig = [event2.lat, event2.lng];
+    if (!event2.lat || !event2.lng) {
+      markerConfig = [this.settings.error_position.lat, this.settings.error_position.lng];
+    }
+    const marker2 = L.marker(markerConfig, { icon: myIcon }).bindPopup(markerPopup).bindTooltip(tooltip2).addTo(this.map);
+    const markerInfo = { event: event2, marker: marker2 };
+    this._markers.push(markerInfo);
+  }
+  removeEventMarker(eventId) {
+    for (let i = 0; i < this._markers.length; i++) {
+      if (eventId == this._markers[i].event.id) {
+        this.map.removeLayer(this._markers[i].marker);
+        this._markers.splice(i, 1);
+        i--;
+      }
+    }
+  }
+  updateEventMarker(event2) {
+    for (let i = 0; i < this._markers.length; i++) {
+      if (this._markers[i].event.id == event2.id) {
+        this._markers[i].event = event2;
+        if (!event2.lat || !event2.lng) {
+          this._markers[i].marker.setLatLng([this.settings.error_position.lat, this.settings.error_position.lng]);
+        } else {
+          this._markers[i].marker.setLatLng([event2.lat, event2.lng]);
+        }
+      }
+    }
+  }
+  clearEventMarkers() {
+    if (this._markers) {
+      for (let i = 0; i < this._markers.length; i++) {
+        this.map.removeLayer(this._markers[i].marker);
+      }
+      this._markers = [];
+    }
+  }
+  setView(latitude, longitude, zoom) {
+    this.map.setView([latitude, longitude], zoom);
+  }
+  async resolveAddress(string) {
+    const settings = { method: "GET", headers: { "Accept-Language": "en" } };
+    let position = {};
+    let response = await fetch(`https://nominatim.openstreetmap.org/search?q=${string}&format=json`, settings).then((response2) => response2.json());
+    if (response && response.length) {
+      position.lat = +response[0].lat;
+      position.lng = +response[0].lon;
+    } else {
+      console.error(`Unable recieve a position of the event's location: ${string}`);
+    }
+    return position;
+  }
+}
+class MapboxAdapter {
+  constructor(scheduler2) {
+    this.map = null;
+    this._markers = [];
+    this.scheduler = scheduler2;
+  }
+  onEventClick(event2) {
+    if (this._markers && this._markers.length > 0) {
+      for (let i = 0; i < this._markers.length; i++) {
+        const popup = this._markers[i].marker.getPopup();
+        if (popup.isOpen()) {
+          popup.remove();
+        }
+        if (event2.id == this._markers[i].event.id) {
+          this._markers[i].marker.togglePopup();
+          if (event2.lat && event2.lng) {
+            this.setView(event2.lat, event2.lng, this.settings.zoom_after_resolve || this.settings.initial_zoom);
+          } else {
+            this.setView(this.settings.error_position.lat, this.settings.error_position.lng, this.settings.zoom_after_resolve || this.settings.initial_zoom);
+          }
+        }
+      }
+    }
+  }
+  initialize(container, options) {
+    let scheduler2 = this.scheduler;
+    mapboxgl.accessToken = options.accessToken;
+    const map = new mapboxgl.Map({ container, center: [options.initial_position.lng, options.initial_position.lat], zoom: options.initial_zoom + 1 });
+    map.on("dblclick", async function(e) {
+      let response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${e.lngLat.lng},${e.lngLat.lat}.json?access_token=${options.accessToken}`).then((response2) => response2.json());
+      if (response.features) {
+        let address = response.features[0].place_name;
+        scheduler2.addEventNow({ lat: e.lngLat.lat, lng: e.lngLat.lng, event_location: address, start_date: scheduler2.getState().date, end_date: scheduler2.date.add(scheduler2.getState().date, scheduler2.config.time_step, "minute") });
+      } else {
+        console.error("unable recieve a position of the event");
+      }
+    });
+    this.map = map;
+    this.settings = options;
+  }
+  destroy(container) {
+    this.map.remove();
+    while (container.firstChild) {
+      container.firstChild.remove();
+    }
+    container.innerHTML = "";
+  }
+  addEventMarker(event2) {
+    let config = [event2.lng, event2.lat];
+    if (!event2.lat || !event2.lng) {
+      config = [this.settings.error_position.lng, this.settings.error_position.lat];
+    }
+    const popup = new mapboxgl.Popup({ offset: 25, focusAfterOpen: false }).setMaxWidth(`${this.settings.info_window_max_width}px`).setHTML(this.scheduler.templates.map_info_content(event2));
+    const marker2 = new mapboxgl.Marker().setLngLat(config).setPopup(popup).addTo(this.map);
+    const markerInfo = { event: event2, marker: marker2 };
+    this._markers.push(markerInfo);
+  }
+  removeEventMarker(eventId) {
+    for (let i = 0; i < this._markers.length; i++) {
+      if (eventId == this._markers[i].event.id) {
+        this._markers[i].marker.remove();
+        this._markers.splice(i, 1);
+        i--;
+      }
+    }
+  }
+  updateEventMarker(event2) {
+    for (let i = 0; i < this._markers.length; i++) {
+      if (this._markers[i].event.id == event2.id) {
+        this._markers[i].event = event2;
+        if (!event2.lat || !event2.lng) {
+          this._markers[i].marker.setLngLat([this.settings.error_position.lng, this.settings.error_position.lat]);
+        } else {
+          this._markers[i].marker.setLngLat([event2.lng, event2.lat]);
+        }
+      }
+    }
+  }
+  clearEventMarkers() {
+    for (let i = 0; i < this._markers.length; i++) {
+      this._markers[i].marker.remove();
+    }
+    this._markers = [];
+  }
+  setView(latitude, longitude, zoom) {
+    this.map.setCenter([longitude, latitude]);
+    this.map.setZoom(zoom);
+  }
+  async resolveAddress(string) {
+    let response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${string}.json?access_token=${this.settings.accessToken}`).then((response2) => response2.json());
+    let position = {};
+    if (response && response.features.length) {
+      position.lng = response.features[0].center[0];
+      position.lat = response.features[0].center[1];
+    } else {
+      console.error(`Unable recieve a position of the event's location: ${string}`);
+    }
+    return position;
+  }
+}
 function map_view(scheduler2) {
+  let mapAdapter = null;
+  let eventHandlerIds = [];
+  const adapters = { googleMap: new GoogleMapAdapter(scheduler2), openStreetMaps: new OpenStreetMapAdapter(scheduler2), mapbox: new MapboxAdapter(scheduler2) };
   if (!scheduler2.ext) {
     scheduler2.ext = {};
   }
-  scheduler2.ext.mapView = { geocoder: null, map: null, points: null, markers: null, infoWindow: null, createMarker: function(config) {
+  scheduler2.ext.mapView = { createAdapter: function() {
+    return adapters[scheduler2.config.map_view_provider];
+  }, createMarker: function(config) {
     return new google.maps.Marker(config);
-  } };
+  }, currentAdapter: null, adapters };
+  scheduler2._latLngUpdate = false;
+  scheduler2._eventLocationChanged = false;
+  scheduler2.config.map_view_provider = "googleMap";
+  scheduler2.config.map_settings = { initial_position: { lat: 48.724, lng: 8.215 }, error_position: { lat: 15, lng: 15 }, initial_zoom: 1, zoom_after_resolve: 15, info_window_max_width: 300, resolve_user_location: true, resolve_event_location: true, view_provider: "googleMap" };
+  if (scheduler2.config.map_initial_position) {
+    scheduler2.config.map_settings.initial_position = { lat: scheduler2.config.map_initial_position.lat(), lng: scheduler2.config.map_initial_position.lng() };
+  }
+  if (scheduler2.config.map_error_position) {
+    scheduler2.config.map_settings.error_position = { lat: scheduler2.config.map_error_position.lat(), lng: scheduler2.config.map_error_position.lng() };
+  }
   scheduler2.xy.map_date_width = 188;
   scheduler2.xy.map_icon_width = 25;
   scheduler2.xy.map_description_width = 400;
-  scheduler2.config.map_resolve_event_location = true;
-  scheduler2.config.map_resolve_user_location = true;
-  scheduler2.config.map_initial_position = new google.maps.LatLng(48.724, 8.215);
-  scheduler2.config.map_error_position = new google.maps.LatLng(15, 15);
-  scheduler2.config.map_infowindow_max_width = 300;
-  scheduler2.config.map_type = google.maps.MapTypeId.ROADMAP;
-  scheduler2.config.map_zoom_after_resolve = 15;
-  scheduler2.locale.labels.marker_geo_success = "It seems you are here.";
-  scheduler2.locale.labels.marker_geo_fail = "Sorry, could not get your current position using geolocation.";
-  scheduler2.templates.marker_date = scheduler2.date.date_to_str("%Y-%m-%d %H:%i");
-  scheduler2.templates.marker_text = function(start, end, ev) {
-    return "<div><b>" + ev.text + "</b><br/><br/>" + (ev.event_location || "") + "<br/><br/>" + scheduler2.templates.marker_date(start) + " - " + scheduler2.templates.marker_date(end) + "</div>";
+  scheduler2.date.add_map = function(date, inc, mode) {
+    return new Date(date.valueOf());
   };
-  scheduler2.dblclick_dhx_map_area = function() {
-    if (!this.config.readonly && this.config.dblclick_create)
-      this.addEventNow({ start_date: scheduler2._date, end_date: scheduler2.date.add(scheduler2._date, scheduler2.config.time_step, "minute") });
+  scheduler2.templates.map_date = function(dd, ed, mode) {
+    return "";
   };
   scheduler2.templates.map_time = function(start, end, ev) {
     if (scheduler2.config.rtl && !ev._timed) {
@@ -12601,131 +13271,219 @@ function map_view(scheduler2) {
   scheduler2.templates.map_text = function(start, end, ev) {
     return ev.text;
   };
+  scheduler2.templates.map_info_content = function(event2) {
+    return `<div><b>Event's text:</b> ${event2.text}
+				<div><b>Location:</b> ${event2.event_location}</div>
+				<div><b>Starts:</b> ${scheduler2.templates.tooltip_date_format(event2.start_date)}</div>
+				<div><b>Ends:</b> ${scheduler2.templates.tooltip_date_format(event2.end_date)}</div>
+			</div>`;
+  };
   scheduler2.date.map_start = function(d) {
     return d;
   };
-  scheduler2.date.add_map = function(date, inc, mode) {
-    return new Date(date.valueOf());
-  };
-  scheduler2.templates.map_date = function(dd, ed, mode) {
-    return "";
-  };
-  scheduler2._latLngUpdate = false;
-  scheduler2.attachEvent("onSchedulerReady", function() {
-    scheduler2._isMapPositionSet = false;
-    const gmap = document.createElement("div");
-    gmap.className = "dhx_map";
-    gmap.id = "dhx_gmap";
-    gmap.style.display = "none";
-    scheduler2._obj.appendChild(gmap);
-    scheduler2._els.dhx_gmap = [];
-    scheduler2._els.dhx_gmap.push(gmap);
-    _setMapSize("dhx_gmap");
-    const mapOptions = { zoom: scheduler2.config.map_initial_zoom || 10, center: scheduler2.config.map_initial_position, mapTypeId: scheduler2.config.map_type || google.maps.MapTypeId.ROADMAP };
-    const map = new google.maps.Map(document.getElementById("dhx_gmap"), mapOptions);
-    map.disableDefaultUI = false;
-    map.disableDoubleClickZoom = !scheduler2.config.readonly;
-    google.maps.event.addListener(map, "dblclick", function(event2) {
-      const geocoder = scheduler2.ext.mapView.geocoder;
-      if (!scheduler2.config.readonly && scheduler2.config.dblclick_create) {
-        var point = event2.latLng;
-        geocoder.geocode({ latLng: point }, function(results, status) {
-          if (status == google.maps.GeocoderStatus.OK) {
-            point = results[0].geometry.location;
-            scheduler2.addEventNow({ lat: point.lat(), lng: point.lng(), event_location: results[0].formatted_address, start_date: scheduler2._date, end_date: scheduler2.date.add(scheduler2._date, scheduler2.config.time_step, "minute") });
-          }
+  function setupMapView(scheduler22) {
+    mapAdapter = scheduler22.ext.mapView.createAdapter();
+    attachSchedulerEvents();
+  }
+  async function addEventWithLocation(event2, mapAdapter2) {
+    let coordinates = await mapAdapter2.resolveAddress(event2.event_location);
+    event2.lat = coordinates.lat;
+    event2.lng = coordinates.lng;
+    mapAdapter2.removeEventMarker(String(event2.id));
+    mapAdapter2.addEventMarker(event2);
+    return event2;
+  }
+  function setUserLocation(options, adapter) {
+    if (options.resolve_user_location) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          adapter.setView(position.coords.latitude, position.coords.longitude, options.zoom_after_resolve || options.initial_zoom);
         });
       }
-    });
-    var infoWindowOptions = { content: "" };
-    if (scheduler2.config.map_infowindow_max_width) {
-      infoWindowOptions.maxWidth = scheduler2.config.map_infowindow_max_width;
+    } else {
+      adapter.setView(options.initial_position.lat, options.initial_position.lng, options.initial_zoom);
     }
-    scheduler2.map = { _points: [], _markers: [], _infowindow: new google.maps.InfoWindow(infoWindowOptions), _infowindows_content: [], _initialization_count: -1, _obj: map };
-    scheduler2.ext.mapView.geocoder = new google.maps.Geocoder();
-    scheduler2.ext.mapView.map = map;
-    scheduler2.ext.mapView.points = scheduler2.map._points;
-    scheduler2.ext.mapView.markers = scheduler2.map._markers;
-    scheduler2.ext.mapView.infoWindow = scheduler2.map._infowindow;
-    if (scheduler2.config.map_resolve_user_location) {
-      if (navigator.geolocation) {
-        if (!scheduler2._isMapPositionSet) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-            var _userLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-            map.setCenter(_userLocation);
-            map.setZoom(scheduler2.config.map_zoom_after_resolve || 10);
-            scheduler2.map._infowindow.setContent(scheduler2.locale.labels.marker_geo_success);
-            scheduler2.map._infowindow.position = map.getCenter();
-            scheduler2.map._infowindow.open(map);
-            scheduler2._isMapPositionSet = true;
-          }, function() {
-            scheduler2.map._infowindow.setContent(scheduler2.locale.labels.marker_geo_fail);
-            scheduler2.map._infowindow.setPosition(map.getCenter());
-            scheduler2.map._infowindow.open(map);
-            scheduler2._isMapPositionSet = true;
-          });
+  }
+  scheduler2.dblclick_dhx_map_area = function(e) {
+    let eventNode = e.target.closest(`[${scheduler2.config.event_attribute}]`);
+    if (eventNode) {
+      let eventId = eventNode.getAttribute(`${scheduler2.config.event_attribute}`);
+      scheduler2.showLightbox(eventId);
+    }
+    if (!this.config.readonly && this.config.dblclick_create && !eventNode) {
+      this.addEventNow({ start_date: scheduler2.config.map_start, end_date: scheduler2.date.add(scheduler2.config.map_start, scheduler2.config.time_step, "minute") });
+    }
+  };
+  function attachSchedulerEvents() {
+    eventHandlerIds.push(scheduler2.attachEvent("onEventSave", function(id2, ev, is_new) {
+      let unmodifiedEvent = scheduler2.getEvent(id2);
+      if (unmodifiedEvent && unmodifiedEvent.event_location != ev.event_location) {
+        scheduler2._eventLocationChanged = true;
+      }
+      return true;
+    }), scheduler2.attachEvent("onEventChanged", (id2, event2) => {
+      const { start_date, end_date } = event2;
+      const { min_date, max_date } = scheduler2.getState();
+      if (start_date.valueOf() < max_date.valueOf() && end_date.valueOf() > min_date.valueOf()) {
+        if (mapAdapter) {
+          if (scheduler2.config.map_settings.resolve_event_location && event2.event_location && !scheduler2._latLngUpdate) {
+            addEventWithLocation(event2, mapAdapter);
+          } else {
+            mapAdapter.updateEventMarker(event2);
+          }
         }
       }
+      scheduler2._latLngUpdate = false;
+      return true;
+    }), scheduler2.attachEvent("onEventIdChange", function(old_id, new_id) {
+      let newIdEvent = scheduler2.getEvent(new_id);
+      mapAdapter == null ? void 0 : mapAdapter.removeEventMarker(old_id);
+      mapAdapter == null ? void 0 : mapAdapter.addEventMarker(newIdEvent);
+    }), scheduler2.attachEvent("onEventAdded", (id2, event2) => {
+      const { start_date, end_date } = event2;
+      const { min_date, max_date } = scheduler2.getState();
+      if (start_date.valueOf() < max_date.valueOf() && end_date.valueOf() > min_date.valueOf()) {
+        if (mapAdapter) {
+          if (scheduler2.config.map_settings.resolve_event_location && event2.event_location && scheduler2._eventLocationChanged) {
+            addEventWithLocation(event2, mapAdapter);
+            scheduler2._eventLocationChanged = false;
+          } else {
+            mapAdapter.addEventMarker(event2);
+            mapAdapter.onEventClick(event2);
+          }
+        }
+      }
+    }), scheduler2.attachEvent("onClick", function(id2, e) {
+      const event2 = scheduler2.getEvent(id2);
+      if (mapAdapter && event2)
+        mapAdapter.onEventClick(event2);
+      return false;
+    }), scheduler2.attachEvent("onBeforeEventDelete", (id2, event2) => {
+      if (mapAdapter) {
+        mapAdapter.removeEventMarker(id2);
+      }
+      return true;
+    }));
+  }
+  function detachSchedulerEvents() {
+    eventHandlerIds.forEach((id2) => scheduler2.detachEvent(id2));
+    eventHandlerIds = [];
+  }
+  scheduler2.attachEvent("onSchedulerReady", function() {
+    if (scheduler2.config.map_initial_zoom !== void 0) {
+      scheduler2.config.map_settings.initial_zoom = scheduler2.config.map_initial_zoom;
     }
-    google.maps.event.addListener(map, "resize", function(event2) {
-      gmap.style.zIndex = "5";
-      map.setZoom(map.getZoom());
-    });
-    google.maps.event.addListener(map, "tilesloaded", function(event2) {
-      gmap.style.zIndex = "5";
-    });
-    gmap.style.display = "none";
+    if (scheduler2.config.map_zoom_after_resolve !== void 0) {
+      scheduler2.config.map_settings.zoom_after_resolve = scheduler2.config.map_zoom_after_resolve;
+    }
+    if (scheduler2.config.map_infowindow_max_width !== void 0) {
+      scheduler2.config.map_settings.info_window_max_width = scheduler2.config.map_infowindow_max_width;
+    }
+    if (scheduler2.config.map_resolve_user_location !== void 0) {
+      scheduler2.config.map_settings.resolve_user_location = scheduler2.config.map_resolve_user_location;
+    }
+    if (scheduler2.config.map_view_provider !== void 0) {
+      scheduler2.config.map_settings.view_provider = scheduler2.config.map_view_provider;
+    }
+    if (scheduler2.config.map_type !== void 0) {
+      scheduler2.config.map_settings.type = scheduler2.config.map_type;
+    }
+    if (scheduler2.config.map_resolve_event_location !== void 0) {
+      scheduler2.config.map_settings.resolve_event_location = scheduler2.config.map_resolve_event_location;
+    }
+    scheduler2.ext.mapView.currentAdapter = scheduler2.config.map_view_provider;
+    let map = document.createElement("div");
+    map.className = "mapContainer";
+    map.id = "mapContainer";
+    map.style.display = "none";
+    map.style.zIndex = "1";
+    scheduler2._obj.appendChild(map);
     const old = scheduler2.render_data;
     scheduler2.render_data = function(evs, hold) {
       if (this._mode == "map") {
         fill_map_tab();
-        var events = scheduler2.get_visible_events();
-        for (var i = 0; i < events.length; i++) {
-          if (!scheduler2.map._markers[events[i].id]) {
-            showAddress(events[i], false, false);
-          }
+        let events = scheduler2.get_visible_events();
+        if (mapAdapter) {
+          mapAdapter.clearEventMarkers();
+          events.forEach((event2) => mapAdapter == null ? void 0 : mapAdapter.addEventMarker(event2));
         }
       } else
         return old.apply(this, arguments);
     };
-    function set_full_view(mode) {
-      if (mode) {
-        var l = scheduler2.locale.labels;
-        scheduler2._els["dhx_cal_header"][0].innerHTML = "<div class='dhx_map_head' style='width: " + (scheduler2.xy.map_date_width + scheduler2.xy.map_description_width + 2) + "px;' ><div class='headline_date' style='width: " + scheduler2.xy.map_date_width + "px;'>" + l.date + "</div><div class='headline_description' style='width: " + scheduler2.xy.map_description_width + "px;'>" + l.description + "</div></div>";
-        scheduler2._table_view = true;
-        scheduler2.set_sizes();
-      }
-    }
-    function clear_map_tab() {
-      scheduler2._selected_event_id = null;
-      scheduler2.map._infowindow.close();
-      var markers = scheduler2.map._markers;
-      for (var key in markers) {
-        if (markers.hasOwnProperty(key)) {
-          markers[key].setMap(null);
-          delete scheduler2.map._markers[key];
-          if (scheduler2.map._infowindows_content[key])
-            delete scheduler2.map._infowindows_content[key];
+    scheduler2.map_view = function(mode) {
+      scheduler2._els.dhx_cal_data[0].style.width = scheduler2.xy.map_date_width + scheduler2.xy.map_description_width + 1 + "px";
+      scheduler2._min_date = scheduler2.config.map_start || scheduler2._currentDate();
+      scheduler2._max_date = scheduler2.config.map_end || scheduler2.date.add(scheduler2._currentDate(), 1, "year");
+      scheduler2._table_view = true;
+      set_full_view(mode);
+      let mapContainer = document.getElementById("mapContainer");
+      _setMapSize("mapContainer");
+      if (mode && mapContainer) {
+        map.style.display = "block";
+        fill_map_tab();
+        if (scheduler2.config.map_view_provider == scheduler2.ext.mapView.currentAdapter) {
+          mapAdapter == null ? void 0 : mapAdapter.destroy(mapContainer);
+          setupMapView(scheduler2);
+          mapAdapter == null ? void 0 : mapAdapter.initialize(mapContainer, scheduler2.config.map_settings);
+        } else {
+          mapAdapter == null ? void 0 : mapAdapter.destroy(mapContainer);
+          setupMapView(scheduler2);
+          mapAdapter == null ? void 0 : mapAdapter.initialize(mapContainer, scheduler2.config.map_settings);
+          scheduler2.ext.mapView.currentAdapter = scheduler2.config.map_view_provider;
         }
+        if (mapAdapter) {
+          setUserLocation(scheduler2.config.map_settings, mapAdapter);
+        }
+      } else {
+        map.style.display = "none";
+        scheduler2._els.dhx_cal_data[0].style.width = "100%";
+        if (mapAdapter && mapContainer) {
+          mapAdapter.destroy(mapContainer);
+          mapAdapter = null;
+          scheduler2.ext.mapView.currentAdapter = scheduler2.config.map_view_provider;
+        }
+        detachSchedulerEvents();
+      }
+    };
+    function _setMapSize(elem_id) {
+      let map2 = document.getElementById(elem_id);
+      if (map2) {
+        const nav_height = scheduler2.$container.querySelector(".dhx_cal_navline").offsetHeight;
+        let height = scheduler2.$container.querySelector(".dhx_cal_data").offsetHeight + scheduler2.$container.querySelector(".dhx_cal_header").offsetHeight;
+        if (height < 0)
+          height = 0;
+        let width = scheduler2._x - scheduler2.xy.map_date_width - scheduler2.xy.map_description_width - 1;
+        if (width < 0)
+          width = 0;
+        map2.style.height = height + "px";
+        map2.style.width = width + "px";
+        map2.style.position = "absolute";
+        map2.style.top = nav_height + "px";
+        if (scheduler2.config.rtl) {
+          map2.style.marginRight = scheduler2.xy.map_date_width + scheduler2.xy.map_description_width + 1 + "px";
+        } else {
+          map2.style.marginLeft = scheduler2.xy.map_date_width + scheduler2.xy.map_description_width + 1 + "px";
+        }
+        map2.style.marginTop = scheduler2.xy.nav_height + 2 + "px";
       }
     }
     function fill_map_tab() {
-      var events = scheduler2.get_visible_events();
+      let events = scheduler2.get_visible_events();
       events.sort(function(a, b) {
         if (a.start_date.valueOf() == b.start_date.valueOf())
           return a.id > b.id ? 1 : -1;
         return a.start_date > b.start_date ? 1 : -1;
       });
-      var ariaAttr = scheduler2._waiAria.mapAttrString();
-      var html = "<div " + ariaAttr + " class='dhx_map_area'>";
-      for (var i = 0; i < events.length; i++) {
-        var ev = events[i];
-        var event_class = ev.id == scheduler2._selected_event_id ? "dhx_map_line highlight" : "dhx_map_line";
-        var bg_color = ev.color ? "--dhx-scheduler-event-background:" + ev.color + ";" : "";
-        var color = ev.textColor ? "--dhx-scheduler-event-color:" + ev.textColor + ";" : "";
-        var ariaAttr = scheduler2._waiAria.mapRowAttrString(ev);
-        var ariaButtonAttr = scheduler2._waiAria.mapDetailsBtnString();
-        html += "<div " + ariaAttr + " class='" + event_class + "' event_id='" + ev.id + "' " + scheduler2.config.event_attribute + "='" + ev.id + "' style='" + bg_color + color + (ev._text_style || "") + " width: " + (scheduler2.xy.map_date_width + scheduler2.xy.map_description_width + 2) + "px;'><div class='dhx_map_event_time' style='width: " + scheduler2.xy.map_date_width + "px;' >" + scheduler2.templates.map_time(ev.start_date, ev.end_date, ev) + "</div>";
+      let ariaAttr = scheduler2._waiAria.mapAttrString();
+      let html = "<div " + ariaAttr + " class='dhx_map_area'>";
+      for (let i = 0; i < events.length; i++) {
+        let ev = events[i];
+        let event_class = ev.id == scheduler2._selected_event_id ? "dhx_map_line highlight" : "dhx_map_line";
+        let bg_color = ev.color ? "--dhx-scheduler-event-background:" + ev.color + ";" : "";
+        let color = ev.textColor ? "--dhx-scheduler-event-color:" + ev.textColor + ";" : "";
+        let ariaAttr2 = scheduler2._waiAria.mapRowAttrString(ev);
+        let ariaButtonAttr = scheduler2._waiAria.mapDetailsBtnString();
+        html += "<div " + ariaAttr2 + " class='" + event_class + "' event_id='" + ev.id + "' " + scheduler2.config.event_attribute + "='" + ev.id + "' style='" + bg_color + color + (ev._text_style || "") + " width: " + (scheduler2.xy.map_date_width + scheduler2.xy.map_description_width + 2) + "px;'><div class='dhx_map_event_time' style='width: " + scheduler2.xy.map_date_width + "px;' >" + scheduler2.templates.map_time(ev.start_date, ev.end_date, ev) + "</div>";
         html += `<div ${ariaButtonAttr} class='dhx_event_icon icon_details'><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path d="M15.4444 16.4H4.55556V7.6H15.4444V16.4ZM13.1111 2V3.6H6.88889V2H5.33333V3.6H4.55556C3.69222 3.6 3 4.312 3 5.2V16.4C3 16.8243 3.16389 17.2313 3.45561 17.5314C3.74733 17.8314 4.143 18 4.55556 18H15.4444C15.857 18 16.2527 17.8314 16.5444 17.5314C16.8361 17.2313 17 16.8243 17 16.4V5.2C17 4.312 16.3 3.6 15.4444 3.6H14.6667V2H13.1111ZM13.8889 10.8H10V14.8H13.8889V10.8Z" fill="#A1A4A6"/>
 			</svg></div>`;
@@ -12734,224 +13492,62 @@ function map_view(scheduler2) {
       html += "<div class='dhx_v_border' style=" + (scheduler2.config.rtl ? "'right: " : "'left: ") + (scheduler2.xy.map_date_width - 1) + "px;'></div><div class='dhx_v_border_description'></div></div>";
       scheduler2._els["dhx_cal_data"][0].scrollTop = 0;
       scheduler2._els["dhx_cal_data"][0].innerHTML = html;
-      var t = scheduler2._els["dhx_cal_data"][0].firstChild.childNodes;
-      var dateElement = scheduler2._getNavDateElement();
+      let t = scheduler2._els["dhx_cal_data"][0].firstChild.childNodes;
+      let dateElement = scheduler2._getNavDateElement();
       if (dateElement) {
         dateElement.innerHTML = scheduler2.templates[scheduler2._mode + "_date"](scheduler2._min_date, scheduler2._max_date, scheduler2._mode);
       }
       scheduler2._rendered = [];
-      for (var i = 0; i < t.length - 2; i++) {
+      for (let i = 0; i < t.length - 2; i++) {
         scheduler2._rendered[i] = t[i];
       }
     }
-    function _setMapSize(elem_id) {
-      var map2 = document.getElementById(elem_id);
-      const nav_height = scheduler2.$container.querySelector(".dhx_cal_navline").offsetHeight;
-      var height = scheduler2._y - nav_height;
-      if (height < 0)
-        height = 0;
-      var width = scheduler2._x - scheduler2.xy.map_date_width - scheduler2.xy.map_description_width - 1;
-      if (width < 0)
-        width = 0;
-      map2.style.height = height + "px";
-      map2.style.width = width + "px";
-      map2.style.position = "absolute";
-      map2.style.top = nav_height + "px";
-      if (scheduler2.config.rtl) {
-        map2.style.marginRight = scheduler2.xy.map_date_width + scheduler2.xy.map_description_width + 1 + "px";
-      } else {
-        map2.style.marginLeft = scheduler2.xy.map_date_width + scheduler2.xy.map_description_width + 1 + "px";
-      }
-      map2.style.marginTop = scheduler2.xy.nav_height + 2 + "px";
-    }
-    scheduler2.map_view = function(mode) {
-      scheduler2.map._initialization_count++;
-      var gmap2 = scheduler2._els.dhx_gmap[0];
-      var temp_center;
-      scheduler2._min_date = scheduler2.config.map_start || scheduler2._currentDate();
-      scheduler2._max_date = scheduler2.config.map_end || scheduler2.date.add(scheduler2._currentDate(), 1, "year");
-      scheduler2._table_view = true;
-      set_full_view(mode);
+    function set_full_view(mode) {
       if (mode) {
-        clear_map_tab();
-        fill_map_tab();
-        gmap2.style.display = "block";
-        _setMapSize("dhx_gmap");
-        temp_center = scheduler2.map._obj.getCenter();
-        var events = scheduler2.get_visible_events();
-        for (var i = 0; i < events.length; i++) {
-          if (!scheduler2.map._markers[events[i].id]) {
-            showAddress(events[i]);
-          }
-        }
-      } else {
-        gmap2.style.display = "none";
+        const l = scheduler2.locale.labels;
+        scheduler2._els["dhx_cal_header"][0].innerHTML = "<div class='dhx_map_head' style='width: " + (scheduler2.xy.map_date_width + scheduler2.xy.map_description_width + 2) + "px;' ><div class='headline_date' style='width: " + scheduler2.xy.map_date_width + "px;'>" + l.date + "</div><div class='headline_description' style='width: " + scheduler2.xy.map_description_width + "px;'>" + l.description + "</div></div>";
+        scheduler2._table_view = true;
+        scheduler2.set_sizes();
       }
-      google.maps.event.trigger(scheduler2.map._obj, "resize");
-      if (scheduler2.map._initialization_count === 0 && temp_center) {
-        scheduler2.map._obj.setCenter(temp_center);
-      }
-      if (scheduler2._selected_event_id) {
-        selectEvent(scheduler2._selected_event_id);
-      }
-    };
-    var selectEvent = function(event_id) {
-      scheduler2.map._obj.setCenter(scheduler2.map._points[event_id]);
-      scheduler2.callEvent("onClick", [event_id]);
-    };
-    var showAddress = function(event2, setCenter, performClick) {
-      var point = scheduler2.config.map_error_position;
-      if (event2.lat && event2.lng) {
-        point = new google.maps.LatLng(event2.lat, event2.lng);
-      }
-      var message2 = scheduler2.templates.marker_text(event2.start_date, event2.end_date, event2);
-      if (!scheduler2._new_event) {
-        scheduler2.map._infowindows_content[event2.id] = message2;
-        if (scheduler2.map._markers[event2.id])
-          scheduler2.map._markers[event2.id].setMap(null);
-        scheduler2.map._markers[event2.id] = scheduler2.ext.mapView.createMarker({ position: point, map: scheduler2.map._obj });
-        google.maps.event.addListener(scheduler2.map._markers[event2.id], "click", function() {
-          scheduler2.map._infowindow.setContent(scheduler2.map._infowindows_content[event2.id]);
-          scheduler2.map._infowindow.open(scheduler2.map._obj, scheduler2.map._markers[event2.id]);
-          scheduler2._selected_event_id = event2.id;
-          scheduler2.render_data();
-        });
-        scheduler2.map._points[event2.id] = point;
-        if (setCenter)
-          scheduler2.map._obj.setCenter(scheduler2.map._points[event2.id]);
-        if (performClick)
-          scheduler2.callEvent("onClick", [event2.id]);
-      }
-    };
-    scheduler2.attachEvent("onClick", function(id2, domEvent) {
-      if (this._mode == "map") {
-        scheduler2._selected_event_id = id2;
-        for (var i = 0; i < scheduler2._rendered.length; i++) {
-          scheduler2._rendered[i].className = "dhx_map_line";
-          if (scheduler2._rendered[i].getAttribute(scheduler2.config.event_attribute) == id2) {
-            scheduler2._rendered[i].className += " highlight";
-          }
-        }
-        if (scheduler2.map._points[id2] && scheduler2.map._markers[id2]) {
-          scheduler2.map._obj.setCenter(scheduler2.map._points[id2]);
-          google.maps.event.trigger(scheduler2.map._markers[id2], "click");
-        }
-      }
-      return true;
+    }
+    scheduler2.attachEvent("onLocationError", function(id2) {
+      alert("Location can't be found");
+      return google.maps.LatLng(51.47784, -1492e-6);
     });
-    var _displayEventOnMap = function(event2) {
-      const geocoder = scheduler2.ext.mapView.geocoder;
-      if (event2.event_location && geocoder) {
-        geocoder.geocode({ address: event2.event_location, language: scheduler2.uid().toString() }, function(results, status) {
-          var point = {};
-          if (status != google.maps.GeocoderStatus.OK) {
-            point = scheduler2.callEvent("onLocationError", [event2.id]);
-            if (!point || point === true)
-              point = scheduler2.config.map_error_position;
-          } else {
-            point = results[0].geometry.location;
-          }
-          event2.lat = point.lat();
-          event2.lng = point.lng();
-          scheduler2._selected_event_id = event2.id;
-          scheduler2._latLngUpdate = true;
-          scheduler2.callEvent("onEventChanged", [event2.id, event2]);
-          showAddress(event2, true, true);
-        });
-      } else {
-        showAddress(event2, true, true);
+    let _updateEventLocation = async function(event2) {
+      if (mapAdapter) {
+        const coordinates = await mapAdapter.resolveAddress(event2.event_location);
+        if (coordinates.lat && coordinates.lng) {
+          event2.lat = +coordinates.lat;
+          event2.lng = +coordinates.lng;
+        } else {
+          scheduler2.callEvent("onLocationError", [event2.id]);
+          event2.lng = scheduler2.config.map_settings.error_position.lng;
+          event2.lat = scheduler2.config.map_settings.error_position.lat;
+        }
+        scheduler2._latLngUpdate = true;
+        scheduler2.callEvent("onEventChanged", [event2.id, event2]);
       }
     };
-    var _updateEventLocation = function(event2) {
-      const geocoder = scheduler2.ext.mapView.geocoder;
-      if (event2.event_location && geocoder) {
-        geocoder.geocode({ address: event2.event_location, language: scheduler2.uid().toString() }, function(results, status) {
-          var point = {};
-          if (status != google.maps.GeocoderStatus.OK) {
-            point = scheduler2.callEvent("onLocationError", [event2.id]);
-            if (!point || point === true)
-              point = scheduler2.config.map_error_position;
-          } else {
-            point = results[0].geometry.location;
-          }
-          event2.lat = point.lat();
-          event2.lng = point.lng();
-          scheduler2._latLngUpdate = true;
-          scheduler2.callEvent("onEventChanged", [event2.id, event2]);
-        });
-      }
-    };
-    var _delay = function(method, object, params, delay2) {
+    let _delay = function(method, object, params, delay2) {
       setTimeout(function() {
         if (scheduler2.$destroyed) {
           return true;
         }
-        var ret = method.apply(object, params);
+        let ret = method.apply(object, params);
         method = object = params = null;
         return ret;
       }, delay2 || 1);
     };
-    scheduler2.attachEvent("onEventChanged", function(id2, event2) {
-      if (!this._latLngUpdate) {
-        var event2 = scheduler2.getEvent(id2);
-        if (event2.start_date < scheduler2._min_date && event2.end_date > scheduler2._min_date || event2.start_date < scheduler2._max_date && event2.end_date > scheduler2._max_date || event2.start_date.valueOf() >= scheduler2._min_date && event2.end_date.valueOf() <= scheduler2._max_date) {
-          if (scheduler2.map._markers[id2])
-            scheduler2.map._markers[id2].setMap(null);
-          _displayEventOnMap(event2);
-        } else {
-          scheduler2._selected_event_id = null;
-          scheduler2.map._infowindow.close();
-          if (scheduler2.map._markers[id2])
-            scheduler2.map._markers[id2].setMap(null);
-        }
-      } else
-        this._latLngUpdate = false;
-      return true;
-    });
-    scheduler2.attachEvent("onEventIdChange", function(old_event_id, new_event_id) {
-      var event2 = scheduler2.getEvent(new_event_id);
-      if (event2.start_date < scheduler2._min_date && event2.end_date > scheduler2._min_date || event2.start_date < scheduler2._max_date && event2.end_date > scheduler2._max_date || event2.start_date.valueOf() >= scheduler2._min_date && event2.end_date.valueOf() <= scheduler2._max_date) {
-        if (scheduler2.map._markers[old_event_id]) {
-          scheduler2.map._markers[old_event_id].setMap(null);
-          delete scheduler2.map._markers[old_event_id];
-        }
-        if (scheduler2.map._infowindows_content[old_event_id])
-          delete scheduler2.map._infowindows_content[old_event_id];
-        _displayEventOnMap(event2);
-      }
-      return true;
-    });
-    scheduler2.attachEvent("onEventAdded", function(id2, event2) {
-      if (!scheduler2._dataprocessor) {
-        if (event2.start_date < scheduler2._min_date && event2.end_date > scheduler2._min_date || event2.start_date < scheduler2._max_date && event2.end_date > scheduler2._max_date || event2.start_date.valueOf() >= scheduler2._min_date && event2.end_date.valueOf() <= scheduler2._max_date) {
-          if (scheduler2.map._markers[id2])
-            scheduler2.map._markers[id2].setMap(null);
-          _displayEventOnMap(event2);
-        }
-      }
-      return true;
-    });
-    scheduler2.attachEvent("onBeforeEventDelete", function(id2, event2) {
-      if (scheduler2.map._markers[id2]) {
-        scheduler2.map._markers[id2].setMap(null);
-      }
-      scheduler2._selected_event_id = null;
-      scheduler2.map._infowindow.close();
-      return true;
-    });
     scheduler2._event_resolve_delay = 1500;
     scheduler2.attachEvent("onEventLoading", function(event2) {
-      if (scheduler2.config.map_resolve_event_location && event2.event_location && !event2.lat && !event2.lng) {
+      if (event2.lat && event2.lng) {
+        event2.lat = +event2.lat;
+        event2.lng = +event2.lng;
+      }
+      if (scheduler2.config.map_settings.resolve_event_location && event2.event_location && !event2.lat && !event2.lng) {
         scheduler2._event_resolve_delay += 1500;
         _delay(_updateEventLocation, this, [event2], scheduler2._event_resolve_delay);
-      }
-      return true;
-    });
-    scheduler2.attachEvent("onEventCancel", function(id2, is_new) {
-      if (is_new) {
-        if (scheduler2.map._markers[id2])
-          scheduler2.map._markers[id2].setMap(null);
-        scheduler2.map._infowindow.close();
       }
       return true;
     });
@@ -14045,6 +14641,24 @@ function quick_info(scheduler2) {
   scheduler2.config.details_on_create = true;
   scheduler2.config.show_quick_info = true;
   scheduler2.xy.menu_width = 0;
+  let clickedElementPosition = null;
+  scheduler2.attachEvent("onSchedulerReady", function() {
+    const container = scheduler2.$container;
+    if (container._$quickInfoHandler) {
+      return;
+    } else {
+      container._$quickInfoHandler = true;
+      scheduler2.event(container, "mousedown", function(e) {
+        const eventElement = e.target.closest(`[${scheduler2.config.event_attribute}]`);
+        if (eventElement) {
+          clickedElementPosition = { id: eventElement.getAttribute(scheduler2.config.event_attribute), position: getPositionInsideScheduler(eventElement) };
+        }
+      });
+      scheduler2.attachEvent("onDestroy", () => {
+        delete container._$quickInfoHandler;
+      });
+    }
+  });
   scheduler2.attachEvent("onClick", function(id2) {
     if (!scheduler2.config.show_quick_info) {
       return;
@@ -14086,7 +14700,12 @@ function quick_info(scheduler2) {
     if (this.callEvent("onBeforeQuickInfo", [id2]) === false) {
       return;
     }
-    var pos = this._get_event_counter_part(id2);
+    let pos;
+    if (clickedElementPosition && clickedElementPosition.id == id2) {
+      pos = clickedElementPosition.position;
+    } else {
+      pos = this._get_event_counter_part(id2);
+    }
     if (pos) {
       this._quick_info_box = this._init_quick_info(pos);
       this._fill_quick_data(id2);
@@ -14191,7 +14810,22 @@ function quick_info(scheduler2) {
       }
       qi.className = qi.className.replace(" dhx_qi_left", "").replace(" dhx_qi_right", "") + " dhx_qi_" + (pos.dx == 1 ? "left" : "right");
     }
+    qi.ontransitionend = () => {
+      fitQIInsideWindow(qi);
+      qi.ontransitionend = null;
+    };
+    setTimeout(() => {
+      fitQIInsideWindow(qi);
+    }, 1);
   };
+  function fitQIInsideWindow(quickInfoPopup) {
+    const popupRect = quickInfoPopup.getBoundingClientRect();
+    const containerRect = scheduler2.$container.getBoundingClientRect();
+    const offsetBottom = containerRect.bottom - popupRect.bottom;
+    if (offsetBottom < 0) {
+      quickInfoPopup.style.top = `${parseFloat(quickInfoPopup.style.top) + offsetBottom}px`;
+    }
+  }
   scheduler2.attachEvent("onTemplatesReady", function() {
     scheduler2.hideQuickInfo();
     if (this._quick_info_box) {
@@ -14259,22 +14893,25 @@ function quick_info(scheduler2) {
     } else
       scheduler2._qi_button_click(node.parentNode);
   };
-  scheduler2._get_event_counter_part = function(id2) {
-    var domEv = scheduler2.getRenderedEvent(id2);
-    var left = 0;
-    var top = 0;
-    var node = domEv;
+  function getPositionInsideScheduler(element) {
+    let left = 0;
+    let top = 0;
+    let node = element;
     while (node && node != scheduler2._obj) {
       left += node.offsetLeft;
       top += node.offsetTop - node.scrollTop;
       node = node.offsetParent;
     }
     if (node) {
-      var dx = left + domEv.offsetWidth / 2 > scheduler2._x / 2 ? 1 : 0;
-      var dy = top + domEv.offsetHeight / 2 > scheduler2._y / 2 ? 1 : 0;
-      return { left, top, dx, dy, width: domEv.offsetWidth, height: domEv.offsetHeight };
+      let dx = left + element.offsetWidth / 2 > scheduler2._x / 2 ? 1 : 0;
+      let dy = top + element.offsetHeight / 2 > scheduler2._y / 2 ? 1 : 0;
+      return { left, top, dx, dy, width: element.offsetWidth, height: element.offsetHeight };
     }
     return 0;
+  }
+  scheduler2._get_event_counter_part = function(id2) {
+    var domEv = scheduler2.getRenderedEvent(id2);
+    return getPositionInsideScheduler(domEv);
   };
   scheduler2._fill_quick_data = function(id2) {
     var ev = scheduler2.getEvent(id2);
@@ -14419,7 +15056,3488 @@ function readonly(scheduler2) {
     };
   });
 }
+var ALL_WEEKDAYS = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"];
+var Weekday = function() {
+  function Weekday2(weekday, n) {
+    if (n === 0)
+      throw new Error("Can't create weekday with n == 0");
+    this.weekday = weekday;
+    this.n = n;
+  }
+  Weekday2.fromStr = function(str) {
+    return new Weekday2(ALL_WEEKDAYS.indexOf(str));
+  };
+  Weekday2.prototype.nth = function(n) {
+    return this.n === n ? this : new Weekday2(this.weekday, n);
+  };
+  Weekday2.prototype.equals = function(other) {
+    return this.weekday === other.weekday && this.n === other.n;
+  };
+  Weekday2.prototype.toString = function() {
+    var s = ALL_WEEKDAYS[this.weekday];
+    if (this.n)
+      s = (this.n > 0 ? "+" : "") + String(this.n) + s;
+    return s;
+  };
+  Weekday2.prototype.getJsWeekday = function() {
+    return this.weekday === 6 ? 0 : this.weekday + 1;
+  };
+  return Weekday2;
+}();
+var isPresent = function(value) {
+  return value !== null && value !== void 0;
+};
+var isNumber = function(value) {
+  return typeof value === "number";
+};
+var isWeekdayStr = function(value) {
+  return typeof value === "string" && ALL_WEEKDAYS.includes(value);
+};
+var isArray = Array.isArray;
+var range = function(start, end) {
+  if (end === void 0) {
+    end = start;
+  }
+  if (arguments.length === 1) {
+    end = start;
+    start = 0;
+  }
+  var rang = [];
+  for (var i = start; i < end; i++)
+    rang.push(i);
+  return rang;
+};
+var repeat = function(value, times) {
+  var i = 0;
+  var array = [];
+  if (isArray(value)) {
+    for (; i < times; i++)
+      array[i] = [].concat(value);
+  } else {
+    for (; i < times; i++)
+      array[i] = value;
+  }
+  return array;
+};
+var toArray = function(item) {
+  if (isArray(item)) {
+    return item;
+  }
+  return [item];
+};
+function padStart(item, targetLength, padString) {
+  if (padString === void 0) {
+    padString = " ";
+  }
+  var str = String(item);
+  targetLength = targetLength >> 0;
+  if (str.length > targetLength) {
+    return String(str);
+  }
+  targetLength = targetLength - str.length;
+  if (targetLength > padString.length) {
+    padString += repeat(padString, targetLength / padString.length);
+  }
+  return padString.slice(0, targetLength) + String(str);
+}
+var split = function(str, sep, num) {
+  var splits = str.split(sep);
+  return num ? splits.slice(0, num).concat([splits.slice(num).join(sep)]) : splits;
+};
+var pymod = function(a, b) {
+  var r = a % b;
+  return r * b < 0 ? r + b : r;
+};
+var divmod = function(a, b) {
+  return { div: Math.floor(a / b), mod: pymod(a, b) };
+};
+var empty = function(obj) {
+  return !isPresent(obj) || obj.length === 0;
+};
+var notEmpty = function(obj) {
+  return !empty(obj);
+};
+var includes = function(arr, val) {
+  return notEmpty(arr) && arr.indexOf(val) !== -1;
+};
+var datetime = function(y, m, d, h, i, s) {
+  if (h === void 0) {
+    h = 0;
+  }
+  if (i === void 0) {
+    i = 0;
+  }
+  if (s === void 0) {
+    s = 0;
+  }
+  return new Date(Date.UTC(y, m - 1, d, h, i, s));
+};
+var MONTH_DAYS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+var ONE_DAY = 1e3 * 60 * 60 * 24;
+var MAXYEAR = 9999;
+var ORDINAL_BASE = datetime(1970, 1, 1);
+var PY_WEEKDAYS = [6, 0, 1, 2, 3, 4, 5];
+var isLeapYear = function(year) {
+  return year % 4 === 0 && year % 100 !== 0 || year % 400 === 0;
+};
+var isDate = function(value) {
+  return value instanceof Date;
+};
+var isValidDate = function(value) {
+  return isDate(value) && !isNaN(value.getTime());
+};
+var daysBetween = function(date1, date2) {
+  var date1ms = date1.getTime();
+  var date2ms = date2.getTime();
+  var differencems = date1ms - date2ms;
+  return Math.round(differencems / ONE_DAY);
+};
+var toOrdinal = function(date) {
+  return daysBetween(date, ORDINAL_BASE);
+};
+var fromOrdinal = function(ordinal) {
+  return new Date(ORDINAL_BASE.getTime() + ordinal * ONE_DAY);
+};
+var getMonthDays = function(date) {
+  var month = date.getUTCMonth();
+  return month === 1 && isLeapYear(date.getUTCFullYear()) ? 29 : MONTH_DAYS[month];
+};
+var getWeekday = function(date) {
+  return PY_WEEKDAYS[date.getUTCDay()];
+};
+var monthRange = function(year, month) {
+  var date = datetime(year, month + 1, 1);
+  return [getWeekday(date), getMonthDays(date)];
+};
+var combine = function(date, time) {
+  time = time || date;
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), time.getHours(), time.getMinutes(), time.getSeconds(), time.getMilliseconds()));
+};
+var clone = function(date) {
+  var dolly = new Date(date.getTime());
+  return dolly;
+};
+var cloneDates = function(dates) {
+  var clones = [];
+  for (var i = 0; i < dates.length; i++) {
+    clones.push(clone(dates[i]));
+  }
+  return clones;
+};
+var sort = function(dates) {
+  dates.sort(function(a, b) {
+    return a.getTime() - b.getTime();
+  });
+};
+var timeToUntilString = function(time, utc) {
+  if (utc === void 0) {
+    utc = true;
+  }
+  var date = new Date(time);
+  return [padStart(date.getUTCFullYear().toString(), 4, "0"), padStart(date.getUTCMonth() + 1, 2, "0"), padStart(date.getUTCDate(), 2, "0"), "T", padStart(date.getUTCHours(), 2, "0"), padStart(date.getUTCMinutes(), 2, "0"), padStart(date.getUTCSeconds(), 2, "0"), utc ? "Z" : ""].join("");
+};
+var untilStringToDate = function(until) {
+  var re = /^(\d{4})(\d{2})(\d{2})(T(\d{2})(\d{2})(\d{2})Z?)?$/;
+  var bits = re.exec(until);
+  if (!bits)
+    throw new Error("Invalid UNTIL value: ".concat(until));
+  return new Date(Date.UTC(parseInt(bits[1], 10), parseInt(bits[2], 10) - 1, parseInt(bits[3], 10), parseInt(bits[5], 10) || 0, parseInt(bits[6], 10) || 0, parseInt(bits[7], 10) || 0));
+};
+var dateTZtoISO8601 = function(date, timeZone) {
+  var dateStr = date.toLocaleString("sv-SE", { timeZone });
+  return dateStr.replace(" ", "T") + "Z";
+};
+var dateInTimeZone = function(date, timeZone) {
+  var localTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  var dateInLocalTZ = new Date(dateTZtoISO8601(date, localTimeZone));
+  var dateInTargetTZ = new Date(dateTZtoISO8601(date, timeZone !== null && timeZone !== void 0 ? timeZone : "UTC"));
+  var tzOffset = dateInTargetTZ.getTime() - dateInLocalTZ.getTime();
+  return new Date(date.getTime() - tzOffset);
+};
+var IterResult = function() {
+  function IterResult2(method, args) {
+    this.minDate = null;
+    this.maxDate = null;
+    this._result = [];
+    this.total = 0;
+    this.method = method;
+    this.args = args;
+    if (method === "between") {
+      this.maxDate = args.inc ? args.before : new Date(args.before.getTime() - 1);
+      this.minDate = args.inc ? args.after : new Date(args.after.getTime() + 1);
+    } else if (method === "before") {
+      this.maxDate = args.inc ? args.dt : new Date(args.dt.getTime() - 1);
+    } else if (method === "after") {
+      this.minDate = args.inc ? args.dt : new Date(args.dt.getTime() + 1);
+    }
+  }
+  IterResult2.prototype.accept = function(date) {
+    ++this.total;
+    var tooEarly = this.minDate && date < this.minDate;
+    var tooLate = this.maxDate && date > this.maxDate;
+    if (this.method === "between") {
+      if (tooEarly)
+        return true;
+      if (tooLate)
+        return false;
+    } else if (this.method === "before") {
+      if (tooLate)
+        return false;
+    } else if (this.method === "after") {
+      if (tooEarly)
+        return true;
+      this.add(date);
+      return false;
+    }
+    return this.add(date);
+  };
+  IterResult2.prototype.add = function(date) {
+    this._result.push(date);
+    return true;
+  };
+  IterResult2.prototype.getValue = function() {
+    var res = this._result;
+    switch (this.method) {
+      case "all":
+      case "between":
+        return res;
+      case "before":
+      case "after":
+      default:
+        return res.length ? res[res.length - 1] : null;
+    }
+  };
+  IterResult2.prototype.clone = function() {
+    return new IterResult2(this.method, this.args);
+  };
+  return IterResult2;
+}();
+var extendStatics = function(d, b) {
+  extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(d2, b2) {
+    d2.__proto__ = b2;
+  } || function(d2, b2) {
+    for (var p in b2)
+      if (Object.prototype.hasOwnProperty.call(b2, p))
+        d2[p] = b2[p];
+  };
+  return extendStatics(d, b);
+};
+function __extends(d, b) {
+  if (typeof b !== "function" && b !== null)
+    throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+  extendStatics(d, b);
+  function __() {
+    this.constructor = d;
+  }
+  d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+}
+var __assign = function() {
+  __assign = Object.assign || function __assign2(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s)
+        if (Object.prototype.hasOwnProperty.call(s, p))
+          t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+function __spreadArray(to, from, pack) {
+  if (pack || arguments.length === 2)
+    for (var i = 0, l = from.length, ar2; i < l; i++) {
+      if (ar2 || !(i in from)) {
+        if (!ar2)
+          ar2 = Array.prototype.slice.call(from, 0, i);
+        ar2[i] = from[i];
+      }
+    }
+  return to.concat(ar2 || Array.prototype.slice.call(from));
+}
+typeof SuppressedError === "function" ? SuppressedError : function(error, suppressed, message2) {
+  var e = new Error(message2);
+  return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+};
+var CallbackIterResult = function(_super) {
+  __extends(CallbackIterResult2, _super);
+  function CallbackIterResult2(method, args, iterator) {
+    var _this = _super.call(this, method, args) || this;
+    _this.iterator = iterator;
+    return _this;
+  }
+  CallbackIterResult2.prototype.add = function(date) {
+    if (this.iterator(date, this._result.length)) {
+      this._result.push(date);
+      return true;
+    }
+    return false;
+  };
+  return CallbackIterResult2;
+}(IterResult);
+var ENGLISH = { dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], tokens: { SKIP: /^[ \r\n\t]+|^\.$/, number: /^[1-9][0-9]*/, numberAsText: /^(one|two|three)/i, every: /^every/i, "day(s)": /^days?/i, "weekday(s)": /^weekdays?/i, "week(s)": /^weeks?/i, "hour(s)": /^hours?/i, "minute(s)": /^minutes?/i, "month(s)": /^months?/i, "year(s)": /^years?/i, on: /^(on|in)/i, at: /^(at)/i, the: /^the/i, first: /^first/i, second: /^second/i, third: /^third/i, nth: /^([1-9][0-9]*)(\.|th|nd|rd|st)/i, last: /^last/i, for: /^for/i, "time(s)": /^times?/i, until: /^(un)?til/i, monday: /^mo(n(day)?)?/i, tuesday: /^tu(e(s(day)?)?)?/i, wednesday: /^we(d(n(esday)?)?)?/i, thursday: /^th(u(r(sday)?)?)?/i, friday: /^fr(i(day)?)?/i, saturday: /^sa(t(urday)?)?/i, sunday: /^su(n(day)?)?/i, january: /^jan(uary)?/i, february: /^feb(ruary)?/i, march: /^mar(ch)?/i, april: /^apr(il)?/i, may: /^may/i, june: /^june?/i, july: /^july?/i, august: /^aug(ust)?/i, september: /^sep(t(ember)?)?/i, october: /^oct(ober)?/i, november: /^nov(ember)?/i, december: /^dec(ember)?/i, comma: /^(,\s*|(and|or)\s*)+/i } };
+var contains = function(arr, val) {
+  return arr.indexOf(val) !== -1;
+};
+var defaultGetText = function(id2) {
+  return id2.toString();
+};
+var defaultDateFormatter = function(year, month, day) {
+  return "".concat(month, " ").concat(day, ", ").concat(year);
+};
+var ToText = function() {
+  function ToText2(rrule, gettext, language, dateFormatter) {
+    if (gettext === void 0) {
+      gettext = defaultGetText;
+    }
+    if (language === void 0) {
+      language = ENGLISH;
+    }
+    if (dateFormatter === void 0) {
+      dateFormatter = defaultDateFormatter;
+    }
+    this.text = [];
+    this.language = language || ENGLISH;
+    this.gettext = gettext;
+    this.dateFormatter = dateFormatter;
+    this.rrule = rrule;
+    this.options = rrule.options;
+    this.origOptions = rrule.origOptions;
+    if (this.origOptions.bymonthday) {
+      var bymonthday = [].concat(this.options.bymonthday);
+      var bynmonthday = [].concat(this.options.bynmonthday);
+      bymonthday.sort(function(a, b) {
+        return a - b;
+      });
+      bynmonthday.sort(function(a, b) {
+        return b - a;
+      });
+      this.bymonthday = bymonthday.concat(bynmonthday);
+      if (!this.bymonthday.length)
+        this.bymonthday = null;
+    }
+    if (isPresent(this.origOptions.byweekday)) {
+      var byweekday = !isArray(this.origOptions.byweekday) ? [this.origOptions.byweekday] : this.origOptions.byweekday;
+      var days = String(byweekday);
+      this.byweekday = { allWeeks: byweekday.filter(function(weekday) {
+        return !weekday.n;
+      }), someWeeks: byweekday.filter(function(weekday) {
+        return Boolean(weekday.n);
+      }), isWeekdays: days.indexOf("MO") !== -1 && days.indexOf("TU") !== -1 && days.indexOf("WE") !== -1 && days.indexOf("TH") !== -1 && days.indexOf("FR") !== -1 && days.indexOf("SA") === -1 && days.indexOf("SU") === -1, isEveryDay: days.indexOf("MO") !== -1 && days.indexOf("TU") !== -1 && days.indexOf("WE") !== -1 && days.indexOf("TH") !== -1 && days.indexOf("FR") !== -1 && days.indexOf("SA") !== -1 && days.indexOf("SU") !== -1 };
+      var sortWeekDays = function(a, b) {
+        return a.weekday - b.weekday;
+      };
+      this.byweekday.allWeeks.sort(sortWeekDays);
+      this.byweekday.someWeeks.sort(sortWeekDays);
+      if (!this.byweekday.allWeeks.length)
+        this.byweekday.allWeeks = null;
+      if (!this.byweekday.someWeeks.length)
+        this.byweekday.someWeeks = null;
+    } else {
+      this.byweekday = null;
+    }
+  }
+  ToText2.isFullyConvertible = function(rrule) {
+    var canConvert = true;
+    if (!(rrule.options.freq in ToText2.IMPLEMENTED))
+      return false;
+    if (rrule.origOptions.until && rrule.origOptions.count)
+      return false;
+    for (var key in rrule.origOptions) {
+      if (contains(["dtstart", "tzid", "wkst", "freq"], key))
+        return true;
+      if (!contains(ToText2.IMPLEMENTED[rrule.options.freq], key))
+        return false;
+    }
+    return canConvert;
+  };
+  ToText2.prototype.isFullyConvertible = function() {
+    return ToText2.isFullyConvertible(this.rrule);
+  };
+  ToText2.prototype.toString = function() {
+    var gettext = this.gettext;
+    if (!(this.options.freq in ToText2.IMPLEMENTED)) {
+      return gettext("RRule error: Unable to fully convert this rrule to text");
+    }
+    this.text = [gettext("every")];
+    this[RRule.FREQUENCIES[this.options.freq]]();
+    if (this.options.until) {
+      this.add(gettext("until"));
+      var until = this.options.until;
+      this.add(this.dateFormatter(until.getUTCFullYear(), this.language.monthNames[until.getUTCMonth()], until.getUTCDate()));
+    } else if (this.options.count) {
+      this.add(gettext("for")).add(this.options.count.toString()).add(this.plural(this.options.count) ? gettext("times") : gettext("time"));
+    }
+    if (!this.isFullyConvertible())
+      this.add(gettext("(~ approximate)"));
+    return this.text.join("");
+  };
+  ToText2.prototype.HOURLY = function() {
+    var gettext = this.gettext;
+    if (this.options.interval !== 1)
+      this.add(this.options.interval.toString());
+    this.add(this.plural(this.options.interval) ? gettext("hours") : gettext("hour"));
+  };
+  ToText2.prototype.MINUTELY = function() {
+    var gettext = this.gettext;
+    if (this.options.interval !== 1)
+      this.add(this.options.interval.toString());
+    this.add(this.plural(this.options.interval) ? gettext("minutes") : gettext("minute"));
+  };
+  ToText2.prototype.DAILY = function() {
+    var gettext = this.gettext;
+    if (this.options.interval !== 1)
+      this.add(this.options.interval.toString());
+    if (this.byweekday && this.byweekday.isWeekdays) {
+      this.add(this.plural(this.options.interval) ? gettext("weekdays") : gettext("weekday"));
+    } else {
+      this.add(this.plural(this.options.interval) ? gettext("days") : gettext("day"));
+    }
+    if (this.origOptions.bymonth) {
+      this.add(gettext("in"));
+      this._bymonth();
+    }
+    if (this.bymonthday) {
+      this._bymonthday();
+    } else if (this.byweekday) {
+      this._byweekday();
+    } else if (this.origOptions.byhour) {
+      this._byhour();
+    }
+  };
+  ToText2.prototype.WEEKLY = function() {
+    var gettext = this.gettext;
+    if (this.options.interval !== 1) {
+      this.add(this.options.interval.toString()).add(this.plural(this.options.interval) ? gettext("weeks") : gettext("week"));
+    }
+    if (this.byweekday && this.byweekday.isWeekdays) {
+      if (this.options.interval === 1) {
+        this.add(this.plural(this.options.interval) ? gettext("weekdays") : gettext("weekday"));
+      } else {
+        this.add(gettext("on")).add(gettext("weekdays"));
+      }
+    } else if (this.byweekday && this.byweekday.isEveryDay) {
+      this.add(this.plural(this.options.interval) ? gettext("days") : gettext("day"));
+    } else {
+      if (this.options.interval === 1)
+        this.add(gettext("week"));
+      if (this.origOptions.bymonth) {
+        this.add(gettext("in"));
+        this._bymonth();
+      }
+      if (this.bymonthday) {
+        this._bymonthday();
+      } else if (this.byweekday) {
+        this._byweekday();
+      }
+      if (this.origOptions.byhour) {
+        this._byhour();
+      }
+    }
+  };
+  ToText2.prototype.MONTHLY = function() {
+    var gettext = this.gettext;
+    if (this.origOptions.bymonth) {
+      if (this.options.interval !== 1) {
+        this.add(this.options.interval.toString()).add(gettext("months"));
+        if (this.plural(this.options.interval))
+          this.add(gettext("in"));
+      }
+      this._bymonth();
+    } else {
+      if (this.options.interval !== 1) {
+        this.add(this.options.interval.toString());
+      }
+      this.add(this.plural(this.options.interval) ? gettext("months") : gettext("month"));
+    }
+    if (this.bymonthday) {
+      this._bymonthday();
+    } else if (this.byweekday && this.byweekday.isWeekdays) {
+      this.add(gettext("on")).add(gettext("weekdays"));
+    } else if (this.byweekday) {
+      this._byweekday();
+    }
+  };
+  ToText2.prototype.YEARLY = function() {
+    var gettext = this.gettext;
+    if (this.origOptions.bymonth) {
+      if (this.options.interval !== 1) {
+        this.add(this.options.interval.toString());
+        this.add(gettext("years"));
+      }
+      this._bymonth();
+    } else {
+      if (this.options.interval !== 1) {
+        this.add(this.options.interval.toString());
+      }
+      this.add(this.plural(this.options.interval) ? gettext("years") : gettext("year"));
+    }
+    if (this.bymonthday) {
+      this._bymonthday();
+    } else if (this.byweekday) {
+      this._byweekday();
+    }
+    if (this.options.byyearday) {
+      this.add(gettext("on the")).add(this.list(this.options.byyearday, this.nth, gettext("and"))).add(gettext("day"));
+    }
+    if (this.options.byweekno) {
+      this.add(gettext("in")).add(this.plural(this.options.byweekno.length) ? gettext("weeks") : gettext("week")).add(this.list(this.options.byweekno, void 0, gettext("and")));
+    }
+  };
+  ToText2.prototype._bymonthday = function() {
+    var gettext = this.gettext;
+    if (this.byweekday && this.byweekday.allWeeks) {
+      this.add(gettext("on")).add(this.list(this.byweekday.allWeeks, this.weekdaytext, gettext("or"))).add(gettext("the")).add(this.list(this.bymonthday, this.nth, gettext("or")));
+    } else {
+      this.add(gettext("on the")).add(this.list(this.bymonthday, this.nth, gettext("and")));
+    }
+  };
+  ToText2.prototype._byweekday = function() {
+    var gettext = this.gettext;
+    if (this.byweekday.allWeeks && !this.byweekday.isWeekdays) {
+      this.add(gettext("on")).add(this.list(this.byweekday.allWeeks, this.weekdaytext));
+    }
+    if (this.byweekday.someWeeks) {
+      if (this.byweekday.allWeeks)
+        this.add(gettext("and"));
+      this.add(gettext("on the")).add(this.list(this.byweekday.someWeeks, this.weekdaytext, gettext("and")));
+    }
+  };
+  ToText2.prototype._byhour = function() {
+    var gettext = this.gettext;
+    this.add(gettext("at")).add(this.list(this.origOptions.byhour, void 0, gettext("and")));
+  };
+  ToText2.prototype._bymonth = function() {
+    this.add(this.list(this.options.bymonth, this.monthtext, this.gettext("and")));
+  };
+  ToText2.prototype.nth = function(n) {
+    n = parseInt(n.toString(), 10);
+    var nth;
+    var gettext = this.gettext;
+    if (n === -1)
+      return gettext("last");
+    var npos = Math.abs(n);
+    switch (npos) {
+      case 1:
+      case 21:
+      case 31:
+        nth = npos + gettext("st");
+        break;
+      case 2:
+      case 22:
+        nth = npos + gettext("nd");
+        break;
+      case 3:
+      case 23:
+        nth = npos + gettext("rd");
+        break;
+      default:
+        nth = npos + gettext("th");
+    }
+    return n < 0 ? nth + " " + gettext("last") : nth;
+  };
+  ToText2.prototype.monthtext = function(m) {
+    return this.language.monthNames[m - 1];
+  };
+  ToText2.prototype.weekdaytext = function(wday) {
+    var weekday = isNumber(wday) ? (wday + 1) % 7 : wday.getJsWeekday();
+    return (wday.n ? this.nth(wday.n) + " " : "") + this.language.dayNames[weekday];
+  };
+  ToText2.prototype.plural = function(n) {
+    return n % 100 !== 1;
+  };
+  ToText2.prototype.add = function(s) {
+    this.text.push(" ");
+    this.text.push(s);
+    return this;
+  };
+  ToText2.prototype.list = function(arr, callback, finalDelim, delim) {
+    var _this = this;
+    if (delim === void 0) {
+      delim = ",";
+    }
+    if (!isArray(arr)) {
+      arr = [arr];
+    }
+    var delimJoin = function(array, delimiter, finalDelimiter) {
+      var list = "";
+      for (var i = 0; i < array.length; i++) {
+        if (i !== 0) {
+          if (i === array.length - 1) {
+            list += " " + finalDelimiter + " ";
+          } else {
+            list += delimiter + " ";
+          }
+        }
+        list += array[i];
+      }
+      return list;
+    };
+    callback = callback || function(o) {
+      return o.toString();
+    };
+    var realCallback = function(arg) {
+      return callback && callback.call(_this, arg);
+    };
+    if (finalDelim) {
+      return delimJoin(arr.map(realCallback), delim, finalDelim);
+    } else {
+      return arr.map(realCallback).join(delim + " ");
+    }
+  };
+  return ToText2;
+}();
+var Parser = function() {
+  function Parser2(rules) {
+    this.done = true;
+    this.rules = rules;
+  }
+  Parser2.prototype.start = function(text) {
+    this.text = text;
+    this.done = false;
+    return this.nextSymbol();
+  };
+  Parser2.prototype.isDone = function() {
+    return this.done && this.symbol === null;
+  };
+  Parser2.prototype.nextSymbol = function() {
+    var best;
+    var bestSymbol;
+    this.symbol = null;
+    this.value = null;
+    do {
+      if (this.done)
+        return false;
+      var rule = void 0;
+      best = null;
+      for (var name_1 in this.rules) {
+        rule = this.rules[name_1];
+        var match = rule.exec(this.text);
+        if (match) {
+          if (best === null || match[0].length > best[0].length) {
+            best = match;
+            bestSymbol = name_1;
+          }
+        }
+      }
+      if (best != null) {
+        this.text = this.text.substr(best[0].length);
+        if (this.text === "")
+          this.done = true;
+      }
+      if (best == null) {
+        this.done = true;
+        this.symbol = null;
+        this.value = null;
+        return;
+      }
+    } while (bestSymbol === "SKIP");
+    this.symbol = bestSymbol;
+    this.value = best;
+    return true;
+  };
+  Parser2.prototype.accept = function(name) {
+    if (this.symbol === name) {
+      if (this.value) {
+        var v = this.value;
+        this.nextSymbol();
+        return v;
+      }
+      this.nextSymbol();
+      return true;
+    }
+    return false;
+  };
+  Parser2.prototype.acceptNumber = function() {
+    return this.accept("number");
+  };
+  Parser2.prototype.expect = function(name) {
+    if (this.accept(name))
+      return true;
+    throw new Error("expected " + name + " but found " + this.symbol);
+  };
+  return Parser2;
+}();
+function parseText(text, language) {
+  if (language === void 0) {
+    language = ENGLISH;
+  }
+  var options = {};
+  var ttr = new Parser(language.tokens);
+  if (!ttr.start(text))
+    return null;
+  S();
+  return options;
+  function S() {
+    ttr.expect("every");
+    var n = ttr.acceptNumber();
+    if (n)
+      options.interval = parseInt(n[0], 10);
+    if (ttr.isDone())
+      throw new Error("Unexpected end");
+    switch (ttr.symbol) {
+      case "day(s)":
+        options.freq = RRule.DAILY;
+        if (ttr.nextSymbol()) {
+          AT();
+          F();
+        }
+        break;
+      case "weekday(s)":
+        options.freq = RRule.WEEKLY;
+        options.byweekday = [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR];
+        ttr.nextSymbol();
+        AT();
+        F();
+        break;
+      case "week(s)":
+        options.freq = RRule.WEEKLY;
+        if (ttr.nextSymbol()) {
+          ON();
+          AT();
+          F();
+        }
+        break;
+      case "hour(s)":
+        options.freq = RRule.HOURLY;
+        if (ttr.nextSymbol()) {
+          ON();
+          F();
+        }
+        break;
+      case "minute(s)":
+        options.freq = RRule.MINUTELY;
+        if (ttr.nextSymbol()) {
+          ON();
+          F();
+        }
+        break;
+      case "month(s)":
+        options.freq = RRule.MONTHLY;
+        if (ttr.nextSymbol()) {
+          ON();
+          F();
+        }
+        break;
+      case "year(s)":
+        options.freq = RRule.YEARLY;
+        if (ttr.nextSymbol()) {
+          ON();
+          F();
+        }
+        break;
+      case "monday":
+      case "tuesday":
+      case "wednesday":
+      case "thursday":
+      case "friday":
+      case "saturday":
+      case "sunday":
+        options.freq = RRule.WEEKLY;
+        var key = ttr.symbol.substr(0, 2).toUpperCase();
+        options.byweekday = [RRule[key]];
+        if (!ttr.nextSymbol())
+          return;
+        while (ttr.accept("comma")) {
+          if (ttr.isDone())
+            throw new Error("Unexpected end");
+          var wkd = decodeWKD();
+          if (!wkd) {
+            throw new Error("Unexpected symbol " + ttr.symbol + ", expected weekday");
+          }
+          options.byweekday.push(RRule[wkd]);
+          ttr.nextSymbol();
+        }
+        AT();
+        MDAYs();
+        F();
+        break;
+      case "january":
+      case "february":
+      case "march":
+      case "april":
+      case "may":
+      case "june":
+      case "july":
+      case "august":
+      case "september":
+      case "october":
+      case "november":
+      case "december":
+        options.freq = RRule.YEARLY;
+        options.bymonth = [decodeM()];
+        if (!ttr.nextSymbol())
+          return;
+        while (ttr.accept("comma")) {
+          if (ttr.isDone())
+            throw new Error("Unexpected end");
+          var m = decodeM();
+          if (!m) {
+            throw new Error("Unexpected symbol " + ttr.symbol + ", expected month");
+          }
+          options.bymonth.push(m);
+          ttr.nextSymbol();
+        }
+        ON();
+        F();
+        break;
+      default:
+        throw new Error("Unknown symbol");
+    }
+  }
+  function ON() {
+    var on = ttr.accept("on");
+    var the = ttr.accept("the");
+    if (!(on || the))
+      return;
+    do {
+      var nth = decodeNTH();
+      var wkd = decodeWKD();
+      var m = decodeM();
+      if (nth) {
+        if (wkd) {
+          ttr.nextSymbol();
+          if (!options.byweekday)
+            options.byweekday = [];
+          options.byweekday.push(RRule[wkd].nth(nth));
+        } else {
+          if (!options.bymonthday)
+            options.bymonthday = [];
+          options.bymonthday.push(nth);
+          ttr.accept("day(s)");
+        }
+      } else if (wkd) {
+        ttr.nextSymbol();
+        if (!options.byweekday)
+          options.byweekday = [];
+        options.byweekday.push(RRule[wkd]);
+      } else if (ttr.symbol === "weekday(s)") {
+        ttr.nextSymbol();
+        if (!options.byweekday) {
+          options.byweekday = [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR];
+        }
+      } else if (ttr.symbol === "week(s)") {
+        ttr.nextSymbol();
+        var n = ttr.acceptNumber();
+        if (!n) {
+          throw new Error("Unexpected symbol " + ttr.symbol + ", expected week number");
+        }
+        options.byweekno = [parseInt(n[0], 10)];
+        while (ttr.accept("comma")) {
+          n = ttr.acceptNumber();
+          if (!n) {
+            throw new Error("Unexpected symbol " + ttr.symbol + "; expected monthday");
+          }
+          options.byweekno.push(parseInt(n[0], 10));
+        }
+      } else if (m) {
+        ttr.nextSymbol();
+        if (!options.bymonth)
+          options.bymonth = [];
+        options.bymonth.push(m);
+      } else {
+        return;
+      }
+    } while (ttr.accept("comma") || ttr.accept("the") || ttr.accept("on"));
+  }
+  function AT() {
+    var at = ttr.accept("at");
+    if (!at)
+      return;
+    do {
+      var n = ttr.acceptNumber();
+      if (!n) {
+        throw new Error("Unexpected symbol " + ttr.symbol + ", expected hour");
+      }
+      options.byhour = [parseInt(n[0], 10)];
+      while (ttr.accept("comma")) {
+        n = ttr.acceptNumber();
+        if (!n) {
+          throw new Error("Unexpected symbol " + ttr.symbol + "; expected hour");
+        }
+        options.byhour.push(parseInt(n[0], 10));
+      }
+    } while (ttr.accept("comma") || ttr.accept("at"));
+  }
+  function decodeM() {
+    switch (ttr.symbol) {
+      case "january":
+        return 1;
+      case "february":
+        return 2;
+      case "march":
+        return 3;
+      case "april":
+        return 4;
+      case "may":
+        return 5;
+      case "june":
+        return 6;
+      case "july":
+        return 7;
+      case "august":
+        return 8;
+      case "september":
+        return 9;
+      case "october":
+        return 10;
+      case "november":
+        return 11;
+      case "december":
+        return 12;
+      default:
+        return false;
+    }
+  }
+  function decodeWKD() {
+    switch (ttr.symbol) {
+      case "monday":
+      case "tuesday":
+      case "wednesday":
+      case "thursday":
+      case "friday":
+      case "saturday":
+      case "sunday":
+        return ttr.symbol.substr(0, 2).toUpperCase();
+      default:
+        return false;
+    }
+  }
+  function decodeNTH() {
+    switch (ttr.symbol) {
+      case "last":
+        ttr.nextSymbol();
+        return -1;
+      case "first":
+        ttr.nextSymbol();
+        return 1;
+      case "second":
+        ttr.nextSymbol();
+        return ttr.accept("last") ? -2 : 2;
+      case "third":
+        ttr.nextSymbol();
+        return ttr.accept("last") ? -3 : 3;
+      case "nth":
+        var v = parseInt(ttr.value[1], 10);
+        if (v < -366 || v > 366)
+          throw new Error("Nth out of range: " + v);
+        ttr.nextSymbol();
+        return ttr.accept("last") ? -v : v;
+      default:
+        return false;
+    }
+  }
+  function MDAYs() {
+    ttr.accept("on");
+    ttr.accept("the");
+    var nth = decodeNTH();
+    if (!nth)
+      return;
+    options.bymonthday = [nth];
+    ttr.nextSymbol();
+    while (ttr.accept("comma")) {
+      nth = decodeNTH();
+      if (!nth) {
+        throw new Error("Unexpected symbol " + ttr.symbol + "; expected monthday");
+      }
+      options.bymonthday.push(nth);
+      ttr.nextSymbol();
+    }
+  }
+  function F() {
+    if (ttr.symbol === "until") {
+      var date = Date.parse(ttr.text);
+      if (!date)
+        throw new Error("Cannot parse until date:" + ttr.text);
+      options.until = new Date(date);
+    } else if (ttr.accept("for")) {
+      options.count = parseInt(ttr.value[0], 10);
+      ttr.expect("number");
+    }
+  }
+}
+var Frequency;
+(function(Frequency2) {
+  Frequency2[Frequency2["YEARLY"] = 0] = "YEARLY";
+  Frequency2[Frequency2["MONTHLY"] = 1] = "MONTHLY";
+  Frequency2[Frequency2["WEEKLY"] = 2] = "WEEKLY";
+  Frequency2[Frequency2["DAILY"] = 3] = "DAILY";
+  Frequency2[Frequency2["HOURLY"] = 4] = "HOURLY";
+  Frequency2[Frequency2["MINUTELY"] = 5] = "MINUTELY";
+  Frequency2[Frequency2["SECONDLY"] = 6] = "SECONDLY";
+})(Frequency || (Frequency = {}));
+function freqIsDailyOrGreater(freq) {
+  return freq < Frequency.HOURLY;
+}
+var fromText = function(text, language) {
+  if (language === void 0) {
+    language = ENGLISH;
+  }
+  return new RRule(parseText(text, language) || void 0);
+};
+var common = ["count", "until", "interval", "byweekday", "bymonthday", "bymonth"];
+ToText.IMPLEMENTED = [];
+ToText.IMPLEMENTED[Frequency.HOURLY] = common;
+ToText.IMPLEMENTED[Frequency.MINUTELY] = common;
+ToText.IMPLEMENTED[Frequency.DAILY] = ["byhour"].concat(common);
+ToText.IMPLEMENTED[Frequency.WEEKLY] = common;
+ToText.IMPLEMENTED[Frequency.MONTHLY] = common;
+ToText.IMPLEMENTED[Frequency.YEARLY] = ["byweekno", "byyearday"].concat(common);
+var toText = function(rrule, gettext, language, dateFormatter) {
+  return new ToText(rrule, gettext, language, dateFormatter).toString();
+};
+var isFullyConvertible = ToText.isFullyConvertible;
+var Time = function() {
+  function Time2(hour, minute, second, millisecond) {
+    this.hour = hour;
+    this.minute = minute;
+    this.second = second;
+    this.millisecond = millisecond || 0;
+  }
+  Time2.prototype.getHours = function() {
+    return this.hour;
+  };
+  Time2.prototype.getMinutes = function() {
+    return this.minute;
+  };
+  Time2.prototype.getSeconds = function() {
+    return this.second;
+  };
+  Time2.prototype.getMilliseconds = function() {
+    return this.millisecond;
+  };
+  Time2.prototype.getTime = function() {
+    return (this.hour * 60 * 60 + this.minute * 60 + this.second) * 1e3 + this.millisecond;
+  };
+  return Time2;
+}();
+var DateTime = function(_super) {
+  __extends(DateTime2, _super);
+  function DateTime2(year, month, day, hour, minute, second, millisecond) {
+    var _this = _super.call(this, hour, minute, second, millisecond) || this;
+    _this.year = year;
+    _this.month = month;
+    _this.day = day;
+    return _this;
+  }
+  DateTime2.fromDate = function(date) {
+    return new this(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds(), date.valueOf() % 1e3);
+  };
+  DateTime2.prototype.getWeekday = function() {
+    return getWeekday(new Date(this.getTime()));
+  };
+  DateTime2.prototype.getTime = function() {
+    return new Date(Date.UTC(this.year, this.month - 1, this.day, this.hour, this.minute, this.second, this.millisecond)).getTime();
+  };
+  DateTime2.prototype.getDay = function() {
+    return this.day;
+  };
+  DateTime2.prototype.getMonth = function() {
+    return this.month;
+  };
+  DateTime2.prototype.getYear = function() {
+    return this.year;
+  };
+  DateTime2.prototype.addYears = function(years) {
+    this.year += years;
+  };
+  DateTime2.prototype.addMonths = function(months) {
+    this.month += months;
+    if (this.month > 12) {
+      var yearDiv = Math.floor(this.month / 12);
+      var monthMod = pymod(this.month, 12);
+      this.month = monthMod;
+      this.year += yearDiv;
+      if (this.month === 0) {
+        this.month = 12;
+        --this.year;
+      }
+    }
+  };
+  DateTime2.prototype.addWeekly = function(days, wkst) {
+    if (wkst > this.getWeekday()) {
+      this.day += -(this.getWeekday() + 1 + (6 - wkst)) + days * 7;
+    } else {
+      this.day += -(this.getWeekday() - wkst) + days * 7;
+    }
+    this.fixDay();
+  };
+  DateTime2.prototype.addDaily = function(days) {
+    this.day += days;
+    this.fixDay();
+  };
+  DateTime2.prototype.addHours = function(hours, filtered, byhour) {
+    if (filtered) {
+      this.hour += Math.floor((23 - this.hour) / hours) * hours;
+    }
+    for (; ; ) {
+      this.hour += hours;
+      var _a = divmod(this.hour, 24), dayDiv = _a.div, hourMod = _a.mod;
+      if (dayDiv) {
+        this.hour = hourMod;
+        this.addDaily(dayDiv);
+      }
+      if (empty(byhour) || includes(byhour, this.hour))
+        break;
+    }
+  };
+  DateTime2.prototype.addMinutes = function(minutes, filtered, byhour, byminute) {
+    if (filtered) {
+      this.minute += Math.floor((1439 - (this.hour * 60 + this.minute)) / minutes) * minutes;
+    }
+    for (; ; ) {
+      this.minute += minutes;
+      var _a = divmod(this.minute, 60), hourDiv = _a.div, minuteMod = _a.mod;
+      if (hourDiv) {
+        this.minute = minuteMod;
+        this.addHours(hourDiv, false, byhour);
+      }
+      if ((empty(byhour) || includes(byhour, this.hour)) && (empty(byminute) || includes(byminute, this.minute))) {
+        break;
+      }
+    }
+  };
+  DateTime2.prototype.addSeconds = function(seconds, filtered, byhour, byminute, bysecond) {
+    if (filtered) {
+      this.second += Math.floor((86399 - (this.hour * 3600 + this.minute * 60 + this.second)) / seconds) * seconds;
+    }
+    for (; ; ) {
+      this.second += seconds;
+      var _a = divmod(this.second, 60), minuteDiv = _a.div, secondMod = _a.mod;
+      if (minuteDiv) {
+        this.second = secondMod;
+        this.addMinutes(minuteDiv, false, byhour, byminute);
+      }
+      if ((empty(byhour) || includes(byhour, this.hour)) && (empty(byminute) || includes(byminute, this.minute)) && (empty(bysecond) || includes(bysecond, this.second))) {
+        break;
+      }
+    }
+  };
+  DateTime2.prototype.fixDay = function() {
+    if (this.day <= 28) {
+      return;
+    }
+    var daysinmonth = monthRange(this.year, this.month - 1)[1];
+    if (this.day <= daysinmonth) {
+      return;
+    }
+    while (this.day > daysinmonth) {
+      this.day -= daysinmonth;
+      ++this.month;
+      if (this.month === 13) {
+        this.month = 1;
+        ++this.year;
+        if (this.year > MAXYEAR) {
+          return;
+        }
+      }
+      daysinmonth = monthRange(this.year, this.month - 1)[1];
+    }
+  };
+  DateTime2.prototype.add = function(options, filtered) {
+    var freq = options.freq, interval = options.interval, wkst = options.wkst, byhour = options.byhour, byminute = options.byminute, bysecond = options.bysecond;
+    switch (freq) {
+      case Frequency.YEARLY:
+        return this.addYears(interval);
+      case Frequency.MONTHLY:
+        return this.addMonths(interval);
+      case Frequency.WEEKLY:
+        return this.addWeekly(interval, wkst);
+      case Frequency.DAILY:
+        return this.addDaily(interval);
+      case Frequency.HOURLY:
+        return this.addHours(interval, filtered, byhour);
+      case Frequency.MINUTELY:
+        return this.addMinutes(interval, filtered, byhour, byminute);
+      case Frequency.SECONDLY:
+        return this.addSeconds(interval, filtered, byhour, byminute, bysecond);
+    }
+  };
+  return DateTime2;
+}(Time);
+function initializeOptions$1(options) {
+  var invalid = [];
+  var keys = Object.keys(options);
+  for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
+    var key = keys_1[_i];
+    if (!includes(defaultKeys, key))
+      invalid.push(key);
+    if (isDate(options[key]) && !isValidDate(options[key])) {
+      invalid.push(key);
+    }
+  }
+  if (invalid.length) {
+    throw new Error("Invalid options: " + invalid.join(", "));
+  }
+  return __assign({}, options);
+}
+function parseOptions(options) {
+  var opts = __assign(__assign({}, DEFAULT_OPTIONS$1), initializeOptions$1(options));
+  if (isPresent(opts.byeaster))
+    opts.freq = RRule.YEARLY;
+  if (!(isPresent(opts.freq) && RRule.FREQUENCIES[opts.freq])) {
+    throw new Error("Invalid frequency: ".concat(opts.freq, " ").concat(options.freq));
+  }
+  if (!opts.dtstart)
+    opts.dtstart = new Date((/* @__PURE__ */ new Date()).setMilliseconds(0));
+  if (!isPresent(opts.wkst)) {
+    opts.wkst = RRule.MO.weekday;
+  } else if (isNumber(opts.wkst))
+    ;
+  else {
+    opts.wkst = opts.wkst.weekday;
+  }
+  if (isPresent(opts.bysetpos)) {
+    if (isNumber(opts.bysetpos))
+      opts.bysetpos = [opts.bysetpos];
+    for (var i = 0; i < opts.bysetpos.length; i++) {
+      var v = opts.bysetpos[i];
+      if (v === 0 || !(v >= -366 && v <= 366)) {
+        throw new Error("bysetpos must be between 1 and 366, or between -366 and -1");
+      }
+    }
+  }
+  if (!(Boolean(opts.byweekno) || notEmpty(opts.byweekno) || notEmpty(opts.byyearday) || Boolean(opts.bymonthday) || notEmpty(opts.bymonthday) || isPresent(opts.byweekday) || isPresent(opts.byeaster))) {
+    switch (opts.freq) {
+      case RRule.YEARLY:
+        if (!opts.bymonth)
+          opts.bymonth = opts.dtstart.getUTCMonth() + 1;
+        opts.bymonthday = opts.dtstart.getUTCDate();
+        break;
+      case RRule.MONTHLY:
+        opts.bymonthday = opts.dtstart.getUTCDate();
+        break;
+      case RRule.WEEKLY:
+        opts.byweekday = [getWeekday(opts.dtstart)];
+        break;
+    }
+  }
+  if (isPresent(opts.bymonth) && !isArray(opts.bymonth)) {
+    opts.bymonth = [opts.bymonth];
+  }
+  if (isPresent(opts.byyearday) && !isArray(opts.byyearday) && isNumber(opts.byyearday)) {
+    opts.byyearday = [opts.byyearday];
+  }
+  if (!isPresent(opts.bymonthday)) {
+    opts.bymonthday = [];
+    opts.bynmonthday = [];
+  } else if (isArray(opts.bymonthday)) {
+    var bymonthday = [];
+    var bynmonthday = [];
+    for (var i = 0; i < opts.bymonthday.length; i++) {
+      var v = opts.bymonthday[i];
+      if (v > 0) {
+        bymonthday.push(v);
+      } else if (v < 0) {
+        bynmonthday.push(v);
+      }
+    }
+    opts.bymonthday = bymonthday;
+    opts.bynmonthday = bynmonthday;
+  } else if (opts.bymonthday < 0) {
+    opts.bynmonthday = [opts.bymonthday];
+    opts.bymonthday = [];
+  } else {
+    opts.bynmonthday = [];
+    opts.bymonthday = [opts.bymonthday];
+  }
+  if (isPresent(opts.byweekno) && !isArray(opts.byweekno)) {
+    opts.byweekno = [opts.byweekno];
+  }
+  if (!isPresent(opts.byweekday)) {
+    opts.bynweekday = null;
+  } else if (isNumber(opts.byweekday)) {
+    opts.byweekday = [opts.byweekday];
+    opts.bynweekday = null;
+  } else if (isWeekdayStr(opts.byweekday)) {
+    opts.byweekday = [Weekday.fromStr(opts.byweekday).weekday];
+    opts.bynweekday = null;
+  } else if (opts.byweekday instanceof Weekday) {
+    if (!opts.byweekday.n || opts.freq > RRule.MONTHLY) {
+      opts.byweekday = [opts.byweekday.weekday];
+      opts.bynweekday = null;
+    } else {
+      opts.bynweekday = [[opts.byweekday.weekday, opts.byweekday.n]];
+      opts.byweekday = null;
+    }
+  } else {
+    var byweekday = [];
+    var bynweekday = [];
+    for (var i = 0; i < opts.byweekday.length; i++) {
+      var wday = opts.byweekday[i];
+      if (isNumber(wday)) {
+        byweekday.push(wday);
+        continue;
+      } else if (isWeekdayStr(wday)) {
+        byweekday.push(Weekday.fromStr(wday).weekday);
+        continue;
+      }
+      if (!wday.n || opts.freq > RRule.MONTHLY) {
+        byweekday.push(wday.weekday);
+      } else {
+        bynweekday.push([wday.weekday, wday.n]);
+      }
+    }
+    opts.byweekday = notEmpty(byweekday) ? byweekday : null;
+    opts.bynweekday = notEmpty(bynweekday) ? bynweekday : null;
+  }
+  if (!isPresent(opts.byhour)) {
+    opts.byhour = opts.freq < RRule.HOURLY ? [opts.dtstart.getUTCHours()] : null;
+  } else if (isNumber(opts.byhour)) {
+    opts.byhour = [opts.byhour];
+  }
+  if (!isPresent(opts.byminute)) {
+    opts.byminute = opts.freq < RRule.MINUTELY ? [opts.dtstart.getUTCMinutes()] : null;
+  } else if (isNumber(opts.byminute)) {
+    opts.byminute = [opts.byminute];
+  }
+  if (!isPresent(opts.bysecond)) {
+    opts.bysecond = opts.freq < RRule.SECONDLY ? [opts.dtstart.getUTCSeconds()] : null;
+  } else if (isNumber(opts.bysecond)) {
+    opts.bysecond = [opts.bysecond];
+  }
+  return { parsedOptions: opts };
+}
+function buildTimeset(opts) {
+  var millisecondModulo = opts.dtstart.getTime() % 1e3;
+  if (!freqIsDailyOrGreater(opts.freq)) {
+    return [];
+  }
+  var timeset = [];
+  opts.byhour.forEach(function(hour) {
+    opts.byminute.forEach(function(minute) {
+      opts.bysecond.forEach(function(second) {
+        timeset.push(new Time(hour, minute, second, millisecondModulo));
+      });
+    });
+  });
+  return timeset;
+}
+function parseString(rfcString) {
+  var options = rfcString.split("\n").map(parseLine).filter(function(x) {
+    return x !== null;
+  });
+  return __assign(__assign({}, options[0]), options[1]);
+}
+function parseDtstart(line) {
+  var options = {};
+  var dtstartWithZone = /DTSTART(?:;TZID=([^:=]+?))?(?::|=)([^;\s]+)/i.exec(line);
+  if (!dtstartWithZone) {
+    return options;
+  }
+  var tzid = dtstartWithZone[1], dtstart = dtstartWithZone[2];
+  if (tzid) {
+    options.tzid = tzid;
+  }
+  options.dtstart = untilStringToDate(dtstart);
+  return options;
+}
+function parseLine(rfcString) {
+  rfcString = rfcString.replace(/^\s+|\s+$/, "");
+  if (!rfcString.length)
+    return null;
+  var header = /^([A-Z]+?)[:;]/.exec(rfcString.toUpperCase());
+  if (!header) {
+    return parseRrule(rfcString);
+  }
+  var key = header[1];
+  switch (key.toUpperCase()) {
+    case "RRULE":
+    case "EXRULE":
+      return parseRrule(rfcString);
+    case "DTSTART":
+      return parseDtstart(rfcString);
+    default:
+      throw new Error("Unsupported RFC prop ".concat(key, " in ").concat(rfcString));
+  }
+}
+function parseRrule(line) {
+  var strippedLine = line.replace(/^RRULE:/i, "");
+  var options = parseDtstart(strippedLine);
+  var attrs = line.replace(/^(?:RRULE|EXRULE):/i, "").split(";");
+  attrs.forEach(function(attr) {
+    var _a = attr.split("="), key = _a[0], value = _a[1];
+    switch (key.toUpperCase()) {
+      case "FREQ":
+        options.freq = Frequency[value.toUpperCase()];
+        break;
+      case "WKST":
+        options.wkst = Days[value.toUpperCase()];
+        break;
+      case "COUNT":
+      case "INTERVAL":
+      case "BYSETPOS":
+      case "BYMONTH":
+      case "BYMONTHDAY":
+      case "BYYEARDAY":
+      case "BYWEEKNO":
+      case "BYHOUR":
+      case "BYMINUTE":
+      case "BYSECOND":
+        var num = parseNumber(value);
+        var optionKey = key.toLowerCase();
+        options[optionKey] = num;
+        break;
+      case "BYWEEKDAY":
+      case "BYDAY":
+        options.byweekday = parseWeekday(value);
+        break;
+      case "DTSTART":
+      case "TZID":
+        var dtstart = parseDtstart(line);
+        options.tzid = dtstart.tzid;
+        options.dtstart = dtstart.dtstart;
+        break;
+      case "UNTIL":
+        options.until = untilStringToDate(value);
+        break;
+      case "BYEASTER":
+        options.byeaster = Number(value);
+        break;
+      default:
+        throw new Error("Unknown RRULE property '" + key + "'");
+    }
+  });
+  return options;
+}
+function parseNumber(value) {
+  if (value.indexOf(",") !== -1) {
+    var values = value.split(",");
+    return values.map(parseIndividualNumber);
+  }
+  return parseIndividualNumber(value);
+}
+function parseIndividualNumber(value) {
+  if (/^[+-]?\d+$/.test(value)) {
+    return Number(value);
+  }
+  return value;
+}
+function parseWeekday(value) {
+  var days = value.split(",");
+  return days.map(function(day) {
+    if (day.length === 2) {
+      return Days[day];
+    }
+    var parts = day.match(/^([+-]?\d{1,2})([A-Z]{2})$/);
+    if (!parts || parts.length < 3) {
+      throw new SyntaxError("Invalid weekday string: ".concat(day));
+    }
+    var n = Number(parts[1]);
+    var wdaypart = parts[2];
+    var wday = Days[wdaypart].weekday;
+    return new Weekday(wday, n);
+  });
+}
+var DateWithZone = function() {
+  function DateWithZone2(date, tzid) {
+    if (isNaN(date.getTime())) {
+      throw new RangeError("Invalid date passed to DateWithZone");
+    }
+    this.date = date;
+    this.tzid = tzid;
+  }
+  Object.defineProperty(DateWithZone2.prototype, "isUTC", { get: function() {
+    return !this.tzid || this.tzid.toUpperCase() === "UTC";
+  }, enumerable: false, configurable: true });
+  DateWithZone2.prototype.toString = function() {
+    var datestr = timeToUntilString(this.date.getTime(), this.isUTC);
+    if (!this.isUTC) {
+      return ";TZID=".concat(this.tzid, ":").concat(datestr);
+    }
+    return ":".concat(datestr);
+  };
+  DateWithZone2.prototype.getTime = function() {
+    return this.date.getTime();
+  };
+  DateWithZone2.prototype.rezonedDate = function() {
+    if (this.isUTC) {
+      return this.date;
+    }
+    return dateInTimeZone(this.date, this.tzid);
+  };
+  return DateWithZone2;
+}();
+function optionsToString(options) {
+  var rrule = [];
+  var dtstart = "";
+  var keys = Object.keys(options);
+  var defaultKeys2 = Object.keys(DEFAULT_OPTIONS$1);
+  for (var i = 0; i < keys.length; i++) {
+    if (keys[i] === "tzid")
+      continue;
+    if (!includes(defaultKeys2, keys[i]))
+      continue;
+    var key = keys[i].toUpperCase();
+    var value = options[keys[i]];
+    var outValue = "";
+    if (!isPresent(value) || isArray(value) && !value.length)
+      continue;
+    switch (key) {
+      case "FREQ":
+        outValue = RRule.FREQUENCIES[options.freq];
+        break;
+      case "WKST":
+        if (isNumber(value)) {
+          outValue = new Weekday(value).toString();
+        } else {
+          outValue = value.toString();
+        }
+        break;
+      case "BYWEEKDAY":
+        key = "BYDAY";
+        outValue = toArray(value).map(function(wday) {
+          if (wday instanceof Weekday) {
+            return wday;
+          }
+          if (isArray(wday)) {
+            return new Weekday(wday[0], wday[1]);
+          }
+          return new Weekday(wday);
+        }).toString();
+        break;
+      case "DTSTART":
+        dtstart = buildDtstart(value, options.tzid);
+        break;
+      case "UNTIL":
+        outValue = timeToUntilString(value, !options.tzid);
+        break;
+      default:
+        if (isArray(value)) {
+          var strValues = [];
+          for (var j = 0; j < value.length; j++) {
+            strValues[j] = String(value[j]);
+          }
+          outValue = strValues.toString();
+        } else {
+          outValue = String(value);
+        }
+    }
+    if (outValue) {
+      rrule.push([key, outValue]);
+    }
+  }
+  var rules = rrule.map(function(_a) {
+    var key2 = _a[0], value2 = _a[1];
+    return "".concat(key2, "=").concat(value2.toString());
+  }).join(";");
+  var ruleString = "";
+  if (rules !== "") {
+    ruleString = "RRULE:".concat(rules);
+  }
+  return [dtstart, ruleString].filter(function(x) {
+    return !!x;
+  }).join("\n");
+}
+function buildDtstart(dtstart, tzid) {
+  if (!dtstart) {
+    return "";
+  }
+  return "DTSTART" + new DateWithZone(new Date(dtstart), tzid).toString();
+}
+function argsMatch(left, right) {
+  if (Array.isArray(left)) {
+    if (!Array.isArray(right))
+      return false;
+    if (left.length !== right.length)
+      return false;
+    return left.every(function(date, i) {
+      return date.getTime() === right[i].getTime();
+    });
+  }
+  if (left instanceof Date) {
+    return right instanceof Date && left.getTime() === right.getTime();
+  }
+  return left === right;
+}
+var Cache = function() {
+  function Cache2() {
+    this.all = false;
+    this.before = [];
+    this.after = [];
+    this.between = [];
+  }
+  Cache2.prototype._cacheAdd = function(what, value, args) {
+    if (value) {
+      value = value instanceof Date ? clone(value) : cloneDates(value);
+    }
+    if (what === "all") {
+      this.all = value;
+    } else {
+      args._value = value;
+      this[what].push(args);
+    }
+  };
+  Cache2.prototype._cacheGet = function(what, args) {
+    var cached = false;
+    var argsKeys = args ? Object.keys(args) : [];
+    var findCacheDiff = function(item2) {
+      for (var i2 = 0; i2 < argsKeys.length; i2++) {
+        var key = argsKeys[i2];
+        if (!argsMatch(args[key], item2[key])) {
+          return true;
+        }
+      }
+      return false;
+    };
+    var cachedObject = this[what];
+    if (what === "all") {
+      cached = this.all;
+    } else if (isArray(cachedObject)) {
+      for (var i = 0; i < cachedObject.length; i++) {
+        var item = cachedObject[i];
+        if (argsKeys.length && findCacheDiff(item))
+          continue;
+        cached = item._value;
+        break;
+      }
+    }
+    if (!cached && this.all) {
+      var iterResult = new IterResult(what, args);
+      for (var i = 0; i < this.all.length; i++) {
+        if (!iterResult.accept(this.all[i]))
+          break;
+      }
+      cached = iterResult.getValue();
+      this._cacheAdd(what, cached, args);
+    }
+    return isArray(cached) ? cloneDates(cached) : cached instanceof Date ? clone(cached) : cached;
+  };
+  return Cache2;
+}();
+var M365MASK = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], repeat(1, 31), true), repeat(2, 28), true), repeat(3, 31), true), repeat(4, 30), true), repeat(5, 31), true), repeat(6, 30), true), repeat(7, 31), true), repeat(8, 31), true), repeat(9, 30), true), repeat(10, 31), true), repeat(11, 30), true), repeat(12, 31), true), repeat(1, 7), true);
+var M366MASK = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], repeat(1, 31), true), repeat(2, 29), true), repeat(3, 31), true), repeat(4, 30), true), repeat(5, 31), true), repeat(6, 30), true), repeat(7, 31), true), repeat(8, 31), true), repeat(9, 30), true), repeat(10, 31), true), repeat(11, 30), true), repeat(12, 31), true), repeat(1, 7), true);
+var M28 = range(1, 29);
+var M29 = range(1, 30);
+var M30 = range(1, 31);
+var M31 = range(1, 32);
+var MDAY366MASK = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], M31, true), M29, true), M31, true), M30, true), M31, true), M30, true), M31, true), M31, true), M30, true), M31, true), M30, true), M31, true), M31.slice(0, 7), true);
+var MDAY365MASK = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], M31, true), M28, true), M31, true), M30, true), M31, true), M30, true), M31, true), M31, true), M30, true), M31, true), M30, true), M31, true), M31.slice(0, 7), true);
+var NM28 = range(-28, 0);
+var NM29 = range(-29, 0);
+var NM30 = range(-30, 0);
+var NM31 = range(-31, 0);
+var NMDAY366MASK = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], NM31, true), NM29, true), NM31, true), NM30, true), NM31, true), NM30, true), NM31, true), NM31, true), NM30, true), NM31, true), NM30, true), NM31, true), NM31.slice(0, 7), true);
+var NMDAY365MASK = __spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray(__spreadArray([], NM31, true), NM28, true), NM31, true), NM30, true), NM31, true), NM30, true), NM31, true), NM31, true), NM30, true), NM31, true), NM30, true), NM31, true), NM31.slice(0, 7), true);
+var M366RANGE = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366];
+var M365RANGE = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
+var WDAYMASK = function() {
+  var wdaymask = [];
+  for (var i = 0; i < 55; i++)
+    wdaymask = wdaymask.concat(range(7));
+  return wdaymask;
+}();
+function rebuildYear(year, options) {
+  var firstyday = datetime(year, 1, 1);
+  var yearlen = isLeapYear(year) ? 366 : 365;
+  var nextyearlen = isLeapYear(year + 1) ? 366 : 365;
+  var yearordinal = toOrdinal(firstyday);
+  var yearweekday = getWeekday(firstyday);
+  var result = __assign(__assign({ yearlen, nextyearlen, yearordinal, yearweekday }, baseYearMasks(year)), { wnomask: null });
+  if (empty(options.byweekno)) {
+    return result;
+  }
+  result.wnomask = repeat(0, yearlen + 7);
+  var firstwkst;
+  var wyearlen;
+  var no1wkst = firstwkst = pymod(7 - yearweekday + options.wkst, 7);
+  if (no1wkst >= 4) {
+    no1wkst = 0;
+    wyearlen = result.yearlen + pymod(yearweekday - options.wkst, 7);
+  } else {
+    wyearlen = yearlen - no1wkst;
+  }
+  var div = Math.floor(wyearlen / 7);
+  var mod = pymod(wyearlen, 7);
+  var numweeks = Math.floor(div + mod / 4);
+  for (var j = 0; j < options.byweekno.length; j++) {
+    var n = options.byweekno[j];
+    if (n < 0) {
+      n += numweeks + 1;
+    }
+    if (!(n > 0 && n <= numweeks)) {
+      continue;
+    }
+    var i = void 0;
+    if (n > 1) {
+      i = no1wkst + (n - 1) * 7;
+      if (no1wkst !== firstwkst) {
+        i -= 7 - firstwkst;
+      }
+    } else {
+      i = no1wkst;
+    }
+    for (var k = 0; k < 7; k++) {
+      result.wnomask[i] = 1;
+      i++;
+      if (result.wdaymask[i] === options.wkst)
+        break;
+    }
+  }
+  if (includes(options.byweekno, 1)) {
+    var i = no1wkst + numweeks * 7;
+    if (no1wkst !== firstwkst)
+      i -= 7 - firstwkst;
+    if (i < yearlen) {
+      for (var j = 0; j < 7; j++) {
+        result.wnomask[i] = 1;
+        i += 1;
+        if (result.wdaymask[i] === options.wkst)
+          break;
+      }
+    }
+  }
+  if (no1wkst) {
+    var lnumweeks = void 0;
+    if (!includes(options.byweekno, -1)) {
+      var lyearweekday = getWeekday(datetime(year - 1, 1, 1));
+      var lno1wkst = pymod(7 - lyearweekday.valueOf() + options.wkst, 7);
+      var lyearlen = isLeapYear(year - 1) ? 366 : 365;
+      var weekst = void 0;
+      if (lno1wkst >= 4) {
+        lno1wkst = 0;
+        weekst = lyearlen + pymod(lyearweekday - options.wkst, 7);
+      } else {
+        weekst = yearlen - no1wkst;
+      }
+      lnumweeks = Math.floor(52 + pymod(weekst, 7) / 4);
+    } else {
+      lnumweeks = -1;
+    }
+    if (includes(options.byweekno, lnumweeks)) {
+      for (var i = 0; i < no1wkst; i++)
+        result.wnomask[i] = 1;
+    }
+  }
+  return result;
+}
+function baseYearMasks(year) {
+  var yearlen = isLeapYear(year) ? 366 : 365;
+  var firstyday = datetime(year, 1, 1);
+  var wday = getWeekday(firstyday);
+  if (yearlen === 365) {
+    return { mmask: M365MASK, mdaymask: MDAY365MASK, nmdaymask: NMDAY365MASK, wdaymask: WDAYMASK.slice(wday), mrange: M365RANGE };
+  }
+  return { mmask: M366MASK, mdaymask: MDAY366MASK, nmdaymask: NMDAY366MASK, wdaymask: WDAYMASK.slice(wday), mrange: M366RANGE };
+}
+function rebuildMonth(year, month, yearlen, mrange, wdaymask, options) {
+  var result = { lastyear: year, lastmonth: month, nwdaymask: [] };
+  var ranges = [];
+  if (options.freq === RRule.YEARLY) {
+    if (empty(options.bymonth)) {
+      ranges = [[0, yearlen]];
+    } else {
+      for (var j = 0; j < options.bymonth.length; j++) {
+        month = options.bymonth[j];
+        ranges.push(mrange.slice(month - 1, month + 1));
+      }
+    }
+  } else if (options.freq === RRule.MONTHLY) {
+    ranges = [mrange.slice(month - 1, month + 1)];
+  }
+  if (empty(ranges)) {
+    return result;
+  }
+  result.nwdaymask = repeat(0, yearlen);
+  for (var j = 0; j < ranges.length; j++) {
+    var rang = ranges[j];
+    var first = rang[0];
+    var last = rang[1] - 1;
+    for (var k = 0; k < options.bynweekday.length; k++) {
+      var i = void 0;
+      var _a = options.bynweekday[k], wday = _a[0], n = _a[1];
+      if (n < 0) {
+        i = last + (n + 1) * 7;
+        i -= pymod(wdaymask[i] - wday, 7);
+      } else {
+        i = first + (n - 1) * 7;
+        i += pymod(7 - wdaymask[i] + wday, 7);
+      }
+      if (first <= i && i <= last)
+        result.nwdaymask[i] = 1;
+    }
+  }
+  return result;
+}
+function easter(y, offset) {
+  if (offset === void 0) {
+    offset = 0;
+  }
+  var a = y % 19;
+  var b = Math.floor(y / 100);
+  var c = y % 100;
+  var d = Math.floor(b / 4);
+  var e = b % 4;
+  var f = Math.floor((b + 8) / 25);
+  var g = Math.floor((b - f + 1) / 3);
+  var h = Math.floor(19 * a + b - d - g + 15) % 30;
+  var i = Math.floor(c / 4);
+  var k = c % 4;
+  var l = Math.floor(32 + 2 * e + 2 * i - h - k) % 7;
+  var m = Math.floor((a + 11 * h + 22 * l) / 451);
+  var month = Math.floor((h + l - 7 * m + 114) / 31);
+  var day = (h + l - 7 * m + 114) % 31 + 1;
+  var date = Date.UTC(y, month - 1, day + offset);
+  var yearStart = Date.UTC(y, 0, 1);
+  return [Math.ceil((date - yearStart) / (1e3 * 60 * 60 * 24))];
+}
+var Iterinfo = function() {
+  function Iterinfo2(options) {
+    this.options = options;
+  }
+  Iterinfo2.prototype.rebuild = function(year, month) {
+    var options = this.options;
+    if (year !== this.lastyear) {
+      this.yearinfo = rebuildYear(year, options);
+    }
+    if (notEmpty(options.bynweekday) && (month !== this.lastmonth || year !== this.lastyear)) {
+      var _a = this.yearinfo, yearlen = _a.yearlen, mrange = _a.mrange, wdaymask = _a.wdaymask;
+      this.monthinfo = rebuildMonth(year, month, yearlen, mrange, wdaymask, options);
+    }
+    if (isPresent(options.byeaster)) {
+      this.eastermask = easter(year, options.byeaster);
+    }
+  };
+  Object.defineProperty(Iterinfo2.prototype, "lastyear", { get: function() {
+    return this.monthinfo ? this.monthinfo.lastyear : null;
+  }, enumerable: false, configurable: true });
+  Object.defineProperty(Iterinfo2.prototype, "lastmonth", { get: function() {
+    return this.monthinfo ? this.monthinfo.lastmonth : null;
+  }, enumerable: false, configurable: true });
+  Object.defineProperty(Iterinfo2.prototype, "yearlen", { get: function() {
+    return this.yearinfo.yearlen;
+  }, enumerable: false, configurable: true });
+  Object.defineProperty(Iterinfo2.prototype, "yearordinal", { get: function() {
+    return this.yearinfo.yearordinal;
+  }, enumerable: false, configurable: true });
+  Object.defineProperty(Iterinfo2.prototype, "mrange", { get: function() {
+    return this.yearinfo.mrange;
+  }, enumerable: false, configurable: true });
+  Object.defineProperty(Iterinfo2.prototype, "wdaymask", { get: function() {
+    return this.yearinfo.wdaymask;
+  }, enumerable: false, configurable: true });
+  Object.defineProperty(Iterinfo2.prototype, "mmask", { get: function() {
+    return this.yearinfo.mmask;
+  }, enumerable: false, configurable: true });
+  Object.defineProperty(Iterinfo2.prototype, "wnomask", { get: function() {
+    return this.yearinfo.wnomask;
+  }, enumerable: false, configurable: true });
+  Object.defineProperty(Iterinfo2.prototype, "nwdaymask", { get: function() {
+    return this.monthinfo ? this.monthinfo.nwdaymask : [];
+  }, enumerable: false, configurable: true });
+  Object.defineProperty(Iterinfo2.prototype, "nextyearlen", { get: function() {
+    return this.yearinfo.nextyearlen;
+  }, enumerable: false, configurable: true });
+  Object.defineProperty(Iterinfo2.prototype, "mdaymask", { get: function() {
+    return this.yearinfo.mdaymask;
+  }, enumerable: false, configurable: true });
+  Object.defineProperty(Iterinfo2.prototype, "nmdaymask", { get: function() {
+    return this.yearinfo.nmdaymask;
+  }, enumerable: false, configurable: true });
+  Iterinfo2.prototype.ydayset = function() {
+    return [range(this.yearlen), 0, this.yearlen];
+  };
+  Iterinfo2.prototype.mdayset = function(_, month) {
+    var start = this.mrange[month - 1];
+    var end = this.mrange[month];
+    var set = repeat(null, this.yearlen);
+    for (var i = start; i < end; i++)
+      set[i] = i;
+    return [set, start, end];
+  };
+  Iterinfo2.prototype.wdayset = function(year, month, day) {
+    var set = repeat(null, this.yearlen + 7);
+    var i = toOrdinal(datetime(year, month, day)) - this.yearordinal;
+    var start = i;
+    for (var j = 0; j < 7; j++) {
+      set[i] = i;
+      ++i;
+      if (this.wdaymask[i] === this.options.wkst)
+        break;
+    }
+    return [set, start, i];
+  };
+  Iterinfo2.prototype.ddayset = function(year, month, day) {
+    var set = repeat(null, this.yearlen);
+    var i = toOrdinal(datetime(year, month, day)) - this.yearordinal;
+    set[i] = i;
+    return [set, i, i + 1];
+  };
+  Iterinfo2.prototype.htimeset = function(hour, _, second, millisecond) {
+    var _this = this;
+    var set = [];
+    this.options.byminute.forEach(function(minute) {
+      set = set.concat(_this.mtimeset(hour, minute, second, millisecond));
+    });
+    sort(set);
+    return set;
+  };
+  Iterinfo2.prototype.mtimeset = function(hour, minute, _, millisecond) {
+    var set = this.options.bysecond.map(function(second) {
+      return new Time(hour, minute, second, millisecond);
+    });
+    sort(set);
+    return set;
+  };
+  Iterinfo2.prototype.stimeset = function(hour, minute, second, millisecond) {
+    return [new Time(hour, minute, second, millisecond)];
+  };
+  Iterinfo2.prototype.getdayset = function(freq) {
+    switch (freq) {
+      case Frequency.YEARLY:
+        return this.ydayset.bind(this);
+      case Frequency.MONTHLY:
+        return this.mdayset.bind(this);
+      case Frequency.WEEKLY:
+        return this.wdayset.bind(this);
+      case Frequency.DAILY:
+        return this.ddayset.bind(this);
+      default:
+        return this.ddayset.bind(this);
+    }
+  };
+  Iterinfo2.prototype.gettimeset = function(freq) {
+    switch (freq) {
+      case Frequency.HOURLY:
+        return this.htimeset.bind(this);
+      case Frequency.MINUTELY:
+        return this.mtimeset.bind(this);
+      case Frequency.SECONDLY:
+        return this.stimeset.bind(this);
+    }
+  };
+  return Iterinfo2;
+}();
+function buildPoslist(bysetpos, timeset, start, end, ii, dayset) {
+  var poslist = [];
+  for (var j = 0; j < bysetpos.length; j++) {
+    var daypos = void 0;
+    var timepos = void 0;
+    var pos = bysetpos[j];
+    if (pos < 0) {
+      daypos = Math.floor(pos / timeset.length);
+      timepos = pymod(pos, timeset.length);
+    } else {
+      daypos = Math.floor((pos - 1) / timeset.length);
+      timepos = pymod(pos - 1, timeset.length);
+    }
+    var tmp = [];
+    for (var k = start; k < end; k++) {
+      var val = dayset[k];
+      if (!isPresent(val))
+        continue;
+      tmp.push(val);
+    }
+    var i = void 0;
+    if (daypos < 0) {
+      i = tmp.slice(daypos)[0];
+    } else {
+      i = tmp[daypos];
+    }
+    var time = timeset[timepos];
+    var date = fromOrdinal(ii.yearordinal + i);
+    var res = combine(date, time);
+    if (!includes(poslist, res))
+      poslist.push(res);
+  }
+  sort(poslist);
+  return poslist;
+}
+function iter(iterResult, options) {
+  var dtstart = options.dtstart, freq = options.freq, interval = options.interval, until = options.until, bysetpos = options.bysetpos;
+  var count = options.count;
+  if (count === 0 || interval === 0) {
+    return emitResult(iterResult);
+  }
+  var counterDate = DateTime.fromDate(dtstart);
+  var ii = new Iterinfo(options);
+  ii.rebuild(counterDate.year, counterDate.month);
+  var timeset = makeTimeset(ii, counterDate, options);
+  for (; ; ) {
+    var _a = ii.getdayset(freq)(counterDate.year, counterDate.month, counterDate.day), dayset = _a[0], start = _a[1], end = _a[2];
+    var filtered = removeFilteredDays(dayset, start, end, ii, options);
+    if (notEmpty(bysetpos)) {
+      var poslist = buildPoslist(bysetpos, timeset, start, end, ii, dayset);
+      for (var j = 0; j < poslist.length; j++) {
+        var res = poslist[j];
+        if (until && res > until) {
+          return emitResult(iterResult);
+        }
+        if (res >= dtstart) {
+          var rezonedDate = rezoneIfNeeded(res, options);
+          if (!iterResult.accept(rezonedDate)) {
+            return emitResult(iterResult);
+          }
+          if (count) {
+            --count;
+            if (!count) {
+              return emitResult(iterResult);
+            }
+          }
+        }
+      }
+    } else {
+      for (var j = start; j < end; j++) {
+        var currentDay = dayset[j];
+        if (!isPresent(currentDay)) {
+          continue;
+        }
+        var date = fromOrdinal(ii.yearordinal + currentDay);
+        for (var k = 0; k < timeset.length; k++) {
+          var time = timeset[k];
+          var res = combine(date, time);
+          if (until && res > until) {
+            return emitResult(iterResult);
+          }
+          if (res >= dtstart) {
+            var rezonedDate = rezoneIfNeeded(res, options);
+            if (!iterResult.accept(rezonedDate)) {
+              return emitResult(iterResult);
+            }
+            if (count) {
+              --count;
+              if (!count) {
+                return emitResult(iterResult);
+              }
+            }
+          }
+        }
+      }
+    }
+    if (options.interval === 0) {
+      return emitResult(iterResult);
+    }
+    counterDate.add(options, filtered);
+    if (counterDate.year > MAXYEAR) {
+      return emitResult(iterResult);
+    }
+    if (!freqIsDailyOrGreater(freq)) {
+      timeset = ii.gettimeset(freq)(counterDate.hour, counterDate.minute, counterDate.second, 0);
+    }
+    ii.rebuild(counterDate.year, counterDate.month);
+  }
+}
+function isFiltered(ii, currentDay, options) {
+  var bymonth = options.bymonth, byweekno = options.byweekno, byweekday = options.byweekday, byeaster = options.byeaster, bymonthday = options.bymonthday, bynmonthday = options.bynmonthday, byyearday = options.byyearday;
+  return notEmpty(bymonth) && !includes(bymonth, ii.mmask[currentDay]) || notEmpty(byweekno) && !ii.wnomask[currentDay] || notEmpty(byweekday) && !includes(byweekday, ii.wdaymask[currentDay]) || notEmpty(ii.nwdaymask) && !ii.nwdaymask[currentDay] || byeaster !== null && !includes(ii.eastermask, currentDay) || (notEmpty(bymonthday) || notEmpty(bynmonthday)) && !includes(bymonthday, ii.mdaymask[currentDay]) && !includes(bynmonthday, ii.nmdaymask[currentDay]) || notEmpty(byyearday) && (currentDay < ii.yearlen && !includes(byyearday, currentDay + 1) && !includes(byyearday, -ii.yearlen + currentDay) || currentDay >= ii.yearlen && !includes(byyearday, currentDay + 1 - ii.yearlen) && !includes(byyearday, -ii.nextyearlen + currentDay - ii.yearlen));
+}
+function rezoneIfNeeded(date, options) {
+  return new DateWithZone(date, options.tzid).rezonedDate();
+}
+function emitResult(iterResult) {
+  return iterResult.getValue();
+}
+function removeFilteredDays(dayset, start, end, ii, options) {
+  var filtered = false;
+  for (var dayCounter = start; dayCounter < end; dayCounter++) {
+    var currentDay = dayset[dayCounter];
+    filtered = isFiltered(ii, currentDay, options);
+    if (filtered)
+      dayset[currentDay] = null;
+  }
+  return filtered;
+}
+function makeTimeset(ii, counterDate, options) {
+  var freq = options.freq, byhour = options.byhour, byminute = options.byminute, bysecond = options.bysecond;
+  if (freqIsDailyOrGreater(freq)) {
+    return buildTimeset(options);
+  }
+  if (freq >= RRule.HOURLY && notEmpty(byhour) && !includes(byhour, counterDate.hour) || freq >= RRule.MINUTELY && notEmpty(byminute) && !includes(byminute, counterDate.minute) || freq >= RRule.SECONDLY && notEmpty(bysecond) && !includes(bysecond, counterDate.second)) {
+    return [];
+  }
+  return ii.gettimeset(freq)(counterDate.hour, counterDate.minute, counterDate.second, counterDate.millisecond);
+}
+var Days = { MO: new Weekday(0), TU: new Weekday(1), WE: new Weekday(2), TH: new Weekday(3), FR: new Weekday(4), SA: new Weekday(5), SU: new Weekday(6) };
+var DEFAULT_OPTIONS$1 = { freq: Frequency.YEARLY, dtstart: null, interval: 1, wkst: Days.MO, count: null, until: null, tzid: null, bysetpos: null, bymonth: null, bymonthday: null, bynmonthday: null, byyearday: null, byweekno: null, byweekday: null, bynweekday: null, byhour: null, byminute: null, bysecond: null, byeaster: null };
+var defaultKeys = Object.keys(DEFAULT_OPTIONS$1);
+var RRule = function() {
+  function RRule2(options, noCache) {
+    if (options === void 0) {
+      options = {};
+    }
+    if (noCache === void 0) {
+      noCache = false;
+    }
+    this._cache = noCache ? null : new Cache();
+    this.origOptions = initializeOptions$1(options);
+    var parsedOptions = parseOptions(options).parsedOptions;
+    this.options = parsedOptions;
+  }
+  RRule2.parseText = function(text, language) {
+    return parseText(text, language);
+  };
+  RRule2.fromText = function(text, language) {
+    return fromText(text, language);
+  };
+  RRule2.fromString = function(str) {
+    return new RRule2(RRule2.parseString(str) || void 0);
+  };
+  RRule2.prototype._iter = function(iterResult) {
+    return iter(iterResult, this.options);
+  };
+  RRule2.prototype._cacheGet = function(what, args) {
+    if (!this._cache)
+      return false;
+    return this._cache._cacheGet(what, args);
+  };
+  RRule2.prototype._cacheAdd = function(what, value, args) {
+    if (!this._cache)
+      return;
+    return this._cache._cacheAdd(what, value, args);
+  };
+  RRule2.prototype.all = function(iterator) {
+    if (iterator) {
+      return this._iter(new CallbackIterResult("all", {}, iterator));
+    }
+    var result = this._cacheGet("all");
+    if (result === false) {
+      result = this._iter(new IterResult("all", {}));
+      this._cacheAdd("all", result);
+    }
+    return result;
+  };
+  RRule2.prototype.between = function(after, before, inc, iterator) {
+    if (inc === void 0) {
+      inc = false;
+    }
+    if (!isValidDate(after) || !isValidDate(before)) {
+      throw new Error("Invalid date passed in to RRule.between");
+    }
+    var args = { before, after, inc };
+    if (iterator) {
+      return this._iter(new CallbackIterResult("between", args, iterator));
+    }
+    var result = this._cacheGet("between", args);
+    if (result === false) {
+      result = this._iter(new IterResult("between", args));
+      this._cacheAdd("between", result, args);
+    }
+    return result;
+  };
+  RRule2.prototype.before = function(dt, inc) {
+    if (inc === void 0) {
+      inc = false;
+    }
+    if (!isValidDate(dt)) {
+      throw new Error("Invalid date passed in to RRule.before");
+    }
+    var args = { dt, inc };
+    var result = this._cacheGet("before", args);
+    if (result === false) {
+      result = this._iter(new IterResult("before", args));
+      this._cacheAdd("before", result, args);
+    }
+    return result;
+  };
+  RRule2.prototype.after = function(dt, inc) {
+    if (inc === void 0) {
+      inc = false;
+    }
+    if (!isValidDate(dt)) {
+      throw new Error("Invalid date passed in to RRule.after");
+    }
+    var args = { dt, inc };
+    var result = this._cacheGet("after", args);
+    if (result === false) {
+      result = this._iter(new IterResult("after", args));
+      this._cacheAdd("after", result, args);
+    }
+    return result;
+  };
+  RRule2.prototype.count = function() {
+    return this.all().length;
+  };
+  RRule2.prototype.toString = function() {
+    return optionsToString(this.origOptions);
+  };
+  RRule2.prototype.toText = function(gettext, language, dateFormatter) {
+    return toText(this, gettext, language, dateFormatter);
+  };
+  RRule2.prototype.isFullyConvertibleToText = function() {
+    return isFullyConvertible(this);
+  };
+  RRule2.prototype.clone = function() {
+    return new RRule2(this.origOptions);
+  };
+  RRule2.FREQUENCIES = ["YEARLY", "MONTHLY", "WEEKLY", "DAILY", "HOURLY", "MINUTELY", "SECONDLY"];
+  RRule2.YEARLY = Frequency.YEARLY;
+  RRule2.MONTHLY = Frequency.MONTHLY;
+  RRule2.WEEKLY = Frequency.WEEKLY;
+  RRule2.DAILY = Frequency.DAILY;
+  RRule2.HOURLY = Frequency.HOURLY;
+  RRule2.MINUTELY = Frequency.MINUTELY;
+  RRule2.SECONDLY = Frequency.SECONDLY;
+  RRule2.MO = Days.MO;
+  RRule2.TU = Days.TU;
+  RRule2.WE = Days.WE;
+  RRule2.TH = Days.TH;
+  RRule2.FR = Days.FR;
+  RRule2.SA = Days.SA;
+  RRule2.SU = Days.SU;
+  RRule2.parseString = parseString;
+  RRule2.optionsToString = optionsToString;
+  return RRule2;
+}();
+function iterSet(iterResult, _rrule, _exrule, _rdate, _exdate, tzid) {
+  var _exdateHash = {};
+  var _accept = iterResult.accept;
+  function evalExdate(after, before) {
+    _exrule.forEach(function(rrule) {
+      rrule.between(after, before, true).forEach(function(date) {
+        _exdateHash[Number(date)] = true;
+      });
+    });
+  }
+  _exdate.forEach(function(date) {
+    var zonedDate2 = new DateWithZone(date, tzid).rezonedDate();
+    _exdateHash[Number(zonedDate2)] = true;
+  });
+  iterResult.accept = function(date) {
+    var dt = Number(date);
+    if (isNaN(dt))
+      return _accept.call(this, date);
+    if (!_exdateHash[dt]) {
+      evalExdate(new Date(dt - 1), new Date(dt + 1));
+      if (!_exdateHash[dt]) {
+        _exdateHash[dt] = true;
+        return _accept.call(this, date);
+      }
+    }
+    return true;
+  };
+  if (iterResult.method === "between") {
+    evalExdate(iterResult.args.after, iterResult.args.before);
+    iterResult.accept = function(date) {
+      var dt = Number(date);
+      if (!_exdateHash[dt]) {
+        _exdateHash[dt] = true;
+        return _accept.call(this, date);
+      }
+      return true;
+    };
+  }
+  for (var i = 0; i < _rdate.length; i++) {
+    var zonedDate = new DateWithZone(_rdate[i], tzid).rezonedDate();
+    if (!iterResult.accept(new Date(zonedDate.getTime())))
+      break;
+  }
+  _rrule.forEach(function(rrule) {
+    iter(iterResult, rrule.options);
+  });
+  var res = iterResult._result;
+  sort(res);
+  switch (iterResult.method) {
+    case "all":
+    case "between":
+      return res;
+    case "before":
+      return res.length && res[res.length - 1] || null;
+    case "after":
+    default:
+      return res.length && res[0] || null;
+  }
+}
+var DEFAULT_OPTIONS = { dtstart: null, cache: false, unfold: false, forceset: false, compatible: false, tzid: null };
+function parseInput(s, options) {
+  var rrulevals = [];
+  var rdatevals = [];
+  var exrulevals = [];
+  var exdatevals = [];
+  var parsedDtstart = parseDtstart(s);
+  var dtstart = parsedDtstart.dtstart;
+  var tzid = parsedDtstart.tzid;
+  var lines = splitIntoLines(s, options.unfold);
+  lines.forEach(function(line) {
+    var _a;
+    if (!line)
+      return;
+    var _b = breakDownLine(line), name = _b.name, parms = _b.parms, value = _b.value;
+    switch (name.toUpperCase()) {
+      case "RRULE":
+        if (parms.length) {
+          throw new Error("unsupported RRULE parm: ".concat(parms.join(",")));
+        }
+        rrulevals.push(parseString(line));
+        break;
+      case "RDATE":
+        var _c = (_a = /RDATE(?:;TZID=([^:=]+))?/i.exec(line)) !== null && _a !== void 0 ? _a : [], rdateTzid = _c[1];
+        if (rdateTzid && !tzid) {
+          tzid = rdateTzid;
+        }
+        rdatevals = rdatevals.concat(parseRDate(value, parms));
+        break;
+      case "EXRULE":
+        if (parms.length) {
+          throw new Error("unsupported EXRULE parm: ".concat(parms.join(",")));
+        }
+        exrulevals.push(parseString(value));
+        break;
+      case "EXDATE":
+        exdatevals = exdatevals.concat(parseRDate(value, parms));
+        break;
+      case "DTSTART":
+        break;
+      default:
+        throw new Error("unsupported property: " + name);
+    }
+  });
+  return { dtstart, tzid, rrulevals, rdatevals, exrulevals, exdatevals };
+}
+function buildRule(s, options) {
+  var _a = parseInput(s, options), rrulevals = _a.rrulevals, rdatevals = _a.rdatevals, exrulevals = _a.exrulevals, exdatevals = _a.exdatevals, dtstart = _a.dtstart, tzid = _a.tzid;
+  var noCache = options.cache === false;
+  if (options.compatible) {
+    options.forceset = true;
+    options.unfold = true;
+  }
+  if (options.forceset || rrulevals.length > 1 || rdatevals.length || exrulevals.length || exdatevals.length) {
+    var rset_1 = new RRuleSet(noCache);
+    rset_1.dtstart(dtstart);
+    rset_1.tzid(tzid || void 0);
+    rrulevals.forEach(function(val2) {
+      rset_1.rrule(new RRule(groomRruleOptions(val2, dtstart, tzid), noCache));
+    });
+    rdatevals.forEach(function(date) {
+      rset_1.rdate(date);
+    });
+    exrulevals.forEach(function(val2) {
+      rset_1.exrule(new RRule(groomRruleOptions(val2, dtstart, tzid), noCache));
+    });
+    exdatevals.forEach(function(date) {
+      rset_1.exdate(date);
+    });
+    if (options.compatible && options.dtstart)
+      rset_1.rdate(dtstart);
+    return rset_1;
+  }
+  var val = rrulevals[0] || {};
+  return new RRule(groomRruleOptions(val, val.dtstart || options.dtstart || dtstart, val.tzid || options.tzid || tzid), noCache);
+}
+function rrulestr(s, options) {
+  if (options === void 0) {
+    options = {};
+  }
+  return buildRule(s, initializeOptions(options));
+}
+function groomRruleOptions(val, dtstart, tzid) {
+  return __assign(__assign({}, val), { dtstart, tzid });
+}
+function initializeOptions(options) {
+  var invalid = [];
+  var keys = Object.keys(options);
+  var defaultKeys2 = Object.keys(DEFAULT_OPTIONS);
+  keys.forEach(function(key) {
+    if (!includes(defaultKeys2, key))
+      invalid.push(key);
+  });
+  if (invalid.length) {
+    throw new Error("Invalid options: " + invalid.join(", "));
+  }
+  return __assign(__assign({}, DEFAULT_OPTIONS), options);
+}
+function extractName(line) {
+  if (line.indexOf(":") === -1) {
+    return { name: "RRULE", value: line };
+  }
+  var _a = split(line, ":", 1), name = _a[0], value = _a[1];
+  return { name, value };
+}
+function breakDownLine(line) {
+  var _a = extractName(line), name = _a.name, value = _a.value;
+  var parms = name.split(";");
+  if (!parms)
+    throw new Error("empty property name");
+  return { name: parms[0].toUpperCase(), parms: parms.slice(1), value };
+}
+function splitIntoLines(s, unfold) {
+  if (unfold === void 0) {
+    unfold = false;
+  }
+  s = s && s.trim();
+  if (!s)
+    throw new Error("Invalid empty string");
+  if (!unfold) {
+    return s.split(/\s/);
+  }
+  var lines = s.split("\n");
+  var i = 0;
+  while (i < lines.length) {
+    var line = lines[i] = lines[i].replace(/\s+$/g, "");
+    if (!line) {
+      lines.splice(i, 1);
+    } else if (i > 0 && line[0] === " ") {
+      lines[i - 1] += line.slice(1);
+      lines.splice(i, 1);
+    } else {
+      i += 1;
+    }
+  }
+  return lines;
+}
+function validateDateParm(parms) {
+  parms.forEach(function(parm) {
+    if (!/(VALUE=DATE(-TIME)?)|(TZID=)/.test(parm)) {
+      throw new Error("unsupported RDATE/EXDATE parm: " + parm);
+    }
+  });
+}
+function parseRDate(rdateval, parms) {
+  validateDateParm(parms);
+  return rdateval.split(",").map(function(datestr) {
+    return untilStringToDate(datestr);
+  });
+}
+function createGetterSetter(fieldName) {
+  var _this = this;
+  return function(field) {
+    if (field !== void 0) {
+      _this["_".concat(fieldName)] = field;
+    }
+    if (_this["_".concat(fieldName)] !== void 0) {
+      return _this["_".concat(fieldName)];
+    }
+    for (var i = 0; i < _this._rrule.length; i++) {
+      var field_1 = _this._rrule[i].origOptions[fieldName];
+      if (field_1) {
+        return field_1;
+      }
+    }
+  };
+}
+var RRuleSet = function(_super) {
+  __extends(RRuleSet2, _super);
+  function RRuleSet2(noCache) {
+    if (noCache === void 0) {
+      noCache = false;
+    }
+    var _this = _super.call(this, {}, noCache) || this;
+    _this.dtstart = createGetterSetter.apply(_this, ["dtstart"]);
+    _this.tzid = createGetterSetter.apply(_this, ["tzid"]);
+    _this._rrule = [];
+    _this._rdate = [];
+    _this._exrule = [];
+    _this._exdate = [];
+    return _this;
+  }
+  RRuleSet2.prototype._iter = function(iterResult) {
+    return iterSet(iterResult, this._rrule, this._exrule, this._rdate, this._exdate, this.tzid());
+  };
+  RRuleSet2.prototype.rrule = function(rrule) {
+    _addRule(rrule, this._rrule);
+  };
+  RRuleSet2.prototype.exrule = function(rrule) {
+    _addRule(rrule, this._exrule);
+  };
+  RRuleSet2.prototype.rdate = function(date) {
+    _addDate(date, this._rdate);
+  };
+  RRuleSet2.prototype.exdate = function(date) {
+    _addDate(date, this._exdate);
+  };
+  RRuleSet2.prototype.rrules = function() {
+    return this._rrule.map(function(e) {
+      return rrulestr(e.toString());
+    });
+  };
+  RRuleSet2.prototype.exrules = function() {
+    return this._exrule.map(function(e) {
+      return rrulestr(e.toString());
+    });
+  };
+  RRuleSet2.prototype.rdates = function() {
+    return this._rdate.map(function(e) {
+      return new Date(e.getTime());
+    });
+  };
+  RRuleSet2.prototype.exdates = function() {
+    return this._exdate.map(function(e) {
+      return new Date(e.getTime());
+    });
+  };
+  RRuleSet2.prototype.valueOf = function() {
+    var result = [];
+    if (!this._rrule.length && this._dtstart) {
+      result = result.concat(optionsToString({ dtstart: this._dtstart }));
+    }
+    this._rrule.forEach(function(rrule) {
+      result = result.concat(rrule.toString().split("\n"));
+    });
+    this._exrule.forEach(function(exrule) {
+      result = result.concat(exrule.toString().split("\n").map(function(line) {
+        return line.replace(/^RRULE:/, "EXRULE:");
+      }).filter(function(line) {
+        return !/^DTSTART/.test(line);
+      }));
+    });
+    if (this._rdate.length) {
+      result.push(rdatesToString("RDATE", this._rdate, this.tzid()));
+    }
+    if (this._exdate.length) {
+      result.push(rdatesToString("EXDATE", this._exdate, this.tzid()));
+    }
+    return result;
+  };
+  RRuleSet2.prototype.toString = function() {
+    return this.valueOf().join("\n");
+  };
+  RRuleSet2.prototype.clone = function() {
+    var rrs = new RRuleSet2(!!this._cache);
+    this._rrule.forEach(function(rule) {
+      return rrs.rrule(rule.clone());
+    });
+    this._exrule.forEach(function(rule) {
+      return rrs.exrule(rule.clone());
+    });
+    this._rdate.forEach(function(date) {
+      return rrs.rdate(new Date(date.getTime()));
+    });
+    this._exdate.forEach(function(date) {
+      return rrs.exdate(new Date(date.getTime()));
+    });
+    return rrs;
+  };
+  return RRuleSet2;
+}(RRule);
+function _addRule(rrule, collection) {
+  if (!(rrule instanceof RRule)) {
+    throw new TypeError(String(rrule) + " is not RRule instance");
+  }
+  if (!includes(collection.map(String), String(rrule))) {
+    collection.push(rrule);
+  }
+}
+function _addDate(date, collection) {
+  if (!(date instanceof Date)) {
+    throw new TypeError(String(date) + " is not Date instance");
+  }
+  if (!includes(collection.map(Number), Number(date))) {
+    collection.push(date);
+    sort(collection);
+  }
+}
+function rdatesToString(param, rdates, tzid) {
+  var isUTC = !tzid || tzid.toUpperCase() === "UTC";
+  var header = isUTC ? "".concat(param, ":") : "".concat(param, ";TZID=").concat(tzid, ":");
+  var dateString = rdates.map(function(rdate) {
+    return timeToUntilString(rdate.valueOf(), isUTC);
+  }).join(",");
+  return "".concat(header).concat(dateString);
+}
 function recurring(scheduler2) {
+  function clearMilliseconds(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), 0);
+  }
+  function isDeletedOccurrence(event2) {
+    return !!event2.deleted;
+  }
+  function isSeries(event2) {
+    return !!event2.rrule && !event2.recurring_event_id;
+  }
+  function clearRecurringProperties(event2) {
+    event2.rrule = "";
+    event2.original_start = null;
+    event2.recurring_event_id = null;
+    event2.duration = null;
+    event2.deleted = null;
+  }
+  function createException(ev) {
+    let id2 = ev.id.split("#");
+    let nid = scheduler2.uid();
+    scheduler2._not_render = true;
+    let nev = scheduler2._copy_event(ev);
+    nev.id = nid;
+    nev.recurring_event_id = id2[0];
+    let timestamp = id2[1];
+    nev.original_start = new Date(Number(timestamp));
+    scheduler2._add_rec_marker(nev, timestamp);
+    scheduler2.addEvent(nev);
+    scheduler2._not_render = false;
+  }
+  scheduler2._rec_temp = [];
+  scheduler2._rec_markers_pull = {};
+  scheduler2._rec_markers = {};
+  scheduler2._add_rec_marker = function(ev, time) {
+    ev._pid_time = time;
+    this._rec_markers[ev.id] = ev;
+    if (!this._rec_markers_pull[ev.event_pid])
+      this._rec_markers_pull[ev.event_pid] = {};
+    this._rec_markers_pull[ev.event_pid][time] = ev;
+  };
+  scheduler2._get_rec_marker = function(time, id2) {
+    let ch = this._rec_markers_pull[id2];
+    if (ch)
+      return ch[time];
+    return null;
+  };
+  scheduler2._get_rec_markers = function(id2) {
+    return this._rec_markers_pull[id2] || [];
+  };
+  (function() {
+    var old_add_event = scheduler2.addEvent;
+    scheduler2.addEvent = function(start_date, end_date, text, id2, extra_data) {
+      var ev_id = old_add_event.apply(this, arguments);
+      if (ev_id && scheduler2.getEvent(ev_id)) {
+        var ev = scheduler2.getEvent(ev_id);
+        if (ev.start_date) {
+          ev.start_date = clearMilliseconds(ev.start_date);
+        }
+        if (ev.end_date) {
+          ev.end_date = clearMilliseconds(ev.end_date);
+        }
+      }
+      return ev_id;
+    };
+  })();
+  scheduler2.attachEvent("onEventLoading", function(event2) {
+    if (event2.original_start) {
+      event2.original_start = scheduler2.templates.parse_date(event2.original_start);
+    }
+    return true;
+  });
+  scheduler2.attachEvent("onEventIdChange", function(id2, new_id) {
+    if (this._ignore_call)
+      return;
+    this._ignore_call = true;
+    if (scheduler2._rec_markers[id2]) {
+      scheduler2._rec_markers[new_id] = scheduler2._rec_markers[id2];
+      delete scheduler2._rec_markers[id2];
+    }
+    if (scheduler2._rec_markers_pull[id2]) {
+      scheduler2._rec_markers_pull[new_id] = scheduler2._rec_markers_pull[id2];
+      delete scheduler2._rec_markers_pull[id2];
+    }
+    for (var i = 0; i < this._rec_temp.length; i++) {
+      var tev = this._rec_temp[i];
+      if (tev.recurring_event_id == id2) {
+        tev.recurring_event_id = new_id;
+        this.changeEventId(tev.id, new_id + "#" + tev.id.split("#")[1]);
+      }
+    }
+    for (var i in this._rec_markers) {
+      var tev = this._rec_markers[i];
+      if (tev.recurring_event_id == id2) {
+        tev.recurring_event_id = new_id;
+        tev._pid_changed = true;
+      }
+    }
+    var el2 = scheduler2._rec_markers[new_id];
+    if (el2 && el2._pid_changed) {
+      delete el2._pid_changed;
+      setTimeout(function() {
+        if (scheduler2.$destroyed) {
+          return true;
+        }
+        scheduler2.callEvent("onEventChanged", [new_id, scheduler2.getEvent(new_id)]);
+      }, 1);
+    }
+    delete this._ignore_call;
+  });
+  function deleteEventFromSeries(idTimestamp, ev) {
+    let id2 = idTimestamp;
+    idTimestamp = id2.split("#");
+    let nid = scheduler2.uid();
+    let tid = idTimestamp[1] ? idTimestamp[1] : ev._pid_time;
+    let nev = scheduler2._copy_event(ev);
+    nev.id = nid;
+    nev.recurring_event_id = ev.recurring_event_id || idTimestamp[0];
+    nev.original_start = new Date(Number(tid));
+    nev.deleted = true;
+    scheduler2.addEvent(nev);
+  }
+  scheduler2.attachEvent("onConfirmedBeforeEventDelete", function(id2) {
+    var ev = this.getEvent(id2);
+    if (this._is_virtual_event(id2) || this._is_modified_occurence(ev) && !isDeletedOccurrence(ev)) {
+      deleteEventFromSeries(id2, ev);
+    } else {
+      if (isSeries(ev) && this._lightbox_id)
+        this._roll_back_dates(ev);
+      var sub = this._get_rec_markers(id2);
+      for (var i in sub) {
+        if (sub.hasOwnProperty(i)) {
+          id2 = sub[i].id;
+          if (this.getEvent(id2))
+            this.deleteEvent(id2, true);
+        }
+      }
+    }
+    return true;
+  });
+  scheduler2.attachEvent("onEventDeleted", function(id2, ev) {
+    if (!this._is_virtual_event(id2) && this._is_modified_occurence(ev)) {
+      if (!scheduler2._events[id2]) {
+        ev.deleted = true;
+        this.setEvent(id2, ev);
+      }
+    }
+  });
+  scheduler2.attachEvent("onEventChanged", function(id2, event2) {
+    if (this._loading)
+      return true;
+    var ev = this.getEvent(id2);
+    if (this._is_virtual_event(id2)) {
+      createException(ev);
+    } else {
+      if (ev.start_date) {
+        ev.start_date = clearMilliseconds(ev.start_date);
+      }
+      if (ev.end_date) {
+        ev.end_date = clearMilliseconds(ev.end_date);
+      }
+      if (isSeries(ev) && this._lightbox_id) {
+        this._roll_back_dates(ev);
+      }
+      var sub = this._get_rec_markers(id2);
+      for (var i in sub) {
+        if (sub.hasOwnProperty(i)) {
+          delete this._rec_markers[sub[i].id];
+          this.deleteEvent(sub[i].id, true);
+        }
+      }
+      delete this._rec_markers_pull[id2];
+      var isEventFound = false;
+      for (var k = 0; k < this._rendered.length; k++) {
+        if (this._rendered[k].getAttribute(this.config.event_attribute) == id2)
+          isEventFound = true;
+      }
+      if (!isEventFound)
+        this._select_id = null;
+    }
+    return true;
+  });
+  scheduler2.attachEvent("onEventAdded", function(id2) {
+    if (!this._loading) {
+      var ev = this.getEvent(id2);
+      if (isSeries(ev)) {
+        this._roll_back_dates(ev);
+      }
+    }
+    return true;
+  });
+  scheduler2.attachEvent("onEventSave", function(id2, data, is_new_event) {
+    var ev = this.getEvent(id2);
+    if (isSeries(ev))
+      this._select_id = null;
+    return true;
+  });
+  scheduler2.attachEvent("onEventCreated", function(id2) {
+    var ev = this.getEvent(id2);
+    if (!isSeries(ev)) {
+      clearRecurringProperties(ev);
+    }
+    return true;
+  });
+  scheduler2.attachEvent("onEventCancel", function(id2) {
+    var ev = this.getEvent(id2);
+    if (isSeries(ev)) {
+      this._roll_back_dates(ev);
+      this.render_view_data();
+    }
+  });
+  scheduler2._roll_back_dates = function(ev) {
+    if (ev.start_date) {
+      ev.start_date = clearMilliseconds(ev.start_date);
+    }
+    if (ev.end_date) {
+      ev.end_date = clearMilliseconds(ev.end_date);
+    }
+    ev.duration = Math.round((ev.end_date.valueOf() - ev.start_date.valueOf()) / 1e3);
+    ev.end_date = ev._end_date;
+    if (ev._start_date) {
+      ev.start_date.setMonth(0);
+      ev.start_date.setDate(ev._start_date.getDate());
+      ev.start_date.setMonth(ev._start_date.getMonth());
+      ev.start_date.setFullYear(ev._start_date.getFullYear());
+    }
+  };
+  scheduler2._is_virtual_event = function(id2) {
+    return id2.toString().indexOf("#") != -1;
+  };
+  scheduler2._is_modified_occurence = function(ev) {
+    return ev.recurring_event_id && ev.recurring_event_id != "0";
+  };
+  scheduler2.showLightbox_rec = scheduler2.showLightbox;
+  scheduler2.showLightbox = function(id2) {
+    var locale = this.locale;
+    var c = scheduler2.config.lightbox_recurring;
+    var ev = this.getEvent(id2);
+    var pid = ev.recurring_event_id;
+    var isVirtual = this._is_virtual_event(id2);
+    if (isVirtual)
+      pid = id2.split("#")[0];
+    var showSeries = function(id3) {
+      var event2 = scheduler2.getEvent(id3);
+      event2._end_date = event2.end_date;
+      event2.end_date = new Date(event2.start_date.valueOf() + event2.duration * 1e3);
+      return scheduler2.showLightbox_rec(id3);
+    };
+    if ((pid || pid * 1 === 0) && isSeries(ev)) {
+      return showSeries(id2);
+    }
+    if (!pid || pid === "0" || (!locale.labels.confirm_recurring || c == "instance" || c == "series" && !isVirtual)) {
+      return this.showLightbox_rec(id2);
+    }
+    if (c == "ask") {
+      var that = this;
+      scheduler2.modalbox({ text: locale.labels.confirm_recurring, title: locale.labels.title_confirm_recurring, width: "500px", position: "middle", buttons: [locale.labels.button_edit_series, locale.labels.button_edit_occurrence, locale.labels.icon_cancel], callback: function(index) {
+        switch (+index) {
+          case 0:
+            return showSeries(pid);
+          case 1:
+            return that.showLightbox_rec(id2);
+          case 2:
+            return;
+        }
+      } });
+    } else {
+      showSeries(pid);
+    }
+  };
+  function groupExceptions() {
+    const exceptions = {};
+    for (const i in scheduler2._events) {
+      const ev = scheduler2._events[i];
+      if (ev.recurring_event_id) {
+        if (!exceptions[ev.recurring_event_id]) {
+          exceptions[ev.recurring_event_id] = {};
+        }
+        exceptions[ev.recurring_event_id][ev.original_start.valueOf()] = ev;
+      }
+    }
+    return exceptions;
+  }
+  scheduler2.get_visible_events_rec = scheduler2.get_visible_events;
+  scheduler2.get_visible_events = function(only_timed) {
+    for (var i = 0; i < this._rec_temp.length; i++)
+      delete this._events[this._rec_temp[i].id];
+    this._rec_temp = [];
+    const exceptions = groupExceptions();
+    var stack = this.get_visible_events_rec(only_timed);
+    var out = [];
+    for (var i = 0; i < stack.length; i++) {
+      if (stack[i].deleted || stack[i].recurring_event_id) {
+        continue;
+      }
+      if (isSeries(stack[i])) {
+        this.repeat_date(stack[i], out, void 0, void 0, void 0, void 0, exceptions);
+      } else {
+        out.push(stack[i]);
+      }
+    }
+    return out;
+  };
+  (function() {
+    var old = scheduler2.isOneDayEvent;
+    scheduler2.isOneDayEvent = function(ev) {
+      if (isSeries(ev))
+        return true;
+      return old.call(this, ev);
+    };
+    var old_update_event = scheduler2.updateEvent;
+    scheduler2.updateEvent = function(id2) {
+      var ev = scheduler2.getEvent(id2);
+      if (ev && isSeries(ev) && !this._is_virtual_event(id2)) {
+        scheduler2.update_view();
+      } else {
+        old_update_event.call(this, id2);
+      }
+    };
+  })();
+  const toIcalString = scheduler2.date.date_to_str("%Y%m%dT%H%i%s");
+  scheduler2.repeat_date = function(ev, stack, non_render, from, to, maxCount, exceptions) {
+    if (!ev.rrule) {
+      return;
+    }
+    let seriesExceptions = exceptions ? exceptions[ev.id] : groupExceptions()[ev.id];
+    if (!seriesExceptions) {
+      seriesExceptions = {};
+    }
+    if (!from) {
+      from = scheduler2._min_date;
+    }
+    if (!to) {
+      to = scheduler2._max_date;
+    }
+    const utcStart = new Date(Date.UTC(ev.start_date.getFullYear(), ev.start_date.getMonth(), ev.start_date.getDate(), ev.start_date.getHours(), ev.start_date.getMinutes(), ev.start_date.getSeconds()));
+    const parsedRRule = rrulestr(`RRULE:${ev.rrule};UNTIL=${toIcalString(ev.end_date)}`, { dtstart: utcStart });
+    const repeatedDates = parsedRRule.between(from, to).map((date) => {
+      const adjustedDate = new Date(date);
+      adjustedDate.setHours(ev.start_date.getHours());
+      adjustedDate.setMinutes(ev.start_date.getMinutes());
+      adjustedDate.setSeconds(ev.start_date.getSeconds());
+      return adjustedDate;
+    });
+    let visibleCount = 0;
+    const eventDuration = ev.duration;
+    for (let i = 0; i < repeatedDates.length; i++) {
+      if (maxCount && visibleCount >= maxCount) {
+        break;
+      }
+      const date = repeatedDates[i];
+      let exception = seriesExceptions[date.valueOf()];
+      if (exception) {
+        if (exception.deleted) {
+          continue;
+        } else {
+          visibleCount++;
+          stack.push(exception);
+        }
+      } else {
+        const copy2 = scheduler2._copy_event(ev);
+        copy2.text = ev.text;
+        copy2.start_date = date;
+        copy2.id = ev.id + "#" + Math.ceil(date.valueOf());
+        copy2.end_date = new Date(date.valueOf() + eventDuration * 1e3);
+        copy2.end_date = scheduler2._fix_daylight_saving_date(copy2.start_date, copy2.end_date, ev, date, copy2.end_date);
+        copy2._timed = scheduler2.isOneDayEvent(copy2);
+        if (!copy2._timed && !scheduler2._table_view && !scheduler2.config.multi_day)
+          continue;
+        stack.push(copy2);
+        if (!non_render) {
+          scheduler2._events[copy2.id] = copy2;
+          scheduler2._rec_temp.push(copy2);
+        }
+        visibleCount++;
+      }
+    }
+  };
+  scheduler2._fix_daylight_saving_date = function(start_date, end_date, ev, counter, default_date) {
+    var shift = start_date.getTimezoneOffset() - end_date.getTimezoneOffset();
+    if (shift) {
+      if (shift > 0) {
+        return new Date(counter.valueOf() + ev.duration * 1e3 - shift * 60 * 1e3);
+      } else {
+        return new Date(end_date.valueOf() - shift * 60 * 1e3);
+      }
+    }
+    return new Date(default_date.valueOf());
+  };
+  scheduler2.getRecDates = function(id2, max) {
+    var ev = typeof id2 == "object" ? id2 : scheduler2.getEvent(id2);
+    var recurrings = [];
+    max = max || 100;
+    if (!isSeries(ev)) {
+      return [{ start_date: ev.start_date, end_date: ev.end_date }];
+    }
+    if (ev.deleted) {
+      return [];
+    }
+    scheduler2.repeat_date(ev, recurrings, true, ev.start_date, ev.end_date, max);
+    var result = [];
+    for (var i = 0; i < recurrings.length; i++) {
+      if (!recurrings[i].deleted) {
+        result.push({ start_date: recurrings[i].start_date, end_date: recurrings[i].end_date });
+      }
+    }
+    return result;
+  };
+  scheduler2.getEvents = function(from, to) {
+    var result = [];
+    const exceptions = groupExceptions();
+    for (var a in this._events) {
+      var ev = this._events[a];
+      if (ev.recurring_event_id) {
+        continue;
+      }
+      if (isSeries(ev)) {
+        if (from && to && ev.start_date < to && ev.end_date > from) {
+          var sev = [];
+          this.repeat_date(ev, sev, true, from, to, void 0, exceptions);
+          sev.forEach(function(occurence) {
+            if (occurence.start_date < to && occurence.end_date > from) {
+              result.push(occurence);
+            }
+          });
+        } else if (!from && !to) {
+          result.push(ev);
+        }
+      } else if (!this._is_virtual_event(ev.id)) {
+        result.push(ev);
+      }
+    }
+    return result;
+  };
+  scheduler2._copy_dummy = function(ev) {
+    var start_date = new Date(this.start_date);
+    var end_date = new Date(this.end_date);
+    this.start_date = start_date;
+    this.end_date = end_date;
+    this.duration = this.rrule = null;
+  };
+  scheduler2.config.include_end_by = false;
+  scheduler2.config.lightbox_recurring = "ask";
+  scheduler2.config.recurring_workdays = [RRule.MO.weekday, RRule.TU.weekday, RRule.WE.weekday, RRule.TH.weekday, RRule.FR.weekday];
+  scheduler2.config.repeat_date = "%m.%d.%Y";
+  scheduler2.config.lightbox.sections = [{ name: "description", map_to: "text", type: "textarea", focus: true }, { name: "recurring", type: "recurring", map_to: "rec_type" }, { name: "time", height: 72, type: "time", map_to: "auto" }];
+  scheduler2.attachEvent("onClearAll", function() {
+    scheduler2._rec_markers = {};
+    scheduler2._rec_markers_pull = {};
+    scheduler2._rec_temp = [];
+  });
+  function getTopLevelOption(rruleObj, untilDate) {
+    const options = rruleObj.options;
+    const until = options.until || untilDate;
+    const hasEndCondition = options.count || until && until.getFullYear() !== 9999;
+    if (hasEndCondition) {
+      return "CUSTOM";
+    }
+    if (options.freq === RRule.DAILY && options.interval === 1 && !options.byweekday) {
+      return "DAILY";
+    } else if (options.freq === RRule.WEEKLY && options.interval === 1 && !options.byweekday) {
+      return "WEEKLY";
+    } else if (options.freq === RRule.MONTHLY && options.interval === 1 && !options.bysetpos) {
+      return "MONTHLY";
+    } else if (options.freq === RRule.YEARLY && options.interval === 1 && !options.bysetpos) {
+      return "YEARLY";
+    } else if (options.freq === RRule.DAILY && options.byweekday && options.byweekday.length === scheduler2.config.recurring_workdays.length && options.byweekday.includes(RRule.MO) && options.byweekday.includes(RRule.TU) && options.byweekday.includes(RRule.WE) && options.byweekday.includes(RRule.TH) && options.byweekday.includes(RRule.FR)) {
+      return "WORKDAYS";
+    } else {
+      return "CUSTOM";
+    }
+  }
+  function getWeekdayOfMonth(date) {
+    const dayOfWeek = date.getDay();
+    const dayOfMonth = date.getDate();
+    const dayNumber = Math.ceil(dayOfMonth / 7);
+    return { dayOfWeek, dayNumber };
+  }
+  const jsDaysToRRULEDays = { 0: "SU", 1: "MO", 2: "TU", 3: "WE", 4: "TH", 5: "FR", 6: "SA" };
+  const RruleDayNumsToJs = { 0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 0 };
+  function fillCustomDaily(node, rule) {
+    node.querySelector("[name='repeat_interval_value']").value = (rule ? rule.interval : 1) || 1;
+  }
+  function fillCustomWeekly(node, rule, event2) {
+    node.querySelector("[name='repeat_interval_value']").value = (rule ? rule.interval : 1) || 1;
+    const dayCheckboxes = node.querySelectorAll(`.dhx_form_repeat_custom_week input`);
+    dayCheckboxes.forEach((ch) => ch.checked = false);
+    if (rule && rule.byweekday) {
+      rule.byweekday.forEach((day) => {
+        const dayNum = RruleDayNumsToJs[day.weekday];
+        const dayLabel = jsDaysToRRULEDays[dayNum];
+        node.querySelector(`.dhx_form_repeat_custom_week input[value="${dayLabel}"]`).checked = true;
+      });
+    } else {
+      const dayLabel = jsDaysToRRULEDays[event2.start_date.getDay()];
+      node.querySelector(`.dhx_form_repeat_custom_week input[value="${dayLabel}"]`).checked = true;
+    }
+  }
+  function fillCustomMonthly(node, rule, event2) {
+    node.querySelector("[name='repeat_interval_value']").value = (rule ? rule.interval : 1) || 1;
+    const dateOfMonth = node.querySelector(`.dhx_form_repeat_custom_month [value="month_date"]`);
+    const nthWeekDayOfMonth = node.querySelector(`.dhx_form_repeat_custom_month [value="month_nth_weekday"]`);
+    dateOfMonth.innerText = scheduler2.templates.repeat_monthly_date(event2.start_date, event2);
+    nthWeekDayOfMonth.innerText = scheduler2.templates.repeat_monthly_weekday(event2.start_date, event2);
+    if (!rule || rule.bysetpos && !(rule.byweekday && rule.byweekday.length)) {
+      node.querySelector(`[name="dhx_custom_month_option"]`).value = "month_date";
+    } else {
+      node.querySelector(`[name="dhx_custom_month_option"]`).value = "month_nth_weekday";
+    }
+  }
+  function formatDayNumber(date) {
+    switch (date) {
+      case 1:
+      case 31:
+        return `${date}st`;
+      case 2:
+        return `${date}nd`;
+      case 3:
+        return `${date}rd`;
+      default:
+        return `${date}th`;
+    }
+  }
+  scheduler2.templates.repeat_monthly_date = function(startDate, event2) {
+    const date = startDate.getDate();
+    return `Every ${formatDayNumber(date)}`;
+  };
+  scheduler2.templates.repeat_monthly_weekday = function(startDate, event2) {
+    const nthDayOfMonth = getWeekdayOfMonth(startDate);
+    return `Every ${formatDayNumber(nthDayOfMonth.dayNumber)} ${scheduler2.locale.date.day_full[nthDayOfMonth.dayOfWeek]}`;
+  };
+  scheduler2.templates.repeat_yearly_month_date = function(startDate, event2) {
+    const date = startDate.getDate();
+    const monthLabel = scheduler2.locale.date.month_full[startDate.getMonth()];
+    return `Every ${formatDayNumber(date)} day of ${monthLabel}`;
+  };
+  scheduler2.templates.repeat_yearly_month_weekday = function(startDate, event2) {
+    const nthDayOfMonth = getWeekdayOfMonth(startDate);
+    const monthLabel = scheduler2.locale.date.month_full[startDate.getMonth()];
+    return `Every ${formatDayNumber(nthDayOfMonth.dayNumber)} ${scheduler2.locale.date.day_full[nthDayOfMonth.dayOfWeek]} of ${monthLabel}`;
+  };
+  function fillCustomYearly(node, rule, event2) {
+    const dateOfYear = node.querySelector(`.dhx_form_repeat_custom_year [value="month_date"]`);
+    const nthWeekDayOfYear = node.querySelector(`.dhx_form_repeat_custom_year [value="month_nth_weekday"]`);
+    dateOfYear.innerText = scheduler2.templates.repeat_yearly_month_date(event2.start_date, event2);
+    nthWeekDayOfYear.innerText = scheduler2.templates.repeat_yearly_month_weekday(event2.start_date, event2);
+    if (!rule || rule.bysetpos && !(rule.byweekday && rule.byweekday.length)) {
+      node.querySelector(`[name="dhx_custom_year_option"]`).value = "month_date";
+    } else {
+      node.querySelector(`[name="dhx_custom_year_option"]`).value = "month_nth_weekday";
+    }
+  }
+  function fillEndRule(node, rule, event2) {
+    const countInput = node.querySelector(`.dhx_form_repeat_ends_extra [name="dhx_form_repeat_ends_after"]`);
+    const ondateInput = node.querySelector(`.dhx_form_repeat_ends_extra [name="dhx_form_repeat_ends_ondate"]`);
+    const endOptionSelect = node.querySelector(`[name='dhx_custom_repeat_ends']`);
+    countInput.value = 1;
+    let formatter = scheduler2.date.date_to_str("%Y-%m-%d");
+    if (!scheduler2.config.repeat_date_of_end) {
+      scheduler2.config.repeat_date_of_end = formatter(scheduler2.date.add(scheduler2._currentDate(), 30, "day"));
+    }
+    ondateInput.value = scheduler2.config.repeat_date_of_end;
+    if (rule && rule.count) {
+      endOptionSelect.value = "AFTER";
+      countInput.value = rule.count;
+    } else if (event2._end_date && event2._end_date.getFullYear() !== 9999) {
+      endOptionSelect.value = "ON";
+      ondateInput.value = formatter(event2._end_date);
+    } else {
+      endOptionSelect.value = "NEVER";
+    }
+    endOptionSelect.dispatchEvent(new Event("change"));
+  }
+  const getRecValue = { MONTHLY: function(dates) {
+    const rrule = { freq: RRule.MONTHLY, interval: 1, bymonthday: dates.start.getDate() };
+    const until = new Date(9999, 1, 1);
+    return { rrule, until };
+  }, WEEKLY: function(dates) {
+    let day = dates.start.getDay() - 1;
+    if (day == -1)
+      day = 6;
+    const rrule = { freq: RRule.WEEKLY, interval: 1, byweekday: [day] };
+    const until = new Date(9999, 1, 1);
+    return { rrule, until };
+  }, DAILY: function(dates) {
+    const rrule = { freq: RRule.DAILY, interval: 1 };
+    const until = new Date(9999, 1, 1);
+    return { rrule, until };
+  }, YEARLY: function(dates) {
+    const rrule = { freq: RRule.YEARLY, bymonth: dates.start.getMonth() + 1, interval: 1, bymonthday: dates.start.getDate() };
+    const until = new Date(9999, 1, 1);
+    return { rrule, until };
+  }, WORKDAYS: function(dates) {
+    const rrule = { freq: RRule.WEEKLY, interval: 1, byweekday: scheduler2.config.recurring_workdays };
+    const until = new Date(9999, 1, 1);
+    return { rrule, until };
+  }, CUSTOM: function(dates, node) {
+    const rrule = {};
+    const freq = node.querySelector(`[name="repeat_interval_unit"]`).value;
+    const interval = Math.max(1, node.querySelector(`[name="repeat_interval_value"]`).value);
+    const monthRepeat = node.querySelector(`[name="dhx_custom_month_option"]`).value;
+    const yearRepeat = node.querySelector(`[name="dhx_custom_year_option"]`).value;
+    rrule.interval = interval;
+    let days;
+    let day;
+    switch (freq) {
+      case "DAILY":
+        rrule.freq = RRule.DAILY;
+        break;
+      case "WEEKLY":
+        rrule.freq = RRule.WEEKLY;
+        days = [];
+        node.querySelectorAll(`.dhx_form_repeat_custom_week [name="week_day"]`).forEach((ch) => {
+          if (ch.checked) {
+            days.push(ch.value);
+          }
+        });
+        rrule.byweekday = days.map((day2) => {
+          switch (day2) {
+            case "MO":
+              return RRule.MO.weekday;
+            case "TU":
+              return RRule.TU.weekday;
+            case "WE":
+              return RRule.WE.weekday;
+            case "TH":
+              return RRule.TH.weekday;
+            case "FR":
+              return RRule.FR.weekday;
+            case "SA":
+              return RRule.SA.weekday;
+            case "SU":
+              return RRule.SU.weekday;
+          }
+        });
+        break;
+      case "MONTHLY":
+        rrule.freq = RRule.MONTHLY;
+        if (monthRepeat === "month_date") {
+          rrule.bymonthday = dates.start.getDate();
+        } else {
+          day = dates.start.getDay() - 1;
+          if (day == -1)
+            day = 6;
+          rrule.byweekday = [day];
+          rrule.bysetpos = getWeekdayOfMonth(dates.start).dayNumber;
+        }
+        break;
+      case "YEARLY":
+        rrule.freq = RRule.YEARLY;
+        rrule.bymonth = dates.start.getMonth() + 1;
+        if (yearRepeat == "month_date") {
+          rrule.bymonthday = dates.start.getDate();
+        } else {
+          day = dates.start.getDay() - 1;
+          if (day == -1)
+            day = 6;
+          rrule.byweekday = [day];
+          rrule.bysetpos = getWeekdayOfMonth(dates.start).dayNumber;
+        }
+        break;
+    }
+    let until = new Date(9999, 1, 1);
+    const endRule = node.querySelector(`[name="dhx_custom_repeat_ends"]`);
+    if (endRule === "ON") {
+      until = node.querySelector(`[name="dhx_form_repeat_ends_ondate"]`).value;
+    } else if (endRule === "AFTER") {
+      rrule.count = Math.max(1, node.querySelector(`[name="dhx_form_repeat_ends_after"]`).value);
+    }
+    return { rrule, until };
+  }, NEVER: function() {
+  } };
+  function fillInDefaults(node, rule, event2) {
+    fillCustomDaily(node, rule);
+    fillCustomWeekly(node, rule, event2);
+    fillCustomMonthly(node, rule, event2);
+    fillCustomYearly(node, rule, event2);
+    fillEndRule(node, rule, event2);
+  }
+  scheduler2.form_blocks["recurring"] = { render: function(sns) {
+    if (sns.form) {
+      let rec = scheduler2.form_blocks["recurring"];
+      let form = rec._get_node(sns.form);
+      let html = rec._outer_html(form);
+      form.style.display = "none";
+      return html;
+    }
+    let loc = scheduler2.locale.labels;
+    return `<div class="dhx_form_rrule">
+		<div class="dhx_form_repeat_pattern">
+			<select>
+				<option value="NEVER">${loc.repeat_never}</option>
+				<option value="DAILY">${loc.repeat_daily}</option>
+				<option value="WEEKLY">${loc.repeat_weekly}</option>
+				<option value="MONTHLY">${loc.repeat_monthly}</option>
+				<option value="YEARLY">${loc.repeat_yearly}</option>
+				<option value="WORKDAYS">${loc.repeat_workdays}</option>
+				<option value="CUSTOM">${loc.repeat_custom}</option>
+			</select>
+		</div>
+		<div class="dhx_form_repeat_custom dhx_hidden">
+			<div class="dhx_form_repeat_custom_interval">
+				<input name="repeat_interval_value" type="number" min="1">
+				<select name="repeat_interval_unit">
+					<option value="DAILY">${loc.repeat_freq_day}</option>
+					<option value="WEEKLY">${loc.repeat_freq_week}</option>
+					<option value="MONTHLY">${loc.repeat_freq_month}</option>
+					<option value="YEARLY">${loc.repeat_freq_year}</option>
+				</select>
+			</div>
+
+			<div class="dhx_form_repeat_custom_additional">
+				<div class="dhx_form_repeat_custom_week dhx_hidden">
+					<label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="MO" />${loc.day_for_recurring[1]}</label>
+					<label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="TU" />${loc.day_for_recurring[2]}</label>
+					<label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="WE" />${loc.day_for_recurring[3]}</label>
+					<label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="TH" />${loc.day_for_recurring[4]}</label>
+					<label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="FR" />${loc.day_for_recurring[5]}</label>
+					<label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="SA" />${loc.day_for_recurring[6]}</label>
+					<label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="SU" />${loc.day_for_recurring[0]}</label>
+				</div>
+
+				<div class="dhx_form_repeat_custom_month dhx_hidden">
+					<select name="dhx_custom_month_option">
+						<option value="month_date"></option>
+						<option value="month_nth_weekday"></option>
+					</select>
+				</div>
+
+				<div class="dhx_form_repeat_custom_year dhx_hidden">
+					<select name="dhx_custom_year_option">
+						<option value="month_date"></option>
+						<option value="month_nth_weekday"></option>
+					</select>
+				</div>
+			</div>
+
+			<div class="dhx_form_repeat_ends">
+				<div>${loc.repeat_ends}</div>
+				<div class="dhx_form_repeat_ends_options">
+					<select name="dhx_custom_repeat_ends">
+						<option value="NEVER">${loc.repeat_never}</option>
+						<option value="AFTER">${loc.repeat_radio_end2}</option>
+						<option value="ON">${loc.repeat_on_date}</option>
+					</select>
+					<div class="dhx_form_repeat_ends_extra">
+						<div class="dhx_form_repeat_ends_after dhx_hidden">
+							<label><input type="number" min="1" name="dhx_form_repeat_ends_after">${loc.repeat_text_occurences_count}</label>
+						</div>
+						<div class="dhx_form_repeat_ends_on dhx_hidden">
+							<input type="date" name="dhx_form_repeat_ends_ondate">
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>`;
+  }, _init_set_value: function(node, value, event2) {
+    scheduler2.form_blocks["recurring"]._ds = { start: event2.start_date, end: event2.end_date };
+    function hide(node2) {
+      node2.classList.add("dhx_hidden");
+    }
+    function show(node2) {
+      node2.classList.remove("dhx_hidden");
+    }
+    function onRepeatOptionChange(value2) {
+      const repeat2 = node.querySelector(".dhx_form_repeat_custom");
+      if (value2 === "CUSTOM") {
+        show(repeat2);
+      } else {
+        hide(repeat2);
+      }
+    }
+    function onCustomRepeatIntervalChange(value2) {
+      const nodes = { weekly: node.querySelector(".dhx_form_repeat_custom_week"), monthly: node.querySelector(".dhx_form_repeat_custom_month"), yearly: node.querySelector(".dhx_form_repeat_custom_year") };
+      switch (value2) {
+        case "DAILY":
+          hide(nodes.weekly);
+          hide(nodes.monthly);
+          hide(nodes.yearly);
+          break;
+        case "WEEKLY":
+          show(nodes.weekly);
+          hide(nodes.monthly);
+          hide(nodes.yearly);
+          break;
+        case "MONTHLY":
+          hide(nodes.weekly);
+          show(nodes.monthly);
+          hide(nodes.yearly);
+          break;
+        case "YEARLY":
+          hide(nodes.weekly);
+          hide(nodes.monthly);
+          show(nodes.yearly);
+          break;
+      }
+    }
+    function onCustomRepeatEndRule(value2) {
+      const nodes = { after: node.querySelector(".dhx_form_repeat_ends_extra .dhx_form_repeat_ends_after"), on: node.querySelector(".dhx_form_repeat_ends_extra .dhx_form_repeat_ends_on") };
+      switch (value2) {
+        case "NEVER":
+          hide(nodes.after);
+          hide(nodes.on);
+          break;
+        case "AFTER":
+          show(nodes.after);
+          hide(nodes.on);
+          break;
+        case "ON":
+          hide(nodes.after);
+          show(nodes.on);
+          break;
+      }
+    }
+    node.querySelector(".dhx_form_repeat_pattern select").addEventListener("change", function() {
+      onRepeatOptionChange(this.value);
+    });
+    node.querySelector(".dhx_form_repeat_custom_interval [name='repeat_interval_unit']").addEventListener("change", function() {
+      onCustomRepeatIntervalChange(this.value);
+    });
+    node.querySelector(".dhx_form_repeat_ends [name='dhx_custom_repeat_ends']").addEventListener("change", function() {
+      onCustomRepeatEndRule(this.value);
+    });
+    scheduler2._lightbox._rec_init_done = true;
+  }, button_click: function() {
+  }, set_value: function(node, value, ev) {
+    let rf = scheduler2.form_blocks["recurring"];
+    if (!scheduler2._lightbox._rec_init_done)
+      rf._init_set_value(node, value, ev);
+    node.open = !ev.rrule;
+    node.blocked = this._is_modified_occurence(ev);
+    let ds = rf._ds;
+    ds.start = ev.start_date;
+    ds.end = ev._end_date;
+    if (ev.rrule) {
+      const rruleset = rrulestr(ev.rrule);
+      fillInDefaults(node, rruleset.origOptions, ev);
+      const topOption = getTopLevelOption(rruleset, ev._end_date);
+      node.querySelector(".dhx_form_repeat_pattern select").value = topOption;
+      if (topOption === "CUSTOM") {
+        let customFreq;
+        switch (rruleset.origOptions.freq) {
+          case RRule.DAILY:
+            customFreq = "DAILY";
+            break;
+          case RRule.WEEKLY:
+            customFreq = "WEEKLY";
+            break;
+          case RRule.MONTHLY:
+            customFreq = "MONTHLY";
+            break;
+          case RRule.YEARLY:
+            customFreq = "YEARLY";
+            break;
+        }
+        if (customFreq) {
+          node.querySelector(`[name="repeat_interval_unit"]`).value = customFreq;
+          node.querySelector(`[name="repeat_interval_unit"]`).dispatchEvent(new Event("change"));
+        }
+      }
+    } else {
+      fillInDefaults(node, null, ev);
+      node.querySelector(".dhx_form_repeat_pattern select").value = "NEVER";
+    }
+    node.querySelector(".dhx_form_repeat_pattern select").dispatchEvent(new Event("change"));
+  }, get_value: function(node, ev) {
+    if (!node.blocked && node.querySelector(".dhx_form_repeat_pattern select").value !== "NEVER") {
+      let ds = scheduler2.form_blocks["recurring"]._ds;
+      let actual_dates = {};
+      let timeControl = getTimeSection();
+      timeControl.getValue(actual_dates);
+      ds.start = actual_dates.start_date;
+      const pattern = node.querySelector(".dhx_form_repeat_pattern select").value;
+      const recurrence = getRecValue[pattern](ds, node);
+      ev.rrule = new RRule(recurrence.rrule).toString().replace("RRULE:", "");
+      ds.end = recurrence.until;
+      ev.duration = Math.floor((actual_dates.end_date - actual_dates.start_date) / 1e3);
+      if (ds._start) {
+        ev.start_date = new Date(ds.start);
+        ev._start_date = new Date(ds.start);
+        ds._start = false;
+      } else
+        ev._start_date = null;
+      ev._end_date = ds.end;
+    } else {
+      ev.rrule = ev.rrule = "";
+      ev._end_date = ev.end_date;
+    }
+    return ev.rrule;
+  }, focus: function(node) {
+  } };
+  function getTimeSection() {
+    let timeControl = scheduler2.formSection("time");
+    if (!timeControl) {
+      timeControl = getFirstSectionOfType("time");
+    }
+    if (!timeControl) {
+      timeControl = getFirstSectionOfType("calendar_time");
+    }
+    if (!timeControl) {
+      throw new Error(["Can't calculate the recurring rule, the Recurring form block can't find the Time control. Make sure you have the time control in 'scheduler.config.lightbox.sections' config.", "You can use either the default time control https://docs.dhtmlx.com/scheduler/time.html, or the datepicker https://docs.dhtmlx.com/scheduler/minicalendar.html, or a custom control. ", 'In the latter case, make sure the control is named "time":', "", "scheduler.config.lightbox.sections = [", '{name:"time", height:72, type:"YOU CONTROL", map_to:"auto" }];'].join("\n"));
+    }
+    return timeControl;
+  }
+  function getFirstSectionOfType(type) {
+    for (let i = 0; i < scheduler2.config.lightbox.sections.length; i++) {
+      let section = scheduler2.config.lightbox.sections[i];
+      if (section.type === type) {
+        return scheduler2.formSection(section.name);
+      }
+    }
+    return null;
+  }
+}
+function recurring_legacy(scheduler2) {
   scheduler2.config.occurrence_timestamp_in_utc = false;
   scheduler2.config.recurring_workdays = [1, 2, 3, 4, 5];
   scheduler2.form_blocks["recurring"] = { _get_node: function(node) {
@@ -14552,20 +18670,20 @@ function recurring(scheduler2) {
       get_rcode[code[0]](code, dates);
       while (code.length < 5)
         code.push("");
-      var repeat = "";
+      var repeat2 = "";
       var end = get_end_rule(els);
       if (end == "no") {
         dates.end = new Date(9999, 1, 1);
-        repeat = "no";
+        repeat2 = "no";
       } else if (end == "date_of_end") {
         dates.end = str_date(get_value(els, "date_of_end"));
       } else {
         scheduler2.transpose_type(code.join("_"));
-        repeat = Math.max(1, get_value(els, "occurences_count"));
+        repeat2 = Math.max(1, get_value(els, "occurences_count"));
         var transp = 0;
-        dates.end = scheduler2.date["add_" + code.join("_")](new Date(dates.start), repeat + transp, { start_date: dates.start }) || dates.start;
+        dates.end = scheduler2.date["add_" + code.join("_")](new Date(dates.start), repeat2 + transp, { start_date: dates.start }) || dates.start;
       }
-      return code.join("_") + "#" + repeat;
+      return code.join("_") + "#" + repeat2;
     }
     function get_end_rule(els2) {
       var end = els2["end"];
@@ -15631,11 +19749,11 @@ class TooltipManager {
   }
   tooltipFor(config) {
     const cloneDomEvent = (event2) => {
-      let clone = event2;
+      let clone2 = event2;
       if (document["createEventObject"] && !document.createEvent) {
-        clone = document["createEventObject"](event2);
+        clone2 = document["createEventObject"](event2);
       }
-      return clone;
+      return clone2;
     };
     this._initDelayedFunctions();
     this.attach({ selector: config.selector, global: config.global, onmouseenter: (event2, node) => {
@@ -15826,7 +19944,7 @@ function year_view(scheduler2) {
       return null;
     return scheduler2.templates.parse_date(day.getAttribute("data-cell-date"));
   };
-  scheduler2.dblclick_dhx_month_head = function(e) {
+  scheduler2.dblclick_dhx_year_grid = function(e) {
     if (isYearMode()) {
       const target = e.target;
       if (scheduler2.$domHelpers.closest(target, ".dhx_before") || scheduler2.$domHelpers.closest(target, ".dhx_after")) {
@@ -16310,7 +20428,7 @@ function export_api(scheduler2) {
     add_export_methods(scheduler2);
   })();
 }
-const gplExtensions = { active_links, agenda_legacy, agenda_view, all_timed, collision, container_autoresize, cookie, daytimeline: daytimeline_restricted, drag_between: drag_between_restricted, editors, expand, export_api, grid_view, html_templates, key_nav, layer, limit, map_view, minical, monthheight, multisection: multisection_restricted, multiselect, multisource, mvc, outerdrag, pdf, quick_info, readonly, recurring, serialize, timeline: timeline_restricted, tooltip, treetimeline: treetimeline_restricted, units: units_restricted, url, week_agenda: week_agenda_restricted, wp, year_view };
+const gplExtensions = { active_links, agenda_legacy, agenda_view, all_timed, collision, container_autoresize, cookie, daytimeline: daytimeline_restricted, drag_between: drag_between_restricted, editors, expand, export_api, grid_view, html_templates, key_nav, layer, limit, map_view, minical, monthheight, multisection: multisection_restricted, multiselect, multisource, mvc, outerdrag, pdf, quick_info, readonly, recurring, recurring_legacy, serialize, timeline: timeline_restricted, tooltip, treetimeline: treetimeline_restricted, units: units_restricted, url, week_agenda: week_agenda_restricted, wp, year_view };
 const factory = new SchedulerFactory(gplExtensions);
 const scheduler = factory.getSchedulerInstance();
 const Scheduler$1 = { plugin: scheduler.bind(factory.plugin, factory) };

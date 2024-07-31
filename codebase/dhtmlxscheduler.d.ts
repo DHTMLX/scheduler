@@ -5,11 +5,13 @@ type SchedulerCallback = (...args: any[]) => any;
 type SchedulerFilterCallback = { (id: string | number, event: any): boolean }
 
 
-type SchedulerEventName = "onAfterEventDisplay" |
+type SchedulerEventName = "onAfterBatchUpdate" |
+	"onAfterEventDisplay" |
 	"onAfterFolderToggle" |
 	"onAfterLightbox" |
 	"onAfterQuickInfo" |
 	"onAfterSchedulerResize" |
+	"onBeforeBatchUpdate" |
 	"onBeforeCollapse" |
 	"onBeforeDrag" |
 	"onBeforeEventChanged" |
@@ -253,6 +255,12 @@ export interface SchedulerTemplates {
 	map_date(start: Date, end: Date): string;
 
 	/**
+	 * specifies the content of the info window in the Map View
+	 * @param event the event object
+	*/
+	map_info_content(event: any): void;
+
+	/**
 	 * specifies the text in the second column of the view
 	 * @param start the date when an event is scheduled to begin
 	 * @param end the date when an event is scheduled to be completed
@@ -267,22 +275,6 @@ export interface SchedulerTemplates {
 	 * @param event the event object
 	*/
 	map_time(start: Date, end: Date, event: any): string;
-
-	/**
-	 * specifies the date of the event in the Google Maps popup marker
-	 * @param start the date when an event is scheduled to begin
-	 * @param end the date when an event is scheduled to be completed
-	 * @param event the event object
-	*/
-	marker_date(start: Date, end: Date, event: any): string;
-
-	/**
-	 * specifies the text of the event in the Google Maps popup marker
-	 * @param start the date when an event is scheduled to begin
-	 * @param end the date when an event is scheduled to be completed
-	 * @param event the event object
-	*/
-	marker_text(start: Date, end: Date, event: any): string;
 
 	/**
 	 * specifies the date in the header of the view
@@ -735,7 +727,7 @@ export interface SchedulerConfigOptions {
 	drag_event_body: boolean;
 
 	/**
-	 * highlights the event's duration on the time scale when you drags an event over the scheduler
+	 * highlights the event's initial position and duration on the time scale when you are dragging an event over the scheduler
 	*/
 	drag_highlight: boolean;
 
@@ -900,7 +892,7 @@ export interface SchedulerConfigOptions {
 	map_error_position: any;
 
 	/**
-	 * the maximum width of the Google Maps's popup marker in the Map view
+	 * the maximum width of the map's popup marker in the Map view
 	*/
 	map_infowindow_max_width: number;
 
@@ -910,7 +902,7 @@ export interface SchedulerConfigOptions {
 	map_initial_position: any;
 
 	/**
-	 * sets the initial zoom of Google Maps in the Map view
+	 * sets the initial zoom of the map in the Map view
 	*/
 	map_initial_zoom: number;
 
@@ -925,6 +917,11 @@ export interface SchedulerConfigOptions {
 	map_resolve_user_location: boolean;
 
 	/**
+	 * provides map-related configuration settings
+	*/
+	map_settings: any;
+
+	/**
 	 * sets the date to start displaying events from
 	*/
 	map_start: Date;
@@ -933,6 +930,11 @@ export interface SchedulerConfigOptions {
 	 * sets the type of Google Maps
 	*/
 	map_type: any;
+
+	/**
+	 * specifies the map provider
+	*/
+	map_view_provider: string;
 
 	/**
 	 * sets the zoom that will be used to show the user's location, if the user agrees to the browser's offer to show it
@@ -1193,6 +1195,11 @@ export interface SchedulerConfigOptions {
 	 * disables dhtmxlScheduler's tooltips on the touch devices
 	*/
 	touch_tooltip: boolean;
+
+	/**
+	 * provides the Undo popup when you delete an event
+	*/
+	undo_deleted: boolean;
 
 	/**
 	 * updates the mode when the scheduler fully repaints itself on any action
@@ -1618,6 +1625,13 @@ export interface SchedulerStatic {
 	 * @param events the Backbone data collection
 	*/
 	backbone(events: any): void;
+
+	/**
+	 * updates multiple events at once
+	 * @param callback the callback function
+	 * @param noRedraw optional, optional, specifies if Scheduler should repaint the chart after the callback function; <i>true</i> - not to repaint and <i>false</i> (by default) - to repaint
+	*/
+	batchUpdate(callback: SchedulerCallback, noRedraw?: boolean): void;
 
 	/**
 	 * creates a new function that when called has its <i>this</i> keyword set to the provided value
