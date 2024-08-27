@@ -898,10 +898,10 @@ function qt(e) {
 function jt(e) {
   return !isNaN(e.getAttribute("tabindex")) && 1 * e.getAttribute("tabindex") >= 0;
 }
-function Pt(e) {
+function It(e) {
   return !{ a: !0, area: !0 }[e.nodeName.loLowerCase()] || !!e.getAttribute("href");
 }
-function It(e) {
+function Pt(e) {
   return !{ input: !0, select: !0, textarea: !0, button: !0, object: !0 }[e.nodeName.toLowerCase()] || !e.hasAttribute("disabled");
 }
 function pt() {
@@ -952,7 +952,7 @@ const _e = { getAbsoluteLeft: function(e) {
     return n.tabIndex === 0 && s.tabIndex !== 0 ? 1 : n.tabIndex !== 0 && s.tabIndex === 0 ? -1 : n.tabIndex === s.tabIndex ? n.$position - s.$position : n.tabIndex < s.tabIndex ? -1 : 1;
   }), r = 0; r < t.length; r++) {
     var d = t[r];
-    (jt(d) || It(d) || Pt(d)) && qt(d) || (t.splice(r, 1), r--);
+    (jt(d) || Pt(d) || It(d)) && qt(d) || (t.splice(r, 1), r--);
   }
   return t;
 }, getClassName: ut, locateCss: ft, getRootNode: Ke, hasShadowParent: function(e) {
@@ -2287,11 +2287,22 @@ He.prototype = { setTransactionMode: function(e, i) {
     var r = i[t];
     this.$scheduler.getUserData(r, this.action_param) && e.call(this, r);
   }
-}, _prepareDataItem: function(e) {
-  var i = {}, t = this.$scheduler, r = t.utils.copy(e);
-  for (var d in r)
-    d.indexOf("_") !== 0 && r[d] && (r[d].getUTCFullYear ? i[d] = t._helpers.formatDate(r[d]) : typeof r[d] == "object" ? i[d] = this._prepareDataItem(r[d]) : r[d] === null ? i[d] = "" : i[d] = r[d]);
+}, _prepareItemForJson(e) {
+  const i = {}, t = this.$scheduler, r = t.utils.copy(e);
+  for (let d in r) {
+    let n = r[d];
+    d.indexOf("_") !== 0 && (n ? n.getUTCFullYear ? i[d] = t._helpers.formatDate(n) : i[d] = typeof n == "object" ? this._prepareItemForJson(n) : n : n !== void 0 && (i[d] = n));
+  }
   return i[this.action_param] = t.getUserData(e.id, this.action_param), i;
+}, _prepareItemForForm(e) {
+  const i = {}, t = this.$scheduler, r = t.utils.copy(e);
+  for (var d in r) {
+    let n = r[d];
+    d.indexOf("_") !== 0 && (n ? n.getUTCFullYear ? i[d] = t._helpers.formatDate(n) : i[d] = typeof n == "object" ? this._prepareItemForForm(n) : n : i[d] = "");
+  }
+  return i[this.action_param] = t.getUserData(e.id, this.action_param), i;
+}, _prepareDataItem: function(e) {
+  return this._serializeAsJson ? this._prepareItemForJson(e) : this._prepareItemForForm(e);
 }, _getRowData: function(e) {
   var i = this.$scheduler.getEvent(e);
   return i || (i = { id: e }), this._prepareDataItem(i);
@@ -2449,7 +2460,7 @@ class Da {
   }
 }
 function Sa(e) {
-  const i = { version: "7.1.0" };
+  const i = { version: "7.1.1" };
   i.$stateProvider = function() {
     const a = {};
     return { getState: function(o) {
@@ -4841,7 +4852,7 @@ var $e = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"], K = function() {
   for (var t = [], r = e; r < i; r++)
     t.push(r);
   return t;
-}, P = function(e, i) {
+}, I = function(e, i) {
   var t = 0, r = [];
   if (G(e))
     for (; t < i; t++)
@@ -4854,7 +4865,7 @@ var $e = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"], K = function() {
 function ue(e, i, t) {
   t === void 0 && (t = " ");
   var r = String(e);
-  return i >>= 0, r.length > i ? String(r) : ((i -= r.length) > t.length && (t += P(t, i / t.length)), t.slice(0, i) + String(r));
+  return i >>= 0, r.length > i ? String(r) : ((i -= r.length) > t.length && (t += I(t, i / t.length)), t.slice(0, i) + String(r));
 }
 var Ha = function(e, i, t) {
   var r = e.split(i);
@@ -4976,7 +4987,7 @@ function O(e, i, t) {
       !r && d in i || (r || (r = Array.prototype.slice.call(i, 0, d)), r[d] = i[d]);
   return e.concat(r || Array.prototype.slice.call(i));
 }
-var I, et = function(e) {
+var P, et = function(e) {
   function i(t, r, d) {
     var n = e.call(this, t, r) || this;
     return n.iterator = d, n;
@@ -4988,11 +4999,11 @@ var I, et = function(e) {
   return e.indexOf(i) !== -1;
 }, ja = function(e) {
   return e.toString();
-}, Pa = function(e, i, t) {
+}, Ia = function(e, i, t) {
   return "".concat(i, " ").concat(t, ", ").concat(e);
 }, ie = function() {
   function e(i, t, r, d) {
-    if (t === void 0 && (t = ja), r === void 0 && (r = ke), d === void 0 && (d = Pa), this.text = [], this.language = r || ke, this.gettext = t, this.dateFormatter = d, this.rrule = i, this.options = i.options, this.origOptions = i.origOptions, this.origOptions.bymonthday) {
+    if (t === void 0 && (t = ja), r === void 0 && (r = ke), d === void 0 && (d = Ia), this.text = [], this.language = r || ke, this.gettext = t, this.dateFormatter = d, this.rrule = i, this.options = i.options, this.origOptions = i.origOptions, this.origOptions.bymonthday) {
       var n = [].concat(this.options.bymonthday), s = [].concat(this.options.bynmonthday);
       n.sort(function(l, h) {
         return l - h;
@@ -5114,7 +5125,7 @@ var I, et = function(e) {
       return l;
     }(i.map(s), d, r) : i.map(s).join(d + " ");
   }, e;
-}(), Ia = function() {
+}(), Pa = function() {
   function e(i) {
     this.done = !0, this.rules = i;
   }
@@ -5155,7 +5166,7 @@ var I, et = function(e) {
 }();
 function wt(e, i) {
   i === void 0 && (i = ke);
-  var t = {}, r = new Ia(i.tokens);
+  var t = {}, r = new Pa(i.tokens);
   return r.start(e) ? (function() {
     r.expect("every");
     var l = r.acceptNumber();
@@ -5356,15 +5367,15 @@ function wt(e, i) {
   }
 }
 function Ce(e) {
-  return e < I.HOURLY;
+  return e < P.HOURLY;
 }
 (function(e) {
   e[e.YEARLY = 0] = "YEARLY", e[e.MONTHLY = 1] = "MONTHLY", e[e.WEEKLY = 2] = "WEEKLY", e[e.DAILY = 3] = "DAILY", e[e.HOURLY = 4] = "HOURLY", e[e.MINUTELY = 5] = "MINUTELY", e[e.SECONDLY = 6] = "SECONDLY";
-})(I || (I = {}));
+})(P || (P = {}));
 var Ra = function(e, i) {
   return i === void 0 && (i = ke), new C(wt(e, i) || void 0);
 }, fe = ["count", "until", "interval", "byweekday", "bymonthday", "bymonth"];
-ie.IMPLEMENTED = [], ie.IMPLEMENTED[I.HOURLY] = fe, ie.IMPLEMENTED[I.MINUTELY] = fe, ie.IMPLEMENTED[I.DAILY] = ["byhour"].concat(fe), ie.IMPLEMENTED[I.WEEKLY] = fe, ie.IMPLEMENTED[I.MONTHLY] = fe, ie.IMPLEMENTED[I.YEARLY] = ["byweekno", "byyearday"].concat(fe);
+ie.IMPLEMENTED = [], ie.IMPLEMENTED[P.HOURLY] = fe, ie.IMPLEMENTED[P.MINUTELY] = fe, ie.IMPLEMENTED[P.DAILY] = ["byhour"].concat(fe), ie.IMPLEMENTED[P.WEEKLY] = fe, ie.IMPLEMENTED[P.MONTHLY] = fe, ie.IMPLEMENTED[P.YEARLY] = ["byweekno", "byyearday"].concat(fe);
 var Ya = ie.isFullyConvertible, we = function() {
   function e(i, t, r, d) {
     this.hour = i, this.minute = t, this.second = r, this.millisecond = d || 0;
@@ -5442,19 +5453,19 @@ var Ya = ie.isFullyConvertible, we = function() {
   }, i.prototype.add = function(t, r) {
     var d = t.freq, n = t.interval, s = t.wkst, _ = t.byhour, a = t.byminute, o = t.bysecond;
     switch (d) {
-      case I.YEARLY:
+      case P.YEARLY:
         return this.addYears(n);
-      case I.MONTHLY:
+      case P.MONTHLY:
         return this.addMonths(n);
-      case I.WEEKLY:
+      case P.WEEKLY:
         return this.addWeekly(n, s);
-      case I.DAILY:
+      case P.DAILY:
         return this.addDaily(n);
-      case I.HOURLY:
+      case P.HOURLY:
         return this.addHours(n, r, _);
-      case I.MINUTELY:
+      case P.MINUTELY:
         return this.addMinutes(n, r, _, a);
-      case I.SECONDLY:
+      case P.SECONDLY:
         return this.addSeconds(n, r, _, a, o);
     }
   }, i;
@@ -5520,7 +5531,7 @@ function Va(e) {
     i.bynweekday = null;
   return U(i.byhour) ? te(i.byhour) && (i.byhour = [i.byhour]) : i.byhour = i.freq < C.HOURLY ? [i.dtstart.getUTCHours()] : null, U(i.byminute) ? te(i.byminute) && (i.byminute = [i.byminute]) : i.byminute = i.freq < C.MINUTELY ? [i.dtstart.getUTCMinutes()] : null, U(i.bysecond) ? te(i.bysecond) && (i.bysecond = [i.bysecond]) : i.bysecond = i.freq < C.SECONDLY ? [i.dtstart.getUTCSeconds()] : null, { parsedOptions: i };
 }
-function Pe(e) {
+function Ie(e) {
   var i = e.split(`
 `).map(Ba).filter(function(t) {
     return t !== null;
@@ -5557,7 +5568,7 @@ function at(e) {
     var r = t.split("="), d = r[0], n = r[1];
     switch (d.toUpperCase()) {
       case "FREQ":
-        i.freq = I[n.toUpperCase()];
+        i.freq = P[n.toUpperCase()];
         break;
       case "WKST":
         i.wkst = Q[n.toUpperCase()];
@@ -5629,7 +5640,7 @@ var De = function() {
     var i, t, r, d, n;
   }, e;
 }();
-function Ie(e) {
+function Pe(e) {
   for (var i, t = [], r = "", d = Object.keys(e), n = Object.keys(Je), s = 0; s < d.length; s++)
     if (d[s] !== "tzid" && R(n, d[s])) {
       var _ = d[s].toUpperCase(), a = e[d[s]], o = "";
@@ -5713,7 +5724,7 @@ var Wa = function() {
     }
     return G(r) ? Ze(r) : r instanceof Date ? qe(r) : r;
   }, e;
-}(), Ka = O(O(O(O(O(O(O(O(O(O(O(O(O([], P(1, 31), !0), P(2, 28), !0), P(3, 31), !0), P(4, 30), !0), P(5, 31), !0), P(6, 30), !0), P(7, 31), !0), P(8, 31), !0), P(9, 30), !0), P(10, 31), !0), P(11, 30), !0), P(12, 31), !0), P(1, 7), !0), Ga = O(O(O(O(O(O(O(O(O(O(O(O(O([], P(1, 31), !0), P(2, 29), !0), P(3, 31), !0), P(4, 30), !0), P(5, 31), !0), P(6, 30), !0), P(7, 31), !0), P(8, 31), !0), P(9, 30), !0), P(10, 31), !0), P(11, 30), !0), P(12, 31), !0), P(1, 7), !0), Xa = ne(1, 29), Za = ne(1, 30), le = ne(1, 31), F = ne(1, 32), Qa = O(O(O(O(O(O(O(O(O(O(O(O(O([], F, !0), Za, !0), F, !0), le, !0), F, !0), le, !0), F, !0), F, !0), le, !0), F, !0), le, !0), F, !0), F.slice(0, 7), !0), en = O(O(O(O(O(O(O(O(O(O(O(O(O([], F, !0), Xa, !0), F, !0), le, !0), F, !0), le, !0), F, !0), F, !0), le, !0), F, !0), le, !0), F, !0), F.slice(0, 7), !0), tn = ne(-28, 0), an = ne(-29, 0), ce = ne(-30, 0), J = ne(-31, 0), nn = O(O(O(O(O(O(O(O(O(O(O(O(O([], J, !0), an, !0), J, !0), ce, !0), J, !0), ce, !0), J, !0), J, !0), ce, !0), J, !0), ce, !0), J, !0), J.slice(0, 7), !0), rn = O(O(O(O(O(O(O(O(O(O(O(O(O([], J, !0), tn, !0), J, !0), ce, !0), J, !0), ce, !0), J, !0), J, !0), ce, !0), J, !0), ce, !0), J, !0), J.slice(0, 7), !0), on = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366], sn = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365], rt = function() {
+}(), Ka = O(O(O(O(O(O(O(O(O(O(O(O(O([], I(1, 31), !0), I(2, 28), !0), I(3, 31), !0), I(4, 30), !0), I(5, 31), !0), I(6, 30), !0), I(7, 31), !0), I(8, 31), !0), I(9, 30), !0), I(10, 31), !0), I(11, 30), !0), I(12, 31), !0), I(1, 7), !0), Ga = O(O(O(O(O(O(O(O(O(O(O(O(O([], I(1, 31), !0), I(2, 29), !0), I(3, 31), !0), I(4, 30), !0), I(5, 31), !0), I(6, 30), !0), I(7, 31), !0), I(8, 31), !0), I(9, 30), !0), I(10, 31), !0), I(11, 30), !0), I(12, 31), !0), I(1, 7), !0), Xa = ne(1, 29), Za = ne(1, 30), le = ne(1, 31), F = ne(1, 32), Qa = O(O(O(O(O(O(O(O(O(O(O(O(O([], F, !0), Za, !0), F, !0), le, !0), F, !0), le, !0), F, !0), F, !0), le, !0), F, !0), le, !0), F, !0), F.slice(0, 7), !0), en = O(O(O(O(O(O(O(O(O(O(O(O(O([], F, !0), Xa, !0), F, !0), le, !0), F, !0), le, !0), F, !0), F, !0), le, !0), F, !0), le, !0), F, !0), F.slice(0, 7), !0), tn = ne(-28, 0), an = ne(-29, 0), ce = ne(-30, 0), J = ne(-31, 0), nn = O(O(O(O(O(O(O(O(O(O(O(O(O([], J, !0), an, !0), J, !0), ce, !0), J, !0), ce, !0), J, !0), J, !0), ce, !0), J, !0), ce, !0), J, !0), J.slice(0, 7), !0), rn = O(O(O(O(O(O(O(O(O(O(O(O(O([], J, !0), tn, !0), J, !0), ce, !0), J, !0), ce, !0), J, !0), J, !0), ce, !0), J, !0), ce, !0), J, !0), J.slice(0, 7), !0), on = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366], sn = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365], rt = function() {
   for (var e = [], i = 0; i < 55; i++)
     e = e.concat(ne(7));
   return e;
@@ -5725,7 +5736,7 @@ function dn(e, i) {
   }(e)), { wnomask: null });
   if (ae(i.byweekno))
     return o;
-  o.wnomask = P(0, n + 7);
+  o.wnomask = I(0, n + 7);
   var l = t = Z(7 - a + i.wkst, 7);
   l >= 4 ? (l = 0, r = o.yearlen + Z(a - i.wkst, 7)) : r = n - l;
   for (var h = Math.floor(r / 7), v = Z(r, 7), u = Math.floor(h + v / 4), f = 0; f < i.byweekno.length; f++) {
@@ -5774,7 +5785,7 @@ var _n = function() {
           u.freq === C.MONTHLY && (c = [h.slice(o - 1, o + 1)]);
         if (ae(c))
           return f;
-        for (f.nwdaymask = P(0, l), p = 0; p < c.length; p++)
+        for (f.nwdaymask = I(0, l), p = 0; p < c.length; p++)
           for (var m = c[p], g = m[0], y = m[1] - 1, x = 0; x < u.bynweekday.length; x++) {
             var b = void 0, k = u.bynweekday[x], E = k[0], D = k[1];
             D < 0 ? (b = y + 7 * (D + 1), b -= Z(v[b] - E, 7)) : (b = g + 7 * (D - 1), b += Z(7 - v[b] + E, 7)), g <= b && b <= y && (f.nwdaymask[b] = 1);
@@ -5814,15 +5825,15 @@ var _n = function() {
   }, enumerable: !1, configurable: !0 }), e.prototype.ydayset = function() {
     return [ne(this.yearlen), 0, this.yearlen];
   }, e.prototype.mdayset = function(i, t) {
-    for (var r = this.mrange[t - 1], d = this.mrange[t], n = P(null, this.yearlen), s = r; s < d; s++)
+    for (var r = this.mrange[t - 1], d = this.mrange[t], n = I(null, this.yearlen), s = r; s < d; s++)
       n[s] = s;
     return [n, r, d];
   }, e.prototype.wdayset = function(i, t, r) {
-    for (var d = P(null, this.yearlen + 7), n = ze(he(i, t, r)) - this.yearordinal, s = n, _ = 0; _ < 7 && (d[n] = n, ++n, this.wdaymask[n] !== this.options.wkst); _++)
+    for (var d = I(null, this.yearlen + 7), n = ze(he(i, t, r)) - this.yearordinal, s = n, _ = 0; _ < 7 && (d[n] = n, ++n, this.wdaymask[n] !== this.options.wkst); _++)
       ;
     return [d, s, n];
   }, e.prototype.ddayset = function(i, t, r) {
-    var d = P(null, this.yearlen), n = ze(he(i, t, r)) - this.yearordinal;
+    var d = I(null, this.yearlen), n = ze(he(i, t, r)) - this.yearordinal;
     return d[n] = n, [d, n, n + 1];
   }, e.prototype.htimeset = function(i, t, r, d) {
     var n = this, s = [];
@@ -5838,23 +5849,23 @@ var _n = function() {
     return [new we(i, t, r, d)];
   }, e.prototype.getdayset = function(i) {
     switch (i) {
-      case I.YEARLY:
+      case P.YEARLY:
         return this.ydayset.bind(this);
-      case I.MONTHLY:
+      case P.MONTHLY:
         return this.mdayset.bind(this);
-      case I.WEEKLY:
+      case P.WEEKLY:
         return this.wdayset.bind(this);
-      case I.DAILY:
+      case P.DAILY:
       default:
         return this.ddayset.bind(this);
     }
   }, e.prototype.gettimeset = function(i) {
     switch (i) {
-      case I.HOURLY:
+      case P.HOURLY:
         return this.htimeset.bind(this);
-      case I.MINUTELY:
+      case P.MINUTELY:
         return this.mtimeset.bind(this);
-      case I.SECONDLY:
+      case P.SECONDLY:
         return this.stimeset.bind(this);
     }
   }, e;
@@ -5940,7 +5951,7 @@ function hn(e, i, t, r, d) {
   }
   return n;
 }
-var Q = { MO: new K(0), TU: new K(1), WE: new K(2), TH: new K(3), FR: new K(4), SA: new K(5), SU: new K(6) }, Je = { freq: I.YEARLY, dtstart: null, interval: 1, wkst: Q.MO, count: null, until: null, tzid: null, bysetpos: null, bymonth: null, bymonthday: null, bynmonthday: null, byyearday: null, byweekno: null, byweekday: null, bynweekday: null, byhour: null, byminute: null, bysecond: null, byeaster: null }, un = Object.keys(Je), C = function() {
+var Q = { MO: new K(0), TU: new K(1), WE: new K(2), TH: new K(3), FR: new K(4), SA: new K(5), SU: new K(6) }, Je = { freq: P.YEARLY, dtstart: null, interval: 1, wkst: Q.MO, count: null, until: null, tzid: null, bysetpos: null, bymonth: null, bymonthday: null, bynmonthday: null, byyearday: null, byweekno: null, byweekday: null, bynweekday: null, byhour: null, byminute: null, bysecond: null, byeaster: null }, un = Object.keys(Je), C = function() {
   function e(i, t) {
     i === void 0 && (i = {}), t === void 0 && (t = !1), this._cache = t ? null : new Wa(), this.origOptions = Et(i);
     var r = Va(i).parsedOptions;
@@ -5985,7 +5996,7 @@ var Q = { MO: new K(0), TU: new K(1), WE: new K(2), TH: new K(3), FR: new K(4), 
   }, e.prototype.count = function() {
     return this.all().length;
   }, e.prototype.toString = function() {
-    return Ie(this.origOptions);
+    return Pe(this.origOptions);
   }, e.prototype.toText = function(i, t, r) {
     return function(d, n, s, _) {
       return new ie(d, n, s, _).toString();
@@ -5994,7 +6005,7 @@ var Q = { MO: new K(0), TU: new K(1), WE: new K(2), TH: new K(3), FR: new K(4), 
     return Ya(this);
   }, e.prototype.clone = function() {
     return new e(this.origOptions);
-  }, e.FREQUENCIES = ["YEARLY", "MONTHLY", "WEEKLY", "DAILY", "HOURLY", "MINUTELY", "SECONDLY"], e.YEARLY = I.YEARLY, e.MONTHLY = I.MONTHLY, e.WEEKLY = I.WEEKLY, e.DAILY = I.DAILY, e.HOURLY = I.HOURLY, e.MINUTELY = I.MINUTELY, e.SECONDLY = I.SECONDLY, e.MO = Q.MO, e.TU = Q.TU, e.WE = Q.WE, e.TH = Q.TH, e.FR = Q.FR, e.SA = Q.SA, e.SU = Q.SU, e.parseString = Pe, e.optionsToString = Ie, e;
+  }, e.FREQUENCIES = ["YEARLY", "MONTHLY", "WEEKLY", "DAILY", "HOURLY", "MINUTELY", "SECONDLY"], e.YEARLY = P.YEARLY, e.MONTHLY = P.MONTHLY, e.WEEKLY = P.WEEKLY, e.DAILY = P.DAILY, e.HOURLY = P.HOURLY, e.MINUTELY = P.MINUTELY, e.SECONDLY = P.SECONDLY, e.MO = Q.MO, e.TU = Q.TU, e.WE = Q.WE, e.TH = Q.TH, e.FR = Q.FR, e.SA = Q.SA, e.SU = Q.SU, e.parseString = Ie, e.optionsToString = Pe, e;
 }(), ot = { dtstart: null, cache: !1, unfold: !1, forceset: !1, compatible: !1, tzid: null };
 function fn(e, i) {
   var t = [], r = [], d = [], n = [], s = Ee(e), _ = s.dtstart, a = s.tzid, o = function(l, h) {
@@ -6027,7 +6038,7 @@ function fn(e, i) {
         case "RRULE":
           if (f.length)
             throw new Error("unsupported RRULE parm: ".concat(f.join(",")));
-          t.push(Pe(l));
+          t.push(Ie(l));
           break;
         case "RDATE":
           var p = ((h = /RDATE(?:;TZID=([^:=]+))?/i.exec(l)) !== null && h !== void 0 ? h : [])[1];
@@ -6036,7 +6047,7 @@ function fn(e, i) {
         case "EXRULE":
           if (f.length)
             throw new Error("unsupported EXRULE parm: ".concat(f.join(",")));
-          d.push(Pe(c));
+          d.push(Ie(c));
           break;
         case "EXDATE":
           n = n.concat(st(c, f));
@@ -6171,7 +6182,7 @@ var pn = function(e) {
     });
   }, i.prototype.valueOf = function() {
     var t = [];
-    return !this._rrule.length && this._dtstart && (t = t.concat(Ie({ dtstart: this._dtstart }))), this._rrule.forEach(function(r) {
+    return !this._rrule.length && this._dtstart && (t = t.concat(Pe({ dtstart: this._dtstart }))), this._rrule.forEach(function(r) {
       t = t.concat(r.toString().split(`
 `));
     }), this._exrule.forEach(function(r) {
@@ -6280,7 +6291,7 @@ class vn {
       const l = () => {
         n = o, i.onmouseenter(_, o);
       };
-      n ? o && o === n ? i.onmousemove(_, o) : (i.onmouseleave(_, n), n = null, o && o !== n && l()) : o && l();
+      r._mobile && r.config.touch_tooltip && (o ? l() : i.onmouseleave(_, o)), n ? o && o === n ? i.onmousemove(_, o) : (i.onmouseleave(_, n), n = null, o && o !== n && l()) : o && l();
     };
     this.detach(i.selector), this._domEvents.attach(t, "mousemove", s), this._listeners[i.selector] = { node: t, handler: s };
   }
@@ -6613,7 +6624,7 @@ const gn = { active_links: function(e) {
       else {
         var p = c.firstChild;
         const E = p.querySelectorAll(".dhx_cal_month_row");
-        if (E) {
+        if (E && E.length) {
           for (var m = 0; m < E.length; m++) {
             if (f[m]++, f[m] * v > this._colsS.height - this.xy.month_head_height) {
               var g = E[m].querySelectorAll(".dhx_cal_month_cell"), y = this._colsS.height - this.xy.month_head_height;
@@ -6631,7 +6642,7 @@ const gn = { active_links: function(e) {
           const D = this._els.dhx_cal_navline[0].offsetHeight, w = this._els.dhx_cal_header[0].offsetHeight;
           c.style.height = this._obj.offsetHeight - D - w - (this.xy.margin_top || 0) + "px";
           var k = this._els.dhx_multi_day[0];
-          k.style.height = b, k.style.visibility = f[0] == -1 ? "hidden" : "visible", (k = this._els.dhx_multi_day[1]).style.height = b, k.style.visibility = f[0] == -1 ? "hidden" : "visible", k.style.visibility == "hidden" ? k.style.display = "none" : k.style.display = "", k.className = f[0] ? "dhx_multi_day_icon" : "dhx_multi_day_icon_small", this._dy_shift = (f[0] + 1) * v, f[0] = 0;
+          k.style.height = b, k.style.visibility = f[0] == -1 ? "hidden" : "visible", k.style.display = f[0] == -1 ? "none" : "", (k = this._els.dhx_multi_day[1]).style.height = b, k.style.visibility = f[0] == -1 ? "hidden" : "visible", k.style.display = f[0] == -1 ? "none" : "", k.className = f[0] ? "dhx_multi_day_icon" : "dhx_multi_day_icon_small", this._dy_shift = (f[0] + 1) * v, f[0] = 0;
         }
       }
     return l;
@@ -10152,7 +10163,7 @@ END:VCALENDAR`;
   }), e.attachEvent("onLightbox", function() {
     i.hideTooltip();
   }), e.attachEvent("onBeforeDrag", function() {
-    return i.hideTooltip(), !0;
+    return e._mobile && e.config.touch_tooltip || i.hideTooltip(), !0;
   }), e.attachEvent("onEventDeleted", function() {
     return i.hideTooltip(), !0;
   });

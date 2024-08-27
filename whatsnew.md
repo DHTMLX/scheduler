@@ -1,3 +1,13 @@
+### 7.1.1
+
+Fix the issue where the DataProcessor did not allow sending false values
+Fix the issue where the Tooltip disappeared on mobile devices after a click
+Fix the Tooltip position issue during page scroll
+Fix the issue where the container_autoresize plugin hid the multiday section
+Fix the issue where the Quick Info popup appeared outside of the container
+Fix the issue where unconfirmed events disappeared during scrolling with smart rendering enabled in the Timeline view
+Fix the incorrect sections height in the Timeline view after calling scheduler.updateCollection() with active smart rendering
+
 ### 7.1.0
 
 Storing recurring events in the RRULE format

@@ -2087,7 +2087,7 @@ export interface SchedulerStatic {
 	 * creates a mini calendar
 	 * @param config the calendar configuration object
 	*/
-	renderCalendar(config: any): void;
+	renderCalendar(config: any): HTMLElement;
 
 	/**
 	 * generates HTML content for a custom event's box

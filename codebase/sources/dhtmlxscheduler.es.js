@@ -8053,27 +8053,56 @@ DataProcessor.prototype = { setTransactionMode: function(mode, total) {
       code.call(this, rowId);
     }
   }
-}, _prepareDataItem: function(item) {
-  var processedItem = {};
-  var scheduler2 = this.$scheduler;
-  var copy2 = scheduler2.utils.copy(item);
-  for (var i in copy2) {
+}, _prepareItemForJson(item) {
+  const processedItem = {};
+  const scheduler2 = this.$scheduler;
+  const copy2 = scheduler2.utils.copy(item);
+  for (let i in copy2) {
+    let prop = copy2[i];
     if (i.indexOf("_") === 0) {
       continue;
-    } else if (copy2[i]) {
-      if (copy2[i].getUTCFullYear) {
-        processedItem[i] = scheduler2._helpers.formatDate(copy2[i]);
-      } else if (typeof copy2[i] == "object") {
-        processedItem[i] = this._prepareDataItem(copy2[i]);
-      } else if (copy2[i] === null) {
-        processedItem[i] = "";
+    } else if (prop) {
+      if (prop.getUTCFullYear) {
+        processedItem[i] = scheduler2._helpers.formatDate(prop);
+      } else if (typeof prop == "object") {
+        processedItem[i] = this._prepareItemForJson(prop);
       } else {
-        processedItem[i] = copy2[i];
+        processedItem[i] = prop;
       }
+    } else if (prop !== void 0) {
+      processedItem[i] = prop;
     }
   }
   processedItem[this.action_param] = scheduler2.getUserData(item.id, this.action_param);
   return processedItem;
+}, _prepareItemForForm(item) {
+  const processedItem = {};
+  const scheduler2 = this.$scheduler;
+  const copy2 = scheduler2.utils.copy(item);
+  for (var i in copy2) {
+    let prop = copy2[i];
+    if (i.indexOf("_") === 0) {
+      continue;
+    } else if (prop) {
+      if (prop.getUTCFullYear) {
+        processedItem[i] = scheduler2._helpers.formatDate(prop);
+      } else if (typeof prop == "object") {
+        processedItem[i] = this._prepareItemForForm(prop);
+      } else {
+        processedItem[i] = prop;
+      }
+    } else {
+      processedItem[i] = "";
+    }
+  }
+  processedItem[this.action_param] = scheduler2.getUserData(item.id, this.action_param);
+  return processedItem;
+}, _prepareDataItem: function(item) {
+  if (this._serializeAsJson) {
+    return this._prepareItemForJson(item);
+  } else {
+    return this._prepareItemForForm(item);
+  }
 }, _getRowData: function(id2) {
   var dataItem = this.$scheduler.getEvent(id2);
   if (!dataItem) {
@@ -8723,7 +8752,7 @@ class DatePicker {
   }
 }
 function factoryMethod(extensionManager) {
-  const scheduler2 = { version: "7.1.0" };
+  const scheduler2 = { version: "7.1.1" };
   scheduler2.$stateProvider = StateService();
   scheduler2.getState = scheduler2.$stateProvider.getState;
   extend$n(scheduler2);
@@ -9485,7 +9514,7 @@ function container_autoresize(scheduler2) {
       } else {
         var evl = data.firstChild;
         const rows = evl.querySelectorAll(".dhx_cal_month_row");
-        if (rows) {
+        if (rows && rows.length) {
           for (var i = 0; i < rows.length; i++) {
             h[i]++;
             if (h[i] * hb > this._colsS.height - this.xy.month_head_height) {
@@ -9522,14 +9551,11 @@ function container_autoresize(scheduler2) {
             var last = this._els["dhx_multi_day"][0];
             last.style.height = dh;
             last.style.visibility = h[0] == -1 ? "hidden" : "visible";
+            last.style.display = h[0] == -1 ? "none" : "";
             last = this._els["dhx_multi_day"][1];
             last.style.height = dh;
             last.style.visibility = h[0] == -1 ? "hidden" : "visible";
-            if (last.style.visibility == "hidden") {
-              last.style.display = "none";
-            } else {
-              last.style.display = "";
-            }
+            last.style.display = h[0] == -1 ? "none" : "";
             last.className = h[0] ? "dhx_multi_day_icon" : "dhx_multi_day_icon_small";
             this._dy_shift = (h[0] + 1) * hb;
             h[0] = 0;
@@ -19721,6 +19747,13 @@ class TooltipManager {
         watchableTarget = targetNode;
         config.onmouseenter(event2, targetNode);
       };
+      if (scheduler2._mobile && scheduler2.config.touch_tooltip) {
+        if (targetNode) {
+          doOnMouseEnter();
+        } else {
+          config.onmouseleave(event2, targetNode);
+        }
+      }
       if (watchableTarget) {
         if (targetNode && targetNode === watchableTarget) {
           config.onmousemove(event2, targetNode);
@@ -19824,6 +19857,9 @@ function tooltip(scheduler2) {
     tooltipManager.hideTooltip();
   });
   scheduler2.attachEvent("onBeforeDrag", function() {
+    if (scheduler2._mobile && scheduler2.config.touch_tooltip) {
+      return true;
+    }
     tooltipManager.hideTooltip();
     return true;
   });
