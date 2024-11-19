@@ -8756,7 +8756,7 @@
     }
   }
   function factoryMethod(extensionManager) {
-    const scheduler2 = { version: "7.1.1" };
+    const scheduler2 = { version: "7.1.2" };
     scheduler2.$stateProvider = StateService();
     scheduler2.getState = scheduler2.$stateProvider.getState;
     extend$n(scheduler2);
@@ -9432,7 +9432,7 @@
         edited_ev.start_date = new Date(ev.start_date);
         edited_ev.end_date = new Date(ev.end_date);
       }
-      if (edited_ev.rec_type) {
+      if (edited_ev.rrule && !edited_ev.recurring_event_id || edited_ev.rec_type) {
         scheduler2._roll_back_dates(edited_ev);
       }
       return scheduler2.checkCollision(edited_ev);
@@ -9446,12 +9446,12 @@
     scheduler2.checkCollision = function(ev) {
       var evs = [];
       var collision_limit = scheduler2.config.collision_limit;
-      if (ev.rec_type) {
+      if (ev.rrule || ev.rec_type) {
         var evs_dates = scheduler2.getRecDates(ev);
         for (var k = 0; k < evs_dates.length; k++) {
           var tevs = scheduler2.getEvents(evs_dates[k].start_date, evs_dates[k].end_date);
           for (var j = 0; j < tevs.length; j++) {
-            if ((tevs[j].event_pid || tevs[j].id) != ev.id)
+            if ((tevs[j].event_pid || tevs[j].id || tevs[j].recurring_event_id) != ev.id)
               evs.push(tevs[j]);
           }
         }
@@ -9460,6 +9460,10 @@
         for (var i = 0; i < evs.length; i++) {
           var concurrent = evs[i];
           if (concurrent.id == ev.id || concurrent.event_length && [concurrent.event_pid, concurrent.event_length].join("#") == ev.id) {
+            evs.splice(i, 1);
+            break;
+          }
+          if (concurrent.recurring_event_id && [concurrent.recurring_event_id, concurrent._pid_time].join("#") == ev.id) {
             evs.splice(i, 1);
             break;
           }
@@ -11927,7 +11931,7 @@
         copy.end_date = new Date(copy.start_date.valueOf() + event_duration);
         if (section) {
           var property = scheduler2._get_section_property();
-          if (scheduler2.config.multisection)
+          if (scheduler2.config.multisection && ev[property] && scheduler2.isMultisectionEvent && scheduler2.isMultisectionEvent(ev))
             copy[property] = ev[property];
           else
             copy[property] = section;
@@ -17987,8 +17991,14 @@
         to = scheduler2._max_date;
       }
       const utcStart = new Date(Date.UTC(ev.start_date.getFullYear(), ev.start_date.getMonth(), ev.start_date.getDate(), ev.start_date.getHours(), ev.start_date.getMinutes(), ev.start_date.getSeconds()));
-      const parsedRRule = rrulestr(`RRULE:${ev.rrule};UNTIL=${toIcalString(ev.end_date)}`, { dtstart: utcStart });
-      const repeatedDates = parsedRRule.between(from, to).map((date) => {
+      let parsedRRule;
+      if (maxCount) {
+        parsedRRule = rrulestr(`RRULE:${ev.rrule};UNTIL=${toIcalString(ev.end_date)};COUNT=${maxCount}`, { dtstart: utcStart });
+      } else {
+        parsedRRule = rrulestr(`RRULE:${ev.rrule};UNTIL=${toIcalString(ev.end_date)}`, { dtstart: utcStart });
+      }
+      const utcTo = new Date(Date.UTC(to.getFullYear(), to.getMonth(), to.getDate(), to.getHours(), to.getMinutes(), to.getSeconds()));
+      const repeatedDates = parsedRRule.between(from, utcTo).map((date) => {
         const adjustedDate = new Date(date);
         adjustedDate.setHours(ev.start_date.getHours());
         adjustedDate.setMinutes(ev.start_date.getMinutes());
@@ -18026,6 +18036,18 @@
             scheduler2._rec_temp.push(copy);
           }
           visibleCount++;
+        }
+      }
+      if (seriesExceptions && repeatedDates.length == 0) {
+        for (let a in seriesExceptions) {
+          let exception = seriesExceptions[a];
+          if (exception) {
+            if (exception.deleted) {
+              continue;
+            } else if (from && to && exception.start_date < to && exception.end_date > from) {
+              stack.push(exception);
+            }
+          }
         }
       }
     };
@@ -18067,8 +18089,8 @@
         if (ev.recurring_event_id) {
           continue;
         }
-        if (isSeries(ev)) {
-          if (from && to && ev.start_date < to && ev.end_date > from) {
+        if (from && to && ev.start_date < to && ev.end_date > from) {
+          if (isSeries(ev)) {
             var sev = [];
             this.repeat_date(ev, sev, true, from, to, void 0, exceptions);
             sev.forEach(function(occurence) {
@@ -18076,10 +18098,10 @@
                 result.push(occurence);
               }
             });
-          } else if (!from && !to) {
+          } else if (!this._is_virtual_event(ev.id)) {
             result.push(ev);
           }
-        } else if (!this._is_virtual_event(ev.id)) {
+        } else if (!from && !to && !this._is_virtual_event(ev.id)) {
           result.push(ev);
         }
       }
@@ -18313,11 +18335,12 @@
           }
           break;
       }
+      const formatFunc = scheduler2.date.str_to_date("%Y-%m-%d");
       let until = new Date(9999, 1, 1);
       const endRule = node.querySelector(`[name="dhx_custom_repeat_ends"]`);
-      if (endRule === "ON") {
-        until = node.querySelector(`[name="dhx_form_repeat_ends_ondate"]`).value;
-      } else if (endRule === "AFTER") {
+      if (endRule.value === "ON") {
+        until = formatFunc(node.querySelector(`[name="dhx_form_repeat_ends_ondate"]`).value);
+      } else if (endRule.value === "AFTER") {
         rrule.count = Math.max(1, node.querySelector(`[name="dhx_form_repeat_ends_after"]`).value);
       }
       return { rrule, until };

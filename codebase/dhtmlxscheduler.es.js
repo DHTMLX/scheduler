@@ -301,8 +301,8 @@ function Mt(e) {
           return [];
         }
         (M = e._get_block_by_config(n)).className = p;
-        var T = 24 * this.config.hour_size_px + 1, A = 36e5;
-        M.style.top = Math.round((60 * E * 1e3 - this.config.first_hour * A) * this.config.hour_size_px / A) % T + "px", M.style.height = Math.max(Math.round(60 * (N - E) * 1e3 * this.config.hour_size_px / A) % T, 1) + "px", s.appendChild(M), a.push(M);
+        var A = 24 * this.config.hour_size_px + 1, T = 36e5;
+        M.style.top = Math.round((60 * E * 1e3 - this.config.first_hour * T) * this.config.hour_size_px / T) % A + "px", M.style.height = Math.max(Math.round(60 * (N - E) * 1e3 * this.config.hour_size_px / T) % A, 1) + "px", s.appendChild(M), a.push(M);
       }
     }
     return a;
@@ -1526,7 +1526,7 @@ function Vt(e) {
     t && typeof t == "object" && (t.parentNode && t.parentNode.removeChild(t), this.config.show_loading = !0);
   });
 }
-function Bt(e) {
+function Ft(e) {
   e._init_touch_events = function() {
     if ((this.config.touch && (navigator.userAgent.indexOf("Mobile") != -1 || navigator.userAgent.indexOf("iPad") != -1 || navigator.userAgent.indexOf("Android") != -1 || navigator.userAgent.indexOf("Touch") != -1) && !window.MSStream || navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) && (this.xy.scroll_width = 0, this._mobile = !0), this.config.touch) {
       var i = !0;
@@ -1639,7 +1639,7 @@ function Bt(e) {
     i && i.parentNode && (i.parentNode.removeChild(i), e._global_tip = 0);
   };
 }
-function Ft(e) {
+function Bt(e) {
   var i, t;
   function r() {
     if (e._is_material_skin())
@@ -1821,9 +1821,9 @@ function Wt(e) {
       e._waiAria.messageModalAttr(S, N), S.className = " scheduler_modal_box dhtmlx_modal_box scheduler-" + E.type + " dhtmlx-" + E.type, S.setAttribute(i, 1);
       var M = "";
       if (E.width && (S.style.width = E.width), E.height && (S.style.height = E.height), E.title && (M += '<div class="scheduler_popup_title dhtmlx_popup_title">' + E.title + "</div>"), M += '<div class="scheduler_popup_text dhtmlx_popup_text" id="' + N + '"><span>' + (E.content ? "" : E.text) + '</span></div><div  class="scheduler_popup_controls dhtmlx_popup_controls">', D && (M += s(_(E.ok, e.locale.labels.message_ok, "OK"), "ok", !0)), w && (M += s(_(E.cancel, e.locale.labels.message_cancel, "Cancel"), "cancel", !1)), E.buttons)
-        for (var T = 0; T < E.buttons.length; T++) {
-          var A = E.buttons[T];
-          M += typeof A == "object" ? s(A.label, A.css || "scheduler_" + A.label.toLowerCase() + "_button dhtmlx_" + A.label.toLowerCase() + "_button", A.value || T) : s(A, A, T);
+        for (var A = 0; A < E.buttons.length; A++) {
+          var T = E.buttons[A];
+          M += typeof T == "object" ? s(T.label, T.css || "scheduler_" + T.label.toLowerCase() + "_button dhtmlx_" + T.label.toLowerCase() + "_button", T.value || A) : s(T, T, A);
         }
       if (M += "</div>", S.innerHTML = M, E.content) {
         var H = E.content;
@@ -2460,7 +2460,7 @@ class Da {
   }
 }
 function Sa(e) {
-  const i = { version: "7.1.1" };
+  const i = { version: "7.1.2" };
   i.$stateProvider = function() {
     const a = {};
     return { getState: function(o) {
@@ -2807,11 +2807,11 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
               else
                 this.config.preserve_length ? p.resize_from_start ? m = a._correct_drag_start_date(w) : g = a._correct_drag_end_date(w, 0) : p.resize_from_start ? m = w : g = w;
             } else {
-              var N = this.date.date_part(new Date(D.end_date.valueOf() - 1)).valueOf(), M = new Date(N), T = this.config.first_hour, A = 60 / E * (this.config.last_hour - T);
+              var N = this.date.date_part(new Date(D.end_date.valueOf() - 1)).valueOf(), M = new Date(N), A = this.config.first_hour, T = 60 / E * (this.config.last_hour - A);
               this.config.time_step = 1;
               var H = this._mouse_coords(c);
               this.config.time_step = E;
-              var $ = p.y * E * 6e4, j = Math.min(p.y + 1, A) * E * 6e4, z = 6e4 * H.y;
+              var $ = p.y * E * 6e4, j = Math.min(p.y + 1, T) * E * 6e4, z = 6e4 * H.y;
               g = Math.abs($ - z) > Math.abs(j - z) ? N + j : N + $, g += 6e4 * (new Date(g).getTimezoneOffset() - M.getTimezoneOffset()), this._els.dhx_cal_data[0].style.cursor = "s-resize", this._mode != "week" && this._mode != "day" || (g = this._correct_shift(g));
             }
             if (this._drag_mode == "new-size")
@@ -3005,14 +3005,14 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
           for (let N = 1 * this.config.first_hour; N < this.config.last_hour; N++) {
             const M = document.createElement("div");
             M.className = "dhx_scale_time_slot dhx_scale_time_slot_hour_start", M.style.height = this.config.hour_size_px / 2 + "px";
-            let T = new Date(b.getFullYear(), b.getMonth(), b.getDate(), N, 0);
-            M.setAttribute("data-slot-date", this.templates.format_date(T));
-            let A = this.templates.time_slot_text(T);
-            A && (M.innerHTML = A);
-            let H = this.templates.time_slot_class(T);
+            let A = new Date(b.getFullYear(), b.getMonth(), b.getDate(), N, 0);
+            M.setAttribute("data-slot-date", this.templates.format_date(A));
+            let T = this.templates.time_slot_text(A);
+            T && (M.innerHTML = T);
+            let H = this.templates.time_slot_class(A);
             H && M.classList.add(H), w.appendChild(M);
             const $ = document.createElement("div");
-            $.className = "dhx_scale_time_slot", T = new Date(b.getFullYear(), b.getMonth(), b.getDate(), N, 30), $.setAttribute("data-slot-date", this.templates.format_date(T)), $.style.height = this.config.hour_size_px / 2 + "px", A = this.templates.time_slot_text(T), A && ($.innerHTML = A), H = this.templates.time_slot_class(T), H && $.classList.add(H), w.appendChild($);
+            $.className = "dhx_scale_time_slot", A = new Date(b.getFullYear(), b.getMonth(), b.getDate(), N, 30), $.setAttribute("data-slot-date", this.templates.format_date(A)), $.style.height = this.config.hour_size_px / 2 + "px", T = this.templates.time_slot_text(A), T && ($.innerHTML = T), H = this.templates.time_slot_class(A), H && $.classList.add(H), w.appendChild($);
           }
           w.className = S + " " + this.templates.week_date_class(b, y), this._waiAria.dayColumnAttr(w, b), this._set_scale_col_size(w, this._cols[D], E), p.appendChild(w), this.callEvent("onScaleAdd", [w, b]);
         }
@@ -3036,10 +3036,10 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
           this._els[w] && (this._els[w][0].parentNode.removeChild(this._els[w][0]), this._els[w] = null);
           var S = document.createElement("div");
           S.className = w, S.style.visibility = "hidden", S.style.display = "none";
-          var N = this._colsS[this._colsS.col_length], M = m.rtl ? this.xy.scale_width : this.xy.scroll_width, T = Math.max(N + M, 0);
-          this.set_xy(S, T, 0, 0), p.parentNode.insertBefore(S, p);
-          var A = S.cloneNode(!0);
-          A.className = w + "_icon", A.style.visibility = "hidden", A.style.display = "none", this.set_xy(A, this.xy.scale_width + 1, 0, 0), S.appendChild(A), this._els[w] = [S, A], a.event(this._els[w][0], "click", this._click.dhx_cal_data);
+          var N = this._colsS[this._colsS.col_length], M = m.rtl ? this.xy.scale_width : this.xy.scroll_width, A = Math.max(N + M, 0);
+          this.set_xy(S, A, 0, 0), p.parentNode.insertBefore(S, p);
+          var T = S.cloneNode(!0);
+          T.className = w + "_icon", T.style.visibility = "hidden", T.style.display = "none", this.set_xy(T, this.xy.scale_width + 1, 0, 0), S.appendChild(T), this._els[w] = [S, T], a.event(this._els[w][0], "click", this._click.dhx_cal_data);
         }
       }
     }, a._reset_hours_scale = function(c, p, m) {
@@ -3080,20 +3080,20 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
       for (N.classList.add("dhx_cal_month_table"), E = 0; E < g; E++) {
         var M = document.createElement("div");
         M.classList.add("dhx_cal_month_row"), M.style.height = w(E) + "px", N.appendChild(M);
-        for (var T = 0; T < 7; T++) {
-          var A = document.createElement("div");
-          M.appendChild(A);
+        for (var A = 0; A < 7; A++) {
+          var T = document.createElement("div");
+          M.appendChild(T);
           var H = "dhx_cal_month_cell";
-          m < p ? H += " dhx_before" : m >= y ? H += " dhx_after" : m.valueOf() == b.valueOf() && (H += " dhx_now"), this._ignores_detected && this._ignores[T] && (H += " dhx_scale_ignore"), A.className = H + " " + this.templates.month_date_class(m, b), A.setAttribute("data-cell-date", a.templates.format_date(m));
+          m < p ? H += " dhx_before" : m >= y ? H += " dhx_after" : m.valueOf() == b.valueOf() && (H += " dhx_now"), this._ignores_detected && this._ignores[A] && (H += " dhx_scale_ignore"), T.className = H + " " + this.templates.month_date_class(m, b), T.setAttribute("data-cell-date", a.templates.format_date(m));
           var $ = "dhx_month_body", j = "dhx_month_head";
-          if (T === 0 && this.config.left_border && ($ += " dhx_month_body_border", j += " dhx_month_head_border"), this._ignores_detected && this._ignores[T])
-            A.appendChild(document.createElement("div")), A.appendChild(document.createElement("div"));
+          if (A === 0 && this.config.left_border && ($ += " dhx_month_body_border", j += " dhx_month_head_border"), this._ignores_detected && this._ignores[A])
+            T.appendChild(document.createElement("div")), T.appendChild(document.createElement("div"));
           else {
-            A.style.width = k[T], this._waiAria.monthCellAttr(A, m);
+            T.style.width = k[A], this._waiAria.monthCellAttr(T, m);
             var z = document.createElement("div");
-            z.style.height = a.xy.month_head_height + "px", z.className = j, z.innerHTML = this.templates.month_day(m), A.appendChild(z);
+            z.style.height = a.xy.month_head_height + "px", z.className = j, z.innerHTML = this.templates.month_day(m), T.appendChild(z);
             var W = document.createElement("div");
-            W.className = $, A.appendChild(W);
+            W.className = $, T.appendChild(W);
           }
           var Y = m.getDate();
           (m = this.date.add(m, 1, "day")).getDate() - Y > 1 && (m = new Date(m.getFullYear(), m.getMonth(), Y + 1, 12, 0));
@@ -3164,8 +3164,8 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
           y -= p - E;
         else {
           let D = 0;
-          const w = new Date(Math.max(E.valueOf(), c.valueOf())), S = p, N = new Date(w.getFullYear(), w.getMonth(), w.getDate(), m.first_hour), M = new Date(w.getFullYear(), w.getMonth(), w.getDate(), m.last_hour || 24), T = new Date(p.getFullYear(), p.getMonth(), p.getDate(), m.first_hour), A = new Date(p.getFullYear(), p.getMonth(), p.getDate(), m.last_hour || 24);
-          S.valueOf() > A.valueOf() && (D += S - A), S.valueOf() > T.valueOf() ? D += m._start_correction : D += 60 * S.getHours() * 60 * 1e3 + 60 * S.getMinutes() * 1e3, w.valueOf() < M.valueOf() && (D += m._end_correction), w.valueOf() < N.valueOf() && (D += N.valueOf() - w.valueOf()), y -= D, k = !1;
+          const w = new Date(Math.max(E.valueOf(), c.valueOf())), S = p, N = new Date(w.getFullYear(), w.getMonth(), w.getDate(), m.first_hour), M = new Date(w.getFullYear(), w.getMonth(), w.getDate(), m.last_hour || 24), A = new Date(p.getFullYear(), p.getMonth(), p.getDate(), m.first_hour), T = new Date(p.getFullYear(), p.getMonth(), p.getDate(), m.last_hour || 24);
+          S.valueOf() > T.valueOf() && (D += S - T), S.valueOf() > A.valueOf() ? D += m._start_correction : D += 60 * S.getHours() * 60 * 1e3 + 60 * S.getMinutes() * 1e3, w.valueOf() < M.valueOf() && (D += m._end_correction), w.valueOf() < N.valueOf() && (D += N.valueOf() - w.valueOf()), y -= D, k = !1;
         }
         p = E, g--;
       }
@@ -3824,11 +3824,11 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
           }
           if (this.xy.menu_width !== 0 && this._select_id == o.id) {
             this.config.cascade_event_display && this._drag_mode && (w.style.zIndex = 1);
-            for (var M, T = this.config["icons_" + (this._edit_id == o.id ? "edit" : "select")], A = "", H = 0; H < T.length; H++) {
-              const j = T[H];
-              M = this._waiAria.eventMenuAttrString(j), A += `<div class='dhx_menu_icon ${j}' title='${this.locale.labels[j]}' ${M}></div>`;
+            for (var M, A = this.config["icons_" + (this._edit_id == o.id ? "edit" : "select")], T = "", H = 0; H < A.length; H++) {
+              const j = A[H];
+              M = this._waiAria.eventMenuAttrString(j), T += `<div class='dhx_menu_icon ${j}' title='${this.locale.labels[j]}' ${M}></div>`;
             }
-            var $ = this._render_v_bar(o, b - v - 1, p, v, null, "", "<div class='dhx_menu_head'></div>", A, !0);
+            var $ = this._render_v_bar(o, b - v - 1, p, v, null, "", "<div class='dhx_menu_head'></div>", T, !0);
             o.color && $.style.setProperty("--dhx-scheduler-event-background", o.color), o.textColor && $.style.setProperty("--dhx-scheduler-event-color", o.textColor), this._els.dhx_cal_data[0].appendChild($), this._rendered.push($);
           }
           this.config.drag_highlight && this._drag_id == o.id && this.highlightEventPosition(o);
@@ -4077,15 +4077,15 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
         }, k = 0; k < 4; k++)
           m[k].$_eventAttached || (m[k].$_eventAttached = !0, a.event(m[k], "change", b));
       function E(D, w, S) {
-        for (var N = u._time_values, M = 60 * S.getHours() + S.getMinutes(), T = M, A = !1, H = 0; H < N.length; H++) {
+        for (var N = u._time_values, M = 60 * S.getHours() + S.getMinutes(), A = M, T = !1, H = 0; H < N.length; H++) {
           var $ = N[H];
           if ($ === M) {
-            A = !0;
+            T = !0;
             break;
           }
-          $ < M && (T = $);
+          $ < M && (A = $);
         }
-        D[w + g[0]].value = A ? M : T, A || T || (D[w + g[0]].selectedIndex = -1), D[w + g[1]].value = S.getDate(), D[w + g[2]].value = S.getMonth(), D[w + g[3]].value = S.getFullYear();
+        D[w + g[0]].value = T ? M : A, T || A || (D[w + g[0]].selectedIndex = -1), D[w + g[1]].value = S.getDate(), D[w + g[2]].value = S.getMonth(), D[w + g[3]].value = S.getFullYear();
       }
       E(m, 0, v.start_date), E(m, 4, v.end_date);
     }, get_value: function(l, h, v) {
@@ -4299,7 +4299,7 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
 <div class="dhx_cal_ltitle_controls">
 <a class="dhx_cal_ltitle_close_btn scheduler_icon close"></a>
 </div></div><div class='dhx_cal_larea'></div>`;
-  }(i), Bt(i), function(a) {
+  }(i), Ft(i), function(a) {
     a.getRootView = function() {
       return { view: { render: function() {
         return { tag: "div", type: 1, attrs: { style: "width:100%;height:100%;" }, hooks: { didInsert: function() {
@@ -4310,7 +4310,7 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
         o.id = "scheduler_" + a.uid(), o.style.width = "100%", o.style.height = "100%", o.classList.add("dhx_cal_container"), o.cmp = "grid", o.innerHTML = '<div class="dhx_cal_navline"><div class="dhx_cal_prev_button"></div><div class="dhx_cal_next_button"></div><div class="dhx_cal_today_button"></div><div class="dhx_cal_date"></div><div class="dhx_cal_tab" data-tab="day"></div><div class="dhx_cal_tab" data-tab="week"></div><div class="dhx_cal_tab" data-tab="month"></div></div><div class="dhx_cal_header"></div><div class="dhx_cal_data"></div>', a.init(o), this.el = o;
       } }, type: 4 };
     };
-  }(i), Ft(i), window.jQuery && (r = window.jQuery, d = 0, n = [], r.fn.dhx_scheduler = function(a) {
+  }(i), Bt(i), window.jQuery && (r = window.jQuery, d = 0, n = [], r.fn.dhx_scheduler = function(a) {
     if (typeof a != "string") {
       var o = [];
       return this.each(function() {
@@ -4517,7 +4517,7 @@ function Ta(e) {
         delete v.rec_type, delete v.rec_pattern, delete v.event_pid, delete v.event_length;
       }(l), l.start_date = new Date(_), l.end_date = new Date(l.start_date.valueOf() + o), a) {
         var h = e._get_section_property();
-        e.config.multisection ? l[h] = s[h] : l[h] = a;
+        e.config.multisection && s[h] && e.isMultisectionEvent && e.isMultisectionEvent(s) ? l[h] = s[h] : l[h] = a;
       }
       return l;
     }, e._do_paste = function(s, _, a) {
@@ -4877,10 +4877,10 @@ var Ha = function(e, i, t) {
   return { div: Math.floor(e / i), mod: Z(e, i) };
 }, ae = function(e) {
   return !U(e) || e.length === 0;
-}, B = function(e) {
+}, F = function(e) {
   return !ae(e);
 }, R = function(e, i) {
-  return B(e) && e.indexOf(i) !== -1;
+  return F(e) && e.indexOf(i) !== -1;
 }, he = function(e, i, t, r, d, n) {
   return r === void 0 && (r = 0), d === void 0 && (d = 0), n === void 0 && (n = 0), new Date(Date.UTC(e, i - 1, t, r, d, n));
 }, $a = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31], vt = 864e5, gt = 9999, yt = he(1970, 1, 1), za = [6, 0, 1, 2, 3, 4, 5], ge = function(e) {
@@ -4918,7 +4918,7 @@ var Ha = function(e, i, t) {
   i === void 0 && (i = !0);
   var t = new Date(e);
   return [ue(t.getUTCFullYear().toString(), 4, "0"), ue(t.getUTCMonth() + 1, 2, "0"), ue(t.getUTCDate(), 2, "0"), "T", ue(t.getUTCHours(), 2, "0"), ue(t.getUTCMinutes(), 2, "0"), ue(t.getUTCSeconds(), 2, "0"), i ? "Z" : ""].join("");
-}, Be = function(e) {
+}, Fe = function(e) {
   var i = /^(\d{4})(\d{2})(\d{2})(T(\d{2})(\d{2})(\d{2})Z?)?$/.exec(e);
   if (!i)
     throw new Error("Invalid UNTIL value: ".concat(e));
@@ -4965,7 +4965,7 @@ var Ha = function(e, i, t) {
       Object.prototype.hasOwnProperty.call(r, d) && (t[d] = r[d]);
   }, je(e, i);
 };
-function Fe(e, i) {
+function Be(e, i) {
   if (typeof i != "function" && i !== null)
     throw new TypeError("Class extends value " + String(i) + " is not a constructor or null");
   function t() {
@@ -4992,7 +4992,7 @@ var P, et = function(e) {
     var n = e.call(this, t, r) || this;
     return n.iterator = d, n;
   }
-  return Fe(i, e), i.prototype.add = function(t) {
+  return Be(i, e), i.prototype.add = function(t) {
     return !!this.iterator(t, this._result.length) && (this._result.push(t), !0);
   }, i;
 }(pe), ke = { dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], tokens: { SKIP: /^[ \r\n\t]+|^\.$/, number: /^[1-9][0-9]*/, numberAsText: /^(one|two|three)/i, every: /^every/i, "day(s)": /^days?/i, "weekday(s)": /^weekdays?/i, "week(s)": /^weeks?/i, "hour(s)": /^hours?/i, "minute(s)": /^minutes?/i, "month(s)": /^months?/i, "year(s)": /^years?/i, on: /^(on|in)/i, at: /^(at)/i, the: /^the/i, first: /^first/i, second: /^second/i, third: /^third/i, nth: /^([1-9][0-9]*)(\.|th|nd|rd|st)/i, last: /^last/i, for: /^for/i, "time(s)": /^times?/i, until: /^(un)?til/i, monday: /^mo(n(day)?)?/i, tuesday: /^tu(e(s(day)?)?)?/i, wednesday: /^we(d(n(esday)?)?)?/i, thursday: /^th(u(r(sday)?)?)?/i, friday: /^fr(i(day)?)?/i, saturday: /^sa(t(urday)?)?/i, sunday: /^su(n(day)?)?/i, january: /^jan(uary)?/i, february: /^feb(ruary)?/i, march: /^mar(ch)?/i, april: /^apr(il)?/i, may: /^may/i, june: /^june?/i, july: /^july?/i, august: /^aug(ust)?/i, september: /^sep(t(ember)?)?/i, october: /^oct(ober)?/i, november: /^nov(ember)?/i, december: /^dec(ember)?/i, comma: /^(,\s*|(and|or)\s*)+/i } }, tt = function(e, i) {
@@ -5396,7 +5396,7 @@ var Ya = ie.isFullyConvertible, we = function() {
     var o = e.call(this, n, s, _, a) || this;
     return o.year = t, o.month = r, o.day = d, o;
   }
-  return Fe(i, e), i.fromDate = function(t) {
+  return Be(i, e), i.fromDate = function(t) {
     return new this(t.getUTCFullYear(), t.getUTCMonth() + 1, t.getUTCDate(), t.getUTCHours(), t.getUTCMinutes(), t.getUTCSeconds(), t.valueOf() % 1e3);
   }, i.prototype.getWeekday = function() {
     return me(new Date(this.getTime()));
@@ -5489,7 +5489,7 @@ function Va(e) {
       if ((n = i.bysetpos[t]) === 0 || !(n >= -366 && n <= 366))
         throw new Error("bysetpos must be between 1 and 366, or between -366 and -1");
   }
-  if (!(i.byweekno || B(i.byweekno) || B(i.byyearday) || i.bymonthday || B(i.bymonthday) || U(i.byweekday) || U(i.byeaster)))
+  if (!(i.byweekno || F(i.byweekno) || F(i.byyearday) || i.bymonthday || F(i.bymonthday) || U(i.byweekday) || U(i.byeaster)))
     switch (i.freq) {
       case C.YEARLY:
         i.bymonth || (i.bymonth = i.dtstart.getUTCMonth() + 1), i.bymonthday = i.dtstart.getUTCDate();
@@ -5525,7 +5525,7 @@ function Va(e) {
         var a = i.byweekday[t];
         te(a) ? s.push(a) : Ge(a) ? s.push(K.fromStr(a).weekday) : !a.n || i.freq > C.MONTHLY ? s.push(a.weekday) : _.push([a.weekday, a.n]);
       }
-      i.byweekday = B(s) ? s : null, i.bynweekday = B(_) ? _ : null;
+      i.byweekday = F(s) ? s : null, i.bynweekday = F(_) ? _ : null;
     }
   else
     i.bynweekday = null;
@@ -5533,7 +5533,7 @@ function Va(e) {
 }
 function Ie(e) {
   var i = e.split(`
-`).map(Ba).filter(function(t) {
+`).map(Fa).filter(function(t) {
     return t !== null;
   });
   return X(X({}, i[0]), i[1]);
@@ -5543,9 +5543,9 @@ function Ee(e) {
   if (!t)
     return i;
   var r = t[1], d = t[2];
-  return r && (i.tzid = r), i.dtstart = Be(d), i;
+  return r && (i.tzid = r), i.dtstart = Fe(d), i;
 }
-function Ba(e) {
+function Fa(e) {
   if (!(e = e.replace(/^\s+|\s+$/, "")).length)
     return null;
   var i = /^([A-Z]+?)[:;]/.exec(e.toUpperCase());
@@ -5609,7 +5609,7 @@ function at(e) {
         i.tzid = a.tzid, i.dtstart = a.dtstart;
         break;
       case "UNTIL":
-        i.until = Be(n);
+        i.until = Fe(n);
         break;
       case "BYEASTER":
         i.byeaster = Number(n);
@@ -5658,7 +5658,7 @@ function Pe(e) {
             }).toString();
             break;
           case "DTSTART":
-            r = Fa(a, e.tzid);
+            r = Ba(a, e.tzid);
             break;
           case "UNTIL":
             o = Ve(a, !e.tzid);
@@ -5683,7 +5683,7 @@ function Pe(e) {
   }).join(`
 `);
 }
-function Fa(e, i) {
+function Ba(e, i) {
   return e ? "DTSTART" + new De(new Date(e), i).toString() : "";
 }
 function Ja(e, i) {
@@ -5724,7 +5724,7 @@ var Wa = function() {
     }
     return G(r) ? Ze(r) : r instanceof Date ? qe(r) : r;
   }, e;
-}(), Ka = O(O(O(O(O(O(O(O(O(O(O(O(O([], I(1, 31), !0), I(2, 28), !0), I(3, 31), !0), I(4, 30), !0), I(5, 31), !0), I(6, 30), !0), I(7, 31), !0), I(8, 31), !0), I(9, 30), !0), I(10, 31), !0), I(11, 30), !0), I(12, 31), !0), I(1, 7), !0), Ga = O(O(O(O(O(O(O(O(O(O(O(O(O([], I(1, 31), !0), I(2, 29), !0), I(3, 31), !0), I(4, 30), !0), I(5, 31), !0), I(6, 30), !0), I(7, 31), !0), I(8, 31), !0), I(9, 30), !0), I(10, 31), !0), I(11, 30), !0), I(12, 31), !0), I(1, 7), !0), Xa = ne(1, 29), Za = ne(1, 30), le = ne(1, 31), F = ne(1, 32), Qa = O(O(O(O(O(O(O(O(O(O(O(O(O([], F, !0), Za, !0), F, !0), le, !0), F, !0), le, !0), F, !0), F, !0), le, !0), F, !0), le, !0), F, !0), F.slice(0, 7), !0), en = O(O(O(O(O(O(O(O(O(O(O(O(O([], F, !0), Xa, !0), F, !0), le, !0), F, !0), le, !0), F, !0), F, !0), le, !0), F, !0), le, !0), F, !0), F.slice(0, 7), !0), tn = ne(-28, 0), an = ne(-29, 0), ce = ne(-30, 0), J = ne(-31, 0), nn = O(O(O(O(O(O(O(O(O(O(O(O(O([], J, !0), an, !0), J, !0), ce, !0), J, !0), ce, !0), J, !0), J, !0), ce, !0), J, !0), ce, !0), J, !0), J.slice(0, 7), !0), rn = O(O(O(O(O(O(O(O(O(O(O(O(O([], J, !0), tn, !0), J, !0), ce, !0), J, !0), ce, !0), J, !0), J, !0), ce, !0), J, !0), ce, !0), J, !0), J.slice(0, 7), !0), on = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366], sn = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365], rt = function() {
+}(), Ka = O(O(O(O(O(O(O(O(O(O(O(O(O([], I(1, 31), !0), I(2, 28), !0), I(3, 31), !0), I(4, 30), !0), I(5, 31), !0), I(6, 30), !0), I(7, 31), !0), I(8, 31), !0), I(9, 30), !0), I(10, 31), !0), I(11, 30), !0), I(12, 31), !0), I(1, 7), !0), Ga = O(O(O(O(O(O(O(O(O(O(O(O(O([], I(1, 31), !0), I(2, 29), !0), I(3, 31), !0), I(4, 30), !0), I(5, 31), !0), I(6, 30), !0), I(7, 31), !0), I(8, 31), !0), I(9, 30), !0), I(10, 31), !0), I(11, 30), !0), I(12, 31), !0), I(1, 7), !0), Xa = ne(1, 29), Za = ne(1, 30), le = ne(1, 31), B = ne(1, 32), Qa = O(O(O(O(O(O(O(O(O(O(O(O(O([], B, !0), Za, !0), B, !0), le, !0), B, !0), le, !0), B, !0), B, !0), le, !0), B, !0), le, !0), B, !0), B.slice(0, 7), !0), en = O(O(O(O(O(O(O(O(O(O(O(O(O([], B, !0), Xa, !0), B, !0), le, !0), B, !0), le, !0), B, !0), B, !0), le, !0), B, !0), le, !0), B, !0), B.slice(0, 7), !0), tn = ne(-28, 0), an = ne(-29, 0), ce = ne(-30, 0), J = ne(-31, 0), nn = O(O(O(O(O(O(O(O(O(O(O(O(O([], J, !0), an, !0), J, !0), ce, !0), J, !0), ce, !0), J, !0), J, !0), ce, !0), J, !0), ce, !0), J, !0), J.slice(0, 7), !0), rn = O(O(O(O(O(O(O(O(O(O(O(O(O([], J, !0), tn, !0), J, !0), ce, !0), J, !0), ce, !0), J, !0), J, !0), ce, !0), J, !0), ce, !0), J, !0), J.slice(0, 7), !0), on = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366], sn = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365], rt = function() {
   for (var e = [], i = 0; i < 55; i++)
     e = e.concat(ne(7));
   return e;
@@ -5771,7 +5771,7 @@ var _n = function() {
   }
   return e.prototype.rebuild = function(i, t) {
     var r = this.options;
-    if (i !== this.lastyear && (this.yearinfo = dn(i, r)), B(r.bynweekday) && (t !== this.lastmonth || i !== this.lastyear)) {
+    if (i !== this.lastyear && (this.yearinfo = dn(i, r)), F(r.bynweekday) && (t !== this.lastmonth || i !== this.lastyear)) {
       var d = this.yearinfo, n = d.yearlen, s = d.mrange, _ = d.wdaymask;
       this.monthinfo = function(a, o, l, h, v, u) {
         var f = { lastyear: a, lastmonth: o, nwdaymask: [] }, c = [];
@@ -5892,7 +5892,7 @@ function Dt(e, i) {
   var a = Ua.fromDate(t), o = new _n(i);
   o.rebuild(a.year, a.month);
   for (var l = function(D, w, S) {
-    var N = S.freq, M = S.byhour, T = S.byminute, A = S.bysecond;
+    var N = S.freq, M = S.byhour, A = S.byminute, T = S.bysecond;
     return Ce(N) ? function(H) {
       var $ = H.dtstart.getTime() % 1e3;
       if (!Ce(H.freq))
@@ -5905,10 +5905,10 @@ function Dt(e, i) {
           });
         });
       }), j;
-    }(S) : N >= C.HOURLY && B(M) && !R(M, w.hour) || N >= C.MINUTELY && B(T) && !R(T, w.minute) || N >= C.SECONDLY && B(A) && !R(A, w.second) ? [] : D.gettimeset(N)(w.hour, w.minute, w.second, w.millisecond);
+    }(S) : N >= C.HOURLY && F(M) && !R(M, w.hour) || N >= C.MINUTELY && F(A) && !R(A, w.minute) || N >= C.SECONDLY && F(T) && !R(T, w.second) ? [] : D.gettimeset(N)(w.hour, w.minute, w.second, w.millisecond);
   }(o, a, i); ; ) {
     var h = o.getdayset(r)(a.year, a.month, a.day), v = h[0], u = h[1], f = h[2], c = hn(v, u, f, o, i);
-    if (B(s))
+    if (F(s))
       for (var p = ln(s, l, u, f, o, v), m = 0; m < p.length; m++) {
         var g = p[m];
         if (n && g > n)
@@ -5936,7 +5936,7 @@ function Dt(e, i) {
 }
 function cn(e, i, t) {
   var r = t.bymonth, d = t.byweekno, n = t.byweekday, s = t.byeaster, _ = t.bymonthday, a = t.bynmonthday, o = t.byyearday;
-  return B(r) && !R(r, e.mmask[i]) || B(d) && !e.wnomask[i] || B(n) && !R(n, e.wdaymask[i]) || B(e.nwdaymask) && !e.nwdaymask[i] || s !== null && !R(e.eastermask, i) || (B(_) || B(a)) && !R(_, e.mdaymask[i]) && !R(a, e.nmdaymask[i]) || B(o) && (i < e.yearlen && !R(o, i + 1) && !R(o, -e.yearlen + i) || i >= e.yearlen && !R(o, i + 1 - e.yearlen) && !R(o, -e.nextyearlen + i - e.yearlen));
+  return F(r) && !R(r, e.mmask[i]) || F(d) && !e.wnomask[i] || F(n) && !R(n, e.wdaymask[i]) || F(e.nwdaymask) && !e.nwdaymask[i] || s !== null && !R(e.eastermask, i) || (F(_) || F(a)) && !R(_, e.mdaymask[i]) && !R(a, e.nmdaymask[i]) || F(o) && (i < e.yearlen && !R(o, i + 1) && !R(o, -e.yearlen + i) || i >= e.yearlen && !R(o, i + 1 - e.yearlen) && !R(o, -e.nextyearlen + i - e.yearlen));
 }
 function it(e, i) {
   return new De(e, i.tzid).rezonedDate();
@@ -6096,7 +6096,7 @@ function st(e, i) {
         throw new Error("unsupported RDATE/EXDATE parm: " + r);
     });
   }(i), e.split(",").map(function(t) {
-    return Be(t);
+    return Fe(t);
   });
 }
 function dt(e) {
@@ -6117,7 +6117,7 @@ var pn = function(e) {
     var r = e.call(this, {}, t) || this;
     return r.dtstart = dt.apply(r, ["dtstart"]), r.tzid = dt.apply(r, ["tzid"]), r._rrule = [], r._rdate = [], r._exrule = [], r._exdate = [], r;
   }
-  return Fe(i, e), i.prototype._iter = function(t) {
+  return Be(i, e), i.prototype._iter = function(t) {
     return function(r, d, n, s, _, a) {
       var o = {}, l = r.accept;
       function h(c, p) {
@@ -6577,21 +6577,25 @@ const gn = { active_links: function(e) {
       var _ = e.getEvent(d);
       n.start_date = new Date(_.start_date), n.end_date = new Date(_.end_date);
     }
-    return n.rec_type && e._roll_back_dates(n), e.checkCollision(n);
+    return (n.rrule && !n.recurring_event_id || n.rec_type) && e._roll_back_dates(n), e.checkCollision(n);
   }), e._check_sections_collision = function(d, n) {
     var s = e._get_section_property();
     return d[s] == n[s] && d.id != n.id;
   }, e.checkCollision = function(d) {
     var n = [], s = e.config.collision_limit;
-    if (d.rec_type)
+    if (d.rrule || d.rec_type)
       for (var _ = e.getRecDates(d), a = 0; a < _.length; a++)
         for (var o = e.getEvents(_[a].start_date, _[a].end_date), l = 0; l < o.length; l++)
-          (o[l].event_pid || o[l].id) != d.id && n.push(o[l]);
+          (o[l].event_pid || o[l].id || o[l].recurring_event_id) != d.id && n.push(o[l]);
     else {
       n = e.getEvents(d.start_date, d.end_date);
       for (var h = 0; h < n.length; h++) {
         var v = n[h];
         if (v.id == d.id || v.event_length && [v.event_pid, v.event_length].join("#") == d.id) {
+          n.splice(h, 1);
+          break;
+        }
+        if (v.recurring_event_id && [v.recurring_event_id, v._pid_time].join("#") == d.id) {
           n.splice(h, 1);
           break;
         }
@@ -6663,8 +6667,8 @@ const gn = { active_links: function(e) {
           var c = e.getState().mode;
           if (u.childNodes[1] && c != "month") {
             let M = 0;
-            for (let T = 0; T < u.childNodes.length; T++)
-              u.childNodes[T].offsetHeight > M && (M = u.childNodes[T].offsetHeight);
+            for (let A = 0; A < u.childNodes.length; A++)
+              u.childNodes[A].offsetHeight > M && (M = u.childNodes[A].offsetHeight);
             f = M;
           } else
             f = Math.max(u.offsetHeight - 1, u.scrollHeight);
@@ -8470,14 +8474,14 @@ const gn = { active_links: function(e) {
     c._date = new Date(r), c.week_start = (r.getDay() - (this.config.start_on_monday ? 1 : 0) + 7) % 7;
     var M = c._min_date = this.date.week_start(r);
     c._max_date = this.date.add(c._min_date, 6, "week"), this._reset_month_scale(y, r, M, 6), n || t.appendChild(c), g.style.height = g.childNodes[0].offsetHeight - 1 + "px";
-    var T = e.uid();
-    e._waiAria.minicalHeader(m, T), e._waiAria.minicalGrid(c.querySelector(".dhx_year_grid"), T), e._waiAria.minicalRow(g);
-    for (var A = g.querySelectorAll(".dhx_scale_bar"), H = 0; H < A.length; H++)
-      e._waiAria.minicalHeadCell(A[H]);
+    var A = e.uid();
+    e._waiAria.minicalHeader(m, A), e._waiAria.minicalGrid(c.querySelector(".dhx_year_grid"), A), e._waiAria.minicalRow(g);
+    for (var T = g.querySelectorAll(".dhx_scale_bar"), H = 0; H < T.length; H++)
+      e._waiAria.minicalHeadCell(T[H]);
     var $ = y.querySelectorAll(".dhx_cal_month_cell"), j = new Date(M);
     for (H = 0; H < $.length; H++)
       e._waiAria.minicalDayCell($[H], new Date(j)), j = e.date.add(j, 1, "day");
-    return e._waiAria.minicalHeader(m, T), this._cols = _, this._mode = a, this._colsS = o, this._min_date = l, this._max_date = h, e._date = v, s.month_day = u, this._ignores_detected = f, c;
+    return e._waiAria.minicalHeader(m, A), this._cols = _, this._mode = a, this._colsS = o, this._min_date = l, this._max_date = h, e._date = v, s.month_day = u, this._ignores_detected = f, c;
   }, e.destroyCalendar = function(t, r) {
     !t && this._def_count && this._def_count.firstChild && (r || (/* @__PURE__ */ new Date()).valueOf() - this._def_count._created.valueOf() > 500) && (t = this._def_count.firstChild), t && (i.detachAll(), t.innerHTML = "", t.parentNode && t.parentNode.removeChild(t), this._def_count && (this._def_count.style.top = "-1000px"), t.conf && t.conf._on_xle_handler && e.detachEvent(t.conf._on_xle_handler));
   }, e.isCalendarVisible = function() {
@@ -8848,15 +8852,15 @@ const gn = { active_links: function(e) {
       for (E = e.get_visible_events(), w = 0; w < E.length; w++) {
         var S = E[w].start_date;
         for (S.valueOf() < e._min_date.valueOf() && (S = e._min_date); S < E[w].end_date; ) {
-          var N = S.getMonth() + 12 * (S.getFullYear() - e._min_date.getFullYear()) - e.week_starts._month, M = e.week_starts[N] + S.getDate() - 1, T = b ? l(e._get_year_cell(S), "color") : "", A = b ? l(e._get_year_cell(S), "backgroundColor") : "";
-          if (k += "<event day='" + M % 7 + "' week='" + Math.floor(M / 7) + "' month='" + N + "' backgroundColor='" + A + "' color='" + T + "'></event>", (S = e.date.add(S, 1, "day")).valueOf() >= e._max_date.valueOf())
+          var N = S.getMonth() + 12 * (S.getFullYear() - e._min_date.getFullYear()) - e.week_starts._month, M = e.week_starts[N] + S.getDate() - 1, A = b ? l(e._get_year_cell(S), "color") : "", T = b ? l(e._get_year_cell(S), "backgroundColor") : "";
+          if (k += "<event day='" + M % 7 + "' week='" + Math.floor(M / 7) + "' month='" + N + "' backgroundColor='" + T + "' color='" + A + "'></event>", (S = e.date.add(S, 1, "day")).valueOf() >= e._max_date.valueOf())
             break;
         }
       }
     else if (D && D.render == "cell")
       for (E = e._els.dhx_cal_data[0].getElementsByTagName("TD"), w = 0; w < E.length; w++)
-        T = b ? l(E[w], "color") : "", k += `
-<event><body backgroundColor='` + (A = b ? l(E[w], "backgroundColor") : "") + "' color='" + T + "'><![CDATA[" + n(E[w].innerHTML) + "]]></body></event>";
+        A = b ? l(E[w], "color") : "", k += `
+<event><body backgroundColor='` + (T = b ? l(E[w], "backgroundColor") : "") + "' color='" + A + "'><![CDATA[" + n(E[w].innerHTML) + "]]></body></event>";
     else
       for (w = 0; w < E.length; w++) {
         var H, $;
@@ -8886,7 +8890,7 @@ const gn = { active_links: function(e) {
                 H += s(E[w].parentNode.style.left, St);
               }
               k += `
-<event week='` + V + "' day='" + M + "' type='" + Y + "' x='" + H + "' y='" + z + "' width='" + $ + "' height='" + W + "' len='" + ve + "'>", Y == "event" ? (k += "<header><![CDATA[" + n(E[w].childNodes[1].innerHTML) + "]]></header>", T = b ? l(E[w].childNodes[2], "color") : "", k += "<body backgroundColor='" + (A = b ? l(E[w].childNodes[2], "backgroundColor") : "") + "' color='" + T + "'><![CDATA[" + n(E[w].childNodes[2].innerHTML) + "]]></body>") : (T = b ? l(E[w], "color") : "", k += "<body backgroundColor='" + (A = b ? l(E[w], "backgroundColor") : "") + "' color='" + T + "'><![CDATA[" + n(E[w].innerHTML) + "]]></body>"), k += "</event>";
+<event week='` + V + "' day='" + M + "' type='" + Y + "' x='" + H + "' y='" + z + "' width='" + $ + "' height='" + W + "' len='" + ve + "'>", Y == "event" ? (k += "<header><![CDATA[" + n(E[w].childNodes[1].innerHTML) + "]]></header>", A = b ? l(E[w].childNodes[2], "color") : "", k += "<body backgroundColor='" + (T = b ? l(E[w].childNodes[2], "backgroundColor") : "") + "' color='" + A + "'><![CDATA[" + n(E[w].childNodes[2].innerHTML) + "]]></body>") : (A = b ? l(E[w], "color") : "", k += "<body backgroundColor='" + (T = b ? l(E[w], "backgroundColor") : "") + "' color='" + A + "'><![CDATA[" + n(E[w].innerHTML) + "]]></body>"), k += "</event>";
             }
           }
         }
@@ -8896,25 +8900,25 @@ const gn = { active_links: function(e) {
   function y(b, k, E, D, w, S) {
     var N = !1;
     D == "fullcolor" && (N = !0, D = "color"), D = D || "color";
-    var M, T = "";
+    var M, A = "";
     if (b) {
-      var A = e._date, H = e._mode;
-      k = e.date[E + "_start"](k), k = e.date["get_" + E + "_end"] ? e.date["get_" + E + "_end"](k) : e.date.add(k, 1, E), T = f("pages", D, w, S);
+      var T = e._date, H = e._mode;
+      k = e.date[E + "_start"](k), k = e.date["get_" + E + "_end"] ? e.date["get_" + E + "_end"](k) : e.date.add(k, 1, E), A = f("pages", D, w, S);
       for (var $ = new Date(b); +$ < +k; $ = this.date.add($, 1, E))
-        this.setCurrentView($, E), T += ((M = "page") ? "<" + M + ">" : "") + c().replace("–", "-") + g(N) + u("page");
-      T += u("pages"), this.setCurrentView(A, H);
+        this.setCurrentView($, E), A += ((M = "page") ? "<" + M + ">" : "") + c().replace("–", "-") + g(N) + u("page");
+      A += u("pages"), this.setCurrentView(T, H);
     } else
-      T = f("data", D, w, S) + c().replace("–", "-") + g(N) + u("data");
-    return T;
+      A = f("data", D, w, S) + c().replace("–", "-") + g(N) + u("data");
+    return A;
   }
   function x(b, k, E, D, w, S, N) {
-    (function(M, T) {
-      var A = e.uid(), H = document.createElement("div");
-      H.style.display = "none", document.body.appendChild(H), H.innerHTML = '<form id="' + A + '" method="post" target="_blank" action="' + T + '" accept-charset="utf-8" enctype="application/x-www-form-urlencoded"><input type="hidden" name="mycoolxmlbody"/> </form>', document.getElementById(A).firstChild.value = encodeURIComponent(M), document.getElementById(A).submit(), H.parentNode.removeChild(H);
+    (function(M, A) {
+      var T = e.uid(), H = document.createElement("div");
+      H.style.display = "none", document.body.appendChild(H), H.innerHTML = '<form id="' + T + '" method="post" target="_blank" action="' + A + '" accept-charset="utf-8" enctype="application/x-www-form-urlencoded"><input type="hidden" name="mycoolxmlbody"/> </form>', document.getElementById(T).firstChild.value = encodeURIComponent(M), document.getElementById(T).submit(), H.parentNode.removeChild(H);
     })(typeof w == "object" ? function(M) {
-      for (var T = "<data>", A = 0; A < M.length; A++)
-        T += M[A].source.getPDFData(M[A].start, M[A].end, M[A].view, M[A].mode, M[A].header, M[A].footer);
-      return T += "</data>", T;
+      for (var A = "<data>", T = 0; T < M.length; T++)
+        A += M[T].source.getPDFData(M[T].start, M[T].end, M[T].view, M[T].mode, M[T].header, M[T].footer);
+      return A += "</data>", A;
     }(w) : y.apply(this, [b, k, E, w, S, N]), D);
   }
   e.getPDFData = y, e.toPDF = function(b, k, E, D) {
@@ -9296,26 +9300,38 @@ const gn = { active_links: function(e) {
       return;
     let x = y ? y[u.id] : d()[u.id];
     x || (x = {}), p || (p = e._min_date), m || (m = e._max_date);
-    const b = new Date(Date.UTC(u.start_date.getFullYear(), u.start_date.getMonth(), u.start_date.getDate(), u.start_date.getHours(), u.start_date.getMinutes(), u.start_date.getSeconds())), k = Se(`RRULE:${u.rrule};UNTIL=${n(u.end_date)}`, { dtstart: b }).between(p, m).map((w) => {
-      const S = new Date(w);
-      return S.setHours(u.start_date.getHours()), S.setMinutes(u.start_date.getMinutes()), S.setSeconds(u.start_date.getSeconds()), S;
+    const b = new Date(Date.UTC(u.start_date.getFullYear(), u.start_date.getMonth(), u.start_date.getDate(), u.start_date.getHours(), u.start_date.getMinutes(), u.start_date.getSeconds()));
+    let k;
+    k = Se(g ? `RRULE:${u.rrule};UNTIL=${n(u.end_date)};COUNT=${g}` : `RRULE:${u.rrule};UNTIL=${n(u.end_date)}`, { dtstart: b });
+    const E = new Date(Date.UTC(m.getFullYear(), m.getMonth(), m.getDate(), m.getHours(), m.getMinutes(), m.getSeconds())), D = k.between(p, E).map((N) => {
+      const M = new Date(N);
+      return M.setHours(u.start_date.getHours()), M.setMinutes(u.start_date.getMinutes()), M.setSeconds(u.start_date.getSeconds()), M;
     });
-    let E = 0;
-    const D = u.duration;
-    for (let w = 0; w < k.length && !(g && E >= g); w++) {
-      const S = k[w];
-      let N = x[S.valueOf()];
-      if (N) {
-        if (N.deleted)
+    let w = 0;
+    const S = u.duration;
+    for (let N = 0; N < D.length && !(g && w >= g); N++) {
+      const M = D[N];
+      let A = x[M.valueOf()];
+      if (A) {
+        if (A.deleted)
           continue;
-        E++, f.push(N);
+        w++, f.push(A);
       } else {
-        const M = e._copy_event(u);
-        if (M.text = u.text, M.start_date = S, M.id = u.id + "#" + Math.ceil(S.valueOf()), M.end_date = new Date(S.valueOf() + 1e3 * D), M.end_date = e._fix_daylight_saving_date(M.start_date, M.end_date, u, S, M.end_date), M._timed = e.isOneDayEvent(M), !M._timed && !e._table_view && !e.config.multi_day)
+        const T = e._copy_event(u);
+        if (T.text = u.text, T.start_date = M, T.id = u.id + "#" + Math.ceil(M.valueOf()), T.end_date = new Date(M.valueOf() + 1e3 * S), T.end_date = e._fix_daylight_saving_date(T.start_date, T.end_date, u, M, T.end_date), T._timed = e.isOneDayEvent(T), !T._timed && !e._table_view && !e.config.multi_day)
           continue;
-        f.push(M), c || (e._events[M.id] = M, e._rec_temp.push(M)), E++;
+        f.push(T), c || (e._events[T.id] = T, e._rec_temp.push(T)), w++;
       }
     }
+    if (x && D.length == 0)
+      for (let N in x) {
+        let M = x[N];
+        if (M) {
+          if (M.deleted)
+            continue;
+          p && m && M.start_date < m && M.end_date > p && f.push(M);
+        }
+      }
   }, e._fix_daylight_saving_date = function(u, f, c, p, m) {
     var g = u.getTimezoneOffset() - f.getTimezoneOffset();
     return g ? g > 0 ? new Date(p.valueOf() + 1e3 * c.duration - 60 * g * 1e3) : new Date(f.valueOf() - 60 * g * 1e3) : new Date(m.valueOf());
@@ -9335,16 +9351,16 @@ const gn = { active_links: function(e) {
     for (var m in this._events) {
       var g = this._events[m];
       if (!g.recurring_event_id)
-        if (t(g))
-          if (u && f && g.start_date < f && g.end_date > u) {
+        if (u && f && g.start_date < f && g.end_date > u)
+          if (t(g)) {
             var y = [];
             this.repeat_date(g, y, !0, u, f, void 0, p), y.forEach(function(x) {
               x.start_date < f && x.end_date > u && c.push(x);
             });
           } else
-            u || f || c.push(g);
+            this._is_virtual_event(g.id) || c.push(g);
         else
-          this._is_virtual_event(g.id) || c.push(g);
+          u || f || this._is_virtual_event(g.id) || c.push(g);
     }
     return c;
   }, e._copy_dummy = function(u) {
@@ -9398,10 +9414,10 @@ const gn = { active_links: function(e) {
         c.freq = C.DAILY;
         break;
       case "WEEKLY":
-        c.freq = C.WEEKLY, x = [], f.querySelectorAll('.dhx_form_repeat_custom_week [name="week_day"]').forEach((D) => {
-          D.checked && x.push(D.value);
-        }), c.byweekday = x.map((D) => {
-          switch (D) {
+        c.freq = C.WEEKLY, x = [], f.querySelectorAll('.dhx_form_repeat_custom_week [name="week_day"]').forEach((w) => {
+          w.checked && x.push(w.value);
+        }), c.byweekday = x.map((w) => {
+          switch (w) {
             case "MO":
               return C.MO.weekday;
             case "TU":
@@ -9425,9 +9441,10 @@ const gn = { active_links: function(e) {
       case "YEARLY":
         c.freq = C.YEARLY, c.bymonth = u.start.getMonth() + 1, y == "month_date" ? c.bymonthday = u.start.getDate() : (b = u.start.getDay() - 1, b == -1 && (b = 6), c.byweekday = [b], c.bysetpos = s(u.start).dayNumber);
     }
-    let k = new Date(9999, 1, 1);
-    const E = f.querySelector('[name="dhx_custom_repeat_ends"]');
-    return E === "ON" ? k = f.querySelector('[name="dhx_form_repeat_ends_ondate"]').value : E === "AFTER" && (c.count = Math.max(1, f.querySelector('[name="dhx_form_repeat_ends_after"]').value)), { rrule: c, until: k };
+    const k = e.date.str_to_date("%Y-%m-%d");
+    let E = new Date(9999, 1, 1);
+    const D = f.querySelector('[name="dhx_custom_repeat_ends"]');
+    return D.value === "ON" ? E = k(f.querySelector('[name="dhx_form_repeat_ends_ondate"]').value) : D.value === "AFTER" && (c.count = Math.max(1, f.querySelector('[name="dhx_form_repeat_ends_after"]').value)), { rrule: c, until: E };
   }, NEVER: function() {
   } };
   function h(u, f, c) {
@@ -9765,18 +9782,18 @@ const gn = { active_links: function(e) {
       for (x[w[0]](w, D); w.length < 5; )
         w.push("");
       var S = "", N = function(M) {
-        var T = M.end;
-        if (T.length) {
-          for (var A = 0; A < T.length; A++)
-            if (T[A].checked)
-              return T[A].value && T[A].value != "on" ? T[A].value : A ? A == 2 ? "date_of_end" : "occurences_count" : "no";
-        } else if (T.value)
-          return T.value;
+        var A = M.end;
+        if (A.length) {
+          for (var T = 0; T < A.length; T++)
+            if (A[T].checked)
+              return A[T].value && A[T].value != "on" ? A[T].value : T ? T == 2 ? "date_of_end" : "occurences_count" : "no";
+        } else if (A.value)
+          return A.value;
         return "no";
       }(f);
       return N == "no" ? (D.end = new Date(9999, 1, 1), S = "no") : N == "date_of_end" ? D.end = function(M) {
-        var T = h(M);
-        return e.config.include_end_by && (T = e.date.add(T, 1, "day")), T;
+        var A = h(M);
+        return e.config.include_end_by && (A = e.date.add(A, 1, "day")), A;
       }(o(f, "date_of_end")) : (e.transpose_type(w.join("_")), S = Math.max(1, o(f, "occurences_count")), D.end = e.date["add_" + w.join("_")](new Date(D.start), S + 0, { start_date: D.start }) || D.start), w.join("_") + "#" + S;
     };
     var x = { month: function(D, w) {
@@ -9785,9 +9802,9 @@ const gn = { active_links: function(e) {
     }, week: function(D, w) {
       var S = e.form_blocks.recurring._get_node_value, N = e.form_blocks.recurring._get_node_numeric_value;
       D.push(Math.max(1, N(f, "week_count"))), D.push(""), D.push("");
-      for (var M = [], T = S(f, "week_day", !0), A = w.start.getDay(), H = !1, $ = 0; $ < T.length; $++)
-        M.push(T[$]), H = H || T[$] == A;
-      M.length || (M.push(A), H = !0), M.sort(), e.config.repeat_precise ? H || (e.transpose_day_week(w.start, M, 1, 7), w._start = !0) : (w.start = e.date.week_start(w.start), w._start = !0), D.push(M.join(","));
+      for (var M = [], A = S(f, "week_day", !0), T = w.start.getDay(), H = !1, $ = 0; $ < A.length; $++)
+        M.push(A[$]), H = H || A[$] == T;
+      M.length || (M.push(T), H = !0), M.sort(), e.config.repeat_precise ? H || (e.transpose_day_week(w.start, M, 1, 7), w._start = !0) : (w.start = e.date.week_start(w.start), w._start = !0), D.push(M.join(","));
     }, day: function(D) {
       var w = e.form_blocks.recurring._get_node_value, S = e.form_blocks.recurring._get_node_numeric_value;
       w(f, "day_type") == "d" ? D.push(Math.max(1, S(f, "day_count"))) : (D.push("week"), D.push(1), D.push(""), D.push(""), D.push(e.config.recurring_workdays.join(",")), D.splice(0, 1));
@@ -9797,8 +9814,8 @@ const gn = { active_links: function(e) {
     } }, b = { week: function(D, w) {
       var S = e.form_blocks.recurring._set_node_value;
       S(f, "week_count", D[1]);
-      for (var N = D[4].split(","), M = {}, T = 0; T < N.length; T++)
-        M[N[T]] = !0;
+      for (var N = D[4].split(","), M = {}, A = 0; A < N.length; A++)
+        M[N[A]] = !0;
       S(f, "week_day", M);
     }, month: function(D, w) {
       var S = e.form_blocks.recurring._set_node_value;
@@ -9825,8 +9842,8 @@ const gn = { active_links: function(e) {
           y(f, "occurences_count"), S(f, "occurences_count", N[1]);
       }
       S(f, "repeat", D[0]);
-      var T = e.form_blocks.recurring._get_form_node(f, "repeat", D[0]);
-      T.nodeName == "SELECT" ? (T.dispatchEvent(new Event("change")), T.dispatchEvent(new MouseEvent("click"))) : T.dispatchEvent(new MouseEvent("click"));
+      var A = e.form_blocks.recurring._get_form_node(f, "repeat", D[0]);
+      A.nodeName == "SELECT" ? (A.dispatchEvent(new Event("change")), A.dispatchEvent(new MouseEvent("click"))) : A.dispatchEvent(new MouseEvent("click"));
     };
     for (var k = 0; k < u.elements.length; k++) {
       var E = u.elements[k];

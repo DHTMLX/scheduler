@@ -1,3 +1,12 @@
+### 7.1.2
+
+Fix the incorrect position of events pasted using Ctrl+C/Ctrl+V when the multisection extension is enabled
+Ensure the Collision extension works properly with new recurring events
+Correct the sections' height after calling scheduler.updateCollection() when smart rendering enabled in the Timeline view
+Resolve the issue where smart rendering hides parts of new multisection events when onBeforeLightbox is canceled
+Fix incorrect behavior of the getEvents method with recurring events
+Correct the handling of recurring events with custom daily properties
+
 ### 7.1.1
 
 Fix the issue where the DataProcessor did not allow sending false values
