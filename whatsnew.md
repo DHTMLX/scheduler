@@ -1,3 +1,11 @@
+### 7.1.3
+
+Fix the issue where the initial position of events was not highlighted during drag and drop in the Timeline and Units views
+Fix the issue where the last_hour setting caused incorrect behavior of drag and drop in the Timeline view
+Prevent recurring occurrences from disappearing in certain time zones during DST transitions
+Fix repeated end date increments when toggling Full day in the Mini Calendar control of the lightbox
+Restore functionality of the ignore_year and ignore_agenda methods
+
 ### 7.1.2
 
 Fix the incorrect position of events pasted using Ctrl+C/Ctrl+V when the multisection extension is enabled

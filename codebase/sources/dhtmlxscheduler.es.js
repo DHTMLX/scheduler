@@ -1,3 +1,12 @@
+/** @license
+
+dhtmlxScheduler v.7.1.3 Standard
+
+To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
+
+(c) XB Software Ltd.
+
+*/
 function dhtmlxHook() {
   if (typeof dhtmlx != "undefined" && dhtmlx.attaches) {
     dhtmlx.attaches.attachScheduler = function(day, mode, tabs, scheduler2) {
@@ -134,7 +143,7 @@ function dragHighlightPos(scheduler2) {
     let unitMarkersArray = [];
     const { event: event3, layout, viewName, eventNode: eventNode2 } = settings;
     let sectionPropertyName = checkSectionPropertyName(viewName);
-    if (scheduler2.config.multisection && sectionPropertyName) {
+    if (sectionPropertyName) {
       const sections = String(event3[sectionPropertyName]).split(scheduler2.config.section_delimiter);
       const formatedSections = sections.map((element) => String(element));
       const elems = [];
@@ -3189,7 +3198,7 @@ function extend$j(scheduler2) {
         } else {
           excludedDuration += intervalEnd.getHours() * 60 * 60 * 1e3 + intervalEnd.getMinutes() * 60 * 1e3;
         }
-        if (intervalStart.valueOf() < leftCellCutOffEnd.valueOf()) {
+        if (intervalStart.valueOf() <= leftCellCutOffEnd.valueOf()) {
           excludedDuration += config._end_correction;
         }
         if (intervalStart.valueOf() < leftCellCutOffStart.valueOf()) {
@@ -8477,7 +8486,7 @@ function i18nFactory() {
 }
 class DatePicker {
   constructor(scheduler2, container, state = {}) {
-    this.state = { date: /* @__PURE__ */ new Date(), modes: ["days", "months", "years"], currentRange: [], eventDates: [], currentModeIndex: 0, ...state };
+    this.state = { date: /* @__PURE__ */ new Date(), modes: ["days", "months", "years"], currentRange: [], eventDates: [], filterDays: null, currentModeIndex: 0, ...state };
     this.container = null;
     this.element = null;
     this.onStateChangeHandlers = [];
@@ -8585,19 +8594,21 @@ class DatePicker {
     }
   }
   _renderDayGridHeader(daysOfWeekContainer) {
-    const { date } = this.getState();
+    const { date, filterDays } = this.getState();
     const scheduler2 = this.scheduler;
     let currentDate = scheduler2.date.week_start(new Date(date));
     const maxDate = scheduler2.date.add(scheduler2.date.week_start(new Date(date)), 1, "week");
     daysOfWeekContainer.classList.add("dhx_cal_datepicker_days");
     const labelFormat = scheduler2.date.date_to_str("%D");
     while (currentDate.valueOf() < maxDate.valueOf()) {
-      const label = labelFormat(currentDate);
-      const dayElement = document.createElement("div");
-      dayElement.setAttribute("data-day", currentDate.getDay());
-      dayElement.classList.add("dhx_cal_datepicker_dayname");
-      dayElement.innerText = label;
-      daysOfWeekContainer.appendChild(dayElement);
+      if (!(filterDays && filterDays(currentDate))) {
+        const label = labelFormat(currentDate);
+        const dayElement = document.createElement("div");
+        dayElement.setAttribute("data-day", currentDate.getDay());
+        dayElement.classList.add("dhx_cal_datepicker_dayname");
+        dayElement.innerText = label;
+        daysOfWeekContainer.appendChild(dayElement);
+      }
       currentDate = scheduler2.date.add(currentDate, 1, "day");
     }
   }
@@ -8612,7 +8623,7 @@ class DatePicker {
     return weeks;
   }
   _renderDayGrid(container) {
-    const { date, currentRange, eventDates, minWeeks } = this.getState();
+    const { date, currentRange, eventDates, minWeeks, filterDays } = this.getState();
     let minSchedulerDate = currentRange[0];
     let maxSchedulerDate = currentRange[1];
     const eventDaysTable = eventDates.reduce((acc, date2) => {
@@ -8622,7 +8633,11 @@ class DatePicker {
     }, {});
     const daysOfWeekContainer = document.createElement("div");
     this._renderDayGridHeader(daysOfWeekContainer);
+    const weekLength = daysOfWeekContainer.children.length;
     container.appendChild(daysOfWeekContainer);
+    if (weekLength !== 7) {
+      container.style.setProperty("--dhx-scheduler-week-length", weekLength);
+    }
     const scheduler2 = this.scheduler;
     const firstDate = scheduler2.date.week_start(scheduler2.date.month_start(new Date(date)));
     const monthStart = scheduler2.date.month_start(new Date(date));
@@ -8645,31 +8660,33 @@ class DatePicker {
       this.callEvent("onDateClick", [date2, event2]);
     });
     while (currDate.valueOf() < lastDate.valueOf()) {
-      const dayElement = document.createElement("div");
-      dayElement.setAttribute("data-cell-date", scheduler2.templates.format_date(currDate));
-      dayElement.setAttribute("data-day", currDate.getDay());
-      dayElement.innerHTML = currDate.getDate();
-      if (currDate.valueOf() < monthStart.valueOf()) {
-        dayElement.classList.add("dhx_before");
-      } else if (currDate.valueOf() >= monthEnd.valueOf()) {
-        dayElement.classList.add("dhx_after");
-      }
-      if (currDate.getDay() === 0 || currDate.getDay() === 6) {
-        dayElement.classList.add("dhx_cal_datepicker_weekend");
-      }
-      if (currDate.valueOf() == currentCalDate.valueOf()) {
-        dayElement.classList.add("dhx_now");
-      }
-      if (minSchedulerDate && maxSchedulerDate) {
-        if (currDate.valueOf() >= minSchedulerDate.valueOf() && currDate.valueOf() < maxSchedulerDate.valueOf()) {
-          dayElement.classList.add("dhx_cal_datepicker_current");
+      if (!(filterDays && filterDays(currDate))) {
+        const dayElement = document.createElement("div");
+        dayElement.setAttribute("data-cell-date", scheduler2.templates.format_date(currDate));
+        dayElement.setAttribute("data-day", currDate.getDay());
+        dayElement.innerHTML = currDate.getDate();
+        if (currDate.valueOf() < monthStart.valueOf()) {
+          dayElement.classList.add("dhx_before");
+        } else if (currDate.valueOf() >= monthEnd.valueOf()) {
+          dayElement.classList.add("dhx_after");
         }
+        if (currDate.getDay() === 0 || currDate.getDay() === 6) {
+          dayElement.classList.add("dhx_cal_datepicker_weekend");
+        }
+        if (currDate.valueOf() == currentCalDate.valueOf()) {
+          dayElement.classList.add("dhx_now");
+        }
+        if (minSchedulerDate && maxSchedulerDate) {
+          if (currDate.valueOf() >= minSchedulerDate.valueOf() && currDate.valueOf() < maxSchedulerDate.valueOf()) {
+            dayElement.classList.add("dhx_cal_datepicker_current");
+          }
+        }
+        if (eventDaysTable[currDate.valueOf()]) {
+          dayElement.classList.add("dhx_cal_datepicker_event");
+        }
+        dayElement.classList.add("dhx_cal_datepicker_date");
+        dayGridContainer.appendChild(dayElement);
       }
-      if (eventDaysTable[currDate.valueOf()]) {
-        dayElement.classList.add("dhx_cal_datepicker_event");
-      }
-      dayElement.classList.add("dhx_cal_datepicker_date");
-      dayGridContainer.appendChild(dayElement);
       currDate = scheduler2.date.add(currDate, 1, "day");
     }
     container.appendChild(dayGridContainer);
@@ -8752,7 +8769,7 @@ class DatePicker {
   }
 }
 function factoryMethod(extensionManager) {
-  const scheduler2 = { version: "7.1.2" };
+  const scheduler2 = { version: "7.1.3" };
   scheduler2.$stateProvider = StateService();
   scheduler2.getState = scheduler2.$stateProvider.getState;
   extend$n(scheduler2);
@@ -9177,6 +9194,9 @@ function agenda_view(scheduler2) {
       } else {
         let html = "";
         for (let day in eventsInDays) {
+          if (scheduler2.ignore_agenda && scheduler2.ignore_agenda(new Date(day * 1))) {
+            continue;
+          }
           html += renderDay(new Date(day * 1), eventsInDays[day]);
         }
         scheduler2._els["dhx_cal_data"][0].innerHTML = html;
@@ -9196,7 +9216,7 @@ function agenda_view(scheduler2) {
         return "";
       }
       let html = `
-<div class="dhx_cal_agenda_day">
+<div class="dhx_cal_agenda_day" data-date="${scheduler2.templates.format_date(day)}" data-day="${day.getDay()}">
 	<div class="dhx_cal_agenda_day_header">${scheduler2.templates.agenda_day(day)}</div>
 	<div class="dhx_cal_agenda_day_events">
 `;
@@ -13935,6 +13955,9 @@ function minical(scheduler2) {
             end_date = scheduler2.date.date_part(obj.end_date);
             if (+end_date == +start_date || +end_date >= +start_date && (ev.end_date.getHours() !== 0 || ev.end_date.getMinutes() !== 0))
               end_date = scheduler2.date.add(end_date, 1, "day");
+          } else {
+            start_date = null;
+            end_date = null;
           }
           var start = start_date || ev.start_date;
           var end = end_date || ev.end_date;
@@ -17682,6 +17705,12 @@ function recurring(scheduler2) {
     scheduler2.addEvent(nev);
     scheduler2._not_render = false;
   }
+  function toUTCDate(date) {
+    return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
+  }
+  function setUTCPartsToDate(d) {
+    return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds());
+  }
   scheduler2._rec_temp = [];
   scheduler2._rec_markers_pull = {};
   scheduler2._rec_markers = {};
@@ -17980,22 +18009,17 @@ function recurring(scheduler2) {
     if (!seriesExceptions) {
       seriesExceptions = {};
     }
-    if (!from) {
-      from = scheduler2._min_date;
-    }
-    if (!to) {
-      to = scheduler2._max_date;
-    }
-    const utcStart = new Date(Date.UTC(ev.start_date.getFullYear(), ev.start_date.getMonth(), ev.start_date.getDate(), ev.start_date.getHours(), ev.start_date.getMinutes(), ev.start_date.getSeconds()));
+    from = toUTCDate(from || new Date(scheduler2._min_date.valueOf() - 1e3));
+    to = toUTCDate(to || new Date(scheduler2._max_date.valueOf() - 1e3));
+    const utcStart = toUTCDate(ev.start_date);
     let parsedRRule;
     if (maxCount) {
       parsedRRule = rrulestr(`RRULE:${ev.rrule};UNTIL=${toIcalString(ev.end_date)};COUNT=${maxCount}`, { dtstart: utcStart });
     } else {
       parsedRRule = rrulestr(`RRULE:${ev.rrule};UNTIL=${toIcalString(ev.end_date)}`, { dtstart: utcStart });
     }
-    const utcTo = new Date(Date.UTC(to.getFullYear(), to.getMonth(), to.getDate(), to.getHours(), to.getMinutes(), to.getSeconds()));
-    const repeatedDates = parsedRRule.between(from, utcTo).map((date) => {
-      const adjustedDate = new Date(date);
+    const repeatedDates = parsedRRule.between(from, to, true).map((date) => {
+      const adjustedDate = setUTCPartsToDate(date);
       adjustedDate.setHours(ev.start_date.getHours());
       adjustedDate.setMinutes(ev.start_date.getMinutes());
       adjustedDate.setSeconds(ev.start_date.getSeconds());
@@ -20255,7 +20279,7 @@ function year_view(scheduler2) {
       yearBox.innerHTML = `<div class='dhx_year_month'>${this.templates.year_month(currentDate)}</div>
 			<div class='dhx_year_grid'></div>`;
       const yearGrid = yearBox.querySelector(".dhx_year_grid");
-      const datepicker = scheduler2._createDatePicker(null, { date: currentDate, minWeeks: 6 });
+      const datepicker = scheduler2._createDatePicker(null, { date: currentDate, filterDays: scheduler2.ignore_year, minWeeks: 6 });
       datepicker._renderDayGrid(yearGrid);
       datepicker.destructor();
       wrapper.appendChild(yearBox);

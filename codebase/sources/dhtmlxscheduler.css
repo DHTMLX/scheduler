@@ -3285,7 +3285,7 @@ div.dhx_timeline_label_column_header .dhx_timeline_label_content_wrapper {
 }
 .dhx_cal_datepicker_days {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(var(--dhx-scheduler-week-length, 7), 1fr);
   gap: 4px;
 }
 .dhx_cal_datepicker_dayname,
