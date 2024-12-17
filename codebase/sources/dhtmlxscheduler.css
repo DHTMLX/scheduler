@@ -332,6 +332,9 @@
   font-weight: lighter;
   transform: translateY(-2px);
 }
+:root[data-scheduler-theme='flat'] .scheduler_popup_title {
+  text-transform: uppercase;
+}
 :root[data-scheduler-theme='material'] {
   --dhx-scheduler-theme: material;
   --dhx-scheduler-font-family: Roboto, Helvetica, Arial, sans-serif;
@@ -432,6 +435,9 @@
   font-weight: var(--dhx-scheduler-caption-font-weight);
   color: var(--dhx-scheduler-scale-color);
   line-height: 133%;
+}
+:root[data-scheduler-theme='material'] .scheduler_popup_title {
+  text-transform: uppercase;
 }
 :root[data-scheduler-theme='contrast-white'] {
   --dhx-scheduler-theme: contrast-white;
@@ -912,7 +918,7 @@ url("src/dhx-scheduler-icons.woff2?7d3dc8d31762f76ad3c385c23e9afbc6") format("wo
   color: var(--dhx-scheduler-btn-color-disabled);
   border-color: var(--dhx-scheduler-btn-border-disabled);
 }
-.scheduler_popup_button:not(.scheduler_ok_button) {
+.scheduler_popup_button:not(.scheduler_ok_button):not(.scheduler_rec_ok_button) {
   --dhx-scheduler-base-colors-icons: var(--dhx-scheduler-btn-color);
   --dhx-scheduler-btn-background: var(--dhx-scheduler-btn-outline-background);
   --dhx-scheduler-btn-color: var(--dhx-scheduler-btn-outline-color);
@@ -2026,6 +2032,65 @@ url("src/dhx-scheduler-icons.woff2?7d3dc8d31762f76ad3c385c23e9afbc6") format("wo
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+.scheduler-recurring_mode {
+  --dhx_scheduler-radio-size: 20px;
+  --dhx_scheduler-radio-border-color: #4c84f1;
+  --dhx_scheduler-radio-checked-color: #4c84f1;
+  --dhx_scheduler-radio-checked-inner-size: 10px;
+  --dhx_scheduler-font-size: 14px;
+  --dhx_scheduler-label-margin: 10px;
+}
+.scheduler-recurring_mode .dhtmlx_popup_title {
+  padding-top: 16px;
+  padding-bottom: 0;
+}
+.scheduler-recurring_mode .scheduler_popup_text {
+  justify-content: flex-start;
+}
+.scheduler-recurring_mode .scheduler_popup_controls {
+  justify-content: center;
+  padding-bottom: 16px;
+}
+.scheduler-recurring_mode .scheduler_popup_button {
+  min-width: 110px;
+}
+.scheduler-recurring_mode label.dhx_styled_radio {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding-right: 4px;
+}
+.scheduler-recurring_mode .dhx_edit_recurrence_options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--dhx_scheduler-label-margin);
+}
+.scheduler-recurring_mode .dhx_styled_radio > input[type="radio"] {
+  appearance: none;
+  width: var(--dhx_scheduler-radio-size);
+  height: var(--dhx_scheduler-radio-size);
+  border: 2px solid var(--dhx_scheduler-radio-border-color);
+  border-radius: 50%;
+  outline: none;
+  margin: 2px 10px 2px 5px;
+  display: inline-block;
+  position: relative;
+  background-color: transparent;
+}
+.scheduler-recurring_mode .dhx_styled_radio > input[type="radio"]:checked {
+  background-color: transparent;
+}
+.scheduler-recurring_mode .dhx_styled_radio > input[type="radio"]:checked::after {
+  content: '';
+  width: var(--dhx_scheduler-radio-checked-inner-size);
+  height: var(--dhx_scheduler-radio-checked-inner-size);
+  background-color: var(--dhx_scheduler-radio-checked-color);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .dhx_scale_text_styles {
   font-size: var(--dhx-scheduler-caption-font-size);
@@ -3591,7 +3656,8 @@ div.dhx_timeline_label_column_header .dhx_timeline_label_content_wrapper {
 .scheduler_popup_title {
   border-top-left-radius: var(--dhx-scheduler-modal-border-radius);
   border-top-right-radius: var(--dhx-scheduler-modal-border-radius);
-  text-transform: uppercase;
+  color: var(--dhx-scheduler-base-colors-text-base);
+  font-size: var(--dhx-scheduler-heading-font-size);
   font-weight: var(--dhx-scheduler-heading-font-weight);
   padding: calc(var(--dhx-scheduler-modal-padding)/2) var(--dhx-scheduler-modal-padding);
   display: flex;

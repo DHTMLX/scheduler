@@ -514,3 +514,74 @@
         gap: 8px;
     }
 }
+
+
+.scheduler-recurring_mode{
+    --dhx_scheduler-radio-size: 20px;
+    --dhx_scheduler-radio-border-color: #4c84f1;
+    --dhx_scheduler-radio-checked-color: #4c84f1;
+    --dhx_scheduler-radio-checked-inner-size: 10px;
+    --dhx_scheduler-font-size: 14px;
+    --dhx_scheduler-label-margin: 10px;
+
+    .dhtmlx_popup_title{
+        padding-top: 16px;
+        padding-bottom: 0;
+    }
+
+    .scheduler_popup_text{
+        justify-content: flex-start;
+    }
+
+    .scheduler_popup_controls{
+        justify-content:center;
+        padding-bottom: 16px;
+    }
+    .scheduler_popup_button {
+        min-width: 110px;
+    }
+
+    label.dhx_styled_radio {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding-right: 4px;
+    }
+
+    .dhx_edit_recurrence_options{
+        display: flex;
+        flex-direction: column;
+        gap: var(--dhx_scheduler-label-margin);
+    }
+
+
+    .dhx_styled_radio > input[type="radio"] {
+        appearance: none;
+        width: var(--dhx_scheduler-radio-size);
+        height: var(--dhx_scheduler-radio-size);
+        border: 2px solid var(--dhx_scheduler-radio-border-color);
+        border-radius: 50%;
+        outline: none;
+        margin: 2px 10px 2px 5px;
+        display: inline-block;
+        position: relative;
+        background-color: transparent;
+    }
+
+    .dhx_styled_radio >input[type="radio"]:checked {
+        background-color: transparent;
+    }
+
+    .dhx_styled_radio > input[type="radio"]:checked::after {
+        content: '';
+        width: var(--dhx_scheduler-radio-checked-inner-size);
+        height: var(--dhx_scheduler-radio-checked-inner-size);
+        background-color: var(--dhx_scheduler-radio-checked-color);
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+}

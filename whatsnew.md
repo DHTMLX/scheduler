@@ -1,3 +1,18 @@
+### 7.2.0
+
+Ability to edit the current and the following recurring events
+New Live-Update module for collaborative editing
+Improved display of overnight events
+Updated event handlers for the Mini Calendar
+Date functions are now non-mutating
+Fix the issue with the container resize listeners in the LWC environment
+Fix the issue with events' drag and drop when the event's end date is past the scheduler_last_hour configuration
+Fix the incorrect display of events in the cascade_event_display mode
+Fix the incorrect behavior of drag-resize when a new event is resized to the bottom of the day column while the all_timed extension is active
+Fix the incorrect behavior of vertical scrolling in the scrollable Timeline view when smart rendering is disabled
+Fix the incorrect display of scroll buttons in the Units view
+Fix the incorrect display of unassigned events in the Units view when the skip_incorrect setting is set to false
+
 ### 7.1.3
 
 Fix the issue where the initial position of events was not highlighted during drag and drop in the Timeline and Units views
