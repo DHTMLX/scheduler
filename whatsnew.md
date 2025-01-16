@@ -1,3 +1,13 @@
+### 7.2.1
+
+Prevent recurring occurrences from disappearing during daylight saving time (DST) transitions.
+Fix the script error that occurred when editing newly created recurring events.
+Fix the incorrect display of occurrences after loading data from the back-end.
+Fix the error encountered when adjusting the size property in the Units view that exceeds the available columns.
+Ensure multi-level folders in the Tree Timeline view display correctly at all nesting levels.
+Fix the issue with the readonly_form configuration option causing errors when opening the lightbox for recurring events.
+Fix the issue with recurring patterns when modifying "the current and the following" occurrences of weekly recurring events that span certain weekdays.
+
 ### 7.2.0
 
 Ability to edit the current and the following recurring events

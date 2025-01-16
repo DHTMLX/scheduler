@@ -3,7 +3,7 @@
 })(this, function(exports2) {
   "use strict";/** @license
 
-dhtmlxScheduler v.7.2.0 Standard
+dhtmlxScheduler v.7.2.1 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -9124,7 +9124,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     }
   }
   function factoryMethod(extensionManager) {
-    const scheduler2 = { version: "7.2.0" };
+    const scheduler2 = { version: "7.2.1" };
     scheduler2.$stateProvider = StateService();
     scheduler2.getState = scheduler2.$stateProvider.getState;
     extend$n(scheduler2);
@@ -15400,22 +15400,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
             scheduler2.form_blocks.recurring.set_value = originalRecurringSetValue;
           }
         }
-        var sns = this.config.lightbox.sections;
         if (this.config.readonly_active) {
-          for (var i = 0; i < sns.length; i++) {
-            if (sns[i].type == "recurring") {
-              if (this.config.readonly_active && scheduler2.form_blocks.recurring) {
-                scheduler2.form_blocks.recurring.set_value = function(node, value, ev) {
-                  var wrapper = scheduler2.$domHelpers.closest(node, ".dhx_wrap_section");
-                  var style = "none";
-                  wrapper.querySelector(".dhx_cal_lsection").display = style;
-                  wrapper.querySelector(".dhx_form_repeat").display = style;
-                  wrapper.style.display = style;
-                  scheduler2.setLightboxSize();
-                };
-              }
-            }
-          }
           var forbidden_buttons = ["dhx_delete_btn", "dhx_save_btn"];
           var button_arrays = [scheduler2.config.buttons_left, scheduler2.config.buttons_right];
           for (var i = 0; i < forbidden_buttons.length; i++) {
@@ -18100,7 +18085,16 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       scheduler2.addEvent(nev);
       scheduler2._not_render = false;
     }
+    function toUTCDate(date) {
+      return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()));
+    }
+    function setUTCPartsToDate(d) {
+      return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds());
+    }
     function updateFollowingEventsRRULE(ev) {
+      if (ev.rrule.includes(";UNTIL=")) {
+        ev.rrule = ev.rrule.split(";UNTIL=")[0];
+      }
       let parsedRRule = rrulestr(`RRULE:${ev.rrule};UNTIL=${toIcalString(ev._end_date || ev.end_date)}`, { dtstart: ev.start_date });
       let newRRULE = new RRule(parsedRRule.origOptions).toString().replace("RRULE:", "");
       newRRULE = newRRULE.split("\n")[1];
@@ -18130,6 +18124,20 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     scheduler2._isFollowing = function(id2) {
       let ev = scheduler2.getEvent(id2);
       return !!(ev && ev._thisAndFollowing);
+    };
+    scheduler2._isFirstOccurrence = function(ev) {
+      if (scheduler2._is_virtual_event(ev.id)) {
+        let pid = ev.id.split("#")[0];
+        let recEvent = scheduler2.getEvent(pid);
+        return !!(recEvent.start_date.valueOf() === ev.start_date.valueOf());
+      }
+    };
+    scheduler2._isExceptionFirstOccurrence = function(ev) {
+      if (scheduler2._is_modified_occurrence(ev)) {
+        let pid = ev.recurring_event_id;
+        let recEvent = scheduler2.getEvent(pid);
+        return !!(ev.original_start.valueOf() && ev.original_start.valueOf() === recEvent.start_date.valueOf());
+      }
     };
     scheduler2._rec_temp = [];
     scheduler2._rec_markers_pull = {};
@@ -18210,19 +18218,51 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       }
       delete this._ignore_call;
     });
-    function moveToFollowingEvents(copy, newEv) {
-      copy.recurring_event_id = newEv.id;
-      copy.text = newEv.text;
-      scheduler2._not_render = true;
-      scheduler2._add_rec_marker(copy, copy._pid_time);
-      scheduler2.addEvent(copy);
-      scheduler2._not_render = false;
+    function setPropsForFirstOccurrence(ev, occurrence) {
+      ev._end_date = ev.end_date;
+      if (scheduler2._isExceptionFirstOccurrence(occurrence)) {
+        ev.start_date = occurrence.start_date;
+        ev.end_date = new Date(occurrence.start_date.valueOf() + ev.duration * 1e3);
+        ev._start_date = occurrence.original_start;
+        ev._modified = true;
+      } else {
+        ev.end_date = new Date(occurrence.start_date.valueOf() + ev.duration * 1e3);
+        ev.start_date = occurrence.start_date;
+        ev._firstOccurrence = true;
+      }
+      ev._thisAndFollowing = occurrence.id;
+    }
+    function setPropsForStorageEvent(index, data, ev, tempEvent) {
+      const targetIndex = ev._modified ? tempEvent.id : index;
+      scheduler2._events[targetIndex] = { ...tempEvent, text: data.text, duration: data.duration, start_date: data.start_date, rrule: data.rrule, end_date: tempEvent._end_date, _start_date: tempEvent.start_date, _thisAndFollowing: null, _end_date: null };
+      if (ev._modified) {
+        delete scheduler2._events[index];
+      }
+      scheduler2.callEvent("onEventChanged", [scheduler2._events[targetIndex].id, scheduler2._events[targetIndex]]);
+    }
+    function deleteExceptionFromStorage(exception) {
+      for (const i in scheduler2._events) {
+        let tev = scheduler2._events[i];
+        if (tev.id == exception.id) {
+          delete scheduler2._events[i];
+        }
+      }
+    }
+    function updateTextEvents(id2, data) {
+      for (let i in scheduler2._events) {
+        let tev = scheduler2._events[i];
+        if (tev.recurring_event_id == id2 || scheduler2._is_virtual_event(tev.id) && tev.id.split("#")[0] == id2) {
+          tev.text = data.text;
+          scheduler2.updateEvent(tev.id);
+        }
+      }
     }
     function deleteEventFromSeries(idTimestamp, ev) {
       let id2 = idTimestamp;
-      idTimestamp = String(id2).split("#") || ev._pid_time;
+      let originalStartTimestamp = new Date(ev.original_start).valueOf();
+      idTimestamp = String(id2).split("#") || ev._pid_time || originalStartTimestamp;
       let nid = scheduler2.uid();
-      let tid = idTimestamp[1] ? idTimestamp[1] : ev._pid_time;
+      let tid = idTimestamp[1] ? idTimestamp[1] : ev._pid_time || originalStartTimestamp;
       let nev = scheduler2._copy_event(ev);
       nev.id = nid;
       nev.recurring_event_id = ev.recurring_event_id || idTimestamp[0];
@@ -18267,17 +18307,15 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     }
     scheduler2.attachEvent("onBeforeEventChanged", function(ev, e, is_new, original) {
       if (!is_new && ev && (scheduler2._is_virtual_event(ev.id) || scheduler2._is_modified_occurrence(ev))) {
-        if (original && (original.start_date.valueOf() !== ev.start_date.valueOf() || original.end_date.valueOf() !== ev.end_date.valueOf())) {
-          if (original.start_date.getDate() !== ev.start_date.getDate()) {
-            ev._beforeEventChangedFlag = "edit";
-          } else {
-            ev._beforeEventChangedFlag = "ask";
-          }
-          if (!scheduler2.config.collision_limit || scheduler2.checkCollision(ev)) {
-            scheduler2._events["$dnd_recurring_placeholder"] = scheduler2._lame_clone(ev);
-            scheduler2._showRequiredModalBox(ev.id, ev._beforeEventChangedFlag);
-            return false;
-          }
+        if (original.start_date.getDate() !== ev.start_date.getDate()) {
+          ev._beforeEventChangedFlag = "edit";
+        } else {
+          ev._beforeEventChangedFlag = "ask";
+        }
+        if (!scheduler2.config.collision_limit || scheduler2.checkCollision(ev)) {
+          scheduler2._events["$dnd_recurring_placeholder"] = scheduler2._lame_clone(ev);
+          scheduler2._showRequiredModalBox(ev.id, ev._beforeEventChangedFlag);
+          return false;
         }
       }
       return true;
@@ -18285,8 +18323,8 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     scheduler2.attachEvent("onEventChanged", function(id2, event2) {
       if (this._loading)
         return true;
-      var ev = this.getEvent(id2);
-      if (this._is_virtual_event(id2) && !this._isFollowing(id2)) {
+      let ev = this.getEvent(id2);
+      if (this._is_virtual_event(id2)) {
         createException(ev);
       } else {
         if (ev.start_date) {
@@ -18331,30 +18369,32 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       return true;
     });
     scheduler2.attachEvent("onEventSave", function(id2, data, is_new_event) {
-      let tempData = { ...data };
       let ev = this.getEvent(id2);
+      let tempEvent = scheduler2._lame_clone(ev);
+      let tempDataRRULE = data.rrule;
       if (ev && isSeries(ev)) {
         if (!is_new_event && this._isFollowing(id2)) {
           if (ev._removeFollowing) {
-            ev.end_date = new Date(ev.start_date.valueOf() - 1e3);
-            ev._end_date = ev._shorten_end_date;
-            ev.start_date = ev._start_date;
-            if (ev.end_date.valueOf() <= ev.start_date.valueOf()) {
+            let occurrence = scheduler2.getEvent(ev._thisAndFollowing);
+            if (occurrence && (ev._firstOccurrence || ev._modified)) {
               scheduler2.hideLightbox();
               scheduler2.deleteEvent(ev.id);
               return false;
-            }
-            ev._shorten = true;
-            updateFollowingEventsRRULE(ev);
-            scheduler2.updateEvent(ev.id);
-            scheduler2.callEvent("onEventChanged", [ev.id, ev]);
-            let occurrence = scheduler2.getEvent(ev._thisAndFollowing);
-            if (occurrence) {
-              for (const i in scheduler2._events) {
-                let tev = scheduler2._events[i];
-                if (tev.recurring_event_id === id2) {
-                  if (tev.start_date.valueOf() > tempData.start_date.valueOf()) {
-                    deleteEventFromSeries(tev.id, tev);
+            } else {
+              ev.end_date = new Date(ev.start_date.valueOf() - 1e3);
+              ev._end_date = ev._shorten_end_date;
+              ev.start_date = ev._start_date;
+              ev._shorten = true;
+              updateFollowingEventsRRULE(ev);
+              scheduler2.callEvent("onEventChanged", [ev.id, ev]);
+              let occurrence2 = scheduler2.getEvent(ev._thisAndFollowing);
+              if (occurrence2) {
+                for (const i in scheduler2._events) {
+                  let tev = scheduler2._events[i];
+                  if (tev.recurring_event_id === id2) {
+                    if (tev.start_date.valueOf() > tempEvent.start_date.valueOf()) {
+                      deleteEventFromSeries(tev.id, tev);
+                    }
                   }
                 }
               }
@@ -18363,61 +18403,54 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
             return false;
           } else {
             let occurrence = scheduler2.getEvent(ev._thisAndFollowing);
-            let futureOcurrences = [];
-            for (const i in scheduler2._events) {
-              let tev = scheduler2._events[i];
-              if (tev.recurring_event_id == id2) {
-                if (tev.start_date.valueOf() > tempData.start_date.valueOf()) {
-                  futureOcurrences.push(tev);
-                }
-              }
-            }
-            ev.end_date = ev._shorten_end_date;
-            ev._end_date = ev._shorten_end_date;
-            ev.start_date = ev._start_date;
-            ev._shorten = true;
-            updateFollowingEventsRRULE(ev);
-            scheduler2.updateEvent(ev.id);
-            scheduler2.callEvent("onEventChanged", [ev.id, ev]);
-            let followingEv = { ...tempData };
-            followingEv._start_date = followingEv.start_date;
-            followingEv._thisAndFollowing = occurrence.id;
-            followingEv.id = scheduler2.uid();
-            scheduler2.addEvent(followingEv.start_date, followingEv.end_date, followingEv.text, followingEv.id, followingEv);
-            for (let i = 0; i < futureOcurrences.length; i++) {
-              const ocr = futureOcurrences[i];
-              moveToFollowingEvents(ocr, followingEv);
-              scheduler2.callEvent("onEventChanged", [ocr.id, ocr]);
-            }
-            if (occurrence && ev._beforeEventChangedFlag) {
-              for (let i in scheduler2._events) {
+            if (occurrence && ev._firstOccurrence) {
+              for (const i in scheduler2._events) {
                 let tev = scheduler2._events[i];
-                if (tev.recurring_event_id == id2) {
-                  if (tev.start_date.valueOf() >= tempData.start_date.valueOf()) {
-                    deleteEventFromSeries(tev.id, tev);
-                  }
+                if (tev.id == ev.id) {
+                  setPropsForStorageEvent(i, data, ev, tempEvent);
                 }
               }
+            } else if (occurrence && ev._modified) {
+              for (const i in scheduler2._events) {
+                let tev = scheduler2._events[i];
+                if (tev.recurring_event_id == id2 && tev.id == tempEvent._thisAndFollowing) {
+                  setPropsForStorageEvent(i, data, ev, tempEvent);
+                }
+              }
+            } else {
+              if (scheduler2._is_modified_occurrence(occurrence)) {
+                deleteExceptionFromStorage(occurrence);
+              }
+              ev.end_date = ev._shorten_end_date;
+              ev._end_date = ev._shorten_end_date;
+              ev.start_date = ev._start_date;
+              ev._shorten = true;
+              updateFollowingEventsRRULE(ev);
+              scheduler2.callEvent("onEventChanged", [ev.id, ev]);
+              let followingEv = { ...tempEvent };
+              followingEv.text = data.text;
+              followingEv.duration = data.duration;
+              followingEv.rrule = tempDataRRULE;
+              followingEv._start_date = null;
+              followingEv.id = scheduler2.uid();
+              scheduler2.addEvent(followingEv.start_date, followingEv.end_date, followingEv.text, followingEv.id, followingEv);
+            }
+            if (!is_new_event) {
+              updateTextEvents(id2, data);
             }
             scheduler2.hideLightbox();
             return false;
           }
         }
-        if (!is_new_event) {
-          for (let i in scheduler2._events) {
-            let tev = scheduler2._events[i];
-            if (tev.recurring_event_id == id2) {
-              tev.text = tempData.text;
-              scheduler2.updateEvent(tev.id);
-            }
-          }
-        }
       }
-      if (tempData._ocr && tempData._beforeEventChangedFlag) {
-        ev.start_date = tempData.start_date;
-        ev.end_date = tempData.end_date;
-        ev._start_date = tempData._start_date;
-        ev._end_date = tempData._end_date;
+      if (!is_new_event) {
+        updateTextEvents(id2, data);
+      }
+      if (tempEvent._ocr && tempEvent._beforeEventChangedFlag) {
+        ev.start_date = tempEvent.start_date;
+        ev.end_date = tempEvent.end_date;
+        ev._start_date = tempEvent._start_date;
+        ev._end_date = tempEvent._end_date;
         scheduler2.updateEvent(ev.id);
         return true;
       }
@@ -18469,6 +18502,10 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         ev._shorten_end_date = null;
       if (ev._removeFollowing)
         ev._removeFollowing = null;
+      if (ev._firstOccurrence)
+        ev._firstOccurrence = null;
+      if (ev._modified)
+        ev._modified = null;
     };
     scheduler2._is_virtual_event = function(id2) {
       return id2.toString().indexOf("#") != -1;
@@ -18489,13 +18526,23 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       const showRequiredLightbox = function(id3, type) {
         const occurrence = scheduler2.getEvent(id3);
         const event2 = scheduler2.getEvent(pid);
+        const view = scheduler2.getView();
+        if (view && occurrence[view.y_property]) {
+          event2[view.y_property] = occurrence[view.y_property];
+        }
+        if (view && occurrence[view.property]) {
+          event2[view.property] = occurrence[view.property];
+        }
         if (type === "Occurrence") {
           return scheduler2.showLightbox_rec(id3);
         }
         if (type === "Following") {
-          if (+occurrence.start_date === +event2.start_date) {
-            event2._end_date = event2.end_date;
-            event2.end_date = new Date(occurrence.start_date.valueOf() + event2.duration * 1e3);
+          if (scheduler2._isExceptionFirstOccurrence(occurrence)) {
+            setPropsForFirstOccurrence(event2, occurrence);
+            return scheduler2.showLightbox_rec(pid);
+          }
+          if (scheduler2._isFirstOccurrence(occurrence)) {
+            setPropsForFirstOccurrence(event2, occurrence);
             return scheduler2.showLightbox_rec(pid);
           } else {
             event2._end_date = event2.end_date;
@@ -18505,9 +18552,6 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
             event2._start_date = event2.start_date;
             event2.start_date = occurrence.start_date;
             event2._thisAndFollowing = occurrence.id;
-            if (event2.rrule) {
-              updateFollowingWithWEEKLY(pid);
-            }
             if (ev._beforeEventChangedFlag) {
               event2._beforeEventChangedFlag = ev._beforeEventChangedFlag;
               event2._shorten_end_date = new Date(originalStart.valueOf() - 1e3);
@@ -18516,6 +18560,10 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
           }
         }
         if (type === "AllEvents") {
+          if (scheduler2._isExceptionFirstOccurrence(occurrence)) {
+            setPropsForFirstOccurrence(event2, occurrence);
+            return scheduler2.showLightbox_rec(pid);
+          }
           const tempStart = new Date(event2.start_date);
           event2._end_date = event2.end_date;
           event2._start_date = tempStart;
@@ -18523,6 +18571,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
           event2.start_date.setMinutes(occurrence.start_date.getMinutes());
           event2.start_date.setSeconds(occurrence.start_date.getSeconds());
           event2.end_date = new Date(event2.start_date.valueOf() + event2.duration * 1e3);
+          event2._thisAndFollowing = null;
           return scheduler2.showLightbox_rec(pid);
         }
       };
@@ -18580,6 +18629,14 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         pid = occurrence.id.split("#")[0];
       }
       let event2 = scheduler2.getEvent(pid);
+      const view = scheduler2.getView();
+      let tempEvent = scheduler2._lame_clone(event2);
+      if (view && occurrence[view.y_property]) {
+        tempEvent[view.y_property] = occurrence[view.y_property];
+      }
+      if (view && occurrence[view.property]) {
+        tempEvent[view.property] = occurrence[view.property];
+      }
       let tempStartDate;
       let tempEndDate;
       if (occurrence && occurrence._beforeEventChangedFlag) {
@@ -18587,34 +18644,53 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         tempEndDate = occurrence.end_date;
       }
       const handleOccurrence = function(occurrence2) {
-        let tempEvent = scheduler2.getEvent("$dnd_recurring_placeholder");
+        let tempEvent2 = { ...event2, ...scheduler2.getEvent("$dnd_recurring_placeholder") };
         if (tempEndDate && tempStartDate) {
-          tempEvent.start_date = tempStartDate;
-          tempEvent.end_date = tempEndDate;
-          tempEvent._beforeEventChangedFlag = occurrence2._beforeEventChangedFlag;
-          tempEvent._ocr = true;
+          tempEvent2.start_date = tempStartDate;
+          tempEvent2.end_date = tempEndDate;
+          tempEvent2._beforeEventChangedFlag = occurrence2._beforeEventChangedFlag;
+          tempEvent2._ocr = true;
         }
-        if (!scheduler2.config.collision_limit || scheduler2.checkCollision(tempEvent)) {
+        if (!scheduler2.config.collision_limit || scheduler2.checkCollision(tempEvent2)) {
           for (const i in scheduler2._events) {
             let tev = scheduler2._events[i];
-            if (tev.id == tempEvent.id) {
-              scheduler2._events[i] = { ...tempEvent };
-              scheduler2.callEvent("onEventSave", [scheduler2._events[i].id, scheduler2._events[i], scheduler2._new_event]);
-              scheduler2.callEvent("onEventChanged", [occurrence2.id, occurrence2]);
+            if (i === "$dnd_recurring_placeholder") {
+              continue;
+            }
+            if (tev.id == tempEvent2.id) {
+              scheduler2._events[i] = { ...tempEvent2 };
+              scheduler2.callEvent("onEventChanged", [scheduler2._events[i].id, scheduler2._events[i]]);
             }
           }
         }
       };
       const handleFollowing = function(occurrence2) {
-        let tempEvent = scheduler2._lame_clone(event2);
+        let initialOccurrence = scheduler2._lame_clone(occurrence2);
         if (tempEndDate && tempStartDate) {
           occurrence2._start_date = occurrence2.start_date;
           occurrence2.start_date = tempStartDate;
           occurrence2.end_date = tempEndDate;
         }
-        if (+occurrence2.start_date === +event2.start_date) {
-          tempEvent._end_date = event2.end_date;
-          tempEvent.end_date = new Date(occurrence2.start_date.valueOf() + event2.duration * 1e3);
+        if (scheduler2._isFirstOccurrence(initialOccurrence) || scheduler2._isExceptionFirstOccurrence(initialOccurrence)) {
+          if (scheduler2._isExceptionFirstOccurrence(initialOccurrence)) {
+            deleteExceptionFromStorage(initialOccurrence);
+          }
+          tempEvent._start_date = event2.start_date;
+          tempEvent.start_date = occurrence2.start_date;
+          tempEvent.duration = (+occurrence2.end_date - +occurrence2.start_date) / 1e3;
+          tempEvent._beforeEventChangedFlag = occurrence2._beforeEventChangedFlag;
+          if (tempEvent.rrule) {
+            updateFollowingWithWEEKLY(tempEvent.id, tempEvent);
+          }
+          if (!scheduler2.config.collision_limit || scheduler2.checkCollision(tempEvent)) {
+            for (const i in scheduler2._events) {
+              let tev = scheduler2._events[i];
+              if (tev.id == tempEvent.id) {
+                scheduler2._events[i] = { ...tempEvent };
+                scheduler2.callEvent("onEventChanged", [scheduler2._events[i].id, scheduler2._events[i]]);
+              }
+            }
+          }
         } else {
           tempEvent._end_date = event2.end_date;
           const originalStart = occurrence2.original_start || scheduler2.date.date_part(new Date(occurrence2._start_date));
@@ -18626,29 +18702,34 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
           if (tempEvent.rrule) {
             updateFollowingWithWEEKLY(tempEvent.id, tempEvent);
           }
-        }
-        let tempEnd = tempEvent.end_date;
-        tempEvent.end_date = tempEvent._end_date;
-        if (!scheduler2.config.collision_limit || scheduler2.checkCollision(tempEvent)) {
-          tempEvent.end_date = tempEnd;
-          for (const i in scheduler2._events) {
-            let tev = scheduler2._events[i];
-            if (tev.id == tempEvent.id) {
-              scheduler2._events[i] = { ...tempEvent };
-              scheduler2.callEvent("onEventSave", [scheduler2._events[i].id, scheduler2._events[i], scheduler2._new_event]);
-              scheduler2.callEvent("onEventChanged", [scheduler2._events[i].id, scheduler2._events[i]]);
+          let tempEnd = tempEvent.end_date;
+          tempEvent.end_date = tempEvent._end_date;
+          if (!scheduler2.config.collision_limit || scheduler2.checkCollision(tempEvent)) {
+            tempEvent.end_date = tempEnd;
+            for (const i in scheduler2._events) {
+              let tev = scheduler2._events[i];
+              if (tev.id == tempEvent.id) {
+                scheduler2._events[i] = { ...tempEvent };
+                scheduler2.callEvent("onEventSave", [scheduler2._events[i].id, scheduler2._events[i], scheduler2._new_event]);
+                scheduler2.callEvent("onEventChanged", [scheduler2._events[i].id, scheduler2._events[i]]);
+              }
             }
           }
         }
       };
       const handleAllEvents = function(occurrence2) {
-        let tempEvent = scheduler2._lame_clone(event2);
+        let initialOccurrence = scheduler2._lame_clone(occurrence2);
+        if (scheduler2._isExceptionFirstOccurrence(initialOccurrence)) {
+          deleteExceptionFromStorage(initialOccurrence);
+        }
         if (tempEndDate && tempStartDate) {
           tempEvent.start_date.setHours(tempStartDate.getHours());
           tempEvent.start_date.setMinutes(tempStartDate.getMinutes());
           tempEvent.start_date.setSeconds(tempStartDate.getSeconds());
+          tempEvent.duration = (+tempEndDate - +tempStartDate) / 1e3;
         }
         tempEvent._beforeEventChangedFlag = occurrence2._beforeEventChangedFlag;
+        tempEvent._thisAndFollowing = null;
         if (!scheduler2.config.collision_limit || scheduler2.checkCollision(tempEvent)) {
           for (const i in scheduler2._events) {
             let tev = scheduler2._events[i];
@@ -18743,22 +18824,17 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       if (!seriesExceptions) {
         seriesExceptions = {};
       }
-      if (!from) {
-        from = scheduler2._min_date;
-      }
-      if (!to) {
-        to = scheduler2._max_date;
-      }
-      const utcStart = new Date(Date.UTC(ev.start_date.getFullYear(), ev.start_date.getMonth(), ev.start_date.getDate(), ev.start_date.getHours(), ev.start_date.getMinutes(), ev.start_date.getSeconds()));
+      from = toUTCDate(from || new Date(scheduler2._min_date.valueOf() - 1e3));
+      to = toUTCDate(to || new Date(scheduler2._max_date.valueOf() - 1e3));
+      const utcStart = toUTCDate(ev.start_date);
       let parsedRRule;
       if (maxCount) {
         parsedRRule = rrulestr(`RRULE:${ev.rrule};UNTIL=${toIcalString(ev.end_date)};COUNT=${maxCount}`, { dtstart: utcStart });
       } else {
         parsedRRule = rrulestr(`RRULE:${ev.rrule};UNTIL=${toIcalString(ev.end_date)}`, { dtstart: utcStart });
       }
-      const utcTo = new Date(Date.UTC(to.getFullYear(), to.getMonth(), to.getDate(), to.getHours(), to.getMinutes(), to.getSeconds()));
-      const repeatedDates = parsedRRule.between(from, utcTo).map((date) => {
-        const adjustedDate = new Date(date);
+      const repeatedDates = parsedRRule.between(from, to, true).map((date) => {
+        const adjustedDate = setUTCPartsToDate(date);
         adjustedDate.setHours(ev.start_date.getHours());
         adjustedDate.setMinutes(ev.start_date.getMinutes());
         adjustedDate.setSeconds(ev.start_date.getSeconds());

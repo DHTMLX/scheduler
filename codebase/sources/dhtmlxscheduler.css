@@ -153,6 +153,7 @@
   /* timeline */
   --dhx-scheduler-timeline-folder-background: var(--dhx-scheduler-base-colors-disabled);
   --dhx-scheduler-timeline-folder-color: var(--dhx-scheduler-base-colors-primary);
+  --dhx-scheduler-treetimeline-level-padding: 16px;
   /* markers */
   --dhx-scheduler-blocked-time-background: var(--dhx-scheduler-base-colors-disabled);
   --dhx-scheduler-today-marker-color: var(--dhx-scheduler-base-colors-error);
@@ -2856,29 +2857,21 @@ url("src/dhx-scheduler-icons.woff2?7d3dc8d31762f76ad3c385c23e9afbc6") format("wo
   background-color: var(--dhx-scheduler-timeline-folder-background);
   cursor: pointer;
 }
-.dhx_matrix_scell .dhx_scell_level0 {
-  padding-left: 4px;
-}
-.dhx_matrix_scell .dhx_scell_level1 {
-  padding-left: 20px;
-}
-.dhx_matrix_scell .dhx_scell_level2 {
-  padding-left: 32px;
-}
-.dhx_matrix_scell .dhx_scell_level3 {
-  padding-left: 48px;
-}
-.dhx_matrix_scell .dhx_scell_level4 {
-  padding-left: 64px;
-}
 .dhx_matrix_scell.folder {
   border-right-color: transparent;
   font-weight: 700;
   text-align: left;
 }
+.dhx_matrix_scell .dhx_scell_level {
+  padding-left: var(--dhx-scheduler-treetimeline-level-padding-value);
+}
 .dhx_cal_container_rtl .dhx_matrix_scell.folder {
   border-right: var(--dhx-scheduler-default-border);
   border-left-color: transparent;
+}
+.dhx_cal_container_rtl .dhx_matrix_scell .dhx_scell_level {
+  padding-left: 0;
+  padding-right: var(--dhx-scheduler-treetimeline-level-padding-value);
 }
 .dhx_matrix_line {
   overflow: hidden;
@@ -2926,26 +2919,6 @@ url("src/dhx-scheduler-icons.woff2?7d3dc8d31762f76ad3c385c23e9afbc6") format("wo
 .dhx_matrix_scell.item .dhx_scell_name {
   padding-left: 16px;
   text-align: left;
-}
-.dhx_cal_container_rtl .dhx_matrix_scell .dhx_scell_level0 {
-  padding-left: 0;
-  padding-right: 4px;
-}
-.dhx_cal_container_rtl .dhx_matrix_scell .dhx_scell_level1 {
-  padding-left: 0;
-  padding-right: 20px;
-}
-.dhx_cal_container_rtl .dhx_matrix_scell .dhx_scell_level2 {
-  padding-left: 0;
-  padding-right: 32px;
-}
-.dhx_cal_container_rtl .dhx_matrix_scell .dhx_scell_level3 {
-  padding-left: 0;
-  padding-right: 48px;
-}
-.dhx_cal_container_rtl .dhx_matrix_scell .dhx_scell_level4 {
-  padding-left: 0;
-  padding-right: 63px;
 }
 .dhx_cal_container_rtl .dhx_matrix_scell.folder .dhx_scell_expand {
   padding-right: 0;
