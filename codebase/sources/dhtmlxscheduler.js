@@ -3,7 +3,7 @@
 })(this, function(exports2) {
   "use strict";/** @license
 
-dhtmlxScheduler v.7.2.1 Standard
+dhtmlxScheduler v.7.2.2 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -82,6 +82,14 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       setRequiredStylesToMarker(eventNode2, layout);
       const sections = {};
       let markerObject = { start_date: event3.start_date, end_date: event3.end_date, css: "dhx_scheduler_dnd_marker", html: eventNode2 };
+      if (layout == "timeline") {
+        const viewObj = scheduler2.getView(viewName);
+        if (viewObj.round_position) {
+          const index = scheduler2._get_date_index(viewObj, event3.start_date);
+          const rounded_date = viewObj._trace_x[index];
+          markerObject.start_date = rounded_date;
+        }
+      }
       if (layout == "timeline" || layout == "month") {
         markerObject = { ...markerObject, end_date: scheduler2.date.add(event3.start_date, 1, "minute") };
       }
@@ -9019,7 +9027,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
           const dayElement = document.createElement("div");
           dayElement.setAttribute("data-cell-date", scheduler2.templates.format_date(currDate));
           dayElement.setAttribute("data-day", currDate.getDay());
-          dayElement.innerHTML = currDate.getDate();
+          dayElement.innerHTML = scheduler2.templates.month_day(currDate);
           if (currDate.valueOf() < monthStart.valueOf()) {
             dayElement.classList.add("dhx_before");
           } else if (currDate.valueOf() >= monthEnd.valueOf()) {
@@ -9124,7 +9132,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     }
   }
   function factoryMethod(extensionManager) {
-    const scheduler2 = { version: "7.2.1" };
+    const scheduler2 = { version: "7.2.2" };
     scheduler2.$stateProvider = StateService();
     scheduler2.getState = scheduler2.$stateProvider.getState;
     extend$n(scheduler2);
@@ -18564,6 +18572,10 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
             setPropsForFirstOccurrence(event2, occurrence);
             return scheduler2.showLightbox_rec(pid);
           }
+          if (scheduler2._isFirstOccurrence(occurrence)) {
+            setPropsForFirstOccurrence(event2, occurrence);
+            return scheduler2.showLightbox_rec(pid);
+          }
           const tempStart = new Date(event2.start_date);
           event2._end_date = event2.end_date;
           event2._start_date = tempStart;
@@ -18824,7 +18836,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       if (!seriesExceptions) {
         seriesExceptions = {};
       }
-      from = toUTCDate(from || new Date(scheduler2._min_date.valueOf() - 1e3));
+      from = toUTCDate(from || new Date(scheduler2._min_date.valueOf() - 7 * 24 * 60 * 60 * 1e3));
       to = toUTCDate(to || new Date(scheduler2._max_date.valueOf() - 1e3));
       const utcStart = toUTCDate(ev.start_date);
       let parsedRRule;
@@ -18849,7 +18861,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         const date = repeatedDates[i];
         let exception = seriesExceptions[date.valueOf()];
         if (exception) {
-          if (exception.deleted) {
+          if (exception.deleted || exception.end_date.valueOf() < scheduler2._min_date.valueOf()) {
             continue;
           } else {
             visibleCount++;
@@ -18861,6 +18873,9 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
           copy.start_date = date;
           copy.id = ev.id + "#" + Math.ceil(date.valueOf());
           copy.end_date = new Date(date.valueOf() + eventDuration * 1e3);
+          if (copy.end_date.valueOf() < scheduler2._min_date.valueOf()) {
+            continue;
+          }
           copy.end_date = scheduler2._fix_daylight_saving_date(copy.start_date, copy.end_date, ev, date, copy.end_date);
           copy._timed = scheduler2.isOneDayEvent(copy);
           if (!copy._timed && !scheduler2._table_view && !scheduler2.config.multi_day)
@@ -18877,7 +18892,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         for (let a in seriesExceptions) {
           let exception = seriesExceptions[a];
           if (exception) {
-            if (exception.deleted) {
+            if (exception.deleted || exception.end_date.valueOf() < scheduler2._min_date.valueOf()) {
               continue;
             } else if (from && to && exception.start_date < to && exception.end_date > from) {
               stack.push(exception);
@@ -21014,69 +21029,6 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       } else {
         scheduler2._hideToolTip();
       }
-    };
-    scheduler2._reset_year_scale = function() {
-      this._cols = [];
-      this._colsS = {};
-      var week_starts = [];
-      var dataArea = this._els["dhx_cal_data"][0];
-      var c = this.config;
-      dataArea.scrollTop = 0;
-      dataArea.innerHTML = "";
-      Math.floor((parseInt(dataArea.style.height) - scheduler2.xy.year_top) / c.year_y);
-      var week_template = document.createElement("div");
-      var dummy_date = this.date.week_start(scheduler2._currentDate());
-      this._process_ignores(dummy_date, 7, "day", 1);
-      for (var i = 0; i < 7; i++) {
-        if (!(this._ignores && this._ignores[i])) {
-          this._cols[i] = "var(--dhx-scheduler-datepicker-cell-size)";
-          this._render_x_header(i, 0, dummy_date, week_template);
-        }
-        dummy_date = this.date.add(dummy_date, 1, "day");
-      }
-      week_template.lastChild.className += " dhx_scale_bar_last";
-      for (var i = 0; i < week_template.childNodes.length; i++) {
-        this._waiAria.yearHeadCell(week_template.childNodes[i]);
-      }
-      var sd = this.date[this._mode + "_start"](this.date.copy(this._date));
-      var ssd = sd;
-      var yearBox = null;
-      const wrapper = document.createElement("div");
-      wrapper.classList.add("dhx_year_wrapper");
-      for (var i = 0; i < c.year_y; i++) {
-        for (var j = 0; j < c.year_x; j++) {
-          yearBox = document.createElement("div");
-          yearBox.className = "dhx_year_box";
-          yearBox.setAttribute("date", this._helpers.formatDate(sd));
-          yearBox.setAttribute("data-month-date", this._helpers.formatDate(sd));
-          yearBox.innerHTML = "<div class='dhx_year_month'></div><div class='dhx_year_grid'><div class='dhx_year_week'>" + week_template.innerHTML + "</div><div class='dhx_year_body'></div></div>";
-          var header = yearBox.querySelector(".dhx_year_month");
-          var grid = yearBox.querySelector(".dhx_year_grid");
-          var body = yearBox.querySelector(".dhx_year_body");
-          var headerId = scheduler2.uid();
-          this._waiAria.yearHeader(header, headerId);
-          this._waiAria.yearGrid(grid, headerId);
-          header.innerHTML = this.templates.year_month(sd);
-          var dd = this.date.week_start(sd);
-          this._reset_month_scale(body, sd, dd, 6);
-          var days = body.querySelectorAll("td");
-          for (var day = 0; day < days.length; day++) {
-            this._waiAria.yearDayCell(days[day]);
-          }
-          wrapper.appendChild(yearBox);
-          week_starts[i * c.year_x + j] = (sd.getDay() - (this.config.start_on_monday ? 1 : 0) + 7) % 7;
-          sd = this.date.add(sd, 1, "month");
-        }
-      }
-      dataArea.appendChild(wrapper);
-      var dateElement = this._getNavDateElement();
-      if (dateElement) {
-        dateElement.innerHTML = this.templates[this._mode + "_date"](ssd, sd, this._mode);
-      }
-      this.week_starts = week_starts;
-      week_starts._month = ssd.getMonth();
-      this._min_date = ssd;
-      this._max_date = sd;
     };
     scheduler2._reset_year_scale = function() {
       var dataArea = this._els["dhx_cal_data"][0];

@@ -1,3 +1,11 @@
+### 7.2.2
+
+Fix the issue where filtering did not work correctly for modified occurrences of recurring events
+Ensure the month_date template properly affects the Year view
+Fix the incorrect behavior when using multisection events in the Timeline view with round_position: true
+Prevent recurring events occurrences from being cut off when they fall outside the visible range of the Timeline view
+Fix issues with editing recurring events using the "current and the following" option
+
 ### 7.2.1
 
 Prevent recurring occurrences from disappearing during daylight saving time (DST) transitions.
