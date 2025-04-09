@@ -1833,6 +1833,7 @@ url("src/dhx-scheduler-icons.woff2?7d3dc8d31762f76ad3c385c23e9afbc6") format("wo
 /* checkbox */
 .dhx_cal_checkbox {
   display: flex;
+  align-items: center;
   gap: var(--dhx-scheduler-base-padding);
 }
 .dhx_cal_wide_checkbox {

@@ -1,3 +1,14 @@
+### 7.2.3
+
+Fix the issue where grid cells were not focused when tasks were outside the chart's visible time range
+Fix the issue in the multiUserBackend extension that caused incorrect behavior when editing all events in a recurring series
+Fix the issue where the timeline_scalex_class added the class twice in the Timeline view
+Fix the issue where scrollTo({section: x}) did not scroll to the first section in the Timeline view
+Fix the issue where the section height setting in the lightbox was not applied correctly
+Fix the issue where the Mini Calendar ignored the rtl configuration
+Fix the issue where smart rendering worked only in the first Timeline view when multiple timelines were used with smart_rendering:true and scrollable:false
+Fix the issue where using first_hour/last_hour with round_position caused incorrect dates of events when dragging events in the Timeline view
+
 ### 7.2.2
 
 Fix the issue where filtering did not work correctly for modified occurrences of recurring events

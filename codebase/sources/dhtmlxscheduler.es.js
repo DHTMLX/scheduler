@@ -1,6 +1,6 @@
 /** @license
 
-dhtmlxScheduler v.7.2.2 Standard
+dhtmlxScheduler v.7.2.3 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -2674,8 +2674,15 @@ function extend$j(scheduler2) {
               if (this.config.preserve_length) {
                 if (pos.resize_from_start) {
                   start = scheduler2._correct_drag_start_date(resize_date);
+                  if (obj.round_position && obj.first_hour && obj.last_hour && obj.x_unit == "day") {
+                    start = new Date(start * 1 + obj._start_correction);
+                  }
                 } else {
                   end = scheduler2._correct_drag_end_date(resize_date, 0);
+                  if (obj.round_position && obj.first_hour && obj.last_hour && obj.x_unit == "day") {
+                    end = scheduler2.date.date_part(new Date(end));
+                    end = new Date(end * 1 - obj._end_correction);
+                  }
                 }
               } else {
                 if (pos.resize_from_start) {
@@ -3524,9 +3531,9 @@ function extend$j(scheduler2) {
         let excludedDuration = 0;
         const intervalStart = new Date(Math.max(check.valueOf(), startDate.valueOf()));
         const intervalEnd = endDate;
-        const leftCellCutOffStart = new Date(intervalStart.getFullYear(), intervalStart.getMonth(), intervalStart.getDate(), config.first_hour);
+        const leftCellCutOffStart = new Date(intervalStart.getFullYear(), intervalStart.getMonth(), intervalStart.getDate(), config.first_hour || 0);
         const leftCellCutOffEnd = new Date(intervalStart.getFullYear(), intervalStart.getMonth(), intervalStart.getDate(), config.last_hour || 24);
-        const rightCellCutOffStart = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), config.first_hour);
+        const rightCellCutOffStart = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), config.first_hour || 0);
         const rightCellCutOffEnd = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), config.last_hour || 24);
         if (intervalEnd.valueOf() > rightCellCutOffEnd.valueOf()) {
           excludedDuration += intervalEnd - rightCellCutOffEnd;
@@ -6378,15 +6385,17 @@ function extend$6(scheduler2) {
   };
   scheduler2._lightbox_controls.defaults = { template: { height: 30 }, textarea: { height: 200 }, select: { height: 23 }, time: { height: 20 } };
   scheduler2.form_blocks = { template: { render: function(sns) {
-    return "<div class='dhx_cal_ltext dhx_cal_template' ></div>";
+    const sectionHeight = sns.height ? `style='height:${sns.height}px;'` : "";
+    return `<div class='dhx_cal_ltext dhx_cal_template' ${sectionHeight}></div>`;
   }, set_value: function(node, value, ev, config) {
     node.innerHTML = value || "";
   }, get_value: function(node, ev, config) {
     return node.innerHTML || "";
   }, focus: function(node) {
   } }, textarea: { render: function(sns) {
+    const sectionHeight = sns.height ? `style='height:${sns.height}px;'` : "";
     const placeholder = sns.placeholder ? `placeholder='${sns.placeholder}'` : "";
-    return `<div class='dhx_cal_ltext'><textarea ${placeholder}></textarea></div>`;
+    return `<div class='dhx_cal_ltext' ${sectionHeight}><textarea ${placeholder}></textarea></div>`;
   }, set_value: function(node, value, ev) {
     scheduler2.form_blocks.textarea._get_input(node).value = value || "";
   }, get_value: function(node, ev) {
@@ -6397,7 +6406,8 @@ function extend$6(scheduler2) {
   }, _get_input: function(node) {
     return node.getElementsByTagName("textarea")[0];
   } }, select: { render: function(sns) {
-    var html = "<div class='dhx_cal_ltext dhx_cal_select'><select style='width:100%;'>";
+    const sectionHeight = sns.height ? `style='height:${sns.height}px;'` : "";
+    var html = `<div class='dhx_cal_ltext dhx_cal_select' ${sectionHeight}><select style='width:100%;'>`;
     for (var i = 0; i < sns.options.length; i++)
       html += "<option value='" + sns.options[i].key + "'>" + sns.options[i].label + "</option>";
     html += "</select></div>";
@@ -6494,7 +6504,8 @@ function extend$6(scheduler2) {
         html += "<select class='" + selectBoxClass + "' " + readonly2 + ariaAttrs + ">" + options + "</select> ";
       }
     }
-    return "<div class='dhx_section_time'>" + html + "<span style='font-weight:normal; font-size:10pt;' class='dhx_section_time_spacer'> &nbsp;&ndash;&nbsp; </span>" + html + "</div>";
+    const sectionHeight = sns.height ? `style='height:${sns.height}px;'` : "";
+    return `<div class='dhx_section_time' ${sectionHeight}>${html}<span style='font-weight:normal; font-size:10pt;' class='dhx_section_time_spacer'> &nbsp;&ndash;&nbsp; </span>${html}</div>`;
   }, set_value: function(node, value, ev, config) {
     var cfg = scheduler2.config;
     var s = node.getElementsByTagName("select");
@@ -9128,7 +9139,7 @@ class DatePicker {
   }
 }
 function factoryMethod(extensionManager) {
-  const scheduler2 = { version: "7.2.2" };
+  const scheduler2 = { version: "7.2.3" };
   scheduler2.$stateProvider = StateService();
   scheduler2.getState = scheduler2.$stateProvider.getState;
   extend$n(scheduler2);
@@ -10249,8 +10260,9 @@ function editors(scheduler2) {
   scheduler2.form_blocks["combo"] = { render: function(sns) {
     if (!sns.cached_options)
       sns.cached_options = {};
+    const sectionHeight = sns.height ? `style='height:${sns.height}px;'` : "";
     var res = "";
-    res += "<div class='" + sns.type + "' ></div>";
+    res += `<div class='${sns.type}' ${sectionHeight}></div>`;
     return res;
   }, set_value: function(node, value, ev, config) {
     (function() {
@@ -10331,7 +10343,7 @@ function editors(scheduler2) {
   } };
   scheduler2.form_blocks["radio"] = { render: function(sns) {
     var res = "";
-    res += `<div class='dhx_cal_ltext dhx_cal_radio ${sns.vertical ? "dhx_cal_radio_vertical" : ""}' style='max-height:${sns.height}px;'>`;
+    res += `<div class='dhx_cal_ltext dhx_cal_radio ${sns.vertical ? "dhx_cal_radio_vertical" : ""}' style='height:${sns.height}px;'>`;
     for (var i = 0; i < sns.options.length; i++) {
       var id2 = scheduler2.uid();
       res += "<label class='dhx_cal_radio_item' for='" + id2 + "'><input id='" + id2 + "' type='radio' name='" + sns.name + "' value='" + sns.options[i].key + "'><span> " + sns.options[i].label + "</span></label>";
@@ -10363,6 +10375,9 @@ function editors(scheduler2) {
       return "";
   }, set_value: function(node, value, ev, config) {
     node = scheduler2._lightbox.querySelector(`#${config.id}`);
+    if (config.height) {
+      node.style.height = `${config.height}px`;
+    }
     var id2 = scheduler2.uid();
     var isChecked = typeof config.checked_value != "undefined" ? value == config.checked_value : !!value;
     node.className += " dhx_cal_checkbox";
@@ -14191,6 +14206,8 @@ function minical(scheduler2) {
     } else {
       d = document.createElement("div");
       d.className = "dhx_cal_container dhx_mini_calendar";
+      if (this.config.rtl)
+        d.className += " dhx_cal_container_rtl";
     }
     d.setAttribute("date", this._helpers.formatDate(sd));
     d.innerHTML = "<div class='dhx_year_month'></div><div class='dhx_year_grid" + (scheduler2.config.rtl ? " dhx_grid_rtl'>" : "'>") + "<div class='dhx_year_week'>" + (week_template ? week_template.innerHTML : "") + "</div><div class='dhx_year_body'></div></div>";
@@ -14517,7 +14534,7 @@ function multiselect(scheduler2) {
     if (!!sns.vertical) {
       css += " dhx_multi_select_control_vertical";
     }
-    var _result = "<div class='" + css + "' style='overflow: auto; max-height: " + sns.height + "px; position: relative;' >";
+    var _result = "<div class='" + css + "' style='overflow: auto; height: " + sns.height + "px; position: relative;' >";
     for (var i = 0; i < sns.options.length; i++) {
       _result += "<label><input type='checkbox' value='" + sns.options[i].key + "'/>" + sns.options[i].label + "</label>";
     }
@@ -18115,7 +18132,9 @@ function recurring(scheduler2) {
       let code = splited[0];
       let name = splited[1];
       if (code === "BYDAY") {
-        continue;
+        if (!(ev.rrule.includes("WEEKLY") && name.length > 3)) {
+          continue;
+        }
       }
       updatedRRULE.push(code);
       updatedRRULE.push("=");
@@ -18140,7 +18159,7 @@ function recurring(scheduler2) {
     if (scheduler2._is_modified_occurrence(ev)) {
       let pid = ev.recurring_event_id;
       let recEvent = scheduler2.getEvent(pid);
-      return !!(ev.original_start.valueOf() && ev.original_start.valueOf() === recEvent.start_date.valueOf());
+      return !!(ev.original_start && ev.original_start.valueOf() && ev.original_start.valueOf() === recEvent.start_date.valueOf());
     }
   };
   scheduler2._rec_temp = [];
@@ -18857,7 +18876,7 @@ function recurring(scheduler2) {
       const date = repeatedDates[i];
       let exception = seriesExceptions[date.valueOf()];
       if (exception) {
-        if (exception.deleted || exception.end_date.valueOf() < scheduler2._min_date.valueOf()) {
+        if (exception.deleted || exception.end_date.valueOf() < scheduler2._min_date.valueOf() || !scheduler2.filter_event(exception.id, exception)) {
           continue;
         } else {
           visibleCount++;
@@ -18888,7 +18907,7 @@ function recurring(scheduler2) {
       for (let a in seriesExceptions) {
         let exception = seriesExceptions[a];
         if (exception) {
-          if (exception.deleted || exception.end_date.valueOf() < scheduler2._min_date.valueOf()) {
+          if (exception.deleted || exception.end_date.valueOf() < scheduler2._min_date.valueOf() || !scheduler2.filter_event(exception.id, exception)) {
             continue;
           } else if (from && to && exception.start_date < to && exception.end_date > from) {
             stack.push(exception);
@@ -18999,34 +19018,47 @@ function recurring(scheduler2) {
   }
   const jsDaysToRRULEDays = { 0: "SU", 1: "MO", 2: "TU", 3: "WE", 4: "TH", 5: "FR", 6: "SA" };
   const RruleDayNumsToJs = { 0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 0 };
+  function fillIntervalInput(node, rule) {
+    const intervalInput = node.querySelector("[name='repeat_interval_value']");
+    if (intervalInput) {
+      intervalInput.value = (rule ? rule.interval : 1) || 1;
+    }
+  }
   function fillCustomDaily(node, rule) {
-    node.querySelector("[name='repeat_interval_value']").value = (rule ? rule.interval : 1) || 1;
+    fillIntervalInput(node, rule);
   }
   function fillCustomWeekly(node, rule, event2) {
-    node.querySelector("[name='repeat_interval_value']").value = (rule ? rule.interval : 1) || 1;
+    fillIntervalInput(node, rule);
     const dayCheckboxes = node.querySelectorAll(`.dhx_form_repeat_custom_week input`);
     dayCheckboxes.forEach((ch) => ch.checked = false);
     if (rule && rule.byweekday) {
       rule.byweekday.forEach((day) => {
         const dayNum = RruleDayNumsToJs[day.weekday];
         const dayLabel = jsDaysToRRULEDays[dayNum];
-        node.querySelector(`.dhx_form_repeat_custom_week input[value="${dayLabel}"]`).checked = true;
+        const checkbox = node.querySelector(`.dhx_form_repeat_custom_week input[value="${dayLabel}"]`);
+        if (checkbox) {
+          checkbox.checked = true;
+        }
       });
     } else {
       const dayLabel = jsDaysToRRULEDays[event2.start_date.getDay()];
-      node.querySelector(`.dhx_form_repeat_custom_week input[value="${dayLabel}"]`).checked = true;
+      const checkbox = node.querySelector(`.dhx_form_repeat_custom_week input[value="${dayLabel}"]`);
+      if (checkbox) {
+        checkbox.checked = true;
+      }
     }
   }
   function fillCustomMonthly(node, rule, event2) {
-    node.querySelector("[name='repeat_interval_value']").value = (rule ? rule.interval : 1) || 1;
+    fillIntervalInput(node, rule);
     const dateOfMonth = node.querySelector(`.dhx_form_repeat_custom_month [value="month_date"]`);
     const nthWeekDayOfMonth = node.querySelector(`.dhx_form_repeat_custom_month [value="month_nth_weekday"]`);
-    dateOfMonth.innerText = scheduler2.templates.repeat_monthly_date(event2.start_date, event2);
-    nthWeekDayOfMonth.innerText = scheduler2.templates.repeat_monthly_weekday(event2.start_date, event2);
-    if (!rule || rule.bysetpos && !(rule.byweekday && rule.byweekday.length)) {
-      node.querySelector(`[name="dhx_custom_month_option"]`).value = "month_date";
-    } else {
-      node.querySelector(`[name="dhx_custom_month_option"]`).value = "month_nth_weekday";
+    if (dateOfMonth && nthWeekDayOfMonth) {
+      dateOfMonth.innerText = scheduler2.templates.repeat_monthly_date(event2.start_date, event2);
+      nthWeekDayOfMonth.innerText = scheduler2.templates.repeat_monthly_weekday(event2.start_date, event2);
+      const option = node.querySelector(`[name="dhx_custom_month_option"]`);
+      if (option) {
+        option.value = rule && rule.bysetpos && !(rule.byweekday && rule.byweekday.length) ? "month_date" : "month_nth_weekday";
+      }
     }
   }
   function formatDayNumber(date) {
@@ -19063,34 +19095,38 @@ function recurring(scheduler2) {
   function fillCustomYearly(node, rule, event2) {
     const dateOfYear = node.querySelector(`.dhx_form_repeat_custom_year [value="month_date"]`);
     const nthWeekDayOfYear = node.querySelector(`.dhx_form_repeat_custom_year [value="month_nth_weekday"]`);
-    dateOfYear.innerText = scheduler2.templates.repeat_yearly_month_date(event2.start_date, event2);
-    nthWeekDayOfYear.innerText = scheduler2.templates.repeat_yearly_month_weekday(event2.start_date, event2);
-    if (!rule || rule.bysetpos && !(rule.byweekday && rule.byweekday.length)) {
-      node.querySelector(`[name="dhx_custom_year_option"]`).value = "month_date";
-    } else {
-      node.querySelector(`[name="dhx_custom_year_option"]`).value = "month_nth_weekday";
+    if (dateOfYear && nthWeekDayOfYear) {
+      dateOfYear.innerText = scheduler2.templates.repeat_yearly_month_date(event2.start_date, event2);
+      nthWeekDayOfYear.innerText = scheduler2.templates.repeat_yearly_month_weekday(event2.start_date, event2);
+      if (!rule || rule.bysetpos && !(rule.byweekday && rule.byweekday.length)) {
+        node.querySelector(`[name="dhx_custom_year_option"]`).value = "month_date";
+      } else {
+        node.querySelector(`[name="dhx_custom_year_option"]`).value = "month_nth_weekday";
+      }
     }
   }
   function fillEndRule(node, rule, event2) {
     const countInput = node.querySelector(`.dhx_form_repeat_ends_extra [name="dhx_form_repeat_ends_after"]`);
     const ondateInput = node.querySelector(`.dhx_form_repeat_ends_extra [name="dhx_form_repeat_ends_ondate"]`);
     const endOptionSelect = node.querySelector(`[name='dhx_custom_repeat_ends']`);
-    countInput.value = 1;
-    let formatter = scheduler2.date.date_to_str("%Y-%m-%d");
-    if (!scheduler2.config.repeat_date_of_end) {
-      scheduler2.config.repeat_date_of_end = formatter(scheduler2.date.add(scheduler2._currentDate(), 30, "day"));
+    if (countInput && ondateInput && endOptionSelect) {
+      countInput.value = 1;
+      let formatter = scheduler2.date.date_to_str("%Y-%m-%d");
+      if (!scheduler2.config.repeat_date_of_end) {
+        scheduler2.config.repeat_date_of_end = formatter(scheduler2.date.add(scheduler2._currentDate(), 30, "day"));
+      }
+      ondateInput.value = scheduler2.config.repeat_date_of_end;
+      if (rule && rule.count) {
+        endOptionSelect.value = "AFTER";
+        countInput.value = rule.count;
+      } else if (event2._end_date && event2._end_date.getFullYear() !== 9999) {
+        endOptionSelect.value = "ON";
+        ondateInput.value = formatter(event2._end_date);
+      } else {
+        endOptionSelect.value = "NEVER";
+      }
+      endOptionSelect.dispatchEvent(new Event("change"));
     }
-    ondateInput.value = scheduler2.config.repeat_date_of_end;
-    if (rule && rule.count) {
-      endOptionSelect.value = "AFTER";
-      countInput.value = rule.count;
-    } else if (event2._end_date && event2._end_date.getFullYear() !== 9999) {
-      endOptionSelect.value = "ON";
-      ondateInput.value = formatter(event2._end_date);
-    } else {
-      endOptionSelect.value = "NEVER";
-    }
-    endOptionSelect.dispatchEvent(new Event("change"));
   }
   const getRecValue = { MONTHLY: function(dates) {
     const rrule = { freq: RRule.MONTHLY, interval: 1, bymonthday: dates.start.getDate() };
@@ -19119,8 +19155,8 @@ function recurring(scheduler2) {
     const rrule = {};
     const freq = node.querySelector(`[name="repeat_interval_unit"]`).value;
     const interval = Math.max(1, node.querySelector(`[name="repeat_interval_value"]`).value);
-    const monthRepeat = node.querySelector(`[name="dhx_custom_month_option"]`).value;
-    const yearRepeat = node.querySelector(`[name="dhx_custom_year_option"]`).value;
+    const monthRepeat = node.querySelector(`[name="dhx_custom_month_option"]`) ? node.querySelector(`[name="dhx_custom_month_option"]`).value : null;
+    const yearRepeat = node.querySelector(`[name="dhx_custom_year_option"]`) ? node.querySelector(`[name="dhx_custom_year_option"]`).value : null;
     rrule.interval = interval;
     let days;
     let day;
@@ -19184,10 +19220,10 @@ function recurring(scheduler2) {
     const formatFunc = scheduler2.date.str_to_date("%Y-%m-%d");
     let until = new Date(9999, 1, 1);
     const endRule = node.querySelector(`[name="dhx_custom_repeat_ends"]`);
-    if (endRule.value === "ON") {
+    if (endRule && endRule.value === "ON") {
       until = formatFunc(node.querySelector(`[name="dhx_form_repeat_ends_ondate"]`).value);
       rrule.until = new Date(until);
-    } else if (endRule.value === "AFTER") {
+    } else if (endRule && endRule.value === "AFTER") {
       rrule.count = Math.max(1, node.querySelector(`[name="dhx_form_repeat_ends_after"]`).value);
     }
     return { rrule, until };
@@ -19200,7 +19236,27 @@ function recurring(scheduler2) {
     fillCustomYearly(node, rule, event2);
     fillEndRule(node, rule, event2);
   }
-  scheduler2.form_blocks["recurring"] = { render: function(sns) {
+  scheduler2.form_blocks["recurring"] = { _get_node: function(node) {
+    if (typeof node == "string") {
+      let element = scheduler2._lightbox.querySelector(`#${node}`);
+      if (!element) {
+        element = document.getElementById(node);
+      }
+      node = element;
+    }
+    if (node.style.display == "none")
+      node.style.display = "";
+    return node;
+  }, _outer_html: function(node) {
+    return node.outerHTML || getOuterHTML(node);
+    function getOuterHTML(n) {
+      var div = document.createElement("div"), h;
+      div.appendChild(n.cloneNode(true));
+      h = div.innerHTML;
+      div = null;
+      return h;
+    }
+  }, render: function(sns) {
     if (sns.form) {
       let rec = scheduler2.form_blocks["recurring"];
       let form = rec._get_node(sns.form);
@@ -19282,10 +19338,12 @@ function recurring(scheduler2) {
   }, _init_set_value: function(node, value, event2) {
     scheduler2.form_blocks["recurring"]._ds = { start: event2.start_date, end: event2.end_date };
     function hide(node2) {
-      node2.classList.add("dhx_hidden");
+      if (node2)
+        node2.classList.add("dhx_hidden");
     }
     function show(node2) {
-      node2.classList.remove("dhx_hidden");
+      if (node2)
+        node2.classList.remove("dhx_hidden");
     }
     function onRepeatOptionChange(value2) {
       const repeat2 = node.querySelector(".dhx_form_repeat_custom");
@@ -19337,15 +19395,24 @@ function recurring(scheduler2) {
           break;
       }
     }
-    node.querySelector(".dhx_form_repeat_pattern select").addEventListener("change", function() {
-      onRepeatOptionChange(this.value);
-    });
-    node.querySelector(".dhx_form_repeat_custom_interval [name='repeat_interval_unit']").addEventListener("change", function() {
-      onCustomRepeatIntervalChange(this.value);
-    });
-    node.querySelector(".dhx_form_repeat_ends [name='dhx_custom_repeat_ends']").addEventListener("change", function() {
-      onCustomRepeatEndRule(this.value);
-    });
+    const repeatSelect = node.querySelector(".dhx_form_repeat_pattern select");
+    if (repeatSelect) {
+      repeatSelect.addEventListener("change", function() {
+        onRepeatOptionChange(this.value);
+      });
+    }
+    const customRepeatUnitInput = node.querySelector(".dhx_form_repeat_custom_interval [name='repeat_interval_unit']");
+    if (customRepeatUnitInput) {
+      customRepeatUnitInput.addEventListener("change", function() {
+        onCustomRepeatIntervalChange(this.value);
+      });
+    }
+    const customRepeatEndInput = node.querySelector(".dhx_form_repeat_ends [name='dhx_custom_repeat_ends']");
+    if (customRepeatEndInput) {
+      customRepeatEndInput.addEventListener("change", function() {
+        onCustomRepeatEndRule(this.value);
+      });
+    }
     scheduler2._lightbox._rec_init_done = true;
   }, button_click: function() {
   }, set_value: function(node, value, ev) {
@@ -19385,17 +19452,24 @@ function recurring(scheduler2) {
       }
     } else {
       fillInDefaults(node, null, ev);
-      node.querySelector(".dhx_form_repeat_pattern select").value = "NEVER";
+      const repeatSelect2 = node.querySelector(".dhx_form_repeat_pattern select");
+      if (repeatSelect2) {
+        repeatSelect2.value = "NEVER";
+      }
     }
-    node.querySelector(".dhx_form_repeat_pattern select").dispatchEvent(new Event("change"));
+    const repeatSelect = node.querySelector(".dhx_form_repeat_pattern select");
+    if (repeatSelect) {
+      repeatSelect.dispatchEvent(new Event("change"));
+    }
   }, get_value: function(node, ev) {
-    if (!node.blocked && node.querySelector(".dhx_form_repeat_pattern select").value !== "NEVER") {
+    const repeatSelect = node.querySelector(".dhx_form_repeat_pattern select");
+    if (!node.blocked && (!repeatSelect || repeatSelect.value !== "NEVER")) {
       let ds = scheduler2.form_blocks["recurring"]._ds;
       let actual_dates = {};
       let timeControl = getTimeSection();
       timeControl.getValue(actual_dates);
       ds.start = actual_dates.start_date;
-      const pattern = node.querySelector(".dhx_form_repeat_pattern select").value;
+      const pattern = repeatSelect ? repeatSelect.value : "CUSTOM";
       const recurrence = getRecValue[pattern](ds, node);
       ev.rrule = new RRule(recurrence.rrule).toString().replace("RRULE:", "");
       ds.end = recurrence.until;
