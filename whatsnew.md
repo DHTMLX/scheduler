@@ -1,3 +1,12 @@
+### 7.2.4
+
+Fix the incorrect behavior of the ignore_timeline setting when moving or resizing events in the Timeline view
+Fix the issue with incorrect end_date calculation when creating new events with ignore_timeline enabled
+Fix the issue where lightbox button configurations were mixed up after being saved to storage
+Fix the issue where the container_autoresize plugin unexpectedly increased container size in an empty Agenda view
+Fix the script error in the Units view that occurred with certain values of the size setting with the mark_now config enabled
+Fix the incorrect behavior of horizontal scroll in the Timeline view when smart_rendering is set to false
+
 ### 7.2.3
 
 Fix the issue where grid cells were not focused when tasks were outside the chart's visible time range

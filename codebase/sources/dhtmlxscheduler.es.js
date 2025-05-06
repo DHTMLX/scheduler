@@ -1,6 +1,6 @@
 /** @license
 
-dhtmlxScheduler v.7.2.3 Standard
+dhtmlxScheduler v.7.2.4 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -2683,6 +2683,13 @@ function extend$j(scheduler2) {
                     end = scheduler2.date.date_part(new Date(end));
                     end = new Date(end * 1 - obj._end_correction);
                   }
+                  if (obj.round_position && scheduler2["ignore_" + scheduler2._mode] && obj.x_unit == "day") {
+                    const ignore = this["ignore_" + this._mode];
+                    let tempEnd = scheduler2.date.add(new Date(end), -obj.x_step, obj.x_unit);
+                    if (ignore(tempEnd)) {
+                      end = tempEnd;
+                    }
+                  }
                 }
               } else {
                 if (pos.resize_from_start) {
@@ -2802,6 +2809,14 @@ function extend$j(scheduler2) {
             end.setHours(this.config.last_hour);
             new_end = new Date(end - 1);
           }
+        }
+        if (this._table_view && scheduler2["ignore_" + this._mode] && (this._drag_mode == "resize" || this._drag_mode == "new-size") && +end > +scheduler2._max_date) {
+          end = new Date(scheduler2._max_date);
+          const ignore = this["ignore_" + this._mode];
+          while (ignore(end)) {
+            end = scheduler2.date.add(end, -obj.x_step, obj.x_unit);
+          }
+          end = scheduler2.date.add(end, obj.x_step, obj.x_unit);
         }
         if (this._table_view || new_end.getDate() == new_start.getDate() && new_end.getHours() < this.config.last_hour || scheduler2._allow_dnd) {
           ev.start_date = new_start;
@@ -3581,7 +3596,11 @@ function extend$j(scheduler2) {
     } else {
       end_slot = Math.round(ev_length / 60 / 60 / 1e3 / 24);
     }
-    while (start_slot * dir <= end_slot * dir) {
+    function condition() {
+      const isDayUnit = obj.x_unit === "day";
+      return isDayUnit ? start_slot * dir < end_slot * dir : start_slot * dir <= end_slot * dir;
+    }
+    while (condition()) {
       var check = scheduler2.date.add(sd, obj.x_step * dir, obj.x_unit);
       if (ignore && ignore(sd)) {
         ev_length += (check - sd) * dir;
@@ -4743,7 +4762,7 @@ function extend$e(scheduler2) {
   } };
 }
 function extend$d(scheduler2) {
-  scheduler2.config = { default_date: "%j %M %Y", month_date: "%F %Y", load_date: "%Y-%m-%d", week_date: "%l", day_date: "%D %j", hour_date: "%H:%i", month_day: "%d", date_format: "%Y-%m-%d %H:%i", api_date: "%d-%m-%Y %H:%i", parse_exact_format: false, preserve_length: true, time_step: 5, displayed_event_color: "#ff4a4a", displayed_event_text_color: "#ffef80", wide_form: 0, day_column_padding: 8, use_select_menu_space: true, fix_tab_position: true, start_on_monday: true, first_hour: 0, last_hour: 24, readonly: false, drag_resize: true, drag_move: true, drag_create: true, drag_event_body: true, dblclick_create: true, details_on_dblclick: true, edit_on_create: true, details_on_create: true, header: null, hour_size_px: 44, resize_month_events: false, resize_month_timed: false, responsive_lightbox: false, separate_short_events: true, rtl: false, cascade_event_display: false, cascade_event_count: 4, cascade_event_margin: 30, multi_day: true, multi_day_height_limit: 200, drag_lightbox: true, preserve_scroll: true, select: true, undo_deleted: true, server_utc: false, touch: true, touch_tip: true, touch_drag: 500, touch_swipe_dates: false, quick_info_detached: true, positive_closing: false, drag_highlight: true, limit_drag_out: false, icons_edit: ["icon_save", "icon_cancel"], icons_select: ["icon_details", "icon_edit", "icon_delete"], buttons_left: ["dhx_save_btn", "dhx_cancel_btn"], buttons_right: ["dhx_delete_btn"], lightbox: { sections: [{ name: "description", map_to: "text", type: "textarea", focus: true }, { name: "time", height: 72, type: "time", map_to: "auto" }] }, highlight_displayed_event: true, left_border: false, ajax_error: "alert", delay_render: 0, timeline_swap_resize: true, wai_aria_attributes: true, wai_aria_application_role: true, csp: "auto", event_attribute: "data-event-id", show_errors: true };
+  scheduler2.config = { default_date: "%j %M %Y", month_date: "%F %Y", load_date: "%Y-%m-%d", week_date: "%l", day_date: "%D %j", hour_date: "%H:%i", month_day: "%d", date_format: "%Y-%m-%d %H:%i", api_date: "%d-%m-%Y %H:%i", parse_exact_format: false, preserve_length: true, time_step: 5, displayed_event_color: "#ff4a4a", displayed_event_text_color: "#ffef80", wide_form: 0, day_column_padding: 8, use_select_menu_space: true, fix_tab_position: true, start_on_monday: true, first_hour: 0, last_hour: 24, readonly: false, drag_resize: true, drag_move: true, drag_create: true, drag_event_body: true, dblclick_create: true, details_on_dblclick: true, edit_on_create: true, details_on_create: true, header: null, hour_size_px: 44, resize_month_events: false, resize_month_timed: false, responsive_lightbox: false, separate_short_events: true, rtl: false, cascade_event_display: false, cascade_event_count: 4, cascade_event_margin: 30, multi_day: true, multi_day_height_limit: 200, drag_lightbox: true, preserve_scroll: true, select: true, undo_deleted: true, server_utc: false, touch: true, touch_tip: true, touch_drag: 500, touch_swipe_dates: false, quick_info_detached: true, positive_closing: false, drag_highlight: true, limit_drag_out: false, icons_edit: ["icon_save", "icon_cancel"], icons_select: ["icon_details", "icon_edit", "icon_delete"], buttons_right: ["dhx_save_btn", "dhx_cancel_btn"], buttons_left: ["dhx_delete_btn"], lightbox: { sections: [{ name: "description", map_to: "text", type: "textarea", focus: true }, { name: "time", height: 72, type: "time", map_to: "auto" }] }, highlight_displayed_event: true, left_border: false, ajax_error: "alert", delay_render: 0, timeline_swap_resize: true, wai_aria_attributes: true, wai_aria_application_role: true, csp: "auto", event_attribute: "data-event-id", show_errors: true };
   scheduler2.config.buttons_left.$initial = scheduler2.config.buttons_left.join();
   scheduler2.config.buttons_right.$initial = scheduler2.config.buttons_right.join();
   scheduler2._helpers = { parseDate: function parseDate(date) {
@@ -6906,14 +6925,14 @@ function extend$6(scheduler2) {
         d.className += " dhx_cal_light_responsive";
       d.style.visibility = "hidden";
       var html = this._lightbox_template;
-      var buttons = this.config.buttons_left;
+      var buttons = this.config.buttons_right;
       html += "<div class='dhx_cal_lcontrols'>";
       var ariaAttr = "";
       for (var i = 0; i < buttons.length; i++) {
         ariaAttr = this._waiAria.lightboxButtonAttrString(buttons[i]);
         html += "<div " + ariaAttr + " data-action='" + buttons[i] + "' class='dhx_btn_set dhx_" + (scheduler2.config.rtl ? "right" : "left") + "_btn_set " + buttons[i] + "_set'><div class='dhx_btn_inner " + buttons[i] + "'></div><div>" + scheduler2.locale.labels[buttons[i]] + "</div></div>";
       }
-      buttons = this.config.buttons_right;
+      buttons = this.config.buttons_left;
       var rtl = scheduler2.config.rtl;
       for (var i = 0; i < buttons.length; i++) {
         ariaAttr = this._waiAria.lightboxButtonAttrString(buttons[i]);
@@ -9139,7 +9158,7 @@ class DatePicker {
   }
 }
 function factoryMethod(extensionManager) {
-  const scheduler2 = { version: "7.2.3" };
+  const scheduler2 = { version: "7.2.4" };
   scheduler2.$stateProvider = StateService();
   scheduler2.getState = scheduler2.$stateProvider.getState;
   extend$n(scheduler2);
@@ -10013,9 +10032,13 @@ function container_autoresize(scheduler2) {
             height = 190 * scheduler2.config.year_y;
           } else if (mode == "agenda") {
             height = 0;
-            if (checked_div.childNodes && checked_div.childNodes.length) {
-              for (var j = 0; j < checked_div.childNodes.length; j++) {
-                height += checked_div.childNodes[j].offsetHeight;
+            if (checked_div.children && checked_div.children.length) {
+              if (checked_div.children.length === 1 && checked_div.children[0].classList.contains("dhx_cal_agenda_no_events")) {
+                height = 300;
+              } else {
+                for (var j = 0; j < checked_div.children.length; j++) {
+                  height += checked_div.children[j].offsetHeight;
+                }
               }
             }
             if (height + 2 < scheduler2.config.min_grid_size) {
