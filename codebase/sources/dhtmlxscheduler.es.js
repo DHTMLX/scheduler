@@ -1,6 +1,6 @@
 /** @license
 
-dhtmlxScheduler v.7.2.4 Standard
+dhtmlxScheduler v.7.2.5 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -2730,8 +2730,17 @@ function extend$j(scheduler2) {
               start = this._drag_start;
             }
           } else {
-            if (end <= start)
-              end = start + timeStep * 6e4;
+            if (end <= start) {
+              if (obj && obj.round_position) {
+                if (obj.x_unit == "hour" || obj.x_unit == "minute") {
+                  end = scheduler2.date.add(start, obj.x_step, obj.x_unit);
+                } else {
+                  end = scheduler2.date.add(scheduler2.date.date_part(new Date(start)), 1, obj.x_unit);
+                }
+              } else {
+                end = start + timeStep * 6e4;
+              }
+            }
           }
         }
         var new_end = new Date(end - 1);
@@ -3328,8 +3337,8 @@ function extend$j(scheduler2) {
   scheduler2._render_month_scale = function(div, dd, sd, rows) {
     var ed = scheduler2.date.add(dd, 1, "month"), view_start = new Date(sd);
     var cd = scheduler2._currentDate();
-    this.date.date_part(cd);
-    this.date.date_part(sd);
+    cd = this.date.date_part(cd);
+    sd = this.date.date_part(sd);
     rows = rows || Math.ceil(Math.round((ed.valueOf() - sd.valueOf()) / (60 * 60 * 24 * 1e3)) / 7);
     var tdwidths = [];
     for (var i = 0; i <= 7; i++) {
@@ -3414,9 +3423,7 @@ function extend$j(scheduler2) {
   };
   scheduler2._reset_month_scale = function(b, dd, sd, rows) {
     var ed = scheduler2.date.add(dd, 1, "month");
-    var cd = scheduler2._currentDate();
-    this.date.date_part(cd);
-    this.date.date_part(sd);
+    sd = this.date.date_part(sd);
     rows = rows || Math.ceil(Math.round((ed.valueOf() - sd.valueOf()) / (60 * 60 * 24 * 1e3)) / 7);
     var height = Math.floor(b.clientHeight / rows) - this.xy.month_head_height;
     this._colsS.height = height + this.xy.month_head_height;
@@ -6877,6 +6884,37 @@ function extend$6(scheduler2) {
           break;
       }
     });
+    function getDaysInMonth(year, month) {
+      return new Date(year, month + 1, 0).getDate();
+    }
+    scheduler2.event(lightbox, "click", function(e) {
+      if (e.target.closest(".dhx_lightbox_day_select") || e.target.closest(".dhx_lightbox_month_select")) {
+        const monthSelectNodes = lightbox.querySelectorAll(".dhx_lightbox_month_select");
+        const daySelectNodes = lightbox.querySelectorAll(".dhx_lightbox_day_select");
+        const yearSelectNodes = lightbox.querySelectorAll(".dhx_lightbox_year_select");
+        if (monthSelectNodes.length && daySelectNodes.length && yearSelectNodes) {
+          monthSelectNodes.forEach((select, i) => {
+            const daySelect = daySelectNodes[i];
+            const month = parseInt(select.value, 10);
+            let year = parseInt(yearSelectNodes[i].value, 10);
+            if (!year) {
+              year = new Date(scheduler2.getState().date).getFullYear();
+            }
+            const daysInMonth = getDaysInMonth(year, month);
+            const maxDays = daysInMonth || 31;
+            let curDayValue = daySelect.value;
+            daySelect.innerHTML = "";
+            for (let day = 1; day <= maxDays; day++) {
+              const option = document.createElement("option");
+              option.value = day;
+              option.textContent = day;
+              daySelect.appendChild(option);
+            }
+            daySelect.value = Math.min(curDayValue, maxDays);
+          });
+        }
+      }
+    });
   };
   scheduler2.setLightboxSize = function() {
     return;
@@ -9158,7 +9196,7 @@ class DatePicker {
   }
 }
 function factoryMethod(extensionManager) {
-  const scheduler2 = { version: "7.2.4" };
+  const scheduler2 = { version: "7.2.5" };
   scheduler2.$stateProvider = StateService();
   scheduler2.getState = scheduler2.$stateProvider.getState;
   extend$n(scheduler2);
@@ -20663,6 +20701,12 @@ class Tooltip {
     if (mouse.y >= tooltip2.top && mouse.y <= tooltip2.bottom) {
       tooltip2.top = mouse.y - tooltip2.height - offsetY;
       tooltip2.bottom = tooltip2.top + tooltip2.height;
+    }
+    if (tooltip2.left < 0) {
+      tooltip2.left = 0;
+    }
+    if (tooltip2.right < 0) {
+      tooltip2.right = 0;
     }
     return tooltip2;
   }

@@ -1,3 +1,11 @@
+### 7.2.5
+
+Ensure that the Lightbox time control displays the correct number of days for each month in the day selectors
+Fix the script error occurring in the trial build in Salesforce
+Fix the regression introduced in Scheduler v7.2 where the "Today" cell was not highlighted in the Month view
+Fix the issue with incorrect end_date calculation when resizing events with round_position enabled
+Fix the issue where the Tooltip shifted off-screen when displaying long content
+
 ### 7.2.4
 
 Fix the incorrect behavior of the ignore_timeline setting when moving or resizing events in the Timeline view
