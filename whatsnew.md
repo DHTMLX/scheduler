@@ -1,3 +1,10 @@
+### 7.2.6
+
+Fix the issue with seconds-level precision in the event timing
+Fix the incorrect drag behavior in the Timeline view during short months
+Fix the incorrect rounding of events in the Timeline view
+Prevent DataProcessor from adding the !nativeeditor_status property to custom router arguments
+
 ### 7.2.5
 
 Ensure that the Lightbox time control displays the correct number of days for each month in the day selectors

@@ -1,6 +1,6 @@
 /** @license
 
-dhtmlxScheduler v.7.2.5 Standard
+dhtmlxScheduler v.7.2.6 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -2651,7 +2651,9 @@ He.prototype = { setTransactionMode: function(e, i) {
       return this._waitMode++, n.query(a);
     }
     {
-      var l = this.getState(i), h = this.getActionByState(l), v = function(c) {
+      var l = this.getState(i), h = this.getActionByState(l);
+      delete e[this.action_param];
+      var v = function(c) {
         var u = l;
         if (c && c.responseText && c.setRequestHeader) {
           c.status !== 200 && (u = "error");
@@ -3075,7 +3077,7 @@ class Ma {
   }
 }
 function Na(e) {
-  const i = { version: "7.2.5" };
+  const i = { version: "7.2.6" };
   i.$stateProvider = function() {
     const r = {};
     return { getState: function(d) {
@@ -4137,7 +4139,7 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
       var f = d;
       arguments.length != 1 && ((f = m || {}).start_date = d, f.end_date = l, f.text = h, f.id = v), f.id = f.id || r.uid(), f.text = f.text || "", typeof f.start_date == "string" && (f.start_date = this.templates.api_date(f.start_date)), typeof f.end_date == "string" && (f.end_date = this.templates.api_date(f.end_date));
       var c = 6e4 * (this.config.event_duration || this.config.time_step);
-      f.start_date.valueOf() == f.end_date.valueOf() && f.end_date.setTime(f.end_date.valueOf() + c), f.start_date.setMilliseconds(0), f.end_date.setMilliseconds(0), f._timed = this.isOneDayEvent(f);
+      new Date(f.end_date).valueOf() - new Date(f.start_date).valueOf() <= c && f.end_date.setTime(f.end_date.valueOf() + c), f.start_date.setMilliseconds(0), f.end_date.setMilliseconds(0), f._timed = this.isOneDayEvent(f);
       var u = !this._events[f.id];
       return this._events[f.id] = f, this.event_updated(f), this._loading || this.callEvent(u ? "onEventAdded" : "onEventChanged", [f.id, f]), f.id;
     }, r.deleteEvent = function(d, l) {

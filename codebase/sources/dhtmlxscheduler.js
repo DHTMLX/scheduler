@@ -3,7 +3,7 @@
 })(this, function(exports2) {
   "use strict";/** @license
 
-dhtmlxScheduler v.7.2.5 Standard
+dhtmlxScheduler v.7.2.6 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -4863,7 +4863,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       if (typeof ev.end_date == "string")
         ev.end_date = this.templates.api_date(ev.end_date);
       var d = (this.config.event_duration || this.config.time_step) * 6e4;
-      if (ev.start_date.valueOf() == ev.end_date.valueOf())
+      if (new Date(ev.end_date).valueOf() - new Date(ev.start_date).valueOf() <= d)
         ev.end_date.setTime(ev.end_date.valueOf() + d);
       ev.start_date.setMilliseconds(0);
       ev.end_date.setMilliseconds(0);
@@ -8063,6 +8063,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     if (this._tMode === "CUSTOM") {
       var state = this.getState(rowId);
       var action = this.getActionByState(state);
+      delete dataToSend[this.action_param];
       var _onResolvedCreateUpdate = function(tag) {
         var resultState = state;
         if (tag && tag.responseText && tag.setRequestHeader) {
@@ -9200,7 +9201,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     }
   }
   function factoryMethod(extensionManager) {
-    const scheduler2 = { version: "7.2.5" };
+    const scheduler2 = { version: "7.2.6" };
     scheduler2.$stateProvider = StateService();
     scheduler2.getState = scheduler2.$stateProvider.getState;
     extend$n(scheduler2);
