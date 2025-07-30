@@ -1931,6 +1931,7 @@ url("src/dhx-scheduler-icons.woff2?7d3dc8d31762f76ad3c385c23e9afbc6") format("wo
 .dhx_form_repeat #dhx_repeat_month > div,
 .dhx_form_repeat #dhx_repeat_week > div {
   display: flex;
+  align-items: center;
   gap: 8px;
 }
 .dhx_repeat_left {

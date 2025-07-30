@@ -1,3 +1,14 @@
+### 7.2.8
+
+Samples for React Scheduler were added to the Commercial, Enterprise, Ultimate, and Evaluation packages
+Fix the issue where dragging a recurring event after deleting its subsequent occurrences behaved incorrectly
+Ensure "Repeat Event" control of the lightbox is disabled for modified series instances
+Fix the incorrect display of legacy labels for recurring events
+Fix the conflict between the max_month_events setting and multi-day events, which caused events to disappear or overlap in the Month view
+Ensure cookies set by Scheduler over HTTPS now include the Secure attribute
+Fix the issue where the event_duration setting corrupted parsed event data
+Fix the issue where the time_step setting corrupted parsed event data
+
 ### 7.2.6
 
 Fix the issue with seconds-level precision in the event timing

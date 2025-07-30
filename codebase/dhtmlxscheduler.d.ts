@@ -1,11 +1,11 @@
 // Type definitions for dhtmlxScheduler <%= pkg.version %>
 // Project: http://dhtmlx.com/docs/products/dhtmlxScheduler
 
-type SchedulerCallback = (...args: any[]) => any;
+export type SchedulerCallback = (...args: any[]) => any;
 type SchedulerFilterCallback = { (id: string | number, event: any): boolean }
 
 
-type SchedulerEventName = "onAfterBatchUpdate" |
+export type SchedulerEventName = "onAfterBatchUpdate" |
 	"onAfterEventDisplay" |
 	"onAfterFolderToggle" |
 	"onAfterLightbox" |
@@ -91,7 +91,8 @@ type SchedulerEventName = "onAfterBatchUpdate" |
 	"onXScaleClick" |
 	"onXScaleDblClick" |
 	"onYScaleClick" |
-	"onYScaleDblClick";
+	"onYScaleDblClick" | 
+	string;
 
 
 export interface SchedulerTemplates {
@@ -1833,13 +1834,13 @@ export interface SchedulerStatic {
 	 * exports a Scheduler into the PDF format
 	 * @param _export_ an object with export settings (see the details)
 	*/
-	exportToPDF(_export_: any): void;
+	exportToPDF(_export_?: any): void;
 
 	/**
 	 * exports a Scheduler into the PNG format
 	 * @param _export_ an object with export settings (see the details)
 	*/
-	exportToPNG(_export_: any): void;
+	exportToPNG(_export_?: any): void;
 
 	/**
 	 * sets focus on the scheduler
