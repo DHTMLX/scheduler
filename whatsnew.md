@@ -1,3 +1,12 @@
+### 7.2.9
+
+Fix memory leaks that occurred in the Timeline view
+Fix compatibility issue between the container_autoresize plugin and the Week Agenda view
+Fix the issue where the onScaleDblClick was not triggered as expected
+Fix inconsistent behavior of onEventSave and DataProcessor when working with recurring events
+Fix the React Scheduler issue where multiple instances of the component caused duplicated templates
+Fix incorrect handling of the events prop's changes in React Scheduler
+
 ### 7.2.8
 
 Samples for React Scheduler were added to the Commercial, Enterprise, Ultimate, and Evaluation packages

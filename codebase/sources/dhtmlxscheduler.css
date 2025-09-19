@@ -4,35 +4,35 @@
   font-style: normal;
   font-weight: 300;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/inter/v19/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuOKfMZg.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuOKfMZg.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/inter/v19/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZg.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZg.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/inter/v19/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/inter/v19/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf) format('truetype');
 }
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url(https://fonts.gstatic.com/s/inter/v19/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYMZg.ttf) format('truetype');
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYMZg.ttf) format('truetype');
 }
 /* default terrace theme is here */
 :root {
@@ -3054,19 +3054,14 @@ div.dhx_timeline_label_column_header .dhx_timeline_label_content_wrapper {
   width: 100%;
   height: 100%;
   display: flex;
-}
-.dhx_wa_column {
-  flex: 1;
-  display: flex;
   flex-direction: column;
-  border-right: var(--dhx-scheduler-default-border);
 }
 .dhx_wa_day_cont {
-  flex-grow: 0;
-  flex-shrink: 0;
-  flex-basis: calc(100% / 3);
   display: flex;
   flex-direction: column;
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: 50%;
   overflow-y: auto;
 }
 .dhx_wa_column:last-child .dhx_wa_day_cont:nth-last-child(1),
@@ -3110,6 +3105,23 @@ div.dhx_timeline_label_column_header .dhx_timeline_label_content_wrapper {
 }
 .dhx_wa_ev_body.dhx_cal_event_selected {
   background-color: var(--dhx-scheduler-base-colors-select);
+}
+.dhx_wa_row {
+  display: flex;
+  flex-basis: calc(100% / 3);
+}
+/* week_agenda + container_autoresize */
+.dhx_wa_row_autoresize {
+  display: flex;
+  flex-basis: 0;
+}
+.dhx_wa_row > :first-child {
+  border-right: var(--dhx-scheduler-default-border);
+}
+.dhx_wa_weekday {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 50%;
 }
 .dhx_grid_event {
   height: var(--dhx-scheduler-list-line-height);

@@ -3,7 +3,7 @@
 })(this, function(exports2) {
   "use strict";/** @license
 
-dhtmlxScheduler v.7.2.8 Standard
+dhtmlxScheduler v.7.2.9 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -2432,6 +2432,10 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         return;
       const name = scheduler2._getClassName(src).split(" ")[0];
       switch (name) {
+        case "dhx_scale_bar": {
+          this.callEvent("onScaleDblClick");
+          break;
+        }
         case "dhx_scale_holder":
         case "dhx_scale_holder_now":
         case "dhx_month_body":
@@ -6737,9 +6741,11 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     scheduler2._empty_lightbox = function(data) {
       var id = scheduler2._lightbox_id;
       var ev = this.getEvent(id);
-      this._lame_copy(ev, data);
-      this.setEvent(ev.id, ev);
-      this._edit_stop_event(ev, true);
+      if (ev) {
+        this._lame_copy(ev, data);
+        this.setEvent(ev.id, ev);
+        this._edit_stop_event(ev, true);
+      }
       this.render_view_data();
     };
     scheduler2.hide_lightbox = function(id) {
@@ -6774,6 +6780,9 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       var data = this._lightbox_out({}, this._lame_copy(this.getEvent(this._lightbox_id)));
       if (this.checkEvent("onEventSave") && !this.callEvent("onEventSave", [this._lightbox_id, data, this._new_event]))
         return;
+      if (this.checkEvent("onRecurringEventSave")) {
+        scheduler2.callEvent("onRecurringEventSave", [this._lightbox_id, data, this._new_event]);
+      }
       this._empty_lightbox(data);
       this.hide_lightbox();
     };
@@ -6855,7 +6864,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
               let ev = scheduler2.getEvent(scheduler2._lightbox_id);
               if (ev._thisAndFollowing) {
                 ev._removeFollowing = true;
-                scheduler2.callEvent("onEventSave", [ev.id, ev, scheduler2._new_event]);
+                scheduler2.callEvent("onRecurringEventSave", [ev.id, ev, scheduler2._new_event]);
               } else {
                 scheduler2.deleteEvent(scheduler2._lightbox_id);
               }
@@ -9219,7 +9228,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     }
   }
   function factoryMethod(extensionManager) {
-    const scheduler2 = { version: "7.2.8" };
+    const scheduler2 = { version: "7.2.9" };
     scheduler2.$stateProvider = StateService();
     scheduler2.getState = scheduler2.$stateProvider.getState;
     extend$n(scheduler2);
@@ -10109,23 +10118,10 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
                 height += 2;
               }
             } else if (mode == "week_agenda") {
-              var min_height = scheduler2.xy.week_agenda_scale_height + scheduler2.config.min_grid_size, cur_height;
-              var column;
-              for (var k = 0; k < checked_div.childNodes.length; k++) {
-                column = checked_div.childNodes[k];
-                for (var j = 0; j < column.childNodes.length; j++) {
-                  var innerHeight = 0, eventsContainer = column.childNodes[j].childNodes[1];
-                  for (var g = 0; g < eventsContainer.childNodes.length; g++) {
-                    innerHeight += eventsContainer.childNodes[g].offsetHeight;
-                  }
-                  cur_height = innerHeight + scheduler2.xy.week_agenda_scale_height;
-                  cur_height = k == 1 && (j == 2 || j == 3) ? cur_height * 2 : cur_height;
-                  if (cur_height > min_height) {
-                    min_height = cur_height;
-                  }
-                }
-              }
-              height = min_height * 3;
+              let maxEvents = getMaxEvents();
+              let eventDiv = checked_div.querySelector(".dhx_wa_ev_body") || 0;
+              let scale_height = window.getComputedStyle(checked_div.querySelector(".dhx_wa_scale_bar")).getPropertyValue("--dhx-scheduler-week-agenda-scale-height") || 35;
+              height = maxEvents * (eventDiv.offsetHeight * 1.1) + 4 * (parseInt(scale_height) + 10);
             } else if (mode == "map") {
               height = 0;
               var evs = checked_div.querySelectorAll(".dhx_map_line");
@@ -10258,6 +10254,23 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       var size = div.offsetWidth - div.clientWidth;
       document.body.removeChild(div);
       return size;
+    }
+    function getMaxEvents() {
+      const rows = document.querySelectorAll(".dhx_wa_row_autoresize");
+      const maxEventsCounts = [];
+      rows.forEach((row) => {
+        let maxCount = 0;
+        const dayContainers = row.querySelectorAll(".dhx_wa_day_cont");
+        dayContainers.forEach((container) => {
+          const eventsCount = container.querySelectorAll(".dhx_wa_ev_body").length;
+          if (eventsCount > maxCount) {
+            maxCount = eventsCount;
+          }
+        });
+        maxEventsCounts.push(maxCount);
+      });
+      const sum = maxEventsCounts.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+      return sum;
     }
   }
   function cookie(scheduler2) {
@@ -18274,11 +18287,11 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       return this._rec_markers_pull[id] || [];
     };
     (function() {
-      var old_add_event = scheduler2.addEvent;
+      let old_add_event = scheduler2.addEvent;
       scheduler2.addEvent = function(start_date, end_date, text, id, extra_data) {
-        var ev_id = old_add_event.apply(this, arguments);
+        const ev_id = old_add_event.apply(this, arguments);
         if (ev_id && scheduler2.getEvent(ev_id)) {
-          var ev = scheduler2.getEvent(ev_id);
+          const ev = scheduler2.getEvent(ev_id);
           if (ev.start_date) {
             ev.start_date = clearMilliseconds(ev.start_date);
           }
@@ -18307,21 +18320,21 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         scheduler2._rec_markers_pull[new_id] = scheduler2._rec_markers_pull[id];
         delete scheduler2._rec_markers_pull[id];
       }
-      for (var i = 0; i < this._rec_temp.length; i++) {
-        var tev = this._rec_temp[i];
+      for (let i = 0; i < this._rec_temp.length; i++) {
+        let tev = this._rec_temp[i];
         if (this._is_virtual_event(tev.id) && tev.id.split("#")[0] == id) {
           tev.recurring_event_id = new_id;
           this.changeEventId(tev.id, new_id + "#" + tev.id.split("#")[1]);
         }
       }
-      for (var i in this._rec_markers) {
-        var tev = this._rec_markers[i];
+      for (let i in this._rec_markers) {
+        let tev = this._rec_markers[i];
         if (tev.recurring_event_id == id) {
           tev.recurring_event_id = new_id;
           tev._pid_changed = true;
         }
       }
-      var el = scheduler2._rec_markers[new_id];
+      let el = scheduler2._rec_markers[new_id];
       if (el && el._pid_changed) {
         delete el._pid_changed;
         setTimeout(function() {
@@ -18386,14 +18399,14 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       scheduler2.addEvent(nev);
     }
     scheduler2.attachEvent("onConfirmedBeforeEventDelete", function(id) {
-      var ev = this.getEvent(id);
+      const ev = this.getEvent(id);
       if (this._is_virtual_event(id) || this._is_modified_occurrence(ev) && !isDeletedOccurrence(ev)) {
         deleteEventFromSeries(id, ev);
       } else {
         if (isSeries(ev) && this._lightbox_id)
           this._roll_back_dates(ev);
-        var sub = this._get_rec_markers(id);
-        for (var i in sub) {
+        const sub = this._get_rec_markers(id);
+        for (let i in sub) {
           if (sub.hasOwnProperty(i)) {
             id = sub[i].id;
             if (this.getEvent(id))
@@ -18455,16 +18468,16 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
             this._roll_back_dates(ev);
           }
         }
-        var sub = this._get_rec_markers(id);
-        for (var i in sub) {
+        const sub = this._get_rec_markers(id);
+        for (let i in sub) {
           if (sub.hasOwnProperty(i)) {
             delete this._rec_markers[sub[i].id];
             this.deleteEvent(sub[i].id, true);
           }
         }
         delete this._rec_markers_pull[id];
-        var isEventFound = false;
-        for (var k = 0; k < this._rendered.length; k++) {
+        let isEventFound = false;
+        for (let k = 0; k < this._rendered.length; k++) {
           if (this._rendered[k].getAttribute(this.config.event_attribute) == id)
             isEventFound = true;
         }
@@ -18476,14 +18489,14 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     });
     scheduler2.attachEvent("onEventAdded", function(id) {
       if (!this._loading) {
-        var ev = this.getEvent(id);
+        const ev = this.getEvent(id);
         if (isSeries(ev)) {
           this._roll_back_dates(ev);
         }
       }
       return true;
     });
-    scheduler2.attachEvent("onEventSave", function(id, data, is_new_event) {
+    scheduler2.attachEvent("onRecurringEventSave", function(id, data, is_new_event) {
       let ev = this.getEvent(id);
       let tempEvent = scheduler2._lame_clone(ev);
       let tempDataRRULE = data.rrule;
@@ -18574,14 +18587,14 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       return true;
     });
     scheduler2.attachEvent("onEventCreated", function(id) {
-      var ev = this.getEvent(id);
+      const ev = this.getEvent(id);
       if (!isSeries(ev)) {
         clearRecurringProperties(ev);
       }
       return true;
     });
     scheduler2.attachEvent("onEventCancel", function(id) {
-      var ev = this.getEvent(id);
+      const ev = this.getEvent(id);
       if (isSeries(ev)) {
         this._roll_back_dates(ev);
         this.render_view_data();
@@ -18841,7 +18854,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
               let tev = scheduler2._events[i];
               if (tev.id == tempEvent.id) {
                 scheduler2._events[i] = { ...tempEvent };
-                scheduler2.callEvent("onEventSave", [scheduler2._events[i].id, scheduler2._events[i], scheduler2._new_event]);
+                scheduler2.callEvent("onRecurringEventSave", [scheduler2._events[i].id, scheduler2._events[i], scheduler2._new_event]);
                 scheduler2.callEvent("onEventChanged", [scheduler2._events[i].id, scheduler2._events[i]]);
               }
             }
@@ -18910,13 +18923,13 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     }
     scheduler2.get_visible_events_rec = scheduler2.get_visible_events;
     scheduler2.get_visible_events = function(only_timed) {
-      for (var i = 0; i < this._rec_temp.length; i++)
+      for (let i = 0; i < this._rec_temp.length; i++)
         delete this._events[this._rec_temp[i].id];
       this._rec_temp = [];
       const exceptions = groupExceptions();
-      var stack = this.get_visible_events_rec(only_timed);
-      var out = [];
-      for (var i = 0; i < stack.length; i++) {
+      let stack = this.get_visible_events_rec(only_timed);
+      let out = [];
+      for (let i = 0; i < stack.length; i++) {
         if (stack[i].deleted || stack[i].recurring_event_id) {
           continue;
         }
@@ -18930,15 +18943,15 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       return result;
     };
     (function() {
-      var old = scheduler2.isOneDayEvent;
+      let old = scheduler2.isOneDayEvent;
       scheduler2.isOneDayEvent = function(ev) {
         if (isSeries(ev))
           return true;
         return old.call(this, ev);
       };
-      var old_update_event = scheduler2.updateEvent;
+      const old_update_event = scheduler2.updateEvent;
       scheduler2.updateEvent = function(id) {
-        var ev = scheduler2.getEvent(id);
+        const ev = scheduler2.getEvent(id);
         if (ev && isSeries(ev) && !this._is_virtual_event(id)) {
           scheduler2.update_view();
         } else {
@@ -19021,7 +19034,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       }
     };
     scheduler2._fix_daylight_saving_date = function(start_date, end_date, ev, counter, default_date) {
-      var shift = start_date.getTimezoneOffset() - end_date.getTimezoneOffset();
+      let shift = start_date.getTimezoneOffset() - end_date.getTimezoneOffset();
       if (shift) {
         if (shift > 0) {
           return new Date(counter.valueOf() + ev.duration * 1e3 - shift * 60 * 1e3);
@@ -19032,8 +19045,8 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       return new Date(default_date.valueOf());
     };
     scheduler2.getRecDates = function(id, max) {
-      var ev = typeof id == "object" ? id : scheduler2.getEvent(id);
-      var recurrings = [];
+      let ev = typeof id == "object" ? id : scheduler2.getEvent(id);
+      let recurrings = [];
       max = max || 100;
       if (!isSeries(ev)) {
         return [{ start_date: ev.start_date, end_date: ev.end_date }];
@@ -19042,8 +19055,8 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         return [];
       }
       scheduler2.repeat_date(ev, recurrings, true, ev.start_date, ev.end_date, max);
-      var result = [];
-      for (var i = 0; i < recurrings.length; i++) {
+      let result = [];
+      for (let i = 0; i < recurrings.length; i++) {
         if (!recurrings[i].deleted) {
           result.push({ start_date: recurrings[i].start_date, end_date: recurrings[i].end_date });
         }
@@ -19051,16 +19064,16 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       return result;
     };
     scheduler2.getEvents = function(from, to) {
-      var result = [];
+      let result = [];
       const exceptions = groupExceptions();
-      for (var a in this._events) {
-        var ev = this._events[a];
+      for (let a in this._events) {
+        let ev = this._events[a];
         if (ev.recurring_event_id) {
           continue;
         }
         if (from && to && ev.start_date < to && ev.end_date > from) {
           if (isSeries(ev)) {
-            var sev = [];
+            let sev = [];
             this.repeat_date(ev, sev, true, from, to, void 0, exceptions);
             sev.forEach(function(occurrence) {
               if (occurrence.start_date < to && occurrence.end_date > from) {
@@ -19077,8 +19090,8 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       return result;
     };
     scheduler2._copy_dummy = function(ev) {
-      var start_date = new Date(this.start_date);
-      var end_date = new Date(this.end_date);
+      const start_date = new Date(this.start_date);
+      const end_date = new Date(this.end_date);
       this.start_date = start_date;
       this.end_date = end_date;
       this.duration = this.rrule = null;
@@ -19354,7 +19367,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     }, _outer_html: function(node) {
       return node.outerHTML || getOuterHTML(node);
       function getOuterHTML(n) {
-        var div = document.createElement("div"), h;
+        let div = document.createElement("div"), h;
         div.appendChild(n.cloneNode(true));
         h = div.innerHTML;
         div = null;
