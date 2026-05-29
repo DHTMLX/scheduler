@@ -1,3 +1,9 @@
+### 7.2.14
+
+Fix the incorrect @dhx/scheduler dependency listed in the published React Scheduler package
+Fix the issue where not all changes were applied when editing the first occurrence of a recurring event in "All events" mode
+Update the url plugin to avoid a false-positive prototype pollution (CWE-1321) static analysis finding
+
 ### 7.2.13
 
 Fix the incorrect trial warning in React Scheduler

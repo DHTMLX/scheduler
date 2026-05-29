@@ -1,6 +1,6 @@
 /** @license
 
-dhtmlxScheduler v.7.2.13 Standard
+dhtmlxScheduler v.7.2.14 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -9267,7 +9267,7 @@ class DatePicker {
   }
 }
 function factoryMethod(extensionManager) {
-  const scheduler2 = { version: "7.2.13" };
+  const scheduler2 = { version: "7.2.14" };
   scheduler2.$stateProvider = StateService();
   scheduler2.getState = scheduler2.$stateProvider.getState;
   extend$n(scheduler2);
@@ -18507,9 +18507,9 @@ function recurring(scheduler2) {
     }
     ev._thisAndFollowing = occurrence.id;
   }
-  function setPropsForStorageEvent(index, data, ev, tempEvent) {
+  function setPropsForStorageEvent(index, actualData, ev, tempEvent) {
     const targetIndex = ev._modified ? tempEvent.id : index;
-    scheduler2._events[targetIndex] = { ...tempEvent, text: data.text, duration: data.duration, start_date: data.start_date, rrule: data.rrule, end_date: tempEvent._end_date, _start_date: tempEvent.start_date, _thisAndFollowing: null, _end_date: null };
+    scheduler2._events[targetIndex] = { ...tempEvent, ...actualData, end_date: tempEvent._end_date, _start_date: tempEvent.start_date, _thisAndFollowing: null, _end_date: null };
     if (ev._modified) {
       delete scheduler2._events[index];
     }
@@ -21092,15 +21092,16 @@ function units_restricted(scheduler2) {
 }
 function url(scheduler2) {
   function parseHashParameters() {
-    const parameters = {};
+    const parameters = /* @__PURE__ */ Object.create(null);
     const raw = (document.location.hash || "").replace("#", "");
     if (!raw) {
       return parameters;
     }
     const pairs = raw.split(",");
+    const forbiddenKeys = ["__proto__", "constructor", "prototype"];
     for (let i = 0; i < pairs.length; i++) {
       const parts = pairs[i].split("=");
-      if (parts.length === 2) {
+      if (parts.length === 2 && !forbiddenKeys.includes(parts[0])) {
         parameters[parts[0]] = parts[1];
       }
     }
