@@ -3,7 +3,7 @@
 })(this, function(exports2) {
   "use strict";/** @license
 
-dhtmlxScheduler v.7.2.14 Standard
+dhtmlxScheduler v.7.2.15 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -951,9 +951,9 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         var configs = scheduler2._prepare_timespan_options(configuration);
         for (var i = 0; i < configs.length; i++) {
           var config = configs[i];
-          for (var t2 = 0; t2 < types.length; t2++) {
+          for (var t = 0; t < types.length; t++) {
             var typedConfig = scheduler2._lame_clone(config);
-            typedConfig.type = types[t2];
+            typedConfig.type = types[t];
             scheduler2._delete_marked_timespan_by_config(typedConfig);
           }
         }
@@ -1135,137 +1135,230 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
   function batchUpdate(scheduler2) {
     scheduler2.batchUpdate = createMethod(scheduler2);
   }
-  class t {
-    constructor(t2) {
-      const { url: e, token: s } = t2;
-      this._url = e, this._token = s, this._mode = 1, this._seed = 1, this._queue = [], this.data = {}, this.api = {}, this._events = {};
+  const MODE_HTTP = 1;
+  const MODE_CONNECTING = 2;
+  const MODE_SOCKET = 3;
+  function handleSocket(client, url2, token, ready) {
+    let surl = url2;
+    if (surl[0] === "/") {
+      surl = document.location.protocol + "//" + document.location.host + url2;
+    }
+    surl = surl.replace(/^http(s|):/, "ws$1:");
+    const and = surl.indexOf("?") != -1 ? "&" : "?";
+    surl = `${surl}${and}token=${token}&ws=1`;
+    const socket = new WebSocket(surl);
+    socket.onclose = () => setTimeout(() => client.connect(), 2e3);
+    socket.onmessage = (ev) => {
+      const pack = JSON.parse(ev.data);
+      switch (pack.action) {
+        case "result":
+          client.result(pack.body, []);
+          break;
+        case "event":
+          client.fire(pack.body.name, pack.body.value);
+          break;
+        case "start":
+          ready();
+          break;
+        default:
+          client.onError(pack.data);
+      }
+    };
+    return socket;
+  }
+  class Client {
+    constructor(config) {
+      const { url: url2, token } = config;
+      this._url = url2;
+      this._token = token;
+      this._mode = MODE_HTTP;
+      this._seed = 1;
+      this._queue = [];
+      this.data = {};
+      this.api = {};
+      this._events = {};
     }
     headers() {
       return { Accept: "application/json", "Content-Type": "application/json", "Remote-Token": this._token };
     }
-    fetch(t2, e) {
-      const s = { credentials: "include", headers: this.headers() };
-      return e && (s.method = "POST", s.body = e), fetch(t2, s).then((t3) => t3.json());
-    }
-    load(t2) {
-      return t2 && (this._url = t2), this.fetch(this._url).then((t3) => this.parse(t3));
-    }
-    parse(t2) {
-      const { key: e, websocket: s } = t2;
-      e && (this._token = t2.key);
-      for (const e2 in t2.data)
-        this.data[e2] = t2.data[e2];
-      for (const e2 in t2.api) {
-        const s2 = this.api[e2] = {}, i = t2.api[e2];
-        for (const t3 in i)
-          s2[t3] = this._wrapper(e2 + "." + t3);
+    fetch(url2, body) {
+      const req = { credentials: "include", headers: this.headers() };
+      if (body) {
+        req.method = "POST";
+        req.body = body;
       }
-      return s && this.connect(), this;
+      return fetch(url2, req).then((res) => res.json());
+    }
+    load(url2) {
+      if (url2) {
+        this._url = url2;
+      }
+      return this.fetch(this._url).then((obj) => this.parse(obj));
+    }
+    parse(obj) {
+      const { key, websocket } = obj;
+      if (key !== void 0) {
+        this._token = key;
+      }
+      for (const name in obj.data) {
+        this.data[name] = obj.data[name];
+      }
+      for (const name in obj.api) {
+        const sub = this.api[name] = {};
+        const cfg = obj.api[name];
+        for (const method in cfg) {
+          sub[method] = this._wrapper(name + "." + method);
+        }
+      }
+      if (websocket) {
+        this.connect();
+      }
+      return this;
     }
     connect() {
-      const t2 = this._socket;
-      t2 && (this._socket = null, t2.onclose = function() {
-      }, t2.close()), this._mode = 2, this._socket = function(t3, e, s, i) {
-        let n = e;
-        "/" === n[0] && (n = document.location.protocol + "//" + document.location.host + e);
-        n = n.replace(/^http(s|):/, "ws$1:");
-        const o = -1 != n.indexOf("?") ? "&" : "?";
-        n = `${n}${o}token=${s}&ws=1`;
-        const r = new WebSocket(n);
-        return r.onclose = () => setTimeout(() => t3.connect(), 2e3), r.onmessage = (e2) => {
-          const s2 = JSON.parse(e2.data);
-          switch (s2.action) {
-            case "result":
-              t3.result(s2.body, []);
-              break;
-            case "event":
-              t3.fire(s2.body.name, s2.body.value);
-              break;
-            case "start":
-              i();
-              break;
-            default:
-              t3.onError(s2.data);
-          }
-        }, r;
-      }(this, this._url, this._token, () => (this._mode = 3, this._send(), this._resubscribe(), this));
+      const old = this._socket;
+      if (old) {
+        this._socket = null;
+        old.onclose = function() {
+        };
+        old.close();
+      }
+      this._mode = MODE_CONNECTING;
+      this._socket = handleSocket(this, this._url, this._token, () => {
+        this._mode = MODE_SOCKET;
+        this._send();
+        this._resubscribe();
+      });
     }
-    _wrapper(t2) {
+    _wrapper(name) {
       return (function() {
-        const e = [].slice.call(arguments);
-        let s = null;
-        const i = new Promise((i2, n) => {
-          s = { data: { id: this._uid(), name: t2, args: e }, status: 1, resolve: i2, reject: n }, this._queue.push(s);
+        const args = [].slice.call(arguments);
+        let call = null;
+        const result = new Promise((resolve, reject) => {
+          call = { data: { id: this._uid(), name, args }, status: 1, resolve, reject };
+          this._queue.push(call);
         });
-        return this.onCall(s, i), 3 === this._mode ? this._send(s) : setTimeout(() => this._send(), 1), i;
+        if (call) {
+          this.onCall(call, result);
+        }
+        if (call && this._mode === MODE_SOCKET) {
+          this._send(call);
+        } else {
+          setTimeout(() => this._send(), 1);
+        }
+        return result;
       }).bind(this);
     }
     _uid() {
       return (this._seed++).toString();
     }
-    _send(t2) {
-      if (2 == this._mode)
-        return void setTimeout(() => this._send(), 100);
-      const e = t2 ? [t2] : this._queue.filter((t3) => 1 === t3.status);
-      if (!e.length)
+    _send(pack) {
+      if (this._mode == MODE_CONNECTING) {
+        setTimeout(() => this._send(), 100);
         return;
-      const s = e.map((t3) => (t3.status = 2, t3.data));
-      3 !== this._mode ? this.fetch(this._url, JSON.stringify(s)).catch((t3) => this.onError(t3)).then((t3) => this.result(t3, s)) : this._socket.send(JSON.stringify({ action: "call", body: s }));
-    }
-    result(t2, e) {
-      const s = {};
-      if (t2)
-        for (let e2 = 0; e2 < t2.length; e2++)
-          s[t2[e2].id] = t2[e2];
-      else
-        for (let t3 = 0; t3 < e.length; t3++)
-          s[e[t3].id] = { id: e[t3].id, error: "Network Error", data: null };
-      for (let t3 = this._queue.length - 1; t3 >= 0; t3--) {
-        const e2 = this._queue[t3], i = s[e2.data.id];
-        i && (this.onResponse(e2, i), i.error ? e2.reject(i.error) : e2.resolve(i.data), this._queue.splice(t3, 1));
+      }
+      const packArray = pack ? [pack] : this._queue.filter((call) => call.status === 1);
+      if (!packArray.length) {
+        return;
+      }
+      const dataArray = packArray.map((call) => {
+        call.status = 2;
+        return call.data;
+      });
+      if (this._mode !== MODE_SOCKET) {
+        this.fetch(this._url, JSON.stringify(dataArray)).catch((err) => this.onError(err)).then((data) => this.result(data, dataArray));
+      } else {
+        this._socket.send(JSON.stringify({ action: "call", body: dataArray }));
       }
     }
-    on(t2, e) {
-      const s = this._uid();
-      let i = this._events[t2];
-      const n = !!i;
-      return n || (i = this._events[t2] = []), i.push({ id: s, handler: e }), n || 3 != this._mode || this._socket.send(JSON.stringify({ action: "subscribe", name: t2 })), { name: t2, id: s };
+    result(data, pack) {
+      const all = {};
+      if (data) {
+        for (let i = 0; i < data.length; i++) {
+          all[data[i].id] = data[i];
+        }
+      } else {
+        for (let i = 0; i < pack.length; i++) {
+          all[pack[i].id] = { id: pack[i].id, error: "Network Error", data: null };
+        }
+      }
+      for (let i = this._queue.length - 1; i >= 0; i--) {
+        const rcall = this._queue[i];
+        const response = all[rcall.data.id];
+        if (response) {
+          this.onResponse(rcall, response);
+          if (response.error) {
+            rcall.reject(response.error);
+          } else {
+            rcall.resolve(response.data);
+          }
+          this._queue.splice(i, 1);
+        }
+      }
+    }
+    on(name, handler) {
+      const id = this._uid();
+      let events = this._events[name];
+      const hasEvent = !!events;
+      if (!hasEvent) {
+        events = this._events[name] = [];
+      }
+      events.push({ id, handler });
+      if (!hasEvent && this._mode == MODE_SOCKET) {
+        this._socket.send(JSON.stringify({ action: "subscribe", name }));
+      }
+      return { name, id };
     }
     _resubscribe() {
-      if (3 == this._mode)
-        for (const t2 in this._events)
-          this._socket.send(JSON.stringify({ action: "subscribe", name: t2 }));
-    }
-    detach(t2) {
-      if (!t2) {
-        if (3 == this._mode)
-          for (const t3 in this._events)
-            this._socket.send(JSON.stringify({ action: "unsubscribe", key: t3 }));
-        return void (this._events = {});
-      }
-      const { id: e, name: s } = t2, i = this._events[s];
-      if (i) {
-        const t3 = i.filter((t4) => t4.id != e);
-        t3.length ? this._events[s] = t3 : (delete this._events[s], 3 == this._mode && this._socket.send(JSON.stringify({ action: "unsubscribe", name: s })));
+      if (this._mode == MODE_SOCKET) {
+        for (const name in this._events) {
+          this._socket.send(JSON.stringify({ action: "subscribe", name }));
+        }
       }
     }
-    fire(t2, e) {
-      const s = this._events[t2];
-      if (s)
-        for (let t3 = 0; t3 < s.length; t3++)
-          s[t3].handler(e);
+    detach(event2) {
+      if (!event2) {
+        if (this._mode == MODE_SOCKET) {
+          for (const key in this._events) {
+            this._socket.send(JSON.stringify({ action: "unsubscribe", key }));
+          }
+        }
+        this._events = {};
+        return;
+      }
+      const { id, name } = event2;
+      const events = this._events[name];
+      if (events) {
+        const next = events.filter((e) => e.id != id);
+        if (next.length) {
+          this._events[name] = next;
+        } else {
+          delete this._events[name];
+          if (this._mode == MODE_SOCKET) {
+            this._socket.send(JSON.stringify({ action: "unsubscribe", name }));
+          }
+        }
+      }
     }
-    onError(t2) {
+    fire(name, value) {
+      const events = this._events[name];
+      if (events) {
+        for (let i = 0; i < events.length; i++) {
+          events[i].handler(value);
+        }
+      }
+    }
+    onError(info) {
       return null;
     }
-    onCall(t2, e) {
+    onCall(call, result) {
     }
-    onResponse(t2, e) {
+    onResponse(call, result) {
     }
   }
   class RemoteEvents {
     constructor(url2, token) {
-      const remote = new t({ url: url2, token });
+      const remote = new Client({ url: url2, token });
       remote.fetch = function(url22, body) {
         const req = { headers: this.headers() };
         if (body) {
@@ -1432,42 +1525,36 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     batchUpdate(scheduler2);
     remoteEvents(scheduler2);
   }
-  var uidSeed = Date.now();
+  let uidSeed = Date.now();
   function uid() {
     return uidSeed++;
   }
   function isArray$1(obj) {
     if (Array.isArray) {
       return Array.isArray(obj);
-    } else {
-      return obj && obj.length !== void 0 && obj.pop && obj.push;
     }
+    return !!(obj && typeof obj === "object" && "length" in obj && obj.pop && obj.push);
   }
   function isStringObject(obj) {
-    return obj && typeof obj === "object" && Function.prototype.toString.call(obj.constructor) === "function String() { [native code] }";
+    return !!(obj && typeof obj === "object" && Function.prototype.toString.call(obj.constructor) === "function String() { [native code] }");
   }
   function isNumberObject(obj) {
-    return obj && typeof obj === "object" && Function.prototype.toString.call(obj.constructor) === "function Number() { [native code] }";
+    return !!(obj && typeof obj === "object" && Function.prototype.toString.call(obj.constructor) === "function Number() { [native code] }");
   }
   function isBooleanObject(obj) {
-    return obj && typeof obj === "object" && Function.prototype.toString.call(obj.constructor) === "function Boolean() { [native code] }";
+    return !!(obj && typeof obj === "object" && Function.prototype.toString.call(obj.constructor) === "function Boolean() { [native code] }");
   }
   function isDate$1(obj) {
-    if (obj && typeof obj === "object") {
-      return !!(obj.getFullYear && obj.getMonth && obj.getDate);
-    } else {
-      return false;
-    }
+    return !!(obj && typeof obj === "object" && obj.getFullYear && obj.getMonth && obj.getDate);
   }
   function defined(obj) {
-    return typeof obj != "undefined";
+    return typeof obj !== "undefined";
   }
   function delay(callback, timeout) {
-    var timer;
-    var result = function() {
+    let timer;
+    const result = function(...args) {
       result.$cancelTimeout();
       result.$pending = true;
-      var args = Array.prototype.slice.call(arguments);
       timer = setTimeout(function() {
         callback.apply(this, args);
         result.$pending = false;
@@ -1478,28 +1565,32 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       clearTimeout(timer);
       result.$pending = false;
     };
-    result.$execute = function() {
-      var args = Array.prototype.slice.call(arguments);
+    result.$execute = function(...args) {
       callback.apply(this, args);
       result.$cancelTimeout();
     };
     return result;
   }
-  const utils = { uid, mixin: function mixin(target, source, force) {
-    for (var f in source)
-      if (target[f] === void 0 || force)
-        target[f] = source[f];
+  function mixin(target, source, force) {
+    const targetObj = target;
+    const sourceObj = source;
+    for (const f in sourceObj) {
+      if (targetObj[f] === void 0 || force) {
+        targetObj[f] = sourceObj[f];
+      }
+    }
     return target;
-  }, copy: function copy(object) {
-    var i, result;
-    if (object && typeof object == "object") {
+  }
+  function copy(object) {
+    let result;
+    if (object && typeof object === "object") {
       switch (true) {
         case isDate$1(object):
           result = new Date(object);
           break;
         case isArray$1(object):
           result = new Array(object.length);
-          for (i = 0; i < object.length; i++) {
+          for (let i = 0; i < object.length; i++) {
             result[i] = copy(object[i]);
           }
           break;
@@ -1514,20 +1605,25 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
           break;
         default:
           result = {};
-          for (i in object) {
-            const varType = typeof object[i];
-            if (varType === "string" || varType === "number" || varType === "boolean") {
-              result[i] = object[i];
-            } else if (isDate$1(object[i])) {
-              result[i] = new Date(object[i]);
-            } else if (Object.prototype.hasOwnProperty.apply(object, [i]))
-              result[i] = copy(object[i]);
+          for (const i in object) {
+            if (Object.prototype.hasOwnProperty.call(object, i)) {
+              const value = object[i];
+              const varType = typeof value;
+              if (varType === "string" || varType === "number" || varType === "boolean") {
+                result[i] = value;
+              } else if (isDate$1(value)) {
+                result[i] = new Date(value);
+              } else {
+                result[i] = copy(value);
+              }
+            }
           }
           break;
       }
     }
     return result || object;
-  }, defined, isDate: isDate$1, delay };
+  }
+  const utils = { uid, mixin, copy, defined, isDate: isDate$1, delay };
   const StateService = function() {
     const stateProviders = {};
     function getState(name) {
@@ -1949,10 +2045,10 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
   const createEventStorage = function(obj) {
     let handlers = {};
     let index = 0;
-    const eventStorage = function() {
+    const eventStorage = function(...args) {
       let combinedResult = true;
       for (const i in handlers) {
-        const handlerResult = handlers[i].apply(obj, arguments);
+        const handlerResult = handlers[i].apply(obj, args);
         combinedResult = combinedResult && handlerResult;
       }
       return combinedResult;
@@ -2028,7 +2124,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         for (const i in listeners) {
           listeners[i].removeEvent(id);
         }
-        const list = id.split(":");
+        const list = String(id).split(":");
         listeners = eventHost.listeners;
         if (list.length === 2) {
           const eventName = list[0];
@@ -3513,17 +3609,17 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       return true;
     };
     scheduler2._lame_clone = function(object, cache) {
-      var i, t2, result;
+      var i, t, result;
       cache = cache || [];
       for (i = 0; i < cache.length; i += 2)
         if (object === cache[i])
           return cache[i + 1];
       if (object && typeof object == "object") {
         result = Object.create(object);
-        t2 = [Array, Date, Number, String, Boolean];
-        for (i = 0; i < t2.length; i++) {
-          if (object instanceof t2[i])
-            result = i ? new t2[i](object) : new t2[i]();
+        t = [Array, Date, Number, String, Boolean];
+        for (i = 0; i < t.length; i++) {
+          if (object instanceof t[i])
+            result = i ? new t[i](object) : new t[i]();
         }
         cache.push(object, result);
         for (i in object) {
@@ -3695,33 +3791,31 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       el.detachEvent("on" + event2, handler);
   } };
   function createEventScope() {
-    var domEvents = function(addEvent, removeEvent) {
-      addEvent = addEvent || defaultDomEvents.event;
-      removeEvent = removeEvent || defaultDomEvents.eventRemove;
-      var handlers = [];
-      var eventScope = { attach: function(el, event2, callback, capture) {
+    const domEvents = (addEvent = defaultDomEvents.event, removeEvent = defaultDomEvents.eventRemove) => {
+      const handlers = [];
+      const eventScope = { attach(el, event2, callback, capture) {
         handlers.push({ element: el, event: event2, callback, capture });
         addEvent(el, event2, callback, capture);
-      }, detach: function(el, event2, callback, capture) {
+      }, detach(el, event2, callback, capture) {
         removeEvent(el, event2, callback, capture);
-        for (var i = 0; i < handlers.length; i++) {
-          var handler = handlers[i];
+        for (let i = 0; i < handlers.length; i++) {
+          const handler = handlers[i];
           if (handler.element === el && handler.event === event2 && handler.callback === callback && handler.capture === capture) {
             handlers.splice(i, 1);
             i--;
           }
         }
-      }, detachAll: function() {
-        var staticArray = handlers.slice();
-        for (var i = 0; i < staticArray.length; i++) {
-          var handler = staticArray[i];
+      }, detachAll() {
+        const staticArray = handlers.slice();
+        for (let i = 0; i < staticArray.length; i++) {
+          const handler = staticArray[i];
           eventScope.detach(handler.element, handler.event, handler.callback, handler.capture);
           eventScope.detach(handler.element, handler.event, handler.callback, void 0);
           eventScope.detach(handler.element, handler.event, handler.callback, false);
           eventScope.detach(handler.element, handler.event, handler.callback, true);
         }
         handlers.splice(0, handlers.length);
-      }, extend: function() {
+      }, extend() {
         return domEvents(this.event, this.eventRemove);
       } };
       return eventScope;
@@ -3946,97 +4040,79 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     })();
   }
   function elementPosition(elem) {
-    var top = 0, left = 0, right = 0, bottom = 0;
+    let top = 0;
+    let left = 0;
+    let right = 0;
+    let bottom = 0;
+    const originalElem = elem;
     if (elem.getBoundingClientRect) {
-      var box = elem.getBoundingClientRect();
-      var body = document.body;
-      var docElem = document.documentElement || document.body.parentNode || document.body;
-      var scrollTop = window.pageYOffset || docElem.scrollTop || body.scrollTop;
-      var scrollLeft = window.pageXOffset || docElem.scrollLeft || body.scrollLeft;
-      var clientTop = docElem.clientTop || body.clientTop || 0;
-      var clientLeft = docElem.clientLeft || body.clientLeft || 0;
+      const box = elem.getBoundingClientRect();
+      const body = document.body;
+      const docElem = document.documentElement || document.body.parentNode || document.body;
+      const scrollTop = window.pageYOffset || docElem.scrollTop || body.scrollTop;
+      const scrollLeft = window.pageXOffset || docElem.scrollLeft || body.scrollLeft;
+      const clientTop = docElem.clientTop || body.clientTop || 0;
+      const clientLeft = docElem.clientLeft || body.clientLeft || 0;
       top = box.top + scrollTop - clientTop;
       left = box.left + scrollLeft - clientLeft;
       right = document.body.offsetWidth - box.right;
       bottom = document.body.offsetHeight - box.bottom;
     } else {
-      while (elem) {
-        top = top + parseInt(elem.offsetTop, 10);
-        left = left + parseInt(elem.offsetLeft, 10);
-        elem = elem.offsetParent;
+      let currentElem = elem;
+      while (currentElem) {
+        top += parseInt(String(currentElem.offsetTop), 10);
+        left += parseInt(String(currentElem.offsetLeft), 10);
+        currentElem = currentElem.offsetParent;
       }
-      right = document.body.offsetWidth - elem.offsetWidth - left;
-      bottom = document.body.offsetHeight - elem.offsetHeight - top;
+      right = document.body.offsetWidth - originalElem.offsetWidth - left;
+      bottom = document.body.offsetHeight - originalElem.offsetHeight - top;
     }
-    return { y: Math.round(top), x: Math.round(left), width: elem.offsetWidth, height: elem.offsetHeight, right: Math.round(right), bottom: Math.round(bottom) };
+    return { y: Math.round(top), x: Math.round(left), width: originalElem.offsetWidth, height: originalElem.offsetHeight, right: Math.round(right), bottom: Math.round(bottom) };
   }
   function getRelativeEventPosition(ev, node) {
-    var d = document.documentElement;
-    var box = elementPosition(node);
+    const d = document.documentElement;
+    const box = elementPosition(node);
     return { x: ev.clientX - d.clientLeft - box.x + node.scrollLeft, y: ev.clientY - d.clientTop - box.y + node.scrollTop };
   }
   function getNodePosition(elem) {
-    var top = 0, left = 0, right = 0, bottom = 0;
-    if (elem.getBoundingClientRect) {
-      var box = elem.getBoundingClientRect();
-      var body = document.body;
-      var docElem = document.documentElement || document.body.parentNode || document.body;
-      var scrollTop = window.pageYOffset || docElem.scrollTop || body.scrollTop;
-      var scrollLeft = window.pageXOffset || docElem.scrollLeft || body.scrollLeft;
-      var clientTop = docElem.clientTop || body.clientTop || 0;
-      var clientLeft = docElem.clientLeft || body.clientLeft || 0;
-      top = box.top + scrollTop - clientTop;
-      left = box.left + scrollLeft - clientLeft;
-      right = document.body.offsetWidth - box.right;
-      bottom = document.body.offsetHeight - box.bottom;
-    } else {
-      while (elem) {
-        top = top + parseInt(elem.offsetTop, 10);
-        left = left + parseInt(elem.offsetLeft, 10);
-        elem = elem.offsetParent;
-      }
-      right = document.body.offsetWidth - elem.offsetWidth - left;
-      bottom = document.body.offsetHeight - elem.offsetHeight - top;
-    }
-    return { y: Math.round(top), x: Math.round(left), width: elem.offsetWidth, height: elem.offsetHeight, right: Math.round(right), bottom: Math.round(bottom) };
+    return elementPosition(elem);
   }
   function getClassName(node) {
     if (!node)
       return "";
-    var className = node.className || "";
-    if (className.baseVal)
-      className = className.baseVal;
-    if (!className.indexOf)
+    let className = node.className || "";
+    if (typeof className !== "string" && node.className.baseVal) {
+      className = node.className.baseVal;
+    }
+    if (typeof className !== "string" || !className.indexOf) {
       className = "";
+    }
     return className || "";
   }
   function getTargetNode(e) {
-    var trg;
-    if (e.tagName)
+    let trg;
+    if ("tagName" in e) {
       trg = e;
-    else {
-      e = e || window.event;
-      trg = e.target || e.srcElement;
-      if (trg.shadowRoot && e.composedPath) {
-        trg = e.composedPath()[0];
+    } else {
+      const event2 = e || window.event;
+      trg = event2.target || event2.srcElement;
+      if ((trg == null ? void 0 : trg.shadowRoot) && event2.composedPath) {
+        trg = event2.composedPath()[0];
       }
     }
     return trg;
   }
-  function locateCss(e, classname, strict) {
-    if (strict === void 0)
-      strict = true;
-    var trg = e.target || e.srcElement;
-    var css = "";
+  function locateCss(e, classname, strict = true) {
+    let trg = e.target || ("srcElement" in e ? e.srcElement : null);
     while (trg) {
-      css = getClassName(trg);
+      const css = getClassName(trg);
       if (css) {
-        var ind = css.indexOf(classname);
+        const ind = css.indexOf(classname);
         if (ind >= 0) {
           if (!strict)
             return trg;
-          var left = ind === 0 || !(css.charAt(ind - 1) || "").trim();
-          var right = ind + classname.length >= css.length || !css.charAt(ind + classname.length).trim();
+          const left = ind === 0 || !(css.charAt(ind - 1) || "").trim();
+          const right = ind + classname.length >= css.length || !css.charAt(ind + classname.length).trim();
           if (left && right)
             return trg;
         }
@@ -4046,64 +4122,61 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     return null;
   }
   function isVisible(node) {
-    var display = false, visibility = false;
+    let display = false;
+    let visibility = false;
     if (window.getComputedStyle) {
-      var style = window.getComputedStyle(node, null);
-      display = style["display"];
-      visibility = style["visibility"];
+      const style = window.getComputedStyle(node, null);
+      display = style.display;
+      visibility = style.visibility;
     } else if (node.currentStyle) {
-      display = node.currentStyle["display"];
-      visibility = node.currentStyle["visibility"];
+      display = node.currentStyle.display;
+      visibility = node.currentStyle.visibility;
     }
-    var hiddenSection = false;
-    var recurringSection = locateCss({ target: node }, "dhx_form_repeat", false);
+    let hiddenSection = false;
+    const recurringSection = locateCss({ target: node }, "dhx_form_repeat", false);
     if (recurringSection) {
-      hiddenSection = !!(recurringSection.style.height == "0px");
+      hiddenSection = recurringSection.style.height === "0px";
     }
     hiddenSection = hiddenSection || !node.offsetHeight;
-    return display != "none" && visibility != "hidden" && !hiddenSection;
+    return display !== "none" && visibility !== "hidden" && !hiddenSection;
   }
   function hasNonNegativeTabIndex(node) {
-    return !isNaN(node.getAttribute("tabindex")) && node.getAttribute("tabindex") * 1 >= 0;
+    const tabIndex = node.getAttribute("tabindex");
+    return tabIndex !== null && !Number.isNaN(Number(tabIndex)) && Number(tabIndex) >= 0;
   }
   function hasHref(node) {
-    var canHaveHref = { a: true, area: true };
-    if (canHaveHref[node.nodeName.loLowerCase()]) {
+    const canHaveHref = { a: true, area: true };
+    if (canHaveHref[node.nodeName.toLowerCase()]) {
       return !!node.getAttribute("href");
     }
     return true;
   }
   function isEnabled(node) {
-    var canDisable = { input: true, select: true, textarea: true, button: true, object: true };
+    const canDisable = { input: true, select: true, textarea: true, button: true, object: true };
     if (canDisable[node.nodeName.toLowerCase()]) {
       return !node.hasAttribute("disabled");
     }
     return true;
   }
   function getFocusableNodes(root) {
-    var nodes = root.querySelectorAll(["a[href]", "area[href]", "input", "select", "textarea", "button", "iframe", "object", "embed", "[tabindex]", "[contenteditable]"].join(", "));
-    var nodesArray = Array.prototype.slice.call(nodes, 0);
-    for (var i = 0; i < nodesArray.length; i++) {
+    const nodes = root.querySelectorAll(["a[href]", "area[href]", "input", "select", "textarea", "button", "iframe", "object", "embed", "[tabindex]", "[contenteditable]"].join(", "));
+    const nodesArray = Array.from(nodes);
+    for (let i = 0; i < nodesArray.length; i++) {
       nodesArray[i].$position = i;
     }
-    nodesArray.sort(function(a, b) {
-      if (a.tabIndex === 0 && b.tabIndex !== 0) {
+    nodesArray.sort((a, b) => {
+      if (a.tabIndex === 0 && b.tabIndex !== 0)
         return 1;
-      }
-      if (a.tabIndex !== 0 && b.tabIndex === 0) {
+      if (a.tabIndex !== 0 && b.tabIndex === 0)
         return -1;
-      }
       if (a.tabIndex === b.tabIndex) {
-        return a.$position - b.$position;
+        return (a.$position || 0) - (b.$position || 0);
       }
-      if (a.tabIndex < b.tabIndex) {
-        return -1;
-      }
-      return 1;
+      return a.tabIndex < b.tabIndex ? -1 : 1;
     });
-    for (var i = 0; i < nodesArray.length; i++) {
-      var node = nodesArray[i];
-      var isValid = (hasNonNegativeTabIndex(node) || isEnabled(node) || hasHref(node)) && isVisible(node);
+    for (let i = 0; i < nodesArray.length; i++) {
+      const node = nodesArray[i];
+      const isValid = (hasNonNegativeTabIndex(node) || isEnabled(node) || hasHref(node)) && isVisible(node);
       if (!isValid) {
         nodesArray.splice(i, 1);
         i--;
@@ -4112,36 +4185,36 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     return nodesArray;
   }
   function isShadowDomSupported() {
-    return document.head.createShadowRoot || document.head.attachShadow;
+    const head = document.head;
+    return !!(head.createShadowRoot || head.attachShadow);
   }
   function getActiveElement() {
-    var activeElement = document.activeElement;
-    if (activeElement.shadowRoot) {
-      activeElement = activeElement.shadowRoot.activeElement;
+    var _a, _b;
+    let activeElement = document.activeElement;
+    if (activeElement == null ? void 0 : activeElement.shadowRoot) {
+      activeElement = ((_a = activeElement.shadowRoot) == null ? void 0 : _a.activeElement) || activeElement;
     }
     if (activeElement === document.body && document.getSelection) {
-      activeElement = document.getSelection().focusNode || document.body;
+      activeElement = ((_b = document.getSelection()) == null ? void 0 : _b.focusNode) || document.body;
     }
     return activeElement;
   }
   function closest(element, selector) {
-    if (element.closest) {
+    if (typeof element.closest === "function") {
       return element.closest(selector);
-    } else if (element.matches || element.msMatchesSelector || element.webkitMatchesSelector) {
-      var el = element;
-      if (!document.documentElement.contains(el))
-        return null;
-      do {
-        var method = el.matches || el.msMatchesSelector || el.webkitMatchesSelector;
-        if (method.call(el, selector))
-          return el;
-        el = el.parentElement || el.parentNode;
-      } while (el !== null && el.nodeType === 1);
-      return null;
-    } else {
-      console.error("Your browser is not supported");
-      return null;
     }
+    let el = element;
+    if (!document.documentElement.contains(el))
+      return null;
+    do {
+      const legacyEl = el;
+      const method = legacyEl.matches || legacyEl.msMatchesSelector || legacyEl.webkitMatchesSelector;
+      if (method == null ? void 0 : method.call(el, selector))
+        return el;
+      el = el.parentElement || el.parentNode;
+    } while (el !== null && el.nodeType === 1);
+    console.error("Your browser is not supported");
+    return null;
   }
   function getRootNode(element) {
     if (!element) {
@@ -4150,9 +4223,11 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     if (!isShadowDomSupported()) {
       return document.body;
     }
-    while (element.parentNode && (element = element.parentNode)) {
-      if (element instanceof ShadowRoot) {
-        return element.host;
+    let currentElement = element;
+    while (currentElement.parentNode) {
+      currentElement = currentElement.parentNode;
+      if (currentElement instanceof ShadowRoot) {
+        return currentElement.host;
       }
     }
     return document.body;
@@ -4160,74 +4235,77 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
   function hasShadowParent(element) {
     return !!getRootNode(element);
   }
-  const dom_helpers = { getAbsoluteLeft: function getAbsoluteLeft(htmlObject) {
+  const domHelpers = { getAbsoluteLeft(htmlObject) {
     const offsetLeft = this.getOffset(htmlObject).left;
     const paddingLeft = parseInt(window.getComputedStyle(htmlObject).paddingLeft, 10) || 0;
     return offsetLeft + paddingLeft;
-  }, getAbsoluteTop: function getAbsoluteTop(htmlObject) {
+  }, getAbsoluteTop(htmlObject) {
     const offsetTop = this.getOffset(htmlObject).top;
     const paddingTop = parseInt(window.getComputedStyle(htmlObject).paddingTop, 10) || 0;
     return offsetTop + paddingTop;
-  }, getOffsetSum: function getOffsetSum(elem) {
-    var top = 0, left = 0;
-    while (elem) {
-      top = top + parseInt(elem.offsetTop);
-      left = left + parseInt(elem.offsetLeft);
-      elem = elem.offsetParent;
+  }, getOffsetSum(elem) {
+    let top = 0;
+    let left = 0;
+    let currentElem = elem;
+    while (currentElem) {
+      top += parseInt(String(currentElem.offsetTop), 10);
+      left += parseInt(String(currentElem.offsetLeft), 10);
+      currentElem = currentElem.offsetParent;
     }
     return { top, left };
-  }, getOffsetRect: function getOffsetRect(elem) {
-    var box = elem.getBoundingClientRect();
-    var top = 0, left = 0;
+  }, getOffsetRect(elem) {
+    var _a;
+    const box = elem.getBoundingClientRect();
+    let top = 0;
+    let left = 0;
     if (!/Mobi/.test(navigator.userAgent)) {
-      var body = document.body;
-      var docElem = document.documentElement;
-      var scrollTop = window.pageYOffset || docElem.scrollTop || body.scrollTop;
-      var scrollLeft = window.pageXOffset || docElem.scrollLeft || body.scrollLeft;
-      var clientTop = docElem.clientTop || body.clientTop || 0;
-      var clientLeft = docElem.clientLeft || body.clientLeft || 0;
+      const body = document.body;
+      const docElem = document.documentElement;
+      const scrollTop = window.pageYOffset || docElem.scrollTop || body.scrollTop;
+      const scrollLeft = window.pageXOffset || docElem.scrollLeft || body.scrollLeft;
+      const clientTop = docElem.clientTop || body.clientTop || 0;
+      const clientLeft = docElem.clientLeft || body.clientLeft || 0;
       top = box.top + scrollTop - clientTop;
       left = box.left + scrollLeft - clientLeft;
     } else {
-      var dummy = document.createElement("div");
+      const dummy = document.createElement("div");
       dummy.style.position = "absolute";
       dummy.style.left = "0px";
       dummy.style.top = "0px";
       dummy.style.width = "1px";
       dummy.style.height = "1px";
       document.body.appendChild(dummy);
-      var dummyBox = dummy.getBoundingClientRect();
+      const dummyBox = dummy.getBoundingClientRect();
       top = box.top - dummyBox.top;
       left = box.left - dummyBox.left;
-      dummy.parentNode.removeChild(dummy);
+      (_a = dummy.parentNode) == null ? void 0 : _a.removeChild(dummy);
     }
     return { top: Math.round(top), left: Math.round(left) };
-  }, getOffset: function getOffset(elem) {
-    if (elem.getBoundingClientRect) {
-      return this.getOffsetRect(elem);
-    } else {
-      return this.getOffsetSum(elem);
-    }
-  }, closest: function(element, selector) {
+  }, getOffset(elem) {
+    return this.getOffsetSum(elem);
+  }, closest(element, selector) {
     if (!element || !selector) {
       return null;
     }
     return closest(element, selector);
-  }, insertAfter: function(newNode, referenceNode) {
+  }, insertAfter(newNode, referenceNode) {
+    if (!referenceNode.parentNode)
+      return;
     if (referenceNode.nextSibling) {
       referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
     } else {
       referenceNode.parentNode.appendChild(newNode);
     }
-  }, remove: function(node) {
-    if (node && node.parentNode) {
+  }, remove(node) {
+    if (node == null ? void 0 : node.parentNode) {
       node.parentNode.removeChild(node);
     }
-  }, isChildOf: function(child, parent) {
+  }, isChildOf(child, parent) {
     return parent.contains(child);
-  }, getFocusableNodes, getClassName, locateCss, getRootNode, hasShadowParent, isShadowDomSupported, getActiveElement, getRelativeEventPosition, getTargetNode, getNodePosition, closest };
-  var isWindowAwailable = typeof window !== "undefined";
-  const env = { isIE: isWindowAwailable && (navigator.userAgent.indexOf("MSIE") >= 0 || navigator.userAgent.indexOf("Trident") >= 0), isOpera: isWindowAwailable && navigator.userAgent.indexOf("Opera") >= 0, isChrome: isWindowAwailable && navigator.userAgent.indexOf("Chrome") >= 0, isKHTML: isWindowAwailable && (navigator.userAgent.indexOf("Safari") >= 0 || navigator.userAgent.indexOf("Konqueror") >= 0), isFF: isWindowAwailable && navigator.userAgent.indexOf("Firefox") >= 0, isIPad: isWindowAwailable && navigator.userAgent.search(/iPad/gi) >= 0, isEdge: isWindowAwailable && navigator.userAgent.indexOf("Edge") != -1, isNode: !isWindowAwailable || typeof navigator == "undefined" };
+  }, getFocusableNodes, getClassName, locateCss, getRootNode, hasShadowParent, isShadowDomSupported, getActiveElement, getRelativeEventPosition, getTargetNode, getNodePosition };
+  const isWindowAvailable = typeof window !== "undefined";
+  const userAgent = isWindowAvailable && typeof navigator !== "undefined" ? navigator.userAgent : "";
+  const env = { isIE: userAgent.includes("MSIE") || userAgent.includes("Trident"), isOpera: userAgent.includes("Opera"), isChrome: userAgent.includes("Chrome"), isKHTML: userAgent.includes("Safari") || userAgent.includes("Konqueror"), isFF: userAgent.includes("Firefox"), isIPad: /iPad/i.test(userAgent), isEdge: userAgent.includes("Edge"), isNode: !isWindowAvailable || typeof navigator === "undefined" };
   function extend$g(scheduler2) {
     scheduler2.destructor = function() {
       scheduler2.callEvent("onDestroy", []);
@@ -4255,8 +4333,11 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     };
   }
   function serialize$1(data) {
-    if (typeof data === "string" || typeof data === "number") {
+    if (typeof data === "string") {
       return data;
+    }
+    if (typeof data === "number") {
+      return String(data);
     }
     var result = "";
     for (var key in data) {
@@ -4278,178 +4359,169 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     }
     return result;
   }
-  function extend$f(scheduler2) {
-    scheduler2.Promise = typeof window !== "undefined" ? window.Promise : Promise;
-    function createConfig(method, args) {
-      var result = { method };
-      if (args.length === 0) {
-        throw new Error("Arguments list of query is wrong.");
+  function stringifyData(data) {
+    if (!data)
+      return "";
+    return typeof data === "string" ? data : serialize$1(data);
+  }
+  function createConfig(method, args) {
+    const params = Array.from(args);
+    if (params.length === 0) {
+      throw new Error("Arguments list of query is wrong.");
+    }
+    const result = { method, url: "" };
+    if (params.length === 1) {
+      const firstArg = params[0];
+      if (typeof firstArg === "string") {
+        result.url = firstArg;
+        result.async = true;
+      } else {
+        result.url = firstArg.url;
+        result.async = firstArg.async ?? true;
+        result.callback = firstArg.callback;
+        result.headers = firstArg.headers;
       }
-      if (args.length === 1) {
-        if (typeof args[0] === "string") {
-          result.url = args[0];
-          result.async = true;
-        } else {
-          result.url = args[0].url;
-          result.async = args[0].async || true;
-          result.callback = args[0].callback;
-          result.headers = args[0].headers;
-        }
-        if (method === "POST" || "PUT") {
-          if (args[0].data) {
-            if (typeof args[0].data !== "string") {
-              result.data = serialize$1(args[0].data);
-            } else {
-              result.data = args[0].data;
-            }
-          } else {
-            result.data = "";
-          }
-        }
-        return result;
-      }
-      result.url = args[0];
-      switch (method) {
-        case "GET":
-        case "DELETE":
-          result.callback = args[1];
-          result.headers = args[2];
-          break;
-        case "POST":
-        case "PUT":
-          if (args[1]) {
-            if (typeof args[1] !== "string") {
-              result.data = serialize$1(args[1]);
-            } else {
-              result.data = args[1];
-            }
-          } else {
-            result.data = "";
-          }
-          result.callback = args[2];
-          result.headers = args[3];
-          break;
+      if (method === "POST" || method === "PUT") {
+        result.data = stringifyData(firstArg.data);
       }
       return result;
     }
-    scheduler2.ajax = { cache: true, method: "get", serializeRequestParams: serialize$1, parse: function(data) {
+    result.url = params[0];
+    switch (method) {
+      case "GET":
+      case "DELETE":
+        result.callback = params[1];
+        result.headers = params[2];
+        break;
+      case "POST":
+      case "PUT":
+        result.data = stringifyData(params[1]);
+        result.callback = params[2];
+        result.headers = params[3];
+        break;
+    }
+    return result;
+  }
+  function extend$f(scheduler2) {
+    scheduler2.Promise = typeof window !== "undefined" ? window.Promise : Promise;
+    const ajax = { cache: true, method: "get", serializeRequestParams: serialize$1, parse(data) {
       if (typeof data !== "string")
         return data;
-      var obj;
-      data = data.replace(/^[\s]+/, "");
+      let obj;
+      const xmlText = data.replace(/^[\s]+/, "");
       if (typeof DOMParser !== "undefined" && !scheduler2.$env.isIE) {
-        obj = new DOMParser().parseFromString(data, "text/xml");
-      } else if (typeof window.ActiveXObject !== "undefined") {
+        obj = new DOMParser().parseFromString(xmlText, "text/xml");
+      } else if (typeof window !== "undefined" && typeof window.ActiveXObject !== "undefined") {
         obj = new window.ActiveXObject("Microsoft.XMLDOM");
         obj.async = "false";
-        obj.loadXML(data);
+        obj.loadXML(xmlText);
       }
-      return obj;
-    }, xmltop: function(tagname, xhr, obj) {
-      if (typeof xhr.status == "undefined" || xhr.status < 400) {
-        var xml = !xhr.responseXML ? this.parse(xhr.responseText || xhr) : xhr.responseXML || xhr;
-        if (xml && xml.documentElement !== null && !xml.getElementsByTagName("parsererror").length) {
+      return obj || xmlText;
+    }, xmltop(tagname, xhr, obj) {
+      if (typeof xhr.status === "undefined" || xhr.status < 400) {
+        const xml = !xhr.responseXML ? this.parse(xhr.responseText || xhr) : xhr.responseXML;
+        if (typeof xml !== "string" && xml.documentElement !== null && !xml.getElementsByTagName("parsererror").length) {
           return xml.getElementsByTagName(tagname)[0];
         }
       }
-      if (obj !== -1)
-        scheduler2.callEvent("onLoadXMLError", ["Incorrect XML", arguments[1], obj]);
+      if (obj !== -1) {
+        scheduler2.callEvent("onLoadXMLError", ["Incorrect XML", xhr, obj]);
+      }
       return document.createElement("DIV");
-    }, xpath: function(xpathExp, docObj) {
-      if (!docObj.nodeName)
-        docObj = docObj.responseXML || docObj;
+    }, xpath(xpathExp, docObj) {
+      var _a;
+      const documentObject = "nodeName" in docObj ? docObj : docObj.responseXML || docObj;
       if (scheduler2.$env.isIE) {
-        return docObj.selectNodes(xpathExp) || [];
-      } else {
-        var rows = [];
-        var first;
-        var col = (docObj.ownerDocument || docObj).evaluate(xpathExp, docObj, null, XPathResult.ANY_TYPE, null);
-        while (true) {
-          first = col.iterateNext();
-          if (first) {
-            rows.push(first);
-          } else {
-            break;
-          }
+        return ((_a = documentObject.selectNodes) == null ? void 0 : _a.call(documentObject, xpathExp)) || [];
+      }
+      const rows = [];
+      const ownerDocument = documentObject.ownerDocument || documentObject;
+      const collection = ownerDocument.evaluate(xpathExp, documentObject, null, XPathResult.ANY_TYPE, null);
+      while (true) {
+        const first = collection.iterateNext();
+        if (first) {
+          rows.push(first);
+        } else {
+          break;
         }
-        return rows;
       }
-    }, query: function(config) {
-      return this._call(config.method || "GET", config.url, config.data || "", config.async || true, config.callback, config.headers);
-    }, get: function(url2, onLoad, headers) {
-      var config = createConfig("GET", arguments);
+      return rows;
+    }, query(config) {
+      return this._call(config.method || "GET", config.url, String(config.data || ""), config.async ?? true, config.callback, config.headers);
+    }, get(url2, onLoad, headers) {
+      const config = createConfig("GET", arguments);
       return this.query(config);
-    }, getSync: function(url2, headers) {
-      var config = createConfig("GET", arguments);
+    }, getSync(url2, headers) {
+      const config = createConfig("GET", arguments);
       config.async = false;
       return this.query(config);
-    }, put: function(url2, postData, onLoad, headers) {
-      var config = createConfig("PUT", arguments);
+    }, put(url2, postData, onLoad, headers) {
+      const config = createConfig("PUT", arguments);
       return this.query(config);
-    }, del: function(url2, onLoad, headers) {
-      var config = createConfig("DELETE", arguments);
+    }, del(url2, onLoad, headers) {
+      const config = createConfig("DELETE", arguments);
       return this.query(config);
-    }, post: function(url2, postData, onLoad, headers) {
-      if (arguments.length == 1) {
-        postData = "";
-      } else if (arguments.length == 2 && typeof postData == "function") {
-        onLoad = postData;
-        postData = "";
+    }, post(url2, postData, onLoad, headers) {
+      let currentPostData = postData;
+      let currentOnLoad = onLoad;
+      if (arguments.length === 1) {
+        currentPostData = "";
+      } else if (arguments.length === 2 && typeof currentPostData === "function") {
+        currentOnLoad = currentPostData;
+        currentPostData = "";
       }
-      var config = createConfig("POST", arguments);
+      const config = createConfig("POST", [url2, currentPostData, currentOnLoad, headers]);
       return this.query(config);
-    }, postSync: function(url2, postData, headers) {
-      postData = postData === null ? "" : String(postData);
-      var config = createConfig("POST", arguments);
+    }, postSync(url2, postData, headers) {
+      const currentPostData = postData === null ? "" : String(postData);
+      const config = createConfig("POST", [url2, currentPostData, headers]);
       config.async = false;
       return this.query(config);
-    }, _call: function(method, url2, postData, async, onLoad, headers) {
-      return new scheduler2.Promise((function(resolve, reject) {
-        var t2 = typeof XMLHttpRequest !== void 0 && !scheduler2.$env.isIE ? new XMLHttpRequest() : new window.ActiveXObject("Microsoft.XMLHTTP");
-        var isQt = navigator.userAgent.match(/AppleWebKit/) !== null && navigator.userAgent.match(/Qt/) !== null && navigator.userAgent.match(/Safari/) !== null;
-        if (!!async) {
-          t2.addEventListener("readystatechange", function() {
-            if (t2.readyState == 4 || isQt && t2.readyState == 3) {
-              if (t2.status != 200 || t2.responseText === "") {
-                if (!scheduler2.callEvent("onAjaxError", [t2]))
+    }, _call(method, url2, postData, async, onLoad, headers) {
+      return new scheduler2.Promise((resolve) => {
+        let xhr = typeof XMLHttpRequest !== "undefined" && !scheduler2.$env.isIE ? new XMLHttpRequest() : new window.ActiveXObject("Microsoft.XMLHTTP");
+        const userAgent2 = typeof navigator !== "undefined" ? navigator.userAgent : "";
+        const isQt = userAgent2.match(/AppleWebKit/) !== null && userAgent2.match(/Qt/) !== null && userAgent2.match(/Safari/) !== null;
+        if (async) {
+          xhr.addEventListener("readystatechange", () => {
+            if (xhr.readyState === 4 || isQt && xhr.readyState === 3) {
+              if (xhr.status !== 200 || xhr.responseText === "") {
+                if (!scheduler2.callEvent("onAjaxError", [xhr]))
                   return;
               }
-              setTimeout(function() {
-                if (typeof onLoad == "function") {
-                  onLoad.apply(window, [{ xmlDoc: t2, filePath: url2 }]);
+              setTimeout(() => {
+                if (typeof onLoad === "function") {
+                  onLoad.apply(window, [{ xmlDoc: xhr, filePath: url2 }]);
                 }
-                resolve(t2);
-                if (typeof onLoad == "function") {
-                  onLoad = null;
-                  t2 = null;
-                }
+                resolve(xhr);
               }, 0);
             }
           });
         }
-        if (method == "GET" && !this.cache) {
-          url2 += (url2.indexOf("?") >= 0 ? "&" : "?") + "dhxr" + (/* @__PURE__ */ new Date()).getTime() + "=1";
+        let requestUrl = url2;
+        if (method === "GET" && !this.cache) {
+          requestUrl += `${requestUrl.indexOf("?") >= 0 ? "&" : "?"}dhxr${Date.now()}=1`;
         }
-        t2.open(method, url2, async);
+        xhr.open(method, requestUrl, async);
         if (headers) {
-          for (var key in headers)
-            t2.setRequestHeader(key, headers[key]);
-        } else if (method.toUpperCase() == "POST" || method == "PUT" || method == "DELETE") {
-          t2.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        } else if (method == "GET") {
+          for (const key in headers) {
+            xhr.setRequestHeader(key, headers[key]);
+          }
+        } else if (method === "POST" || method === "PUT" || method === "DELETE") {
+          xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        } else if (method === "GET") {
           postData = null;
         }
-        t2.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-        t2.send(postData);
-        if (!async)
-          return { xmlDoc: t2, filePath: url2 };
-      }).bind(this));
-    }, urlSeparator: function(str) {
-      if (str.indexOf("?") != -1)
-        return "&";
-      else
-        return "?";
+        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        xhr.send(postData);
+        if (!async) {
+          resolve(xhr);
+        }
+      });
+    }, urlSeparator(str) {
+      return str.indexOf("?") !== -1 ? "&" : "?";
     } };
+    scheduler2.ajax = ajax;
     scheduler2.$ajax = scheduler2.ajax;
   }
   function extend$e(scheduler2) {
@@ -4624,13 +4696,13 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     }
     scheduler2.date = { init: function() {
       var s = scheduler2.locale.date.month_short;
-      var t2 = scheduler2.locale.date.month_short_hash = {};
+      var t = scheduler2.locale.date.month_short_hash = {};
       for (var i = 0; i < s.length; i++)
-        t2[s[i]] = i;
+        t[s[i]] = i;
       var s = scheduler2.locale.date.month_full;
-      var t2 = scheduler2.locale.date.month_full_hash = {};
+      var t = scheduler2.locale.date.month_full_hash = {};
       for (var i = 0; i < s.length; i++)
-        t2[s[i]] = i;
+        t[s[i]] = i;
     }, date_part: function(value) {
       const date = new Date(value);
       var old = new Date(date);
@@ -4878,7 +4950,75 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       this.callEvent("onTemplatesReady", []);
     };
   }
+  const EMPTY = [];
+  function createRenderedEventsIndex(scheduler2) {
+    let buckets = null;
+    let source = null;
+    let indexed = 0;
+    let anchor = null;
+    function idOf(node) {
+      return node.getAttribute(scheduler2.config.event_attribute);
+    }
+    function add(node) {
+      const id = idOf(node);
+      if (id === null)
+        return;
+      const bucket = buckets.get(id);
+      if (bucket)
+        bucket.push(node);
+      else
+        buckets.set(id, [node]);
+    }
+    function markIndexed() {
+      anchor = indexed > 0 ? source[indexed - 1] : null;
+    }
+    function rebuild(rendered) {
+      buckets = /* @__PURE__ */ new Map();
+      source = rendered;
+      indexed = rendered.length;
+      for (let i = 0; i < rendered.length; i++)
+        add(rendered[i]);
+      markIndexed();
+    }
+    return { sync() {
+      const rendered = scheduler2._rendered;
+      const outOfStep = buckets === null || source !== rendered || rendered.length < indexed || indexed > 0 && rendered[indexed - 1] !== anchor;
+      if (outOfStep) {
+        rebuild(rendered);
+        return;
+      }
+      if (indexed === rendered.length)
+        return;
+      for (; indexed < rendered.length; indexed++)
+        add(rendered[indexed]);
+      markIndexed();
+    }, lookup(id) {
+      this.sync();
+      return buckets.get(String(id)) || EMPTY;
+    }, forget(node) {
+      if (buckets === null)
+        return;
+      const id = idOf(node);
+      const bucket = id === null ? null : buckets.get(id);
+      if (bucket) {
+        const at = bucket.indexOf(node);
+        if (at > -1)
+          bucket.splice(at, 1);
+        if (!bucket.length)
+          buckets.delete(id);
+      }
+      if (indexed > 0)
+        indexed--;
+      markIndexed();
+    }, invalidate() {
+      buckets = null;
+      source = null;
+      indexed = 0;
+      anchor = null;
+    } };
+  }
   function extend$c(scheduler2) {
+    const renderedIndex = createRenderedEventsIndex(scheduler2);
     scheduler2._events = {};
     scheduler2.clearAll = function() {
       this._events = {};
@@ -4949,9 +5089,22 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       this._events[id] = hash;
     };
     scheduler2.for_rendered = function(id, method) {
-      for (var i = this._rendered.length - 1; i >= 0; i--)
-        if (this._rendered[i].getAttribute(this.config.event_attribute) == id)
-          method(this._rendered[i], i);
+      var nodes = renderedIndex.lookup(id);
+      for (var i = nodes.length - 1; i >= 0; i--) {
+        var position = this._rendered.indexOf(nodes[i]);
+        if (position < 0)
+          continue;
+        method(nodes[i], position);
+      }
+    };
+    scheduler2._forget_rendered_event = function(node, position) {
+      renderedIndex.sync();
+      var at = position === void 0 || this._rendered[position] !== node ? this._rendered.indexOf(node) : position;
+      if (at < 0)
+        return false;
+      this._rendered.splice(at, 1);
+      renderedIndex.forget(node);
+      return true;
     };
     scheduler2.changeEventId = function(id, new_id) {
       if (id == new_id)
@@ -4966,6 +5119,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         r.setAttribute("event_id", new_id);
         r.setAttribute(scheduler2.config.event_attribute, new_id);
       });
+      renderedIndex.invalidate();
       if (this._select_id == id)
         this._select_id = new_id;
       if (this._edit_id == id)
@@ -5473,21 +5627,21 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
           ev._first_chunk = chunk_info.first_chunk;
           ev._last_chunk = chunk_info.last_chunk;
         } else {
-          var copy = this._copy_event(ev);
-          copy.id = ev.id;
-          copy._length = cols - ev._sday;
-          copy._eday = cols;
-          copy._sday = ev._sday;
-          copy._sweek = ev._sweek;
-          copy._sorder = ev._sorder;
-          copy.end_date = this.date.add(sd, copy._length, "day");
-          copy._first_chunk = chunk_info.first_chunk;
+          var copy2 = this._copy_event(ev);
+          copy2.id = ev.id;
+          copy2._length = cols - ev._sday;
+          copy2._eday = cols;
+          copy2._sday = ev._sday;
+          copy2._sweek = ev._sweek;
+          copy2._sorder = ev._sorder;
+          copy2.end_date = this.date.add(sd, copy2._length, "day");
+          copy2._first_chunk = chunk_info.first_chunk;
           if (chunk_info.first_chunk) {
             chunk_info.first_chunk = false;
           }
-          out.push(copy);
-          stack[stack_line] = copy;
-          start_date = copy.end_date;
+          out.push(copy2);
+          stack[stack_line] = copy2;
+          start_date = copy2.end_date;
           max[ev._sweek] = stack.length - 1;
           i--;
           continue;
@@ -5506,13 +5660,17 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       return new this._copy_dummy();
     };
     scheduler2._rendered = [];
+    scheduler2._reset_rendered_events = function() {
+      this._rendered = [];
+      renderedIndex.invalidate();
+    };
     scheduler2.clear_view = function() {
       for (var i = 0; i < this._rendered.length; i++) {
         var obj = this._rendered[i];
         if (obj.parentNode)
           obj.parentNode.removeChild(obj);
       }
-      this._rendered = [];
+      this._reset_rendered_events();
     };
     scheduler2.updateEvent = function(id) {
       var ev = this.getEvent(id);
@@ -5533,7 +5691,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       this.for_rendered(id, function(node, i) {
         if (node.parentNode)
           node.parentNode.removeChild(node);
-        scheduler2._rendered.splice(i, 1);
+        scheduler2._forget_rendered_event(node, i);
       });
     };
     scheduler2._y_from_date = function(date) {
@@ -6180,16 +6338,16 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       }
       obj[name] = value;
     }, parse_date: function(value, dh, dm) {
-      var t2 = value.split("T");
+      var t = value.split("T");
       var utcMark = false;
-      if (t2[1]) {
-        dh = t2[1].substr(0, 2);
-        dm = t2[1].substr(2, 2);
-        utcMark = !!(t2[1][6] == "Z");
+      if (t[1]) {
+        dh = t[1].substr(0, 2);
+        dm = t[1].substr(2, 2);
+        utcMark = !!(t[1][6] == "Z");
       }
-      var dy = t2[0].substr(0, 4);
-      var dn = parseInt(t2[0].substr(4, 2), 10) - 1;
-      var dd = t2[0].substr(6, 2);
+      var dy = t[0].substr(0, 4);
+      var dn = parseInt(t[0].substr(4, 2), 10) - 1;
+      var dd = t[0].substr(6, 2);
       if (scheduler2.config.server_utc || utcMark) {
         return new Date(Date.UTC(dy, dn, dd, dh, dm));
       } else {
@@ -6386,33 +6544,33 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     };
     scheduler2._userdata = {};
     scheduler2._xmlNodeToJSON = function(node) {
-      var t2 = {};
+      var t = {};
       for (var i = 0; i < node.attributes.length; i++)
-        t2[node.attributes[i].name] = node.attributes[i].value;
+        t[node.attributes[i].name] = node.attributes[i].value;
       for (var i = 0; i < node.childNodes.length; i++) {
         var child = node.childNodes[i];
         if (child.nodeType == 1)
-          t2[child.tagName] = child.firstChild ? child.firstChild.nodeValue : "";
+          t[child.tagName] = child.firstChild ? child.firstChild.nodeValue : "";
       }
-      if (!t2.text)
-        t2.text = node.firstChild ? node.firstChild.nodeValue : "";
-      return t2;
+      if (!t.text)
+        t.text = node.firstChild ? node.firstChild.nodeValue : "";
+      return t;
     };
     scheduler2.attachEvent("onXLS", function() {
       if (this.config.show_loading === true) {
-        var t2;
-        t2 = this.config.show_loading = document.createElement("div");
-        t2.className = "dhx_loading";
-        t2.style.left = Math.round((this._x - 128) / 2) + "px";
-        t2.style.top = Math.round((this._y - 15) / 2) + "px";
-        this._obj.appendChild(t2);
+        var t;
+        t = this.config.show_loading = document.createElement("div");
+        t.className = "dhx_loading";
+        t.style.left = Math.round((this._x - 128) / 2) + "px";
+        t.style.top = Math.round((this._y - 15) / 2) + "px";
+        this._obj.appendChild(t);
       }
     });
     scheduler2.attachEvent("onXLE", function() {
-      var t2 = this.config.show_loading;
-      if (t2 && typeof t2 == "object") {
-        if (t2.parentNode) {
-          t2.parentNode.removeChild(t2);
+      var t = this.config.show_loading;
+      if (t && typeof t == "object") {
+        if (t.parentNode) {
+          t.parentNode.removeChild(t);
         }
         this.config.show_loading = true;
       }
@@ -7204,11 +7362,11 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       function check_direction_swipe(s_ev, e_ev, step, max_dy) {
         if (!s_ev || !e_ev)
           return false;
-        var t2 = s_ev.target;
-        while (t2 && t2 != scheduler2._obj) {
-          t2 = t2.parentNode;
+        var t = s_ev.target;
+        while (t && t != scheduler2._obj) {
+          t = t.parentNode;
         }
-        if (t2 != scheduler2._obj) {
+        if (t != scheduler2._obj) {
           return false;
         }
         if (scheduler2.matrix && scheduler2.matrix[scheduler2.getState().mode]) {
@@ -7356,7 +7514,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
           if (scheduler2._drag_mode && scheduler2._drag_mode != "create") {
             scheduler2.for_rendered(scheduler2._drag_id, function(node, i) {
               node.style.display = "none";
-              scheduler2._rendered.splice(i, 1);
+              scheduler2._forget_rendered_event(node, i);
             });
           }
           if (scheduler2.config.touch_tip) {
@@ -8520,12 +8678,12 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     if (typeof data === "string") {
       return data;
     }
-    var copy = this.$scheduler.utils.copy(data);
+    var copy2 = this.$scheduler.utils.copy(data);
     if (this._tMode === "REST-JSON") {
-      delete copy.id;
-      delete copy[this.action_param];
+      delete copy2.id;
+      delete copy2[this.action_param];
     }
-    return JSON.stringify(copy);
+    return JSON.stringify(copy2);
   }, _cleanupArgumentsBeforeSend: function(dataToSend) {
     var processedData;
     if (dataToSend[this.action_param] === void 0) {
@@ -8560,9 +8718,9 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
   }, _prepareItemForJson(item) {
     const processedItem = {};
     const scheduler2 = this.$scheduler;
-    const copy = scheduler2.utils.copy(item);
-    for (let i in copy) {
-      let prop = copy[i];
+    const copy2 = scheduler2.utils.copy(item);
+    for (let i in copy2) {
+      let prop = copy2[i];
       if (i.indexOf("_") === 0) {
         continue;
       } else if (prop) {
@@ -8582,9 +8740,9 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
   }, _prepareItemForForm(item) {
     const processedItem = {};
     const scheduler2 = this.$scheduler;
-    const copy = scheduler2.utils.copy(item);
-    for (var i in copy) {
-      let prop = copy[i];
+    const copy2 = scheduler2.utils.copy(item);
+    for (var i in copy2) {
+      let prop = copy2[i];
       if (i.indexOf("_") === 0) {
         continue;
       } else if (prop) {
@@ -8654,7 +8812,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         if (messageBox.keyboard) {
           if (code == 13 || code == 32) {
             var target = event2.target || event2.srcElement;
-            if (dom_helpers.getClassName(target).indexOf("scheduler_popup_button") > -1 && target.click) {
+            if (domHelpers.getClassName(target).indexOf("scheduler_popup_button") > -1 && target.click) {
               target.click();
             } else {
               callback(_dhx_msg_cfg, true);
@@ -8778,7 +8936,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         var source = event2.target || event2.srcElement;
         if (!source.className)
           source = source.parentNode;
-        if (dom_helpers.closest(source, ".scheduler_popup_button")) {
+        if (domHelpers.closest(source, ".scheduler_popup_button")) {
           var result = source.getAttribute("data-result");
           result = result == "true" || (result == "false" ? false : result);
           callback(config, result, event2);
@@ -8860,7 +9018,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     };
     modalBox.focus = function(node) {
       setTimeout(function() {
-        var focusable = dom_helpers.getFocusableNodes(node);
+        var focusable = domHelpers.getFocusableNodes(node);
         if (focusable.length) {
           if (focusable[0].focus)
             focusable[0].focus();
@@ -9271,7 +9429,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     }
   }
   function factoryMethod(extensionManager) {
-    const scheduler2 = { version: "7.2.14" };
+    const scheduler2 = { version: "7.2.15" };
     scheduler2.$stateProvider = StateService();
     scheduler2.getState = scheduler2.$stateProvider.getState;
     extend$n(scheduler2);
@@ -9279,8 +9437,8 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     extend$j(scheduler2);
     extend$h(scheduler2);
     scheduler2.utils = utils;
-    scheduler2.$domHelpers = dom_helpers;
-    scheduler2.utils.dom = dom_helpers;
+    scheduler2.$domHelpers = domHelpers;
+    scheduler2.utils.dom = domHelpers;
     scheduler2.uid = utils.uid;
     scheduler2.mixin = utils.mixin;
     scheduler2.defined = utils.defined;
@@ -9289,9 +9447,9 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     scheduler2._createDatePicker = function(container, config) {
       return new DatePicker(scheduler2, container, config);
     };
-    scheduler2._getFocusableNodes = dom_helpers.getFocusableNodes;
-    scheduler2._getClassName = dom_helpers.getClassName;
-    scheduler2._locate_css = dom_helpers.locateCss;
+    scheduler2._getFocusableNodes = domHelpers.getFocusableNodes;
+    scheduler2._getClassName = domHelpers.getClassName;
+    scheduler2._locate_css = domHelpers.locateCss;
     const messageApi = message(scheduler2);
     scheduler2.utils.mixin(scheduler2, messageApi);
     scheduler2.env = scheduler2.$env = env;
@@ -9593,14 +9751,14 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         var agenda_area = scheduler2._els["dhx_cal_data"][0].childNodes[0];
         var v_border = agenda_area.childNodes[agenda_area.childNodes.length - 1];
         v_border.style.height = agenda_area.offsetHeight < scheduler2._els["dhx_cal_data"][0].offsetHeight ? "100%" : agenda_area.offsetHeight + "px";
-        var t2 = scheduler2._els["dhx_cal_data"][0].firstChild.childNodes;
+        var t = scheduler2._els["dhx_cal_data"][0].firstChild.childNodes;
         var dateElement = scheduler2._getNavDateElement();
         if (dateElement) {
           dateElement.innerHTML = scheduler2.templates.agenda_date(scheduler2._min_date, scheduler2._max_date, scheduler2._mode);
         }
-        scheduler2._rendered = [];
-        for (var i = 0; i < t2.length - 1; i++)
-          scheduler2._rendered[i] = t2[i];
+        scheduler2._reset_rendered_events();
+        for (var i = 0; i < t.length - 1; i++)
+          scheduler2._rendered[i] = t[i];
       }
       scheduler2.agenda_legacy_view = function(mode) {
         scheduler2._min_date = scheduler2.config.agenda_start || scheduler2.date.agenda_legacy_start(scheduler2._date);
@@ -9706,10 +9864,10 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
           scheduler2._els["dhx_cal_data"][0].innerHTML = html;
         }
         scheduler2._els["dhx_cal_data"][0].scrollTop = scrollTop;
-        let t2 = scheduler2._els["dhx_cal_data"][0].querySelectorAll(".dhx_cal_agenda_event_line");
-        scheduler2._rendered = [];
-        for (var i = 0; i < t2.length - 1; i++) {
-          scheduler2._rendered[i] = t2[i];
+        let t = scheduler2._els["dhx_cal_data"][0].querySelectorAll(".dhx_cal_agenda_event_line");
+        scheduler2._reset_rendered_events();
+        for (var i = 0; i < t.length - 1; i++) {
+          scheduler2._rendered[i] = t[i];
         }
       }
       function renderEmptyView() {
@@ -9782,17 +9940,17 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       return false;
     };
     scheduler2._safe_copy = function(event2) {
-      var proto = null, copy = scheduler2._copy_event(event2);
+      var proto = null, copy2 = scheduler2._copy_event(event2);
       if (event2.event_pid) {
         proto = scheduler2.getEvent(event2.event_pid);
       }
       if (proto && proto.isPrototypeOf(event2)) {
-        delete copy.event_length;
-        delete copy.event_pid;
-        delete copy.rec_pattern;
-        delete copy.rec_type;
+        delete copy2.event_length;
+        delete copy2.event_pid;
+        delete copy2.rec_pattern;
+        delete copy2.rec_type;
       }
-      return copy;
+      return copy2;
     };
     var old_prerender_events_line = scheduler2._pre_render_events_line;
     var old_prerender_events_table = scheduler2._pre_render_events_table;
@@ -9999,6 +10157,10 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
             break;
           }
           if (concurrent.recurring_event_id && [concurrent.recurring_event_id, concurrent._pid_time].join("#") == ev.id) {
+            evs.splice(i, 1);
+            break;
+          }
+          if (concurrent.id && String(concurrent.id).split("#")[0] == ev.id) {
             evs.splice(i, 1);
             break;
           }
@@ -10578,17 +10740,17 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     scheduler2.expand = function() {
       if (!scheduler2.callEvent("onBeforeExpand", []))
         return;
-      var t2 = scheduler2._obj;
+      var t = scheduler2._obj;
       do {
-        t2._position = t2.style.position || "";
-        t2.style.position = "static";
-      } while ((t2 = t2.parentNode) && t2.style);
-      t2 = scheduler2._obj;
-      t2.style.position = "absolute";
-      t2._width = t2.style.width;
-      t2._height = t2.style.height;
-      t2.style.width = t2.style.height = "100%";
-      t2.style.top = t2.style.left = "0px";
+        t._position = t.style.position || "";
+        t.style.position = "static";
+      } while ((t = t.parentNode) && t.style);
+      t = scheduler2._obj;
+      t.style.position = "absolute";
+      t._width = t.style.width;
+      t._height = t.style.height;
+      t.style.width = t.style.height = "100%";
+      t.style.top = t.style.left = "0px";
       var top = document.body;
       top.scrollTop = 0;
       top = top.parentNode;
@@ -10602,22 +10764,22 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     scheduler2.collapse = function() {
       if (!scheduler2.callEvent("onBeforeCollapse", []))
         return;
-      var t2 = scheduler2._obj;
+      var t = scheduler2._obj;
       do {
-        t2.style.position = t2._position;
-      } while ((t2 = t2.parentNode) && t2.style);
-      t2 = scheduler2._obj;
-      t2.style.width = t2._width;
-      t2.style.height = t2._height;
+        t.style.position = t._position;
+      } while ((t = t.parentNode) && t.style);
+      t = scheduler2._obj;
+      t.style.width = t._width;
+      t.style.height = t._height;
       document.body.style.overflow = document.body._overflow;
       scheduler2._maximize();
       scheduler2.callEvent("onCollapse", []);
     };
     scheduler2.attachEvent("onTemplatesReady", function() {
-      var t2 = document.createElement("div");
-      t2.className = "dhx_expand_icon";
-      scheduler2.ext.fullscreen.toggleIcon = t2;
-      t2.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      var t = document.createElement("div");
+      t.className = "dhx_expand_icon";
+      scheduler2.ext.fullscreen.toggleIcon = t;
+      t.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 	<g>
 	<line x1="0.5" y1="5" x2="0.5" y2="3.0598e-08" stroke="var(--dhx-scheduler-base-colors-icons)"/>
 	<line y1="0.5" x2="5" y2="0.5" stroke="var(--dhx-scheduler-base-colors-icons)"/>
@@ -10630,8 +10792,8 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
 	</g>
 	</svg>
 	`;
-      scheduler2._obj.appendChild(t2);
-      scheduler2.event(t2, "click", function() {
+      scheduler2._obj.appendChild(t);
+      scheduler2.event(t, "click", function() {
         if (!scheduler2.expanded)
           scheduler2.expand();
         else
@@ -11225,13 +11387,11 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         }
       }
     }, keys: { "alt+1, alt+2, alt+3, alt+4, alt+5, alt+6, alt+7, alt+8, alt+9": function(e) {
-      var tabs = scheduler2.$keyboardNavigation.HeaderCell.prototype.getNodes(".dhx_cal_navline .dhx_cal_tab");
-      var key = e.key;
-      if (key === void 0) {
-        key = e.keyCode - 48;
-      }
-      if (tabs[key * 1 - 1]) {
-        tabs[key * 1 - 1].click();
+      const tabs = scheduler2.$keyboardNavigation.HeaderCell.prototype.getNodes(".dhx_cal_navline .dhx_cal_tab");
+      const keyCode = e.code;
+      let key = parseInt(keyCode.replace("Digit", ""));
+      if (tabs[key - 1]) {
+        tabs[key - 1].click();
       }
     }, "ctrl+left,meta+left": function(e) {
       scheduler2._click.dhx_cal_prev_button();
@@ -12496,18 +12656,18 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         var date = scheduler2.$keyboardNavigation._pasteDate;
         var section = scheduler2.$keyboardNavigation._pasteSection;
         var event_duration = ev.end_date - ev.start_date;
-        var copy = copyEvent(ev);
-        clear_event_after(copy);
-        copy.start_date = new Date(date);
-        copy.end_date = new Date(copy.start_date.valueOf() + event_duration);
+        var copy2 = copyEvent(ev);
+        clear_event_after(copy2);
+        copy2.start_date = new Date(date);
+        copy2.end_date = new Date(copy2.start_date.valueOf() + event_duration);
         if (section) {
           var property = scheduler2._get_section_property();
           if (scheduler2.config.multisection && ev[property] && scheduler2.isMultisectionEvent && scheduler2.isMultisectionEvent(ev))
-            copy[property] = ev[property];
+            copy2[property] = ev[property];
           else
-            copy[property] = section;
+            copy2[property] = section;
         }
-        return copy;
+        return copy2;
       };
       scheduler2._do_paste = function(is_copy, modified_ev, original_ev) {
         if (scheduler2.callEvent("onBeforeEventPasted", [is_copy, modified_ev, original_ev]) === false) {
@@ -14097,14 +14257,14 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         html += "<div class='dhx_v_border' style=" + (scheduler2.config.rtl ? "'right: " : "'left: ") + (scheduler2.xy.map_date_width - 1) + "px;'></div><div class='dhx_v_border_description'></div></div>";
         scheduler2._els["dhx_cal_data"][0].scrollTop = 0;
         scheduler2._els["dhx_cal_data"][0].innerHTML = html;
-        let t2 = scheduler2._els["dhx_cal_data"][0].firstChild.childNodes;
+        let t = scheduler2._els["dhx_cal_data"][0].firstChild.childNodes;
         let dateElement = scheduler2._getNavDateElement();
         if (dateElement) {
           dateElement.innerHTML = scheduler2.templates[scheduler2._mode + "_date"](scheduler2._min_date, scheduler2._max_date, scheduler2._mode);
         }
-        scheduler2._rendered = [];
-        for (let i = 0; i < t2.length - 2; i++) {
-          scheduler2._rendered[i] = t2[i];
+        scheduler2._reset_rendered_events();
+        for (let i = 0; i < t.length - 2; i++) {
+          scheduler2._rendered[i] = t[i];
         }
       }
       function set_full_view(mode) {
@@ -14756,18 +14916,18 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
   }
   function multisource(scheduler2) {
     function backup(obj) {
-      var t2 = function() {
+      var t = function() {
       };
-      t2.prototype = obj;
-      return t2;
+      t.prototype = obj;
+      return t;
     }
     var old = scheduler2._load;
     scheduler2._load = function(url2, from) {
       url2 = url2 || this._load_url;
       if (typeof url2 == "object") {
-        var t2 = backup(this._loaded);
+        var t = backup(this._loaded);
         for (var i = 0; i < url2.length; i++) {
-          this._loaded = new t2();
+          this._loaded = new t();
           old.call(this, url2[i], from);
         }
       } else
@@ -15620,10 +15780,10 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
             if (d.checked)
               n.checked = true;
           } else {
-            var t2 = document.createElement("span");
-            t2.className = "dhx_text_disabled";
-            t2.innerHTML = text(txts[i]);
-            n.parentNode.insertBefore(t2, n);
+            var t = document.createElement("span");
+            t.className = "dhx_text_disabled";
+            t.innerHTML = text(txts[i]);
+            n.parentNode.insertBefore(t, n);
             n.parentNode.removeChild(n);
           }
         }
@@ -15952,14 +16112,14 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
   }
   var __assign = function() {
-    __assign = Object.assign || function __assign2(t2) {
+    __assign = Object.assign || function __assign2(t) {
       for (var s, i = 1, n = arguments.length; i < n; i++) {
         s = arguments[i];
         for (var p in s)
           if (Object.prototype.hasOwnProperty.call(s, p))
-            t2[p] = s[p];
+            t[p] = s[p];
       }
-      return t2;
+      return t;
     };
     return __assign.apply(this, arguments);
   };
@@ -18653,7 +18813,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       let ev = this.getEvent(id);
       let tempEvent = scheduler2._lame_clone(ev);
       let tempData = scheduler2._lame_clone(data);
-      if (ev && isSeries(ev)) {
+      if (ev && isSeries(ev) && isSeries(tempData)) {
         if (!is_new_event && this._isFollowing(id)) {
           if (ev._removeFollowing) {
             let occurrence = scheduler2.getEvent(ev._thisAndFollowing);
@@ -18721,6 +18881,8 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
             return false;
           }
         }
+      } else {
+        scheduler2._roll_back_dates(ev);
       }
       if (!is_new_event) {
         updateTextEvents(id, data);
@@ -19149,22 +19311,22 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
             stack.push(exception);
           }
         } else {
-          const copy = scheduler2._copy_event(ev);
-          copy.text = ev.text;
-          copy.start_date = date;
-          copy.id = ev.id + "#" + Math.ceil(date.valueOf());
-          copy.end_date = new Date(date.valueOf() + eventDuration * 1e3);
-          if (copy.end_date.valueOf() <= scheduler2._min_date.valueOf()) {
+          const copy2 = scheduler2._copy_event(ev);
+          copy2.text = ev.text;
+          copy2.start_date = date;
+          copy2.id = ev.id + "#" + Math.ceil(date.valueOf());
+          copy2.end_date = new Date(date.valueOf() + eventDuration * 1e3);
+          if (copy2.end_date.valueOf() <= scheduler2._min_date.valueOf()) {
             continue;
           }
-          copy.end_date = scheduler2._fix_daylight_saving_date(copy.start_date, copy.end_date, ev, date, copy.end_date);
-          copy._timed = scheduler2.isOneDayEvent(copy);
-          if (!copy._timed && !scheduler2._table_view && !scheduler2.config.multi_day)
+          copy2.end_date = scheduler2._fix_daylight_saving_date(copy2.start_date, copy2.end_date, ev, date, copy2.end_date);
+          copy2._timed = scheduler2.isOneDayEvent(copy2);
+          if (!copy2._timed && !scheduler2._table_view && !scheduler2.config.multi_day)
             continue;
-          stack.push(copy);
+          stack.push(copy2);
           if (!non_render) {
-            scheduler2._events[copy.id] = copy;
-            scheduler2._rec_temp.push(copy);
+            scheduler2._events[copy2.id] = copy2;
+            scheduler2._rec_temp.push(copy2);
           }
           visibleCount++;
         }
@@ -19999,27 +20161,27 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         code.push(Math.max(1, get_numeric_value(els, "week_count")));
         code.push("");
         code.push("");
-        var t2 = [];
+        var t = [];
         var col = get_value2(els, "week_day", true);
         var day = dates.start.getDay();
         var start_exists = false;
         for (var i2 = 0; i2 < col.length; i2++) {
-          t2.push(col[i2]);
+          t.push(col[i2]);
           start_exists = start_exists || col[i2] == day;
         }
-        if (!t2.length) {
-          t2.push(day);
+        if (!t.length) {
+          t.push(day);
           start_exists = true;
         }
-        t2.sort();
+        t.sort();
         if (!scheduler2.config.repeat_precise) {
           dates.start = scheduler2.date.week_start(dates.start);
           dates._start = true;
         } else if (!start_exists) {
-          scheduler2.transpose_day_week(dates.start, t2, 1, 7);
+          scheduler2.transpose_day_week(dates.start, t, 1, 7);
           dates._start = true;
         }
-        code.push(t2.join(","));
+        code.push(t.join(","));
       }, day: function(code) {
         var get_value2 = scheduler2.form_blocks["recurring"]._get_node_value;
         var get_numeric_value = scheduler2.form_blocks["recurring"]._get_node_numeric_value;
@@ -20052,10 +20214,10 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       var set_rcode = { week: function(code, dates) {
         var set_value2 = scheduler2.form_blocks["recurring"]._set_node_value;
         set_value2(els, "week_count", code[1]);
-        var t2 = code[4].split(",");
+        var t = code[4].split(",");
         var d = {};
-        for (var i2 = 0; i2 < t2.length; i2++)
-          d[t2[i2]] = true;
+        for (var i2 = 0; i2 < t.length; i2++)
+          d[t[i2]] = true;
         set_value2(els, "week_day", d);
       }, month: function(code, dates) {
         var set_value2 = scheduler2.form_blocks["recurring"]._set_node_value;
@@ -20639,20 +20801,20 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         var ch = this._get_rec_marker(timestamp, ev.id);
         if (!ch) {
           var ted = new Date(td.valueOf() + ev.event_length * 1e3);
-          var copy = this._copy_event(ev);
-          copy.text = ev.text;
-          copy.start_date = td;
-          copy.event_pid = ev.id;
-          copy.id = ev.id + "#" + Math.round(timestamp / 1e3);
-          copy.end_date = ted;
-          copy.end_date = scheduler2._fix_daylight_saving_date(copy.start_date, copy.end_date, ev, td, copy.end_date);
-          copy._timed = this.isOneDayEvent(copy);
-          if (!copy._timed && !this._table_view && !this.config.multi_day)
+          var copy2 = this._copy_event(ev);
+          copy2.text = ev.text;
+          copy2.start_date = td;
+          copy2.event_pid = ev.id;
+          copy2.id = ev.id + "#" + Math.round(timestamp / 1e3);
+          copy2.end_date = ted;
+          copy2.end_date = scheduler2._fix_daylight_saving_date(copy2.start_date, copy2.end_date, ev, td, copy2.end_date);
+          copy2._timed = this.isOneDayEvent(copy2);
+          if (!copy2._timed && !this._table_view && !this.config.multi_day)
             return;
-          stack.push(copy);
+          stack.push(copy2);
           if (!non_render) {
-            this._events[copy.id] = copy;
-            this._rec_temp.push(copy);
+            this._events[copy2.id] = copy2;
+            this._rec_temp.push(copy2);
           }
           visibleCount++;
         } else if (non_render) {
@@ -20826,10 +20988,10 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     }
     show(left, top) {
       const scheduler2 = this._scheduler;
-      const domHelpers = scheduler2.$domHelpers;
+      const domHelpers2 = scheduler2.$domHelpers;
       const container = document.body;
       const node = this.getNode();
-      if (!domHelpers.isChildOf(node, container)) {
+      if (!domHelpers2.isChildOf(node, container)) {
         this.hide();
         container.appendChild(node);
       }
@@ -20868,15 +21030,15 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     }
     _calculateTooltipPosition(event2) {
       const scheduler2 = this._scheduler;
-      const domHelpers = scheduler2.$domHelpers;
+      const domHelpers2 = scheduler2.$domHelpers;
       const viewport = this._getViewPortSize();
       const tooltipNode = this.getNode();
       const tooltip2 = { top: 0, left: 0, width: tooltipNode.offsetWidth, height: tooltipNode.offsetHeight, bottom: 0, right: 0 };
       const offsetX = scheduler2.config.tooltip_offset_x;
       const offsetY = scheduler2.config.tooltip_offset_y;
       const container = document.body;
-      const mouse = domHelpers.getRelativeEventPosition(event2, container);
-      const containerPos = domHelpers.getNodePosition(container);
+      const mouse = domHelpers2.getRelativeEventPosition(event2, container);
+      const containerPos = domHelpers2.getNodePosition(container);
       mouse.y += containerPos.y;
       tooltip2.top = mouse.y;
       tooltip2.left = mouse.x;
@@ -20917,7 +21079,7 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     }
     _getViewPortSize() {
       const scheduler2 = this._scheduler;
-      const domHelpers = scheduler2.$domHelpers;
+      const domHelpers2 = scheduler2.$domHelpers;
       const container = this._getViewPort();
       let viewport = container;
       let scrollTop = window.scrollY + document.body.scrollTop;
@@ -20927,9 +21089,9 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         viewport = scheduler2.$event;
         scrollTop = 0;
         scrollLeft = 0;
-        pos = domHelpers.getNodePosition(scheduler2.$event);
+        pos = domHelpers2.getNodePosition(scheduler2.$event);
       } else {
-        pos = domHelpers.getNodePosition(viewport);
+        pos = domHelpers2.getNodePosition(viewport);
       }
       return { left: pos.x + scrollLeft, top: pos.y + scrollTop, width: pos.width, height: pos.height, bottom: pos.y + pos.height + scrollTop, right: pos.x + pos.width + scrollLeft };
     }
@@ -20952,15 +21114,15 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
     attach(config) {
       let root = document.body;
       const scheduler2 = this._scheduler;
-      const domHelpers = scheduler2.$domHelpers;
+      const domHelpers2 = scheduler2.$domHelpers;
       if (!config.global) {
         root = scheduler2.$root;
       }
       let watchableTarget = null;
       const handler = (event2) => {
-        const eventTarget = domHelpers.getTargetNode(event2);
-        const targetNode = domHelpers.closest(eventTarget, config.selector);
-        if (domHelpers.isChildOf(eventTarget, this.tooltip.getNode())) {
+        const eventTarget = domHelpers2.getTargetNode(event2);
+        const targetNode = domHelpers2.closest(eventTarget, config.selector);
+        if (domHelpers2.isChildOf(eventTarget, this.tooltip.getNode())) {
           return;
         }
         const doOnMouseEnter = () => {
@@ -21283,13 +21445,13 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
           return;
         this._tooltip.innerHTML = "";
       } else {
-        var t2 = this._tooltip = document.createElement("div");
-        t2.className = "dhx_year_tooltip";
+        var t = this._tooltip = document.createElement("div");
+        t.className = "dhx_year_tooltip";
         if (this.config.rtl)
-          t2.className += " dhx_tooltip_rtl";
-        document.body.appendChild(t2);
-        t2.addEventListener("click", scheduler2._click.dhx_cal_data);
-        t2.addEventListener("click", function(e2) {
+          t.className += " dhx_tooltip_rtl";
+        document.body.appendChild(t);
+        t.addEventListener("click", scheduler2._click.dhx_cal_data);
+        t.addEventListener("click", function(e2) {
           if (e2.target.closest(`[${scheduler2.config.event_attribute}]`)) {
             const id = e2.target.closest(`[${scheduler2.config.event_attribute}]`).getAttribute(scheduler2.config.event_attribute);
             scheduler2.showLightbox(id);
@@ -21338,9 +21500,10 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
       scheduler2.event(scheduler2._els["dhx_cal_data"][0], "mouseover", scheduler2._year_view_tooltip_handler);
     };
     scheduler2._get_year_cell = function(d) {
-      var dateString = scheduler2.templates.format_date(d);
-      var cells = this.$root.querySelectorAll(`.dhx_cal_data .dhx_cal_datepicker_date[data-cell-date="${dateString}"]`);
-      for (var i = 0; i < cells.length; i++) {
+      const dayStart = scheduler2.date.day_start(d);
+      const dateString = scheduler2.templates.format_date(dayStart);
+      const cells = this.$root.querySelectorAll(`.dhx_cal_data .dhx_cal_datepicker_date[data-cell-date="${dateString}"]`);
+      for (let i = 0; i < cells.length; i++) {
         if (!scheduler2.$domHelpers.closest(cells[i], ".dhx_after, .dhx_before")) {
           return cells[i];
         }
@@ -21571,10 +21734,10 @@ To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product),
         };
         scheduler3._create_hidden_form = function() {
           if (!this._hidden_export_form) {
-            var t2 = this._hidden_export_form = document.createElement("div");
-            t2.style.display = "none";
-            t2.innerHTML = "<form method='POST' target='_blank'><input type='text' name='data'><input type='hidden' name='type' value=''></form>";
-            document.body.appendChild(t2);
+            var t = this._hidden_export_form = document.createElement("div");
+            t.style.display = "none";
+            t.innerHTML = "<form method='POST' target='_blank'><input type='text' name='data'><input type='hidden' name='type' value=''></form>";
+            document.body.appendChild(t);
           }
           return this._hidden_export_form;
         };

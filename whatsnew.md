@@ -1,3 +1,10 @@
+### 7.2.15
+
+Fix the issue where the macOS Option key was not recognized as Alt, so the keyboard navigation shortcuts for switching views did not work
+Fix the issue where converting a recurring event into a regular one replaced the event end date with the end date of the whole series
+Fix the incorrect background and border colors of events in the multisection events sample
+Fix the performance bottleneck where repainting a single event scanned all rendered event nodes, which slowed down views repainting many events per frame
+
 ### 7.2.14
 
 Fix the incorrect @dhx/scheduler dependency listed in the published React Scheduler package

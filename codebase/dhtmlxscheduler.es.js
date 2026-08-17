@@ -1,55 +1,55 @@
 /** @license
 
-dhtmlxScheduler v.7.2.14 Standard
+dhtmlxScheduler v.7.2.15 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
 (c) XB Software Ltd.
 
 */
-const _e = typeof window < "u" ? window : global;
-function Mt(e) {
+const le = typeof window < "u" ? window : global;
+function Tt(e) {
   let i = [], t = !1, n = null, s = null;
   function a() {
     return e.config.drag_highlight && e.markTimespan;
   }
-  function o(d) {
-    const l = e.getView(d);
-    return l ? l.layout : d;
+  function o(l) {
+    const _ = e.getView(l);
+    return _ ? _.layout : l;
   }
-  function _(d) {
-    const { event: l, layout: h, viewName: p, sectionId: m, eventNode: g } = d;
-    (function(f, y) {
+  function d(l) {
+    const { event: _, layout: h, viewName: p, sectionId: v, eventNode: g } = l;
+    (function(u, y) {
       switch (y) {
         case "month":
-          f.style.top = "", f.style.left = "";
+          u.style.top = "", u.style.left = "";
           break;
         case "timeline":
-          f.style.left = "", f.style.marginLeft = "1px";
+          u.style.left = "", u.style.marginLeft = "1px";
           break;
         default:
-          f.style.top = "";
+          u.style.top = "";
       }
     })(g, h);
     const c = {};
-    let u = { start_date: l.start_date, end_date: l.end_date, css: "dhx_scheduler_dnd_marker", html: g };
+    let f = { start_date: _.start_date, end_date: _.end_date, css: "dhx_scheduler_dnd_marker", html: g };
     if (h == "timeline") {
-      const f = e.getView(p);
-      if (f.round_position) {
-        const y = e._get_date_index(f, l.start_date), w = f._trace_x[y];
-        u.start_date = w;
+      const u = e.getView(p);
+      if (u.round_position) {
+        const y = e._get_date_index(u, _.start_date), w = u._trace_x[y];
+        f.start_date = w;
       }
     }
-    return h != "timeline" && h != "month" || (u = { ...u, end_date: e.date.add(l.start_date, 1, "minute") }), m && (c[p] = m, u.sections = c), u;
+    return h != "timeline" && h != "month" || (f = { ...f, end_date: e.date.add(_.start_date, 1, "minute") }), v && (c[p] = v, f.sections = c), f;
   }
-  function r(d) {
-    const { layout: l } = d;
+  function r(l) {
+    const { layout: _ } = l;
     let h;
-    switch (l) {
+    switch (_) {
       case "month":
         h = function(p) {
-          let m = [];
-          const { event: g, layout: c, viewName: u, sectionId: f } = p, y = [];
+          let v = [];
+          const { event: g, layout: c, viewName: f, sectionId: u } = p, y = [];
           let w = new Date(g.start_date);
           for (; w.valueOf() < g.end_date.valueOf(); ) {
             let M = { start_date: w };
@@ -57,97 +57,97 @@ function Mt(e) {
           }
           let D = e.$container.querySelectorAll(`[${e.config.event_attribute}='${g.id}']`);
           for (let M = 0; M < D.length; M++) {
-            const k = { event: y[M], layout: c, viewName: u, sectionId: f, eventNode: D[M].cloneNode(!0) };
-            m.push(_(k));
+            const k = { event: y[M], layout: c, viewName: f, sectionId: u, eventNode: D[M].cloneNode(!0) };
+            v.push(d(k));
           }
-          return m;
-        }(d);
+          return v;
+        }(l);
         break;
       case "timeline":
       case "units":
         h = function(p) {
-          let m = [];
-          const { event: g, layout: c, viewName: u, eventNode: f } = p;
+          let v = [];
+          const { event: g, layout: c, viewName: f, eventNode: u } = p;
           let y = function(w) {
             const D = e.getView(w);
             return D.y_property ? D.y_property : D.map_to ? D.map_to : void 0;
-          }(u);
+          }(f);
           if (y) {
             const w = String(g[y]).split(e.config.section_delimiter).map((M) => String(M)), D = [];
             for (let M = 0; M < w.length; M++) {
-              D[M] = f.cloneNode(!0);
-              const k = { event: g, layout: c, viewName: u, sectionId: w[M], eventNode: D[M] };
-              m.push(_(k));
+              D[M] = u.cloneNode(!0);
+              const k = { event: g, layout: c, viewName: f, sectionId: w[M], eventNode: D[M] };
+              v.push(d(k));
             }
           }
-          return m;
-        }(d);
+          return v;
+        }(l);
         break;
       default:
         h = function(p) {
-          const { event: m, layout: g, viewName: c, sectionId: u } = p;
-          let f = [], y = e.$container.querySelectorAll(`[${e.config.event_attribute}='${m.id}']:not(.dhx_cal_select_menu):not(.dhx_drag_marker)`);
+          const { event: v, layout: g, viewName: c, sectionId: f } = p;
+          let u = [], y = e.$container.querySelectorAll(`[${e.config.event_attribute}='${v.id}']:not(.dhx_cal_select_menu):not(.dhx_drag_marker)`);
           if (y)
             for (let w = 0; w < y.length; w++) {
               let D = y[w].cloneNode(!0);
-              const M = { event: { start_date: /* @__PURE__ */ new Date(+D.getAttribute("data-bar-start")), end_date: /* @__PURE__ */ new Date(+D.getAttribute("data-bar-end")) }, layout: g, viewName: c, sectionId: u, eventNode: D };
-              f.push(_(M));
+              const M = { event: { start_date: /* @__PURE__ */ new Date(+D.getAttribute("data-bar-start")), end_date: /* @__PURE__ */ new Date(+D.getAttribute("data-bar-end")) }, layout: g, viewName: c, sectionId: f, eventNode: D };
+              u.push(d(M));
             }
-          return f;
-        }(d);
+          return u;
+        }(l);
     }
     h.forEach((p) => {
       i.push(e.markTimespan(p));
     });
   }
-  e.attachEvent("onBeforeDrag", function(d, l, h) {
-    return a() && (t = !0, s = e.getEvent(d), n = h.target.closest(`[${e.config.event_attribute}]`), o(e.getState().mode) == "units" && e.config.cascade_event_display && (e.unselect(d), n = h.target.closest(`[${e.config.event_attribute}]`))), !0;
-  }), e.attachEvent("onEventDrag", function(d, l, h) {
+  e.attachEvent("onBeforeDrag", function(l, _, h) {
+    return a() && (t = !0, s = e.getEvent(l), n = h.target.closest(`[${e.config.event_attribute}]`), o(e.getState().mode) == "units" && e.config.cascade_event_display && (e.unselect(l), n = h.target.closest(`[${e.config.event_attribute}]`))), !0;
+  }), e.attachEvent("onEventDrag", function(l, _, h) {
     if (t && a()) {
       t = !1;
-      const p = e.getState().mode, m = o(p), g = e.getActionData(h).section;
-      s && r({ event: s, layout: m, viewName: p, sectionId: g, eventNode: n });
+      const p = e.getState().mode, v = o(p), g = e.getActionData(h).section;
+      s && r({ event: s, layout: v, viewName: p, sectionId: g, eventNode: n });
     }
-  }), e.attachEvent("onDragEnd", function(d, l, h) {
+  }), e.attachEvent("onDragEnd", function(l, _, h) {
     for (let p = 0; p < i.length; p++)
       e.unmarkTimespan(i[p]);
     i = [], n = null, s = null;
   });
 }
-function Nt(e) {
+function At(e) {
   e.config.mark_now = !0, e.config.display_marked_timespans = !0, e.config.overwrite_marked_timespans = !0;
-  var i = "dhx_time_block", t = "default", n = function(a, o, _) {
+  var i = "dhx_time_block", t = "default", n = function(a, o, d) {
     var r = typeof a == "object" ? a : { days: a };
-    return r.type = i, r.css = "", o && (_ && (r.sections = _), r = function(d, l, h) {
-      return l instanceof Date && h instanceof Date ? (d.start_date = l, d.end_date = h) : (d.days = l, d.zones = h), d;
+    return r.type = i, r.css = "", o && (d && (r.sections = d), r = function(l, _, h) {
+      return _ instanceof Date && h instanceof Date ? (l.start_date = _, l.end_date = h) : (l.days = _, l.zones = h), l;
     }(r, a, o)), r;
   };
-  function s(a, o, _, r, d) {
-    var l = e, h = [], p = { _props: "map_to", matrix: "y_property" };
-    for (var m in p) {
-      var g = p[m];
-      if (l[m])
-        for (var c in l[m]) {
-          var u = l[m][c][g];
-          a[u] && (h = l._add_timespan_zones(h, e._get_blocked_zones(o[c], a[u], _, r, d)));
+  function s(a, o, d, r, l) {
+    var _ = e, h = [], p = { _props: "map_to", matrix: "y_property" };
+    for (var v in p) {
+      var g = p[v];
+      if (_[v])
+        for (var c in _[v]) {
+          var f = _[v][c][g];
+          a[f] && (h = _._add_timespan_zones(h, e._get_blocked_zones(o[c], a[f], d, r, l)));
         }
     }
-    return h = l._add_timespan_zones(h, e._get_blocked_zones(o, "global", _, r, d));
+    return h = _._add_timespan_zones(h, e._get_blocked_zones(o, "global", d, r, l));
   }
-  e.blockTime = function(a, o, _) {
-    var r = n(a, o, _);
+  e.blockTime = function(a, o, d) {
+    var r = n(a, o, d);
     return e.addMarkedTimespan(r);
-  }, e.unblockTime = function(a, o, _) {
-    var r = n(a, o = o || "fullday", _);
+  }, e.unblockTime = function(a, o, d) {
+    var r = n(a, o = o || "fullday", d);
     return e.deleteMarkedTimespan(r);
-  }, e.checkInMarkedTimespan = function(a, o, _) {
+  }, e.checkInMarkedTimespan = function(a, o, d) {
     o = o || t;
-    for (var r = !0, d = new Date(a.start_date.valueOf()), l = e.date.add(d, 1, "day"), h = e._marked_timespans; d < a.end_date; d = e.date.date_part(l), l = e.date.add(d, 1, "day")) {
-      var p = +e.date.date_part(new Date(d)), m = s(a, h, d.getDay(), p, o);
-      if (m)
-        for (var g = 0; g < m.length; g += 2) {
-          var c = e._get_zone_minutes(d), u = a.end_date > l || a.end_date.getDate() != d.getDate() ? 1440 : e._get_zone_minutes(a.end_date), f = m[g], y = m[g + 1];
-          if (f < u && y > c && !(r = typeof _ == "function" && _(a, c, u, f, y)))
+    for (var r = !0, l = new Date(a.start_date.valueOf()), _ = e.date.add(l, 1, "day"), h = e._marked_timespans; l < a.end_date; l = e.date.date_part(_), _ = e.date.add(l, 1, "day")) {
+      var p = +e.date.date_part(new Date(l)), v = s(a, h, l.getDay(), p, o);
+      if (v)
+        for (var g = 0; g < v.length; g += 2) {
+          var c = e._get_zone_minutes(l), f = a.end_date > _ || a.end_date.getDate() != l.getDate() ? 1440 : e._get_zone_minutes(a.end_date), u = v[g], y = v[g + 1];
+          if (u < f && y > c && !(r = typeof d == "function" && d(a, c, f, u, y)))
             break;
         }
     }
@@ -155,69 +155,69 @@ function Nt(e) {
   }, e.checkLimitViolation = function(a) {
     if (!a || !e.config.check_limits)
       return !0;
-    var o = e, _ = o.config, r = [];
+    var o = e, d = o.config, r = [];
     if (a.rec_type && a._end_date || a.rrule) {
-      const m = a._end_date || a.end_date;
-      return !_.limit_start || !_.limit_end || m.valueOf() >= _.limit_start.valueOf() && a.start_date.valueOf() <= _.limit_end.valueOf();
+      const v = a._end_date || a.end_date;
+      return !d.limit_start || !d.limit_end || v.valueOf() >= d.limit_start.valueOf() && a.start_date.valueOf() <= d.limit_end.valueOf();
     }
     r = [a];
-    for (var d = !0, l = 0; l < r.length; l++) {
-      var h = !0, p = r[l];
-      p._timed = e.isOneDayEvent(p), (h = !_.limit_start || !_.limit_end || p.start_date.valueOf() >= _.limit_start.valueOf() && p.end_date.valueOf() <= _.limit_end.valueOf()) && (h = !e.checkInMarkedTimespan(p, i, function(m, g, c, u, f) {
+    for (var l = !0, _ = 0; _ < r.length; _++) {
+      var h = !0, p = r[_];
+      p._timed = e.isOneDayEvent(p), (h = !d.limit_start || !d.limit_end || p.start_date.valueOf() >= d.limit_start.valueOf() && p.end_date.valueOf() <= d.limit_end.valueOf()) && (h = !e.checkInMarkedTimespan(p, i, function(v, g, c, f, u) {
         var y = !0;
-        return g <= f && g >= u && ((f == 1440 || c <= f) && (y = !1), m._timed && o._drag_id && o._drag_mode == "new-size" ? (m.start_date.setHours(0), m.start_date.setMinutes(f)) : y = !1), (c >= u && c <= f || g < u && c > f) && (m._timed && o._drag_id && o._drag_mode == "new-size" ? (m.end_date.setHours(0), m.end_date.setMinutes(u)) : y = !1), y;
-      })), h || (h = o.checkEvent("onLimitViolation") ? o.callEvent("onLimitViolation", [p.id, p]) : h), d = d && h;
+        return g <= u && g >= f && ((u == 1440 || c <= u) && (y = !1), v._timed && o._drag_id && o._drag_mode == "new-size" ? (v.start_date.setHours(0), v.start_date.setMinutes(u)) : y = !1), (c >= f && c <= u || g < f && c > u) && (v._timed && o._drag_id && o._drag_mode == "new-size" ? (v.end_date.setHours(0), v.end_date.setMinutes(f)) : y = !1), y;
+      })), h || (h = o.checkEvent("onLimitViolation") ? o.callEvent("onLimitViolation", [p.id, p]) : h), l = l && h;
     }
-    return d || (o._drag_id = null, o._drag_mode = null), d;
-  }, e._get_blocked_zones = function(a, o, _, r, d) {
-    var l = [];
+    return l || (o._drag_id = null, o._drag_mode = null), l;
+  }, e._get_blocked_zones = function(a, o, d, r, l) {
+    var _ = [];
     if (a && a[o])
-      for (var h = a[o], p = this._get_relevant_blocked_zones(_, r, h, d), m = 0; m < p.length; m++)
-        l = this._add_timespan_zones(l, p[m].zones);
-    return l;
-  }, e._get_relevant_blocked_zones = function(a, o, _, r) {
-    var d;
-    return e.config.overwrite_marked_timespans ? d = _[o] && _[o][r] ? _[o][r] : _[a] && _[a][r] ? _[a][r] : [] : (d = [], _[o] && _[o][r] && (d = d.concat(_[o][r])), _[a] && _[a][r] && (d = d.concat(_[a][r]))), d;
+      for (var h = a[o], p = this._get_relevant_blocked_zones(d, r, h, l), v = 0; v < p.length; v++)
+        _ = this._add_timespan_zones(_, p[v].zones);
+    return _;
+  }, e._get_relevant_blocked_zones = function(a, o, d, r) {
+    var l;
+    return e.config.overwrite_marked_timespans ? l = d[o] && d[o][r] ? d[o][r] : d[a] && d[a][r] ? d[a][r] : [] : (l = [], d[o] && d[o][r] && (l = l.concat(d[o][r])), d[a] && d[a][r] && (l = l.concat(d[a][r]))), l;
   }, e._mark_now = function(a) {
     var o = "dhx_now_time";
     this._els[o] || (this._els[o] = []);
-    var _ = e._currentDate(), r = this.config;
-    if (e._remove_mark_now(), !a && r.mark_now && _ < this._max_date && _ > this._min_date && _.getHours() >= r.first_hour && _.getHours() < r.last_hour) {
-      var d = this.locate_holder_day(_);
-      this._els[o] = e._append_mark_now(d, _);
+    var d = e._currentDate(), r = this.config;
+    if (e._remove_mark_now(), !a && r.mark_now && d < this._max_date && d > this._min_date && d.getHours() >= r.first_hour && d.getHours() < r.last_hour) {
+      var l = this.locate_holder_day(d);
+      this._els[o] = e._append_mark_now(l, d);
     }
   }, e._append_mark_now = function(a, o) {
-    var _ = "dhx_now_time", r = e._get_zone_minutes(o), d = { zones: [r, r + 1], css: _, type: _ };
+    var d = "dhx_now_time", r = e._get_zone_minutes(o), l = { zones: [r, r + 1], css: d, type: d };
     if (!this._table_view) {
       if (this._props && this._props[this._mode]) {
-        var l, h, p = this._props[this._mode], m = p.size || p.options.length;
-        p.days > 1 ? (p.size && p.options.length && (a = (p.position + a) / p.options.length * p.size), l = a, h = a + m) : h = (l = 0) + m;
-        for (var g = [], c = l; c < h; c++) {
-          var u = c;
-          d.days = u;
-          var f = e._render_marked_timespan(d, null, u)[0];
-          g.push(f);
+        var _, h, p = this._props[this._mode], v = p.size || p.options.length;
+        p.days > 1 ? (p.size && p.options.length && (a = (p.position + a) / p.options.length * p.size), _ = a, h = a + v) : h = (_ = 0) + v;
+        for (var g = [], c = _; c < h; c++) {
+          var f = c;
+          l.days = f;
+          var u = e._render_marked_timespan(l, null, f)[0];
+          g.push(u);
         }
         return g;
       }
-      return d.days = a, e._render_marked_timespan(d, null, a);
+      return l.days = a, e._render_marked_timespan(l, null, a);
     }
     if (this._mode == "month")
-      return d.days = +e.date.date_part(o), e._render_marked_timespan(d, null, null);
+      return l.days = +e.date.date_part(o), e._render_marked_timespan(l, null, null);
   }, e._remove_mark_now = function() {
-    for (var a = "dhx_now_time", o = this._els[a], _ = 0; _ < o.length; _++) {
-      var r = o[_], d = r.parentNode;
-      d && d.removeChild(r);
+    for (var a = "dhx_now_time", o = this._els[a], d = 0; d < o.length; d++) {
+      var r = o[d], l = r.parentNode;
+      l && l.removeChild(r);
     }
     this._els[a] = [];
   }, e._marked_timespans = { global: {} }, e._get_zone_minutes = function(a) {
     return 60 * a.getHours() + a.getMinutes();
   }, e._prepare_timespan_options = function(a) {
-    var o = [], _ = [];
+    var o = [], d = [];
     if (a.days == "fullweek" && (a.days = [0, 1, 2, 3, 4, 5, 6]), a.days instanceof Array) {
-      for (var r = a.days.slice(), d = 0; d < r.length; d++) {
-        var l = e._lame_clone(a);
-        l.days = r[d], o.push.apply(o, e._prepare_timespan_options(l));
+      for (var r = a.days.slice(), l = 0; l < r.length; l++) {
+        var _ = e._lame_clone(a);
+        _.days = r[l], o.push.apply(o, e._prepare_timespan_options(_));
       }
       return o;
     }
@@ -228,29 +228,29 @@ function Nt(e) {
     if (h) {
       for (var p in h)
         if (h.hasOwnProperty(p)) {
-          var m = h[p];
-          for (m instanceof Array || (m = [m]), d = 0; d < m.length; d++)
-            (D = e._lame_copy({}, a)).sections = {}, D.sections[p] = m[d], _.push(D);
+          var v = h[p];
+          for (v instanceof Array || (v = [v]), l = 0; l < v.length; l++)
+            (D = e._lame_copy({}, a)).sections = {}, D.sections[p] = v[l], d.push(D);
         }
     } else
-      _.push(a);
-    for (var g = 0; g < _.length; g++) {
-      var c = _[g], u = c.start_date, f = c.end_date;
-      if (u && f)
-        for (var y = e.date.date_part(new Date(u)), w = e.date.add(y, 1, "day"); y < f; ) {
+      d.push(a);
+    for (var g = 0; g < d.length; g++) {
+      var c = d[g], f = c.start_date, u = c.end_date;
+      if (f && u)
+        for (var y = e.date.date_part(new Date(f)), w = e.date.add(y, 1, "day"); y < u; ) {
           var D;
           delete (D = e._lame_copy({}, c)).start_date, delete D.end_date, D.days = y.valueOf();
-          var M = u > y ? e._get_zone_minutes(u) : 0, k = f > w || f.getDate() != y.getDate() ? 1440 : e._get_zone_minutes(f);
+          var M = f > y ? e._get_zone_minutes(f) : 0, k = u > w || u.getDate() != y.getDate() ? 1440 : e._get_zone_minutes(u);
           D.zones = [M, k], o.push(D), y = w, w = e.date.add(w, 1, "day");
         }
       else
         c.days instanceof Date && (c.days = e.date.date_part(c.days).valueOf()), c.zones = a.zones.slice(), o.push(c);
     }
     return o;
-  }, e._get_dates_by_index = function(a, o, _) {
+  }, e._get_dates_by_index = function(a, o, d) {
     var r = [];
-    o = e.date.date_part(new Date(o || e._min_date)), _ = new Date(_ || e._max_date);
-    for (var d = o.getDay(), l = a - d >= 0 ? a - d : 7 - o.getDay() + a, h = e.date.add(o, l, "day"); h < _; h = e.date.add(h, 1, "week"))
+    o = e.date.date_part(new Date(o || e._min_date)), d = new Date(d || e._max_date);
+    for (var l = o.getDay(), _ = a - l >= 0 ? a - l : 7 - o.getDay() + a, h = e.date.add(o, _, "day"); h < d; h = e.date.add(h, 1, "week"))
       r.push(h);
     return r;
   }, e._get_css_classes_by_config = function(a) {
@@ -259,42 +259,42 @@ function Nt(e) {
   }, e._get_block_by_config = function(a) {
     var o = document.createElement("div");
     if (a.html) {
-      let _ = a.html;
-      typeof _ == "function" && (_ = _(a)), typeof _ == "string" ? o.innerHTML = a.html : e.config.external_render && e.config.external_render.isElement(_) ? e.config.external_render.renderElement(_, o) : o.appendChild(_);
+      let d = a.html;
+      typeof d == "function" && (d = d(a)), typeof d == "string" ? o.innerHTML = a.html : e.config.external_render && e.config.external_render.isElement(d) ? e.config.external_render.renderElement(d, o) : o.appendChild(d);
     }
     return o;
-  }, e._render_marked_timespan = function(a, o, _) {
-    var r = [], d = e.config, l = this._min_date, h = this._max_date, p = !1;
-    if (!d.display_marked_timespans)
+  }, e._render_marked_timespan = function(a, o, d) {
+    var r = [], l = e.config, _ = this._min_date, h = this._max_date, p = !1;
+    if (!l.display_marked_timespans)
       return r;
-    if (!_ && _ !== 0) {
+    if (!d && d !== 0) {
       if (a.days < 7)
-        _ = a.days;
+        d = a.days;
       else {
-        var m = new Date(a.days);
-        if (p = +m, !(+h > +m && +l <= +m))
+        var v = new Date(a.days);
+        if (p = +v, !(+h > +v && +_ <= +v))
           return r;
-        _ = m.getDay();
+        d = v.getDay();
       }
-      var g = l.getDay();
-      g > _ ? _ = 7 - (g - _) : _ -= g;
+      var g = _.getDay();
+      g > d ? d = 7 - (g - d) : d -= g;
     }
-    var c = a.zones, u = e._get_css_classes_by_config(a);
+    var c = a.zones, f = e._get_css_classes_by_config(a);
     if (e._table_view && e._mode == "month") {
-      var f = [], y = [];
+      var u = [], y = [];
       if (o)
-        f.push(o), y.push(_);
+        u.push(o), y.push(d);
       else {
-        y = p ? [p] : e._get_dates_by_index(_);
+        y = p ? [p] : e._get_dates_by_index(d);
         for (var w = 0; w < y.length; w++)
-          f.push(this._scales[y[w]]);
+          u.push(this._scales[y[w]]);
       }
-      for (w = 0; w < f.length; w++) {
-        o = f[w], _ = y[w];
-        var D = this.locate_holder_day(_, !1) % this._cols.length;
+      for (w = 0; w < u.length; w++) {
+        o = u[w], d = y[w];
+        var D = this.locate_holder_day(d, !1) % this._cols.length;
         if (!this._ignores[D]) {
           var M = e._get_block_by_config(a);
-          M.className = u, M.style.top = "0px", M.style.height = "100%";
+          M.className = f, M.style.top = "0px", M.style.height = "100%";
           for (var k = 0; k < c.length; k += 2) {
             var N = c[w];
             if ((E = c[w + 1]) <= N)
@@ -304,39 +304,39 @@ function Nt(e) {
         }
       }
     } else {
-      var v = _;
-      if (this._ignores[this.locate_holder_day(_, !1)])
+      var m = d;
+      if (this._ignores[this.locate_holder_day(d, !1)])
         return r;
       if (this._props && this._props[this._mode] && a.sections && a.sections[this._mode]) {
         var x = this._props[this._mode];
-        v = x.order[a.sections[this._mode]];
+        m = x.order[a.sections[this._mode]];
         var b = x.order[a.sections[this._mode]];
-        x.days > 1 ? v = v * (x.size || x.options.length) + b : (v = b, x.size && v > x.position + x.size && (v = 0));
+        x.days > 1 ? m = m * (x.size || x.options.length) + b : (m = b, x.size && m > x.position + x.size && (m = 0));
       }
-      for (o = o || e.locate_holder(v), w = 0; w < c.length; w += 2) {
+      for (o = o || e.locate_holder(m), w = 0; w < c.length; w += 2) {
         var E, S;
-        if (N = Math.max(c[w], 60 * d.first_hour), (E = Math.min(c[w + 1], 60 * d.last_hour)) <= N) {
+        if (N = Math.max(c[w], 60 * l.first_hour), (E = Math.min(c[w + 1], 60 * l.last_hour)) <= N) {
           if (w + 2 < c.length)
             continue;
           return [];
         }
-        (S = e._get_block_by_config(a)).className = u;
-        var T = 24 * this.config.hour_size_px + 1, A = 36e5;
-        S.style.top = Math.round((60 * N * 1e3 - this.config.first_hour * A) * this.config.hour_size_px / A) % T + "px", S.style.height = Math.max(Math.round(60 * (E - N) * 1e3 * this.config.hour_size_px / A) % T, 1) + "px", o.appendChild(S), r.push(S);
+        (S = e._get_block_by_config(a)).className = f;
+        var T = 24 * this.config.hour_size_px + 1, C = 36e5;
+        S.style.top = Math.round((60 * N * 1e3 - this.config.first_hour * C) * this.config.hour_size_px / C) % T + "px", S.style.height = Math.max(Math.round(60 * (E - N) * 1e3 * this.config.hour_size_px / C) % T, 1) + "px", o.appendChild(S), r.push(S);
       }
     }
     return r;
   }, e._mark_timespans = function() {
     var a = this._els.dhx_cal_data[0], o = [];
     if (e._table_view && e._mode == "month")
-      for (var _ in this._scales) {
-        var r = /* @__PURE__ */ new Date(+_);
-        o.push.apply(o, e._on_scale_add_marker(this._scales[_], r));
+      for (var d in this._scales) {
+        var r = /* @__PURE__ */ new Date(+d);
+        o.push.apply(o, e._on_scale_add_marker(this._scales[d], r));
       }
     else {
       r = new Date(e._min_date);
-      for (var d = 0, l = a.childNodes.length; d < l; d++) {
-        var h = a.childNodes[d];
+      for (var l = 0, _ = a.childNodes.length; l < _; l++) {
+        var h = a.childNodes[l];
         h.firstChild && e._getClassName(h.firstChild).indexOf("dhx_scale_hour") > -1 || (o.push.apply(o, e._on_scale_add_marker(h, r)), r = e.date.add(r, 1, "day"));
       }
     }
@@ -346,110 +346,110 @@ function Nt(e) {
       throw new Error("`scheduler.markTimespan` can't be used before scheduler initialization. Place `scheduler.markTimespan` call after `scheduler.init`.");
     var o = !1;
     this._els.dhx_cal_data || (e.get_elements(), o = !0);
-    var _ = e._marked_timespans_ids, r = e._marked_timespans_types, d = e._marked_timespans;
+    var d = e._marked_timespans_ids, r = e._marked_timespans_types, l = e._marked_timespans;
     e.deleteMarkedTimespan(), e.addMarkedTimespan(a);
-    var l = e._mark_timespans();
-    return o && (e._els = []), e._marked_timespans_ids = _, e._marked_timespans_types = r, e._marked_timespans = d, l;
+    var _ = e._mark_timespans();
+    return o && (e._els = []), e._marked_timespans_ids = d, e._marked_timespans_types = r, e._marked_timespans = l, _;
   }, e.unmarkTimespan = function(a) {
     if (a)
       for (var o = 0; o < a.length; o++) {
-        var _ = a[o];
-        _.parentNode && _.parentNode.removeChild(_);
+        var d = a[o];
+        d.parentNode && d.parentNode.removeChild(d);
       }
   }, e._addMarkerTimespanConfig = function(a) {
-    var o = "global", _ = e._marked_timespans, r = a.id, d = e._marked_timespans_ids;
-    d[r] || (d[r] = []);
-    var l = a.days, h = a.sections, p = a.type;
+    var o = "global", d = e._marked_timespans, r = a.id, l = e._marked_timespans_ids;
+    l[r] || (l[r] = []);
+    var _ = a.days, h = a.sections, p = a.type;
     if (a.id = r, h) {
-      for (var m in h)
-        if (h.hasOwnProperty(m)) {
-          _[m] || (_[m] = {});
-          var g = h[m], c = _[m];
-          c[g] || (c[g] = {}), c[g][l] || (c[g][l] = {}), c[g][l][p] || (c[g][l][p] = [], e._marked_timespans_types || (e._marked_timespans_types = {}), e._marked_timespans_types[p] || (e._marked_timespans_types[p] = !0));
-          var u = c[g][l][p];
-          a._array = u, u.push(a), d[r].push(a);
+      for (var v in h)
+        if (h.hasOwnProperty(v)) {
+          d[v] || (d[v] = {});
+          var g = h[v], c = d[v];
+          c[g] || (c[g] = {}), c[g][_] || (c[g][_] = {}), c[g][_][p] || (c[g][_][p] = [], e._marked_timespans_types || (e._marked_timespans_types = {}), e._marked_timespans_types[p] || (e._marked_timespans_types[p] = !0));
+          var f = c[g][_][p];
+          a._array = f, f.push(a), l[r].push(a);
         }
     } else
-      _[o][l] || (_[o][l] = {}), _[o][l][p] || (_[o][l][p] = []), e._marked_timespans_types || (e._marked_timespans_types = {}), e._marked_timespans_types[p] || (e._marked_timespans_types[p] = !0), u = _[o][l][p], a._array = u, u.push(a), d[r].push(a);
+      d[o][_] || (d[o][_] = {}), d[o][_][p] || (d[o][_][p] = []), e._marked_timespans_types || (e._marked_timespans_types = {}), e._marked_timespans_types[p] || (e._marked_timespans_types[p] = !0), f = d[o][_][p], a._array = f, f.push(a), l[r].push(a);
   }, e._marked_timespans_ids = {}, e.addMarkedTimespan = function(a) {
     var o = e._prepare_timespan_options(a);
     if (o.length) {
-      for (var _ = o[0].id, r = 0; r < o.length; r++)
+      for (var d = o[0].id, r = 0; r < o.length; r++)
         e._addMarkerTimespanConfig(o[r]);
-      return _;
+      return d;
     }
   }, e._add_timespan_zones = function(a, o) {
-    var _ = a.slice();
-    if (o = o.slice(), !_.length)
+    var d = a.slice();
+    if (o = o.slice(), !d.length)
       return o;
-    for (var r = 0; r < _.length; r += 2)
-      for (var d = _[r], l = _[r + 1], h = r + 2 == _.length, p = 0; p < o.length; p += 2) {
-        var m = o[p], g = o[p + 1];
-        if (g > l && m <= l || m < d && g >= d)
-          _[r] = Math.min(d, m), _[r + 1] = Math.max(l, g), r -= 2;
+    for (var r = 0; r < d.length; r += 2)
+      for (var l = d[r], _ = d[r + 1], h = r + 2 == d.length, p = 0; p < o.length; p += 2) {
+        var v = o[p], g = o[p + 1];
+        if (g > _ && v <= _ || v < l && g >= l)
+          d[r] = Math.min(l, v), d[r + 1] = Math.max(_, g), r -= 2;
         else {
           if (!h)
             continue;
-          var c = d > m ? 0 : 2;
-          _.splice(r + c, 0, m, g);
+          var c = l > v ? 0 : 2;
+          d.splice(r + c, 0, v, g);
         }
         o.splice(p--, 2);
         break;
       }
-    return _;
+    return d;
   }, e._subtract_timespan_zones = function(a, o) {
-    for (var _ = a.slice(), r = 0; r < _.length; r += 2)
-      for (var d = _[r], l = _[r + 1], h = 0; h < o.length; h += 2) {
-        var p = o[h], m = o[h + 1];
-        if (m > d && p < l) {
+    for (var d = a.slice(), r = 0; r < d.length; r += 2)
+      for (var l = d[r], _ = d[r + 1], h = 0; h < o.length; h += 2) {
+        var p = o[h], v = o[h + 1];
+        if (v > l && p < _) {
           var g = !1;
-          d >= p && l <= m && _.splice(r, 2), d < p && (_.splice(r, 2, d, p), g = !0), l > m && _.splice(g ? r + 2 : r, g ? 0 : 2, m, l), r -= 2;
+          l >= p && _ <= v && d.splice(r, 2), l < p && (d.splice(r, 2, l, p), g = !0), _ > v && d.splice(g ? r + 2 : r, g ? 0 : 2, v, _), r -= 2;
           break;
         }
       }
-    return _;
+    return d;
   }, e.invertZones = function(a) {
     return e._subtract_timespan_zones([0, 1440], a.slice());
   }, e._delete_marked_timespan_by_id = function(a) {
     var o = e._marked_timespans_ids[a];
     if (o) {
-      for (var _ = 0; _ < o.length; _++)
-        for (var r = o[_], d = r._array, l = 0; l < d.length; l++)
-          if (d[l] == r) {
-            d.splice(l, 1);
+      for (var d = 0; d < o.length; d++)
+        for (var r = o[d], l = r._array, _ = 0; _ < l.length; _++)
+          if (l[_] == r) {
+            l.splice(_, 1);
             break;
           }
     }
   }, e._delete_marked_timespan_by_config = function(a) {
-    var o, _ = e._marked_timespans, r = a.sections, d = a.days, l = a.type || t;
+    var o, d = e._marked_timespans, r = a.sections, l = a.days, _ = a.type || t;
     if (r) {
       for (var h in r)
-        if (r.hasOwnProperty(h) && _[h]) {
+        if (r.hasOwnProperty(h) && d[h]) {
           var p = r[h];
-          _[h][p] && (o = _[h][p]);
+          d[h][p] && (o = d[h][p]);
         }
     } else
-      o = _.global;
+      o = d.global;
     if (o) {
-      if (d !== void 0)
-        o[d] && o[d][l] && (e._addMarkerTimespanConfig(a), e._delete_marked_timespans_list(o[d][l], a));
+      if (l !== void 0)
+        o[l] && o[l][_] && (e._addMarkerTimespanConfig(a), e._delete_marked_timespans_list(o[l][_], a));
       else
-        for (var m in o)
-          if (o[m][l]) {
+        for (var v in o)
+          if (o[v][_]) {
             var g = e._lame_clone(a);
-            a.days = m, e._addMarkerTimespanConfig(g), e._delete_marked_timespans_list(o[m][l], a);
+            a.days = v, e._addMarkerTimespanConfig(g), e._delete_marked_timespans_list(o[v][_], a);
           }
     }
   }, e._delete_marked_timespans_list = function(a, o) {
-    for (var _ = 0; _ < a.length; _++) {
-      var r = a[_], d = e._subtract_timespan_zones(r.zones, o.zones);
-      if (d.length)
-        r.zones = d;
+    for (var d = 0; d < a.length; d++) {
+      var r = a[d], l = e._subtract_timespan_zones(r.zones, o.zones);
+      if (l.length)
+        r.zones = l;
       else {
-        a.splice(_, 1), _--;
-        for (var l = e._marked_timespans_ids[r.id], h = 0; h < l.length; h++)
-          if (l[h] == r) {
-            l.splice(h, 1);
+        a.splice(d, 1), d--;
+        for (var _ = e._marked_timespans_ids[r.id], h = 0; h < _.length; h++)
+          if (_[h] == r) {
+            _.splice(h, 1);
             break;
           }
       }
@@ -463,45 +463,45 @@ function Nt(e) {
       if (a.type)
         o.push(a.type);
       else
-        for (var _ in e._marked_timespans_types)
-          o.push(_);
-      for (var r = e._prepare_timespan_options(a), d = 0; d < r.length; d++)
-        for (var l = r[d], h = 0; h < o.length; h++) {
-          var p = e._lame_clone(l);
+        for (var d in e._marked_timespans_types)
+          o.push(d);
+      for (var r = e._prepare_timespan_options(a), l = 0; l < r.length; l++)
+        for (var _ = r[l], h = 0; h < o.length; h++) {
+          var p = e._lame_clone(_);
           p.type = o[h], e._delete_marked_timespan_by_config(p);
         }
     }
   }, e._get_types_to_render = function(a, o) {
-    var _ = a ? e._lame_copy({}, a) : {};
+    var d = a ? e._lame_copy({}, a) : {};
     for (var r in o || {})
-      o.hasOwnProperty(r) && (_[r] = o[r]);
-    return _;
+      o.hasOwnProperty(r) && (d[r] = o[r]);
+    return d;
   }, e._get_configs_to_render = function(a) {
     var o = [];
-    for (var _ in a)
-      a.hasOwnProperty(_) && o.push.apply(o, a[_]);
+    for (var d in a)
+      a.hasOwnProperty(d) && o.push.apply(o, a[d]);
     return o;
   }, e._on_scale_add_marker = function(a, o) {
     if (!e._table_view || e._mode == "month") {
-      var _ = o.getDay(), r = o.valueOf(), d = this._mode, l = e._marked_timespans, h = [], p = [];
-      if (this._props && this._props[d]) {
-        var m = this._props[d], g = m.options, c = g[e._get_unit_index(m, o)];
-        if (m.days > 1) {
-          var u = Math.round((o - e._min_date) / 864e5), f = m.size || g.length;
-          o = e.date.add(e._min_date, Math.floor(u / f), "day"), o = e.date.date_part(o);
+      var d = o.getDay(), r = o.valueOf(), l = this._mode, _ = e._marked_timespans, h = [], p = [];
+      if (this._props && this._props[l]) {
+        var v = this._props[l], g = v.options, c = g[e._get_unit_index(v, o)];
+        if (v.days > 1) {
+          var f = Math.round((o - e._min_date) / 864e5), u = v.size || g.length;
+          o = e.date.add(e._min_date, Math.floor(f / u), "day"), o = e.date.date_part(o);
         } else
           o = e.date.date_part(new Date(this._date));
-        if (_ = o.getDay(), r = o.valueOf(), l[d] && l[d][c.key]) {
-          var y = l[d][c.key], w = e._get_types_to_render(y[_], y[r]);
+        if (d = o.getDay(), r = o.valueOf(), _[l] && _[l][c.key]) {
+          var y = _[l][c.key], w = e._get_types_to_render(y[d], y[r]);
           h.push.apply(h, e._get_configs_to_render(w));
         }
       }
-      var D = l.global;
+      var D = _.global;
       if (e.config.overwrite_marked_timespans) {
-        var M = D[r] || D[_];
+        var M = D[r] || D[d];
         h.push.apply(h, e._get_configs_to_render(M));
       } else
-        D[r] && h.push.apply(h, e._get_configs_to_render(D[r])), D[_] && h.push.apply(h, e._get_configs_to_render(D[_]));
+        D[r] && h.push.apply(h, e._get_configs_to_render(D[r])), D[d] && h.push.apply(h, e._get_configs_to_render(D[d]));
       for (var k = 0; k < h.length; k++)
         p.push.apply(p, e._render_marked_timespan(h[k], a, o));
       return p;
@@ -512,50 +512,50 @@ function Nt(e) {
     e.callEvent("onScaleDblClick", [e.getActionData(a).date, o, a]), e.config.dblclick_create && e.addEventNow(e.getActionData(a).date, null, a);
   };
 }
-function Tt(e) {
+function Ct(e) {
   var i = {}, t = !1;
-  function n(r, d) {
-    d = typeof d == "function" ? d : function() {
-    }, i[r] || (i[r] = this[r], this[r] = d);
+  function n(r, l) {
+    l = typeof l == "function" ? l : function() {
+    }, i[r] || (i[r] = this[r], this[r] = l);
   }
   function s(r) {
     i[r] && (this[r] = i[r], i[r] = null);
   }
   function a(r) {
-    for (var d in r)
-      n.call(this, d, r[d]);
+    for (var l in r)
+      n.call(this, l, r[l]);
   }
   function o() {
     for (var r in i)
       s.call(this, r);
   }
-  function _(r) {
+  function d(r) {
     try {
       r();
-    } catch (d) {
-      window.console.error(d);
+    } catch (l) {
+      window.console.error(l);
     }
   }
   return e.$stateProvider.registerProvider("batchUpdate", function() {
     return { batch_update: t };
-  }, !1), function(r, d) {
+  }, !1), function(r, l) {
     if (t)
-      return void _(r);
-    var l, h = this._dp && this._dp.updateMode != "off";
-    h && (l = this._dp.updateMode, this._dp.setUpdateMode("off"));
-    const p = { setModeDate: { date: null, mode: null }, needRender: !1, needUpdateView: !1, repaintEvents: {} }, m = (c, u) => {
-      c && (p.setModeDate.date = c), u && (p.setModeDate.mode = u);
+      return void d(r);
+    var _, h = this._dp && this._dp.updateMode != "off";
+    h && (_ = this._dp.updateMode, this._dp.setUpdateMode("off"));
+    const p = { setModeDate: { date: null, mode: null }, needRender: !1, needUpdateView: !1, repaintEvents: {} }, v = (c, f) => {
+      c && (p.setModeDate.date = c), f && (p.setModeDate.mode = f);
     };
-    var g = { render: (c, u) => {
-      p.needRender = !0, m(c, u);
-    }, setCurrentView: (c, u) => {
-      p.needRender = !0, m(c, u);
-    }, updateView: (c, u) => {
-      p.needUpdateView = !0, m(c, u);
+    var g = { render: (c, f) => {
+      p.needRender = !0, v(c, f);
+    }, setCurrentView: (c, f) => {
+      p.needRender = !0, v(c, f);
+    }, updateView: (c, f) => {
+      p.needUpdateView = !0, v(c, f);
     }, render_data: () => p.needRender = !0, render_view_data: (c) => {
-      c && c.length ? c.forEach((u) => p.repaintEvents[u.id] = !0) : p.needRender = !0;
+      c && c.length ? c.forEach((f) => p.repaintEvents[f.id] = !0) : p.needRender = !0;
     } };
-    if (a.call(this, g), t = !0, this.callEvent("onBeforeBatchUpdate", []), _(r), this.callEvent("onAfterBatchUpdate", []), o.call(this), t = !1, !d)
+    if (a.call(this, g), t = !0, this.callEvent("onBeforeBatchUpdate", []), d(r), this.callEvent("onAfterBatchUpdate", []), o.call(this), t = !1, !l)
       if (p.needRender)
         e.render(p.setModeDate.date, p.setModeDate.mode);
       else if (p.needUpdateView)
@@ -563,10 +563,10 @@ function Tt(e) {
       else
         for (const c in p.repaintEvents)
           e.updateEvent(c);
-    h && (this._dp.setUpdateMode(l), this._dp.sendData());
+    h && (this._dp.setUpdateMode(_), this._dp.sendData());
   };
 }
-class At {
+class Ot {
   constructor(i) {
     const { url: t, token: n } = i;
     this._url = t, this._token = n, this._mode = 1, this._seed = 1, this._queue = [], this.data = {}, this.api = {}, this._events = {};
@@ -583,13 +583,13 @@ class At {
   }
   parse(i) {
     const { key: t, websocket: n } = i;
-    t && (this._token = i.key);
+    t !== void 0 && (this._token = t);
     for (const s in i.data)
       this.data[s] = i.data[s];
     for (const s in i.api) {
       const a = this.api[s] = {}, o = i.api[s];
-      for (const _ in o)
-        a[_] = this._wrapper(s + "." + _);
+      for (const d in o)
+        a[d] = this._wrapper(s + "." + d);
     }
     return n && this.connect(), this;
   }
@@ -599,26 +599,28 @@ class At {
     }, i.close()), this._mode = 2, this._socket = function(t, n, s, a) {
       let o = n;
       o[0] === "/" && (o = document.location.protocol + "//" + document.location.host + n), o = o.replace(/^http(s|):/, "ws$1:");
-      const _ = o.indexOf("?") != -1 ? "&" : "?";
-      o = `${o}${_}token=${s}&ws=1`;
+      const d = o.indexOf("?") != -1 ? "&" : "?";
+      o = `${o}${d}token=${s}&ws=1`;
       const r = new WebSocket(o);
-      return r.onclose = () => setTimeout(() => t.connect(), 2e3), r.onmessage = (d) => {
-        const l = JSON.parse(d.data);
-        switch (l.action) {
+      return r.onclose = () => setTimeout(() => t.connect(), 2e3), r.onmessage = (l) => {
+        const _ = JSON.parse(l.data);
+        switch (_.action) {
           case "result":
-            t.result(l.body, []);
+            t.result(_.body, []);
             break;
           case "event":
-            t.fire(l.body.name, l.body.value);
+            t.fire(_.body.name, _.body.value);
             break;
           case "start":
             a();
             break;
           default:
-            t.onError(l.data);
+            t.onError(_.data);
         }
       }, r;
-    }(this, this._url, this._token, () => (this._mode = 3, this._send(), this._resubscribe(), this));
+    }(this, this._url, this._token, () => {
+      this._mode = 3, this._send(), this._resubscribe();
+    });
   }
   _wrapper(i) {
     return (function() {
@@ -627,7 +629,7 @@ class At {
       const s = new Promise((a, o) => {
         n = { data: { id: this._uid(), name: i, args: t }, status: 1, resolve: a, reject: o }, this._queue.push(n);
       });
-      return this.onCall(n, s), this._mode === 3 ? this._send(n) : setTimeout(() => this._send(), 1), s;
+      return n && this.onCall(n, s), n && this._mode === 3 ? this._send(n) : setTimeout(() => this._send(), 1), s;
     }).bind(this);
   }
   _uid() {
@@ -693,12 +695,12 @@ class At {
   onResponse(i, t) {
   }
 }
-class Ct {
+class Lt {
   constructor(i, t) {
-    const n = new At({ url: i, token: t });
+    const n = new Ot({ url: i, token: t });
     n.fetch = function(s, a) {
       const o = { headers: this.headers() };
-      return a && (o.method = "POST", o.body = a), fetch(s, o).then((_) => _.json());
+      return a && (o.method = "POST", o.body = a), fetch(s, o).then((d) => d.json());
     }, this._ready = n.load().then((s) => this._remote = s);
   }
   ready() {
@@ -714,7 +716,7 @@ class Ct {
     });
   }
 }
-function Ot(e) {
+function $t(e) {
   function i(n, s) {
     switch (n) {
       case "add-event":
@@ -731,11 +733,11 @@ function Ot(e) {
           const o = a.id;
           if (!e.getEvent(o))
             return void console.warn(`Event with ID ${o} does not exist. Skipping update.`);
-          const _ = e.getEvent(o);
+          const d = e.getEvent(o);
           t(() => {
             for (let r in a)
-              r !== "start_date" && r !== "end_date" && (_[r] = a[r]);
-            typeof a.start_date == "string" && (_.start_date = e.templates.parse_date(a.start_date)), typeof a.end_date == "string" && (_.end_date = e.templates.parse_date(a.end_date)), a.original_start && typeof a.original_start == "string" && (_.original_start = e.templates.parse_date(a.original_start)), e.callEvent("onEventChanged", [o, _]), e.updateEvent(o), o !== a.id && e.changeEventId(o, a.id);
+              r !== "start_date" && r !== "end_date" && (d[r] = a[r]);
+            typeof a.start_date == "string" && (d.start_date = e.templates.parse_date(a.start_date)), typeof a.end_date == "string" && (d.end_date = e.templates.parse_date(a.end_date)), a.original_start && typeof a.original_start == "string" && (d.original_start = e.templates.parse_date(a.original_start)), e.callEvent("onEventChanged", [o, d]), e.updateEvent(o), o !== a.id && e.changeEventId(o, a.id);
           });
         })(s);
         break;
@@ -747,13 +749,13 @@ function Ot(e) {
               e.addEvent(a);
             }));
           t(() => {
-            const _ = e.getEvent(o);
-            if (_) {
-              if (_.rec_type || _.rrule) {
-                e._roll_back_dates(_);
+            const d = e.getEvent(o);
+            if (d) {
+              if (d.rec_type || d.rrule) {
+                e._roll_back_dates(d);
                 const r = e._get_rec_markers(o);
-                for (const d in r)
-                  e.getEvent(d) && e.deleteEvent(d, !0);
+                for (const l in r)
+                  e.getEvent(l) && e.deleteEvent(l, !0);
               }
               if (e.getState().lightbox_id == o && (this._new_event = this._lightbox_id, a.id = this._lightbox_id, this._events[this._lightbox_id] = a, e.callEvent("onLiveUpdateCollision", [o, null, "delete", a]) === !1))
                 return void e.endLightbox(!1, e._lightbox);
@@ -782,7 +784,7 @@ function Ot(e) {
     }
   } };
 }
-function Lt(e) {
+function Ht(e) {
   (function(i) {
     const t = {};
     i.attachEvent("onConfirmedBeforeEventDelete", function(n) {
@@ -799,77 +801,80 @@ function Lt(e) {
         o.target.closest(`[data-deleted-event-id="${s.id}"]`) && (a.rrule && a.duration && (a.end_date = new Date(a.start_date.valueOf() + 1e3 * a.duration), i.addEvent(a)), i.addEvent(a), i.render());
       } });
     });
-  })(e), Mt(e), Nt(e), function(i) {
-    i.batchUpdate = Tt(i);
+  })(e), Tt(e), At(e), function(i) {
+    i.batchUpdate = Ct(i);
   }(e), function(i) {
-    i.ext || (i.ext = {}), i.ext.liveUpdates = { RemoteEvents: Ct, remoteUpdates: Ot(i) };
+    i.ext || (i.ext = {}), i.ext.liveUpdates = { RemoteEvents: Lt, remoteUpdates: $t(i) };
   }(e);
 }
-var $t = Date.now();
-function Te(e) {
-  return !(!e || typeof e != "object") && !!(e.getFullYear && e.getMonth && e.getDate);
+let zt = Date.now();
+function Ae(e) {
+  return !!(e && typeof e == "object" && e.getFullYear && e.getMonth && e.getDate);
 }
 const ne = { uid: function() {
-  return $t++;
+  return zt++;
 }, mixin: function(e, i, t) {
-  for (var n in i)
-    (e[n] === void 0 || t) && (e[n] = i[n]);
+  const n = e, s = i;
+  for (const a in s)
+    (n[a] === void 0 || t) && (n[a] = s[a]);
   return e;
 }, copy: function e(i) {
-  var t, n, s;
+  let t;
   if (i && typeof i == "object")
     switch (!0) {
-      case Te(i):
-        n = new Date(i);
+      case Ae(i):
+        t = new Date(i);
         break;
-      case (s = i, Array.isArray ? Array.isArray(s) : s && s.length !== void 0 && s.pop && s.push):
-        for (n = new Array(i.length), t = 0; t < i.length; t++)
-          n[t] = e(i[t]);
+      case (n = i, Array.isArray ? Array.isArray(n) : !!(n && typeof n == "object" && "length" in n && n.pop && n.push)):
+        t = new Array(i.length);
+        for (let s = 0; s < i.length; s++)
+          t[s] = e(i[s]);
         break;
-      case function(a) {
-        return a && typeof a == "object" && Function.prototype.toString.call(a.constructor) === "function String() { [native code] }";
+      case function(s) {
+        return !(!s || typeof s != "object" || Function.prototype.toString.call(s.constructor) !== "function String() { [native code] }");
       }(i):
-        n = new String(i);
+        t = new String(i);
         break;
-      case function(a) {
-        return a && typeof a == "object" && Function.prototype.toString.call(a.constructor) === "function Number() { [native code] }";
+      case function(s) {
+        return !(!s || typeof s != "object" || Function.prototype.toString.call(s.constructor) !== "function Number() { [native code] }");
       }(i):
-        n = new Number(i);
+        t = new Number(i);
         break;
-      case function(a) {
-        return a && typeof a == "object" && Function.prototype.toString.call(a.constructor) === "function Boolean() { [native code] }";
+      case function(s) {
+        return !(!s || typeof s != "object" || Function.prototype.toString.call(s.constructor) !== "function Boolean() { [native code] }");
       }(i):
-        n = new Boolean(i);
+        t = new Boolean(i);
         break;
       default:
-        for (t in n = {}, i) {
-          const a = typeof i[t];
-          a === "string" || a === "number" || a === "boolean" ? n[t] = i[t] : Te(i[t]) ? n[t] = new Date(i[t]) : Object.prototype.hasOwnProperty.apply(i, [t]) && (n[t] = e(i[t]));
-        }
+        t = {};
+        for (const s in i)
+          if (Object.prototype.hasOwnProperty.call(i, s)) {
+            const a = i[s], o = typeof a;
+            o === "string" || o === "number" || o === "boolean" ? t[s] = a : Ae(a) ? t[s] = new Date(a) : t[s] = e(a);
+          }
     }
-  return n || i;
+  var n;
+  return t || i;
 }, defined: function(e) {
   return e !== void 0;
-}, isDate: Te, delay: function(e, i) {
-  var t, n = function() {
-    n.$cancelTimeout(), n.$pending = !0;
-    var s = Array.prototype.slice.call(arguments);
-    t = setTimeout(function() {
+}, isDate: Ae, delay: function(e, i) {
+  let t;
+  const n = function(...s) {
+    n.$cancelTimeout(), n.$pending = !0, t = setTimeout(function() {
       e.apply(this, s), n.$pending = !1;
     }, i);
   };
   return n.$pending = !1, n.$cancelTimeout = function() {
     clearTimeout(t), n.$pending = !1;
-  }, n.$execute = function() {
-    var s = Array.prototype.slice.call(arguments);
+  }, n.$execute = function(...s) {
     e.apply(this, s), n.$cancelTimeout();
   }, n;
 } };
-function Ht(e) {
+function qt(e) {
   function i(g) {
     var c = document.createElement("div");
-    return (g || "").split(" ").forEach(function(u) {
-      c.classList.add(u);
+    return (g || "").split(" ").forEach(function(f) {
+      c.classList.add(f);
     }), c;
   }
   var t = function() {
@@ -883,19 +888,19 @@ function Ht(e) {
     return i("dhx_cal_date");
   }, o = function(g) {
     return i("dhx_cal_nav_button dhx_cal_nav_button_custom dhx_cal_tab");
-  }, _ = function(g) {
+  }, d = function(g) {
     return i("dhx_cal_" + g.view + "_button dhx_cal_nav_button");
   }, r = function() {
     return i("dhx_cal_line_spacer");
-  }, d = function(g) {
+  }, l = function(g) {
     var c = i("dhx_minical_icon");
     return g.click || c.$_eventAttached || e.event(c, "click", function() {
-      e.isCalendarVisible() ? e.destroyCalendar() : e.renderCalendar({ position: this, date: e.getState().date, navigation: !0, handler: function(u, f) {
-        e.setCurrentView(u), e.destroyCalendar();
+      e.isCalendarVisible() ? e.destroyCalendar() : e.renderCalendar({ position: this, date: e.getState().date, navigation: !0, handler: function(f, u) {
+        e.setCurrentView(f), e.destroyCalendar();
       } });
     }), c;
   };
-  function l(g) {
+  function _(g) {
     var c = function(y) {
       var w;
       if (y.view)
@@ -903,7 +908,7 @@ function Ht(e) {
           case "today":
           case "next":
           case "prev":
-            w = _;
+            w = d;
             break;
           case "date":
             w = a;
@@ -915,7 +920,7 @@ function Ht(e) {
             w = o;
             break;
           case "minicalendar":
-            w = d;
+            w = l;
             break;
           default:
             w = s;
@@ -925,41 +930,41 @@ function Ht(e) {
       return w;
     }(g);
     if (c) {
-      var u = c(g);
-      if (g.css && u.classList.add(g.css), g.width && ((f = g.width) === 1 * f && (f += "px"), u.style.width = f), g.height && ((f = g.height) === 1 * f && (f += "px"), u.style.height = f), g.click && e.event(u, "click", g.click), g.html && (u.innerHTML = g.html), g.align) {
-        var f = "";
-        g.align == "right" ? f = "flex-end" : g.align == "left" && (f = "flex-start"), u.style.justifyContent = f;
+      var f = c(g);
+      if (g.css && f.classList.add(g.css), g.width && ((u = g.width) === 1 * u && (u += "px"), f.style.width = u), g.height && ((u = g.height) === 1 * u && (u += "px"), f.style.height = u), g.click && e.event(f, "click", g.click), g.html && (f.innerHTML = g.html), g.align) {
+        var u = "";
+        g.align == "right" ? u = "flex-end" : g.align == "left" && (u = "flex-start"), f.style.justifyContent = u;
       }
-      return u;
+      return f;
     }
   }
   function h(g) {
     return typeof g == "string" && (g = { view: g }), g.view || g.rows || g.cols || (g.view = "button"), g;
   }
   function p(g) {
-    var c, u = document.createDocumentFragment();
+    var c, f = document.createDocumentFragment();
     c = Array.isArray(g) ? g : [g];
-    for (var f = 0; f < c.length; f++) {
-      var y, w = h(c[f]);
-      w.view === "day" && c[f + 1] && ((y = h(c[f + 1])).view !== "week" && y.view !== "month" || (w.$firstTab = !0, w.$segmentedTab = !0)), w.view === "week" && c[f - 1] && ((y = h(c[f + 1])).view !== "week" && y.view !== "month" || (w.$segmentedTab = !0)), w.view === "month" && c[f - 1] && ((y = h(c[f - 1])).view !== "week" && y.view !== "day" || (w.$lastTab = !0, w.$segmentedTab = !0));
-      var D = l(w);
-      u.appendChild(D), (w.cols || w.rows) && D.appendChild(p(w.cols || w.rows));
+    for (var u = 0; u < c.length; u++) {
+      var y, w = h(c[u]);
+      w.view === "day" && c[u + 1] && ((y = h(c[u + 1])).view !== "week" && y.view !== "month" || (w.$firstTab = !0, w.$segmentedTab = !0)), w.view === "week" && c[u - 1] && ((y = h(c[u + 1])).view !== "week" && y.view !== "month" || (w.$segmentedTab = !0)), w.view === "month" && c[u - 1] && ((y = h(c[u - 1])).view !== "week" && y.view !== "day" || (w.$lastTab = !0, w.$segmentedTab = !0));
+      var D = _(w);
+      f.appendChild(D), (w.cols || w.rows) && D.appendChild(p(w.cols || w.rows));
     }
-    return u;
+    return f;
   }
   e._init_nav_bar = function(g) {
     var c = this.$container.querySelector(".dhx_cal_navline");
     return c || ((c = document.createElement("div")).className = "dhx_cal_navline dhx_cal_navline_flex", e._update_nav_bar(g, c), c);
   };
-  var m = null;
+  var v = null;
   e._update_nav_bar = function(g, c) {
     if (g) {
-      var u = !1, f = g.height || e.xy.nav_height;
-      m !== null && m === f || (u = !0), u && (e.xy.nav_height = f), c.innerHTML = "", c.appendChild(p(g)), e.unset_actions(), e._els = [], e.get_elements(), e.set_actions(), c.style.display = f === 0 ? "none" : "", m = f;
+      var f = !1, u = g.height || e.xy.nav_height;
+      v !== null && v === u || (f = !0), f && (e.xy.nav_height = u), c.innerHTML = "", c.appendChild(p(g)), e.unset_actions(), e._els = [], e.get_elements(), e.set_actions(), c.style.display = u === 0 ? "none" : "", v = u;
     }
   };
 }
-function zt(e) {
+function jt(e) {
   function i(a) {
     return a.isConnected !== void 0 ? a.isConnected : document.body.contains(a);
   }
@@ -967,12 +972,12 @@ function zt(e) {
     return { w: a.innerWidth || document.documentElement.clientWidth, h: a.innerHeight || document.documentElement.clientHeight };
   }
   function n(a, o) {
-    var _, r = t(o);
+    var d, r = t(o);
     a.event(o, "resize", function() {
-      clearTimeout(_), _ = setTimeout(function() {
+      clearTimeout(d), d = setTimeout(function() {
         if (i(a.$container) && !a.$destroyed) {
-          var d, l, h = t(o);
-          l = h, ((d = r).w != l.w || d.h != l.h) && (r = h, s(a));
+          var l, _, h = t(o);
+          _ = h, ((l = r).w != _.w || l.h != _.h) && (r = h, s(a));
         }
       }, 150);
     });
@@ -984,24 +989,24 @@ function zt(e) {
     var o = a.$container;
     if (window.getComputedStyle(o).getPropertyValue("position") == "static" && (o.style.position = "relative"), window.ResizeObserver) {
       let r = !0;
-      const d = new ResizeObserver(function(l) {
+      const l = new ResizeObserver(function(_) {
         r ? r = !1 : s(a);
       });
-      d.observe(o), a.attachEvent("onDestroy", function() {
-        d.unobserve(o);
+      l.observe(o), a.attachEvent("onDestroy", function() {
+        l.unobserve(o);
       });
     } else {
-      var _ = document.createElement("iframe");
-      _.className = "scheduler_container_resize_watcher", _.tabIndex = -1, a.config.wai_aria_attributes && (_.setAttribute("role", "none"), _.setAttribute("aria-hidden", !0)), window.Sfdc || window.$A || window.Aura ? function(r) {
-        var d = r.$root.offsetHeight, l = r.$root.offsetWidth;
+      var d = document.createElement("iframe");
+      d.className = "scheduler_container_resize_watcher", d.tabIndex = -1, a.config.wai_aria_attributes && (d.setAttribute("role", "none"), d.setAttribute("aria-hidden", !0)), window.Sfdc || window.$A || window.Aura ? function(r) {
+        var l = r.$root.offsetHeight, _ = r.$root.offsetWidth;
         (function h() {
-          r.$destroyed || (r.$root && (r.$root.offsetHeight == d && r.$root.offsetWidth == l || s(r), d = r.$root.offsetHeight, l = r.$root.offsetWidth), setTimeout(h, 200));
+          r.$destroyed || (r.$root && (r.$root.offsetHeight == l && r.$root.offsetWidth == _ || s(r), l = r.$root.offsetHeight, _ = r.$root.offsetWidth), setTimeout(h, 200));
         })();
-      }(a) : (o.appendChild(_), _.contentWindow ? n(a, _.contentWindow) : (o.removeChild(_), n(a, window)));
+      }(a) : (o.appendChild(d), d.contentWindow ? n(a, d.contentWindow) : (o.removeChild(d), n(a, window)));
     }
   })(e);
 }
-class qt {
+class It {
   constructor() {
     this._silent_mode = !1, this.listeners = {};
   }
@@ -1013,35 +1018,35 @@ class qt {
   }
 }
 function Ye(e) {
-  const i = new qt();
+  const i = new It();
   e.attachEvent = function(t, n, s) {
     t = "ev_" + t.toLowerCase(), i.listeners[t] || (i.listeners[t] = function(o) {
-      let _ = {}, r = 0;
-      const d = function() {
-        let l = !0;
-        for (const h in _) {
-          const p = _[h].apply(o, arguments);
-          l = l && p;
+      let d = {}, r = 0;
+      const l = function(..._) {
+        let h = !0;
+        for (const p in d) {
+          const v = d[p].apply(o, _);
+          h = h && v;
         }
-        return l;
+        return h;
       };
-      return d.addEvent = function(l, h) {
-        if (typeof l == "function") {
+      return l.addEvent = function(_, h) {
+        if (typeof _ == "function") {
           let p;
           if (h && h.id ? p = h.id : (p = r, r++), h && h.once) {
-            const m = l;
-            l = function() {
-              m(), d.removeEvent(p);
+            const v = _;
+            _ = function() {
+              v(), l.removeEvent(p);
             };
           }
-          return _[p] = l, p;
+          return d[p] = _, p;
         }
         return !1;
-      }, d.removeEvent = function(l) {
-        delete _[l];
-      }, d.clear = function() {
-        _ = {};
-      }, d;
+      }, l.removeEvent = function(_) {
+        delete d[_];
+      }, l.clear = function() {
+        d = {};
+      }, l;
     }(this)), s && s.thisObject && (n = n.bind(s.thisObject));
     let a = t + ":" + i.listeners[t].addEvent(n, s);
     return s && s.id && (a = s.id), a;
@@ -1059,7 +1064,7 @@ function Ye(e) {
       let n = i.listeners;
       for (const a in n)
         n[a].removeEvent(t);
-      const s = t.split(":");
+      const s = String(t).split(":");
       if (n = i.listeners, s.length === 2) {
         const a = s[0], o = s[1];
         n[a] && n[a].removeEvent(o);
@@ -1070,30 +1075,30 @@ function Ye(e) {
       i.listeners[t].clear();
   };
 }
-const We = { event: function(e, i, t) {
+const Pt = function(e, i, t) {
   e.addEventListener ? e.addEventListener(i, t, !1) : e.attachEvent && e.attachEvent("on" + i, t);
-}, eventRemove: function(e, i, t) {
+}, Rt = function(e, i, t) {
   e.removeEventListener ? e.removeEventListener(i, t, !1) : e.detachEvent && e.detachEvent("on" + i, t);
-} };
-function jt(e) {
+};
+function Ut(e) {
   var i = function() {
-    var t = function(n, s) {
-      n = n || We.event, s = s || We.eventRemove;
-      var a = [], o = { attach: function(_, r, d, l) {
-        a.push({ element: _, event: r, callback: d, capture: l }), n(_, r, d, l);
-      }, detach: function(_, r, d, l) {
-        s(_, r, d, l);
-        for (var h = 0; h < a.length; h++) {
-          var p = a[h];
-          p.element === _ && p.event === r && p.callback === d && p.capture === l && (a.splice(h, 1), h--);
+    const t = (n = Pt, s = Rt) => {
+      const a = [], o = { attach(d, r, l, _) {
+        a.push({ element: d, event: r, callback: l, capture: _ }), n(d, r, l, _);
+      }, detach(d, r, l, _) {
+        s(d, r, l, _);
+        for (let h = 0; h < a.length; h++) {
+          const p = a[h];
+          p.element === d && p.event === r && p.callback === l && p.capture === _ && (a.splice(h, 1), h--);
         }
-      }, detachAll: function() {
-        for (var _ = a.slice(), r = 0; r < _.length; r++) {
-          var d = _[r];
-          o.detach(d.element, d.event, d.callback, d.capture), o.detach(d.element, d.event, d.callback, void 0), o.detach(d.element, d.event, d.callback, !1), o.detach(d.element, d.event, d.callback, !0);
+      }, detachAll() {
+        const d = a.slice();
+        for (let r = 0; r < d.length; r++) {
+          const l = d[r];
+          o.detach(l.element, l.event, l.callback, l.capture), o.detach(l.element, l.event, l.callback, void 0), o.detach(l.element, l.event, l.callback, !1), o.detach(l.element, l.event, l.callback, !0);
         }
         a.splice(0, a.length);
-      }, extend: function() {
+      }, extend() {
         return t(this.event, this.eventRemove);
       } };
       return o;
@@ -1110,22 +1115,37 @@ function jt(e) {
     return t && typeof t == "object";
   };
 }
+function We(e) {
+  let i = 0, t = 0, n = 0, s = 0;
+  const a = e;
+  if (e.getBoundingClientRect) {
+    const o = e.getBoundingClientRect(), d = document.body, r = document.documentElement || document.body.parentNode || document.body, l = window.pageYOffset || r.scrollTop || d.scrollTop, _ = window.pageXOffset || r.scrollLeft || d.scrollLeft, h = r.clientTop || d.clientTop || 0, p = r.clientLeft || d.clientLeft || 0;
+    i = o.top + l - h, t = o.left + _ - p, n = document.body.offsetWidth - o.right, s = document.body.offsetHeight - o.bottom;
+  } else {
+    let o = e;
+    for (; o; )
+      i += parseInt(String(o.offsetTop), 10), t += parseInt(String(o.offsetLeft), 10), o = o.offsetParent;
+    n = document.body.offsetWidth - a.offsetWidth - t, s = document.body.offsetHeight - a.offsetHeight - i;
+  }
+  return { y: Math.round(i), x: Math.round(t), width: a.offsetWidth, height: a.offsetHeight, right: Math.round(n), bottom: Math.round(s) };
+}
 function ft(e) {
   if (!e)
     return "";
-  var i = e.className || "";
-  return i.baseVal && (i = i.baseVal), i.indexOf || (i = ""), i || "";
+  let i = e.className || "";
+  return typeof i != "string" && e.className.baseVal && (i = e.className.baseVal), typeof i == "string" && i.indexOf || (i = ""), i || "";
 }
-function pt(e, i, t) {
-  t === void 0 && (t = !0);
-  for (var n = e.target || e.srcElement, s = ""; n; ) {
-    if (s = ft(n)) {
-      var a = s.indexOf(i);
+function pt(e, i, t = !0) {
+  let n = e.target || ("srcElement" in e ? e.srcElement : null);
+  for (; n; ) {
+    const s = ft(n);
+    if (s) {
+      const a = s.indexOf(i);
       if (a >= 0) {
         if (!t)
           return n;
-        var o = a === 0 || !(s.charAt(a - 1) || "").trim(), _ = a + i.length >= s.length || !s.charAt(a + i.length).trim();
-        if (o && _)
+        const o = a === 0 || !(s.charAt(a - 1) || "").trim(), d = a + i.length >= s.length || !s.charAt(a + i.length).trim();
+        if (o && d)
           return n;
       }
     }
@@ -1133,131 +1153,118 @@ function pt(e, i, t) {
   }
   return null;
 }
-function It(e) {
-  var i = !1, t = !1;
+function Yt(e) {
+  let i = !1, t = !1;
   if (window.getComputedStyle) {
-    var n = window.getComputedStyle(e, null);
-    i = n.display, t = n.visibility;
+    const a = window.getComputedStyle(e, null);
+    i = a.display, t = a.visibility;
   } else
     e.currentStyle && (i = e.currentStyle.display, t = e.currentStyle.visibility);
-  var s = !1, a = pt({ target: e }, "dhx_form_repeat", !1);
-  return a && (s = a.style.height == "0px"), s = s || !e.offsetHeight, i != "none" && t != "hidden" && !s;
+  let n = !1;
+  const s = pt({ target: e }, "dhx_form_repeat", !1);
+  return s && (n = s.style.height === "0px"), n = n || !e.offsetHeight, i !== "none" && t !== "hidden" && !n;
 }
-function Rt(e) {
-  return !isNaN(e.getAttribute("tabindex")) && 1 * e.getAttribute("tabindex") >= 0;
+function Vt(e) {
+  const i = e.getAttribute("tabindex");
+  return i !== null && !Number.isNaN(Number(i)) && Number(i) >= 0;
 }
-function Pt(e) {
-  return !{ a: !0, area: !0 }[e.nodeName.loLowerCase()] || !!e.getAttribute("href");
+function Ft(e) {
+  return !{ a: !0, area: !0 }[e.nodeName.toLowerCase()] || !!e.getAttribute("href");
 }
-function Ut(e) {
+function Bt(e) {
   return !{ input: !0, select: !0, textarea: !0, button: !0, object: !0 }[e.nodeName.toLowerCase()] || !e.hasAttribute("disabled");
 }
 function gt() {
-  return document.head.createShadowRoot || document.head.attachShadow;
+  const e = document.head;
+  return !(!e.createShadowRoot && !e.attachShadow);
 }
-function Ke(e, i) {
-  if (e.closest)
-    return e.closest(i);
-  if (e.matches || e.msMatchesSelector || e.webkitMatchesSelector) {
-    var t = e;
-    if (!document.documentElement.contains(t))
-      return null;
-    do {
-      if ((t.matches || t.msMatchesSelector || t.webkitMatchesSelector).call(t, i))
-        return t;
-      t = t.parentElement || t.parentNode;
-    } while (t !== null && t.nodeType === 1);
-    return null;
-  }
-  return console.error("Your browser is not supported"), null;
-}
-function Ge(e) {
+function Ke(e) {
   if (!e || !gt())
     return document.body;
-  for (; e.parentNode && (e = e.parentNode); )
-    if (e instanceof ShadowRoot)
-      return e.host;
+  let i = e;
+  for (; i.parentNode; )
+    if (i = i.parentNode, i instanceof ShadowRoot)
+      return i.host;
   return document.body;
 }
-const he = { getAbsoluteLeft: function(e) {
+const he = { getAbsoluteLeft(e) {
   return this.getOffset(e).left + (parseInt(window.getComputedStyle(e).paddingLeft, 10) || 0);
-}, getAbsoluteTop: function(e) {
+}, getAbsoluteTop(e) {
   return this.getOffset(e).top + (parseInt(window.getComputedStyle(e).paddingTop, 10) || 0);
-}, getOffsetSum: function(e) {
-  for (var i = 0, t = 0; e; )
-    i += parseInt(e.offsetTop), t += parseInt(e.offsetLeft), e = e.offsetParent;
+}, getOffsetSum(e) {
+  let i = 0, t = 0, n = e;
+  for (; n; )
+    i += parseInt(String(n.offsetTop), 10), t += parseInt(String(n.offsetLeft), 10), n = n.offsetParent;
   return { top: i, left: t };
-}, getOffsetRect: function(e) {
-  var i = e.getBoundingClientRect(), t = 0, n = 0;
+}, getOffsetRect(e) {
+  var s;
+  const i = e.getBoundingClientRect();
+  let t = 0, n = 0;
   if (/Mobi/.test(navigator.userAgent)) {
-    var s = document.createElement("div");
-    s.style.position = "absolute", s.style.left = "0px", s.style.top = "0px", s.style.width = "1px", s.style.height = "1px", document.body.appendChild(s);
-    var a = s.getBoundingClientRect();
-    t = i.top - a.top, n = i.left - a.left, s.parentNode.removeChild(s);
+    const a = document.createElement("div");
+    a.style.position = "absolute", a.style.left = "0px", a.style.top = "0px", a.style.width = "1px", a.style.height = "1px", document.body.appendChild(a);
+    const o = a.getBoundingClientRect();
+    t = i.top - o.top, n = i.left - o.left, (s = a.parentNode) == null || s.removeChild(a);
   } else {
-    var o = document.body, _ = document.documentElement, r = window.pageYOffset || _.scrollTop || o.scrollTop, d = window.pageXOffset || _.scrollLeft || o.scrollLeft, l = _.clientTop || o.clientTop || 0, h = _.clientLeft || o.clientLeft || 0;
-    t = i.top + r - l, n = i.left + d - h;
+    const a = document.body, o = document.documentElement, d = window.pageYOffset || o.scrollTop || a.scrollTop, r = window.pageXOffset || o.scrollLeft || a.scrollLeft, l = o.clientTop || a.clientTop || 0, _ = o.clientLeft || a.clientLeft || 0;
+    t = i.top + d - l, n = i.left + r - _;
   }
   return { top: Math.round(t), left: Math.round(n) };
-}, getOffset: function(e) {
-  return e.getBoundingClientRect ? this.getOffsetRect(e) : this.getOffsetSum(e);
-}, closest: function(e, i) {
-  return e && i ? Ke(e, i) : null;
-}, insertAfter: function(e, i) {
-  i.nextSibling ? i.parentNode.insertBefore(e, i.nextSibling) : i.parentNode.appendChild(e);
-}, remove: function(e) {
-  e && e.parentNode && e.parentNode.removeChild(e);
-}, isChildOf: function(e, i) {
-  return i.contains(e);
-}, getFocusableNodes: function(e) {
-  for (var i = e.querySelectorAll(["a[href]", "area[href]", "input", "select", "textarea", "button", "iframe", "object", "embed", "[tabindex]", "[contenteditable]"].join(", ")), t = Array.prototype.slice.call(i, 0), n = 0; n < t.length; n++)
+}, getOffset(e) {
+  return this.getOffsetSum(e);
+}, closest: (e, i) => e && i ? function(t, n) {
+  if (typeof t.closest == "function")
+    return t.closest(n);
+  let s = t;
+  if (!document.documentElement.contains(s))
+    return null;
+  do {
+    const a = s, o = a.matches || a.msMatchesSelector || a.webkitMatchesSelector;
+    if (o != null && o.call(s, n))
+      return s;
+    s = s.parentElement || s.parentNode;
+  } while (s !== null && s.nodeType === 1);
+  return console.error("Your browser is not supported"), null;
+}(e, i) : null, insertAfter(e, i) {
+  i.parentNode && (i.nextSibling ? i.parentNode.insertBefore(e, i.nextSibling) : i.parentNode.appendChild(e));
+}, remove(e) {
+  e != null && e.parentNode && e.parentNode.removeChild(e);
+}, isChildOf: (e, i) => i.contains(e), getFocusableNodes: function(e) {
+  const i = e.querySelectorAll(["a[href]", "area[href]", "input", "select", "textarea", "button", "iframe", "object", "embed", "[tabindex]", "[contenteditable]"].join(", ")), t = Array.from(i);
+  for (let n = 0; n < t.length; n++)
     t[n].$position = n;
-  for (t.sort(function(a, o) {
-    return a.tabIndex === 0 && o.tabIndex !== 0 ? 1 : a.tabIndex !== 0 && o.tabIndex === 0 ? -1 : a.tabIndex === o.tabIndex ? a.$position - o.$position : a.tabIndex < o.tabIndex ? -1 : 1;
-  }), n = 0; n < t.length; n++) {
-    var s = t[n];
-    (Rt(s) || Ut(s) || Pt(s)) && It(s) || (t.splice(n, 1), n--);
+  t.sort((n, s) => n.tabIndex === 0 && s.tabIndex !== 0 ? 1 : n.tabIndex !== 0 && s.tabIndex === 0 ? -1 : n.tabIndex === s.tabIndex ? (n.$position || 0) - (s.$position || 0) : n.tabIndex < s.tabIndex ? -1 : 1);
+  for (let n = 0; n < t.length; n++) {
+    const s = t[n];
+    (Vt(s) || Bt(s) || Ft(s)) && Yt(s) || (t.splice(n, 1), n--);
   }
   return t;
-}, getClassName: ft, locateCss: pt, getRootNode: Ge, hasShadowParent: function(e) {
-  return !!Ge(e);
+}, getClassName: ft, locateCss: pt, getRootNode: Ke, hasShadowParent: function(e) {
+  return !!Ke(e);
 }, isShadowDomSupported: gt, getActiveElement: function() {
-  var e = document.activeElement;
-  return e.shadowRoot && (e = e.shadowRoot.activeElement), e === document.body && document.getSelection && (e = document.getSelection().focusNode || document.body), e;
+  var i, t;
+  let e = document.activeElement;
+  return e != null && e.shadowRoot && (e = ((i = e.shadowRoot) == null ? void 0 : i.activeElement) || e), e === document.body && document.getSelection && (e = ((t = document.getSelection()) == null ? void 0 : t.focusNode) || document.body), e;
 }, getRelativeEventPosition: function(e, i) {
-  var t = document.documentElement, n = function(s) {
-    var a = 0, o = 0, _ = 0, r = 0;
-    if (s.getBoundingClientRect) {
-      var d = s.getBoundingClientRect(), l = document.body, h = document.documentElement || document.body.parentNode || document.body, p = window.pageYOffset || h.scrollTop || l.scrollTop, m = window.pageXOffset || h.scrollLeft || l.scrollLeft, g = h.clientTop || l.clientTop || 0, c = h.clientLeft || l.clientLeft || 0;
-      a = d.top + p - g, o = d.left + m - c, _ = document.body.offsetWidth - d.right, r = document.body.offsetHeight - d.bottom;
-    } else {
-      for (; s; )
-        a += parseInt(s.offsetTop, 10), o += parseInt(s.offsetLeft, 10), s = s.offsetParent;
-      _ = document.body.offsetWidth - s.offsetWidth - o, r = document.body.offsetHeight - s.offsetHeight - a;
-    }
-    return { y: Math.round(a), x: Math.round(o), width: s.offsetWidth, height: s.offsetHeight, right: Math.round(_), bottom: Math.round(r) };
-  }(i);
+  const t = document.documentElement, n = We(i);
   return { x: e.clientX - t.clientLeft - n.x + i.scrollLeft, y: e.clientY - t.clientTop - n.y + i.scrollTop };
 }, getTargetNode: function(e) {
-  var i;
-  return e.tagName ? i = e : (i = (e = e || window.event).target || e.srcElement).shadowRoot && e.composedPath && (i = e.composedPath()[0]), i;
-}, getNodePosition: function(e) {
-  var i = 0, t = 0, n = 0, s = 0;
-  if (e.getBoundingClientRect) {
-    var a = e.getBoundingClientRect(), o = document.body, _ = document.documentElement || document.body.parentNode || document.body, r = window.pageYOffset || _.scrollTop || o.scrollTop, d = window.pageXOffset || _.scrollLeft || o.scrollLeft, l = _.clientTop || o.clientTop || 0, h = _.clientLeft || o.clientLeft || 0;
-    i = a.top + r - l, t = a.left + d - h, n = document.body.offsetWidth - a.right, s = document.body.offsetHeight - a.bottom;
-  } else {
-    for (; e; )
-      i += parseInt(e.offsetTop, 10), t += parseInt(e.offsetLeft, 10), e = e.offsetParent;
-    n = document.body.offsetWidth - e.offsetWidth - t, s = document.body.offsetHeight - e.offsetHeight - i;
+  let i;
+  if ("tagName" in e)
+    i = e;
+  else {
+    const t = e || window.event;
+    i = t.target || t.srcElement, i != null && i.shadowRoot && t.composedPath && (i = t.composedPath()[0]);
   }
-  return { y: Math.round(i), x: Math.round(t), width: e.offsetWidth, height: e.offsetHeight, right: Math.round(n), bottom: Math.round(s) };
-}, closest: Ke };
-var le = typeof window < "u";
-const Yt = { isIE: le && (navigator.userAgent.indexOf("MSIE") >= 0 || navigator.userAgent.indexOf("Trident") >= 0), isOpera: le && navigator.userAgent.indexOf("Opera") >= 0, isChrome: le && navigator.userAgent.indexOf("Chrome") >= 0, isKHTML: le && (navigator.userAgent.indexOf("Safari") >= 0 || navigator.userAgent.indexOf("Konqueror") >= 0), isFF: le && navigator.userAgent.indexOf("Firefox") >= 0, isIPad: le && navigator.userAgent.search(/iPad/gi) >= 0, isEdge: le && navigator.userAgent.indexOf("Edge") != -1, isNode: !le || typeof navigator > "u" };
-function Ae(e) {
-  if (typeof e == "string" || typeof e == "number")
+  return i;
+}, getNodePosition: function(e) {
+  return We(e);
+} }, mt = typeof window < "u", se = mt && typeof navigator < "u" ? navigator.userAgent : "", Jt = { isIE: se.includes("MSIE") || se.includes("Trident"), isOpera: se.includes("Opera"), isChrome: se.includes("Chrome"), isKHTML: se.includes("Safari") || se.includes("Konqueror"), isFF: se.includes("Firefox"), isIPad: /iPad/i.test(se), isEdge: se.includes("Edge"), isNode: !mt || typeof navigator > "u" };
+function vt(e) {
+  if (typeof e == "string")
     return e;
+  if (typeof e == "number")
+    return String(e);
   var i = "";
   for (var t in e) {
     var n = "";
@@ -1265,90 +1272,113 @@ function Ae(e) {
   }
   return i;
 }
-function Vt(e) {
+function Ge(e) {
+  return e ? typeof e == "string" ? e : vt(e) : "";
+}
+function ve(e, i) {
+  const t = Array.from(i);
+  if (t.length === 0)
+    throw new Error("Arguments list of query is wrong.");
+  const n = { method: e, url: "" };
+  if (t.length === 1) {
+    const s = t[0];
+    return typeof s == "string" ? (n.url = s, n.async = !0) : (n.url = s.url, n.async = s.async ?? !0, n.callback = s.callback, n.headers = s.headers), e !== "POST" && e !== "PUT" || (n.data = Ge(s.data)), n;
+  }
+  switch (n.url = t[0], e) {
+    case "GET":
+    case "DELETE":
+      n.callback = t[1], n.headers = t[2];
+      break;
+    case "POST":
+    case "PUT":
+      n.data = Ge(t[1]), n.callback = t[2], n.headers = t[3];
+  }
+  return n;
+}
+function Wt(e) {
   var i = function(a, o) {
-    for (var _ = "var temp=date.match(/[a-zA-Z]+|[0-9]+/g);", r = a.match(/%[a-zA-Z]/g), d = 0; d < r.length; d++)
-      switch (r[d]) {
+    for (var d = "var temp=date.match(/[a-zA-Z]+|[0-9]+/g);", r = a.match(/%[a-zA-Z]/g), l = 0; l < r.length; l++)
+      switch (r[l]) {
         case "%j":
         case "%d":
-          _ += "set[2]=temp[" + d + "]||1;";
+          d += "set[2]=temp[" + l + "]||1;";
           break;
         case "%n":
         case "%m":
-          _ += "set[1]=(temp[" + d + "]||1)-1;";
+          d += "set[1]=(temp[" + l + "]||1)-1;";
           break;
         case "%y":
-          _ += "set[0]=temp[" + d + "]*1+(temp[" + d + "]>50?1900:2000);";
+          d += "set[0]=temp[" + l + "]*1+(temp[" + l + "]>50?1900:2000);";
           break;
         case "%g":
         case "%G":
         case "%h":
         case "%H":
-          _ += "set[3]=temp[" + d + "]||0;";
+          d += "set[3]=temp[" + l + "]||0;";
           break;
         case "%i":
-          _ += "set[4]=temp[" + d + "]||0;";
+          d += "set[4]=temp[" + l + "]||0;";
           break;
         case "%Y":
-          _ += "set[0]=temp[" + d + "]||0;";
+          d += "set[0]=temp[" + l + "]||0;";
           break;
         case "%a":
         case "%A":
-          _ += "set[3]=set[3]%12+((temp[" + d + "]||'').toLowerCase()=='am'?0:12);";
+          d += "set[3]=set[3]%12+((temp[" + l + "]||'').toLowerCase()=='am'?0:12);";
           break;
         case "%s":
-          _ += "set[5]=temp[" + d + "]||0;";
+          d += "set[5]=temp[" + l + "]||0;";
           break;
         case "%M":
-          _ += "set[1]=this.locale.date.month_short_hash[temp[" + d + "]]||0;";
+          d += "set[1]=this.locale.date.month_short_hash[temp[" + l + "]]||0;";
           break;
         case "%F":
-          _ += "set[1]=this.locale.date.month_full_hash[temp[" + d + "]]||0;";
+          d += "set[1]=this.locale.date.month_full_hash[temp[" + l + "]]||0;";
       }
-    var l = "set[0],set[1],set[2],set[3],set[4],set[5]";
-    return o && (l = " Date.UTC(" + l + ")"), new Function("date", "var set=[0,0,1,0,0,0]; " + _ + " return new Date(" + l + ");");
+    var _ = "set[0],set[1],set[2],set[3],set[4],set[5]";
+    return o && (_ = " Date.UTC(" + _ + ")"), new Function("date", "var set=[0,0,1,0,0,0]; " + d + " return new Date(" + _ + ");");
   }, t = function(a, o) {
-    const _ = a.match(/%[a-zA-Z]/g);
+    const d = a.match(/%[a-zA-Z]/g);
     return function(r) {
-      for (var d = [0, 0, 1, 0, 0, 0], l = r.match(/[a-zA-Z]+|[0-9]+/g), h = 0; h < _.length; h++)
-        switch (_[h]) {
+      for (var l = [0, 0, 1, 0, 0, 0], _ = r.match(/[a-zA-Z]+|[0-9]+/g), h = 0; h < d.length; h++)
+        switch (d[h]) {
           case "%j":
           case "%d":
-            d[2] = l[h] || 1;
+            l[2] = _[h] || 1;
             break;
           case "%n":
           case "%m":
-            d[1] = (l[h] || 1) - 1;
+            l[1] = (_[h] || 1) - 1;
             break;
           case "%y":
-            d[0] = 1 * l[h] + (l[h] > 50 ? 1900 : 2e3);
+            l[0] = 1 * _[h] + (_[h] > 50 ? 1900 : 2e3);
             break;
           case "%g":
           case "%G":
           case "%h":
           case "%H":
-            d[3] = l[h] || 0;
+            l[3] = _[h] || 0;
             break;
           case "%i":
-            d[4] = l[h] || 0;
+            l[4] = _[h] || 0;
             break;
           case "%Y":
-            d[0] = l[h] || 0;
+            l[0] = _[h] || 0;
             break;
           case "%a":
           case "%A":
-            d[3] = d[3] % 12 + ((l[h] || "").toLowerCase() == "am" ? 0 : 12);
+            l[3] = l[3] % 12 + ((_[h] || "").toLowerCase() == "am" ? 0 : 12);
             break;
           case "%s":
-            d[5] = l[h] || 0;
+            l[5] = _[h] || 0;
             break;
           case "%M":
-            d[1] = e.locale.date.month_short_hash[l[h]] || 0;
+            l[1] = e.locale.date.month_short_hash[_[h]] || 0;
             break;
           case "%F":
-            d[1] = e.locale.date.month_full_hash[l[h]] || 0;
+            l[1] = e.locale.date.month_full_hash[_[h]] || 0;
         }
-      return o ? new Date(Date.UTC(d[0], d[1], d[2], d[3], d[4], d[5])) : new Date(d[0], d[1], d[2], d[3], d[4], d[5]);
+      return o ? new Date(Date.UTC(l[0], l[1], l[2], l[3], l[4], l[5])) : new Date(l[0], l[1], l[2], l[3], l[4], l[5]);
     };
   };
   let n;
@@ -1364,14 +1394,14 @@ function Vt(e) {
     }()), a = n) : a = e.config.csp, a;
   }
   e.date = { init: function() {
-    for (var a = e.locale.date.month_short, o = e.locale.date.month_short_hash = {}, _ = 0; _ < a.length; _++)
-      o[a[_]] = _;
-    for (a = e.locale.date.month_full, o = e.locale.date.month_full_hash = {}, _ = 0; _ < a.length; _++)
-      o[a[_]] = _;
+    for (var a = e.locale.date.month_short, o = e.locale.date.month_short_hash = {}, d = 0; d < a.length; d++)
+      o[a[d]] = d;
+    for (a = e.locale.date.month_full, o = e.locale.date.month_full_hash = {}, d = 0; d < a.length; d++)
+      o[a[d]] = d;
   }, date_part: function(a) {
     const o = new Date(a);
-    var _ = new Date(o);
-    return o.setHours(0), o.setMinutes(0), o.setSeconds(0), o.setMilliseconds(0), o.getHours() && (o.getDate() < _.getDate() || o.getMonth() < _.getMonth() || o.getFullYear() < _.getFullYear()) && o.setTime(o.getTime() + 36e5 * (24 - o.getHours())), o;
+    var d = new Date(o);
+    return o.setHours(0), o.setMinutes(0), o.setSeconds(0), o.setMilliseconds(0), o.getHours() && (o.getDate() < d.getDate() || o.getMonth() < d.getMonth() || o.getFullYear() < d.getFullYear()) && o.setTime(o.getTime() + 36e5 * (24 - o.getHours())), o;
   }, time_part: function(a) {
     return (a.valueOf() / 1e3 - 60 * a.getTimezoneOffset()) % 86400;
   }, week_start: function(a) {
@@ -1387,18 +1417,18 @@ function Vt(e) {
     const o = new Date(a);
     return this.date_part(o);
   }, _add_days: function(a, o) {
-    var _ = new Date(a.valueOf());
-    if (_.setDate(_.getDate() + o), o == Math.round(o) && o > 0) {
-      var r = (+_ - +a) % 864e5;
-      if (r && a.getTimezoneOffset() == _.getTimezoneOffset()) {
-        var d = r / 36e5;
-        _.setTime(_.getTime() + 60 * (24 - d) * 60 * 1e3);
+    var d = new Date(a.valueOf());
+    if (d.setDate(d.getDate() + o), o == Math.round(o) && o > 0) {
+      var r = (+d - +a) % 864e5;
+      if (r && a.getTimezoneOffset() == d.getTimezoneOffset()) {
+        var l = r / 36e5;
+        d.setTime(d.getTime() + 60 * (24 - l) * 60 * 1e3);
       }
     }
-    return o >= 0 && !a.getHours() && _.getHours() && (_.getDate() < a.getDate() || _.getMonth() < a.getMonth() || _.getFullYear() < a.getFullYear()) && _.setTime(_.getTime() + 36e5 * (24 - _.getHours())), _;
-  }, add: function(a, o, _) {
+    return o >= 0 && !a.getHours() && d.getHours() && (d.getDate() < a.getDate() || d.getMonth() < a.getMonth() || d.getFullYear() < a.getFullYear()) && d.setTime(d.getTime() + 36e5 * (24 - d.getHours())), d;
+  }, add: function(a, o, d) {
     var r = new Date(a.valueOf());
-    switch (_) {
+    switch (d) {
       case "day":
         r = e.date._add_days(r, o);
         break;
@@ -1418,7 +1448,7 @@ function Vt(e) {
         r.setTime(r.getTime() + 60 * o * 1e3);
         break;
       default:
-        return e.date["add_" + _](a, o, _);
+        return e.date["add_" + d](a, o, d);
     }
     return r;
   }, to_fixed: function(a) {
@@ -1426,55 +1456,55 @@ function Vt(e) {
   }, copy: function(a) {
     return new Date(a.valueOf());
   }, date_to_str: function(a, o) {
-    return s() ? function(_, r) {
-      return function(d) {
-        return _.replace(/%[a-zA-Z]/g, function(l) {
-          switch (l) {
+    return s() ? function(d, r) {
+      return function(l) {
+        return d.replace(/%[a-zA-Z]/g, function(_) {
+          switch (_) {
             case "%d":
-              return r ? e.date.to_fixed(d.getUTCDate()) : e.date.to_fixed(d.getDate());
+              return r ? e.date.to_fixed(l.getUTCDate()) : e.date.to_fixed(l.getDate());
             case "%m":
-              return r ? e.date.to_fixed(d.getUTCMonth() + 1) : e.date.to_fixed(d.getMonth() + 1);
+              return r ? e.date.to_fixed(l.getUTCMonth() + 1) : e.date.to_fixed(l.getMonth() + 1);
             case "%j":
-              return r ? d.getUTCDate() : d.getDate();
+              return r ? l.getUTCDate() : l.getDate();
             case "%n":
-              return r ? d.getUTCMonth() + 1 : d.getMonth() + 1;
+              return r ? l.getUTCMonth() + 1 : l.getMonth() + 1;
             case "%y":
-              return r ? e.date.to_fixed(d.getUTCFullYear() % 100) : e.date.to_fixed(d.getFullYear() % 100);
+              return r ? e.date.to_fixed(l.getUTCFullYear() % 100) : e.date.to_fixed(l.getFullYear() % 100);
             case "%Y":
-              return r ? d.getUTCFullYear() : d.getFullYear();
+              return r ? l.getUTCFullYear() : l.getFullYear();
             case "%D":
-              return r ? e.locale.date.day_short[d.getUTCDay()] : e.locale.date.day_short[d.getDay()];
+              return r ? e.locale.date.day_short[l.getUTCDay()] : e.locale.date.day_short[l.getDay()];
             case "%l":
-              return r ? e.locale.date.day_full[d.getUTCDay()] : e.locale.date.day_full[d.getDay()];
+              return r ? e.locale.date.day_full[l.getUTCDay()] : e.locale.date.day_full[l.getDay()];
             case "%M":
-              return r ? e.locale.date.month_short[d.getUTCMonth()] : e.locale.date.month_short[d.getMonth()];
+              return r ? e.locale.date.month_short[l.getUTCMonth()] : e.locale.date.month_short[l.getMonth()];
             case "%F":
-              return r ? e.locale.date.month_full[d.getUTCMonth()] : e.locale.date.month_full[d.getMonth()];
+              return r ? e.locale.date.month_full[l.getUTCMonth()] : e.locale.date.month_full[l.getMonth()];
             case "%h":
-              return r ? e.date.to_fixed((d.getUTCHours() + 11) % 12 + 1) : e.date.to_fixed((d.getHours() + 11) % 12 + 1);
+              return r ? e.date.to_fixed((l.getUTCHours() + 11) % 12 + 1) : e.date.to_fixed((l.getHours() + 11) % 12 + 1);
             case "%g":
-              return r ? (d.getUTCHours() + 11) % 12 + 1 : (d.getHours() + 11) % 12 + 1;
+              return r ? (l.getUTCHours() + 11) % 12 + 1 : (l.getHours() + 11) % 12 + 1;
             case "%G":
-              return r ? d.getUTCHours() : d.getHours();
+              return r ? l.getUTCHours() : l.getHours();
             case "%H":
-              return r ? e.date.to_fixed(d.getUTCHours()) : e.date.to_fixed(d.getHours());
+              return r ? e.date.to_fixed(l.getUTCHours()) : e.date.to_fixed(l.getHours());
             case "%i":
-              return r ? e.date.to_fixed(d.getUTCMinutes()) : e.date.to_fixed(d.getMinutes());
+              return r ? e.date.to_fixed(l.getUTCMinutes()) : e.date.to_fixed(l.getMinutes());
             case "%a":
-              return r ? d.getUTCHours() > 11 ? "pm" : "am" : d.getHours() > 11 ? "pm" : "am";
+              return r ? l.getUTCHours() > 11 ? "pm" : "am" : l.getHours() > 11 ? "pm" : "am";
             case "%A":
-              return r ? d.getUTCHours() > 11 ? "PM" : "AM" : d.getHours() > 11 ? "PM" : "AM";
+              return r ? l.getUTCHours() > 11 ? "PM" : "AM" : l.getHours() > 11 ? "PM" : "AM";
             case "%s":
-              return r ? e.date.to_fixed(d.getUTCSeconds()) : e.date.to_fixed(d.getSeconds());
+              return r ? e.date.to_fixed(l.getUTCSeconds()) : e.date.to_fixed(l.getSeconds());
             case "%W":
-              return r ? e.date.to_fixed(e.date.getUTCISOWeek(d)) : e.date.to_fixed(e.date.getISOWeek(d));
+              return r ? e.date.to_fixed(e.date.getUTCISOWeek(l)) : e.date.to_fixed(e.date.getISOWeek(l));
             default:
-              return l;
+              return _;
           }
         });
       };
-    }(a, o) : (a = a.replace(/%[a-zA-Z]/g, function(_) {
-      switch (_) {
+    }(a, o) : (a = a.replace(/%[a-zA-Z]/g, function(d) {
+      switch (d) {
         case "%d":
           return '"+this.date.to_fixed(date.getDate())+"';
         case "%m":
@@ -1514,51 +1544,96 @@ function Vt(e) {
         case "%W":
           return '"+this.date.to_fixed(this.date.getISOWeek(date))+"';
         default:
-          return _;
+          return d;
       }
     }), o && (a = a.replace(/date\.get/g, "date.getUTC")), new Function("date", 'return "' + a + '";').bind(e));
-  }, str_to_date: function(a, o, _) {
-    var r = s() ? t : i, d = r(a, o), l = /^[0-9]{4}(\-|\/)[0-9]{2}(\-|\/)[0-9]{2} ?(([0-9]{1,2}:[0-9]{1,2})(:[0-9]{1,2})?)?$/, h = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4} ?(([0-9]{1,2}:[0-9]{2})(:[0-9]{1,2})?)?$/, p = /^[0-9]{2}\-[0-9]{2}\-[0-9]{4} ?(([0-9]{1,2}:[0-9]{1,2})(:[0-9]{1,2})?)?$/, m = /^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/, g = r("%Y-%m-%d %H:%i:%s", o), c = r("%m/%d/%Y %H:%i:%s", o), u = r("%d-%m-%Y %H:%i:%s", o);
-    return function(f) {
-      if (!_ && !e.config.parse_exact_format) {
-        if (f && f.getISOWeek)
-          return new Date(f);
-        if (typeof f == "number")
-          return new Date(f);
-        if (y = f, l.test(String(y)))
-          return g(f);
+  }, str_to_date: function(a, o, d) {
+    var r = s() ? t : i, l = r(a, o), _ = /^[0-9]{4}(\-|\/)[0-9]{2}(\-|\/)[0-9]{2} ?(([0-9]{1,2}:[0-9]{1,2})(:[0-9]{1,2})?)?$/, h = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4} ?(([0-9]{1,2}:[0-9]{2})(:[0-9]{1,2})?)?$/, p = /^[0-9]{2}\-[0-9]{2}\-[0-9]{4} ?(([0-9]{1,2}:[0-9]{1,2})(:[0-9]{1,2})?)?$/, v = /^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/, g = r("%Y-%m-%d %H:%i:%s", o), c = r("%m/%d/%Y %H:%i:%s", o), f = r("%d-%m-%Y %H:%i:%s", o);
+    return function(u) {
+      if (!d && !e.config.parse_exact_format) {
+        if (u && u.getISOWeek)
+          return new Date(u);
+        if (typeof u == "number")
+          return new Date(u);
+        if (y = u, _.test(String(y)))
+          return g(u);
         if (function(w) {
           return h.test(String(w));
-        }(f))
-          return c(f);
+        }(u))
+          return c(u);
         if (function(w) {
           return p.test(String(w));
-        }(f))
-          return u(f);
+        }(u))
+          return f(u);
         if (function(w) {
-          return m.test(w);
-        }(f))
-          return new Date(f);
+          return v.test(w);
+        }(u))
+          return new Date(u);
       }
       var y;
-      return d.call(e, f);
+      return l.call(e, u);
     };
   }, getISOWeek: function(a) {
     if (!a)
       return !1;
     var o = (a = this.date_part(new Date(a))).getDay();
     o === 0 && (o = 7);
-    var _ = new Date(a.valueOf());
-    _.setDate(a.getDate() + (4 - o));
-    var r = _.getFullYear(), d = Math.round((_.getTime() - new Date(r, 0, 1).getTime()) / 864e5);
-    return 1 + Math.floor(d / 7);
+    var d = new Date(a.valueOf());
+    d.setDate(a.getDate() + (4 - o));
+    var r = d.getFullYear(), l = Math.round((d.getTime() - new Date(r, 0, 1).getTime()) / 864e5);
+    return 1 + Math.floor(l / 7);
   }, getUTCISOWeek: function(a) {
     return this.getISOWeek(this.convert_to_utc(a));
   }, convert_to_utc: function(a) {
     return new Date(a.getUTCFullYear(), a.getUTCMonth(), a.getUTCDate(), a.getUTCHours(), a.getUTCMinutes(), a.getUTCSeconds());
   } };
 }
-function vt(e) {
+const Kt = [];
+function Gt(e) {
+  let i = null, t = null, n = 0, s = null;
+  function a(r) {
+    return r.getAttribute(e.config.event_attribute);
+  }
+  function o(r) {
+    const l = a(r);
+    if (l === null)
+      return;
+    const _ = i.get(l);
+    _ ? _.push(r) : i.set(l, [r]);
+  }
+  function d() {
+    s = n > 0 ? t[n - 1] : null;
+  }
+  return { sync() {
+    const r = e._rendered;
+    if (i === null || t !== r || r.length < n || n > 0 && r[n - 1] !== s)
+      (function(l) {
+        i = /* @__PURE__ */ new Map(), t = l, n = l.length;
+        for (let _ = 0; _ < l.length; _++)
+          o(l[_]);
+        d();
+      })(r);
+    else if (n !== r.length) {
+      for (; n < r.length; n++)
+        o(r[n]);
+      d();
+    }
+  }, lookup(r) {
+    return this.sync(), i.get(String(r)) || Kt;
+  }, forget(r) {
+    if (i === null)
+      return;
+    const l = a(r), _ = l === null ? null : i.get(l);
+    if (_) {
+      const h = _.indexOf(r);
+      h > -1 && _.splice(h, 1), _.length || i.delete(l);
+    }
+    n > 0 && n--, d();
+  }, invalidate() {
+    i = null, t = null, n = 0, s = null;
+  } };
+}
+function yt(e) {
   return (function() {
     var i = {};
     for (var t in this._events) {
@@ -1568,7 +1643,7 @@ function vt(e) {
     return i;
   }).bind(e);
 }
-function Ft(e) {
+function Xt(e) {
   e._loaded = {}, e._load = function(t, n) {
     if (t = t || this._load_url) {
       var s;
@@ -1579,10 +1654,10 @@ function Ft(e) {
         s = n;
         for (var o = !0; s < this._max_date; )
           s = this.date.add(s, 1, this._load_mode), this._loaded[a(n)] && o ? n = this.date.add(n, 1, this._load_mode) : o = !1;
-        var _ = s;
+        var d = s;
         do
-          s = _, _ = this.date.add(s, -1, this._load_mode);
-        while (_ > n && this._loaded[a(_)]);
+          s = d, d = this.date.add(s, -1, this._load_mode);
+        while (d > n && this._loaded[a(d)]);
         if (s <= n)
           return !1;
         for (e.ajax.get(t + "&from=" + a(n) + "&to=" + a(s), r); n < s; )
@@ -1591,8 +1666,8 @@ function Ft(e) {
         e.ajax.get(t, r);
       return this.callEvent("onXLS", []), this.callEvent("onLoadStart", []), !0;
     }
-    function r(d) {
-      e.on_load(d), e.callEvent("onLoadEnd", []);
+    function r(l) {
+      e.on_load(l), e.callEvent("onLoadEnd", []);
     }
   }, e._parsers = {}, function(t) {
     t._parsers.xml = { canParse: function(n, s) {
@@ -1611,26 +1686,26 @@ function Ft(e) {
         return null;
       var a = s.getAttribute("dhx_security");
       a && (window.dhtmlx && (window.dhtmlx.security_key = a), t.security_key = a);
-      for (var o = t.ajax.xpath("//coll_options", n.xmlDoc), _ = 0; _ < o.length; _++) {
-        var r = o[_].getAttribute("for"), d = t.serverList[r];
-        d || (t.serverList[r] = d = []), d.splice(0, d.length);
-        for (var l = t.ajax.xpath(".//item", o[_]), h = 0; h < l.length; h++) {
-          for (var p = l[h].attributes, m = { key: l[h].getAttribute("value"), label: l[h].getAttribute("label") }, g = 0; g < p.length; g++) {
+      for (var o = t.ajax.xpath("//coll_options", n.xmlDoc), d = 0; d < o.length; d++) {
+        var r = o[d].getAttribute("for"), l = t.serverList[r];
+        l || (t.serverList[r] = l = []), l.splice(0, l.length);
+        for (var _ = t.ajax.xpath(".//item", o[d]), h = 0; h < _.length; h++) {
+          for (var p = _[h].attributes, v = { key: _[h].getAttribute("value"), label: _[h].getAttribute("label") }, g = 0; g < p.length; g++) {
             var c = p[g];
-            c.nodeName != "value" && c.nodeName != "label" && (m[c.nodeName] = c.nodeValue);
+            c.nodeName != "value" && c.nodeName != "label" && (v[c.nodeName] = c.nodeValue);
           }
-          d.push(m);
+          l.push(v);
         }
       }
       o.length && t.callEvent("onOptionsLoad", []);
-      var u = t.ajax.xpath("//userdata", n.xmlDoc);
-      for (_ = 0; _ < u.length; _++) {
-        var f = t._xmlNodeToJSON(u[_]);
-        t._userdata[f.name] = f.text;
+      var f = t.ajax.xpath("//userdata", n.xmlDoc);
+      for (d = 0; d < f.length; d++) {
+        var u = t._xmlNodeToJSON(f[d]);
+        t._userdata[u.name] = u.text;
       }
       var y = [];
-      for (s = t.ajax.xpath("//event", n.xmlDoc), _ = 0; _ < s.length; _++) {
-        var w = y[_] = t._xmlNodeToJSON(s[_]);
+      for (s = t.ajax.xpath("//event", n.xmlDoc), d = 0; d < s.length; d++) {
+        var w = y[d] = t._xmlNodeToJSON(s[d]);
         t._init_event(w);
       }
       return y;
@@ -1651,26 +1726,26 @@ function Ft(e) {
       var s = [];
       typeof n == "string" && (n = JSON.parse(n)), Object.prototype.toString.call(n) === "[object Array]" ? s = n : n && (n.events ? s = n.events : n.data && (s = n.data)), s = s || [], n.dhx_security && (window.dhtmlx && (window.dhtmlx.security_key = n.dhx_security), t.security_key = n.dhx_security);
       var a = n && n.collections ? n.collections : {}, o = !1;
-      for (var _ in a)
-        if (a.hasOwnProperty(_)) {
+      for (var d in a)
+        if (a.hasOwnProperty(d)) {
           o = !0;
-          var r = a[_], d = t.serverList[_];
-          d || (t.serverList[_] = d = []), d.splice(0, d.length);
-          for (var l = 0; l < r.length; l++) {
-            var h = r[l], p = { key: h.value, label: h.label };
-            for (var m in h)
-              if (h.hasOwnProperty(m)) {
-                if (m == "value" || m == "label")
+          var r = a[d], l = t.serverList[d];
+          l || (t.serverList[d] = l = []), l.splice(0, l.length);
+          for (var _ = 0; _ < r.length; _++) {
+            var h = r[_], p = { key: h.value, label: h.label };
+            for (var v in h)
+              if (h.hasOwnProperty(v)) {
+                if (v == "value" || v == "label")
                   continue;
-                p[m] = h[m];
+                p[v] = h[v];
               }
-            d.push(p);
+            l.push(p);
           }
         }
       o && t.callEvent("onOptionsLoad", []);
       for (var g = [], c = 0; c < s.length; c++) {
-        var u = s[c];
-        t._init_event(u), g.push(u);
+        var f = s[c];
+        t._init_event(f), g.push(f);
       }
       return g;
     } };
@@ -1681,35 +1756,35 @@ function Ft(e) {
       var s = n.match(RegExp(this.c_start + "[^\f]*" + this.c_end, ""));
       if (s.length) {
         s[0] = s[0].replace(/[\r\n]+ /g, ""), s[0] = s[0].replace(/[\r\n]+(?=[a-z \t])/g, " "), s[0] = s[0].replace(/;[^:\r\n]*:/g, ":");
-        for (var a, o = [], _ = RegExp("(?:" + this.e_start + ")([^\f]*?)(?:" + this.e_end + ")", "g"); (a = _.exec(s)) !== null; ) {
-          for (var r, d = {}, l = /[^\r\n]+[\r\n]+/g; (r = l.exec(a[1])) !== null; )
-            this.parse_param(r.toString(), d);
-          d.uid && !d.id && (d.id = d.uid), o.push(d);
+        for (var a, o = [], d = RegExp("(?:" + this.e_start + ")([^\f]*?)(?:" + this.e_end + ")", "g"); (a = d.exec(s)) !== null; ) {
+          for (var r, l = {}, _ = /[^\r\n]+[\r\n]+/g; (r = _.exec(a[1])) !== null; )
+            this.parse_param(r.toString(), l);
+          l.uid && !l.id && (l.id = l.uid), o.push(l);
         }
         return o;
       }
     }, parse_param: function(n, s) {
       var a = n.indexOf(":");
       if (a != -1) {
-        var o = n.substr(0, a).toLowerCase(), _ = n.substr(a + 1).replace(/\\,/g, ",").replace(/[\r\n]+$/, "");
-        o == "summary" ? o = "text" : o == "dtstart" ? (o = "start_date", _ = this.parse_date(_, 0, 0)) : o == "dtend" && (o = "end_date", _ = this.parse_date(_, 0, 0)), s[o] = _;
+        var o = n.substr(0, a).toLowerCase(), d = n.substr(a + 1).replace(/\\,/g, ",").replace(/[\r\n]+$/, "");
+        o == "summary" ? o = "text" : o == "dtstart" ? (o = "start_date", d = this.parse_date(d, 0, 0)) : o == "dtend" && (o = "end_date", d = this.parse_date(d, 0, 0)), s[o] = d;
       }
     }, parse_date: function(n, s, a) {
-      var o = n.split("T"), _ = !1;
-      o[1] && (s = o[1].substr(0, 2), a = o[1].substr(2, 2), _ = o[1][6] == "Z");
-      var r = o[0].substr(0, 4), d = parseInt(o[0].substr(4, 2), 10) - 1, l = o[0].substr(6, 2);
-      return t.config.server_utc || _ ? new Date(Date.UTC(r, d, l, s, a)) : new Date(r, d, l, s, a);
+      var o = n.split("T"), d = !1;
+      o[1] && (s = o[1].substr(0, 2), a = o[1].substr(2, 2), d = o[1][6] == "Z");
+      var r = o[0].substr(0, 4), l = parseInt(o[0].substr(4, 2), 10) - 1, _ = o[0].substr(6, 2);
+      return t.config.server_utc || d ? new Date(Date.UTC(r, l, _, s, a)) : new Date(r, l, _, s, a);
     }, c_start: "BEGIN:VCALENDAR", e_start: "BEGIN:VEVENT", e_end: "END:VEVENT", c_end: "END:VCALENDAR" };
   }(e), e.on_load = function(t) {
     var n;
     this.callEvent("onBeforeParse", []);
     var s = !1, a = !1;
     for (var o in this._parsers) {
-      var _ = this._parsers[o];
-      if (_.canParse(t.xmlDoc.responseText, t.xmlDoc)) {
+      var d = this._parsers[o];
+      if (d.canParse(t.xmlDoc.responseText, t.xmlDoc)) {
         try {
           var r = t.xmlDoc.responseText;
-          o === "xml" && (r = t), (n = _.parse(r)) || (s = !0);
+          o === "xml" && (r = t), (n = d.parse(r)) || (s = !0);
         } catch {
           s = !0;
         }
@@ -1737,20 +1812,20 @@ function Ft(e) {
   }, e._init_date = function(t) {
     return t ? typeof t == "string" ? e._helpers.parseDate(t) : new Date(t) : null;
   };
-  const i = vt(e);
+  const i = yt(e);
   e.serialize = function() {
     const t = [], n = i();
     for (var s in n) {
-      const _ = {};
+      const d = {};
       var a = n[s];
       for (var o in a) {
         if (o.charAt(0) == "$" || o.charAt(0) == "_")
           continue;
         let r;
-        const d = a[o];
-        r = e.utils.isDate(d) ? e.defined(e.templates.xml_format) ? e.templates.xml_format(d) : e.templates.format_date(d) : d, _[o] = r;
+        const l = a[o];
+        r = e.utils.isDate(l) ? e.defined(e.templates.xml_format) ? e.templates.xml_format(l) : e.templates.format_date(l) : l, d[o] = r;
       }
-      t.push(_);
+      t.push(d);
     }
     return t;
   }, e.parse = function(t, n) {
@@ -1777,7 +1852,7 @@ function Ft(e) {
     t && typeof t == "object" && (t.parentNode && t.parentNode.removeChild(t), this.config.show_loading = !0);
   });
 }
-function Bt(e) {
+function Zt(e) {
   function i() {
     const t = e.config.csp === !0, n = !!window.Sfdc || !!window.$A || window.Aura || "$shadowResolver$" in document.body;
     return t || n ? e.$root : document.body;
@@ -1789,12 +1864,12 @@ function Bt(e) {
       return null;
     var a = n[s];
     e._lightbox || e.getLightbox();
-    var o = e._lightbox.querySelector(`#${a.id}`), _ = o.nextSibling, r = { section: a, header: o, node: _, getValue: function(l) {
-      return e.form_blocks[a.type].get_value(_, l || {}, a);
-    }, setValue: function(l, h) {
-      return e.form_blocks[a.type].set_value(_, l, h || {}, a);
-    } }, d = e._lightbox_controls["get_" + a.type + "_control"];
-    return d ? d(r) : r;
+    var o = e._lightbox.querySelector(`#${a.id}`), d = o.nextSibling, r = { section: a, header: o, node: d, getValue: function(_) {
+      return e.form_blocks[a.type].get_value(d, _ || {}, a);
+    }, setValue: function(_, h) {
+      return e.form_blocks[a.type].set_value(d, _, h || {}, a);
+    } }, l = e._lightbox_controls["get_" + a.type + "_control"];
+    return l ? l(r) : r;
   }, e._lightbox_controls.get_template_control = function(t) {
     return t.control = t.node, t;
   }, e._lightbox_controls.get_select_control = function(t) {
@@ -1835,80 +1910,80 @@ function Bt(e) {
     e._focus(n, !0);
   } }, time: { render: function(t) {
     t.time_format || (t.time_format = ["%H:%i", "%d", "%m", "%Y"]), t._time_format_order = {};
-    var n = t.time_format, s = e.config, a = e.date.date_part(e._currentDate()), o = 1440, _ = 0;
-    e.config.limit_time_select && (o = 60 * s.last_hour + 1, _ = 60 * s.first_hour, a.setHours(s.first_hour));
-    for (var r = "", d = 0; d < n.length; d++) {
-      var l = n[d];
-      d > 0 && (r += " ");
+    var n = t.time_format, s = e.config, a = e.date.date_part(e._currentDate()), o = 1440, d = 0;
+    e.config.limit_time_select && (o = 60 * s.last_hour + 1, d = 60 * s.first_hour, a.setHours(s.first_hour));
+    for (var r = "", l = 0; l < n.length; l++) {
+      var _ = n[l];
+      l > 0 && (r += " ");
       var h = "", p = "";
-      switch (l) {
+      switch (_) {
         case "%Y":
-          var m, g, c;
-          h = "dhx_lightbox_year_select", t._time_format_order[3] = d, t.year_range && (isNaN(t.year_range) ? t.year_range.push && (g = t.year_range[0], c = t.year_range[1]) : m = t.year_range), m = m || 10;
-          var u = u || Math.floor(m / 2);
-          g = g || a.getFullYear() - u, c = c || g + m;
-          for (var f = g; f < c; f++)
-            p += "<option value='" + f + "'>" + f + "</option>";
+          var v, g, c;
+          h = "dhx_lightbox_year_select", t._time_format_order[3] = l, t.year_range && (isNaN(t.year_range) ? t.year_range.push && (g = t.year_range[0], c = t.year_range[1]) : v = t.year_range), v = v || 10;
+          var f = f || Math.floor(v / 2);
+          g = g || a.getFullYear() - f, c = c || g + v;
+          for (var u = g; u < c; u++)
+            p += "<option value='" + u + "'>" + u + "</option>";
           break;
         case "%m":
-          for (h = "dhx_lightbox_month_select", t._time_format_order[2] = d, f = 0; f < 12; f++)
-            p += "<option value='" + f + "'>" + this.locale.date.month_full[f] + "</option>";
+          for (h = "dhx_lightbox_month_select", t._time_format_order[2] = l, u = 0; u < 12; u++)
+            p += "<option value='" + u + "'>" + this.locale.date.month_full[u] + "</option>";
           break;
         case "%d":
-          for (h = "dhx_lightbox_day_select", t._time_format_order[1] = d, f = 1; f < 32; f++)
-            p += "<option value='" + f + "'>" + f + "</option>";
+          for (h = "dhx_lightbox_day_select", t._time_format_order[1] = l, u = 1; u < 32; u++)
+            p += "<option value='" + u + "'>" + u + "</option>";
           break;
         case "%H:%i":
-          h = "dhx_lightbox_time_select", t._time_format_order[0] = d, f = _;
+          h = "dhx_lightbox_time_select", t._time_format_order[0] = l, u = d;
           var y = a.getDate();
-          for (t._time_values = []; f < o; )
-            p += "<option value='" + f + "'>" + this.templates.time_picker(a) + "</option>", t._time_values.push(f), a.setTime(a.valueOf() + 60 * this.config.time_step * 1e3), f = 24 * (a.getDate() != y ? 1 : 0) * 60 + 60 * a.getHours() + a.getMinutes();
+          for (t._time_values = []; u < o; )
+            p += "<option value='" + u + "'>" + this.templates.time_picker(a) + "</option>", t._time_values.push(u), a.setTime(a.valueOf() + 60 * this.config.time_step * 1e3), u = 24 * (a.getDate() != y ? 1 : 0) * 60 + 60 * a.getHours() + a.getMinutes();
       }
       if (p) {
-        var w = e._waiAria.lightboxSelectAttrString(l);
+        var w = e._waiAria.lightboxSelectAttrString(_);
         r += "<select class='" + h + "' " + (t.readonly ? "disabled='disabled'" : "") + w + ">" + p + "</select> ";
       }
     }
     return `<div class='dhx_section_time' ${t.height ? `style='height:${t.height}px;'` : ""}>${r}<span style='font-weight:normal; font-size:10pt;' class='dhx_section_time_spacer'> &nbsp;&ndash;&nbsp; </span>${r}</div>`;
   }, set_value: function(t, n, s, a) {
-    var o, _, r = e.config, d = t.getElementsByTagName("select"), l = a._time_format_order;
+    var o, d, r = e.config, l = t.getElementsByTagName("select"), _ = a._time_format_order;
     if (r.full_day) {
       if (!t._full_day) {
         var h = "<label class='dhx_fullday'><input type='checkbox' name='full_day' value='true'> " + e.locale.labels.full_day + "&nbsp;</label></input>";
         e.config.wide_form || (h = t.previousSibling.innerHTML + h), t.previousSibling.innerHTML = h, t._full_day = !0;
       }
       var p = t.previousSibling.getElementsByTagName("input")[0];
-      p.checked = e.date.time_part(s.start_date) === 0 && e.date.time_part(s.end_date) === 0, d[l[0]].disabled = p.checked, d[l[0] + d.length / 2].disabled = p.checked, p.$_eventAttached || (p.$_eventAttached = !0, e.event(p, "click", function() {
+      p.checked = e.date.time_part(s.start_date) === 0 && e.date.time_part(s.end_date) === 0, l[_[0]].disabled = p.checked, l[_[0] + l.length / 2].disabled = p.checked, p.$_eventAttached || (p.$_eventAttached = !0, e.event(p, "click", function() {
         if (p.checked) {
-          var u = {};
-          e.form_blocks.time.get_value(t, u, a), o = e.date.date_part(u.start_date), (+(_ = e.date.date_part(u.end_date)) == +o || +_ >= +o && (s.end_date.getHours() !== 0 || s.end_date.getMinutes() !== 0)) && (_ = e.date.add(_, 1, "day"));
+          var f = {};
+          e.form_blocks.time.get_value(t, f, a), o = e.date.date_part(f.start_date), (+(d = e.date.date_part(f.end_date)) == +o || +d >= +o && (s.end_date.getHours() !== 0 || s.end_date.getMinutes() !== 0)) && (d = e.date.add(d, 1, "day"));
         } else
-          o = null, _ = null;
-        d[l[0]].disabled = p.checked, d[l[0] + d.length / 2].disabled = p.checked, c(d, 0, o || s.start_date), c(d, 4, _ || s.end_date);
+          o = null, d = null;
+        l[_[0]].disabled = p.checked, l[_[0] + l.length / 2].disabled = p.checked, c(l, 0, o || s.start_date), c(l, 4, d || s.end_date);
       }));
     }
     if (r.auto_end_date && r.event_duration)
-      for (var m = function() {
-        r.auto_end_date && r.event_duration && (o = new Date(d[l[3]].value, d[l[2]].value, d[l[1]].value, 0, d[l[0]].value), _ = new Date(o.getTime() + 60 * e.config.event_duration * 1e3), c(d, 4, _));
+      for (var v = function() {
+        r.auto_end_date && r.event_duration && (o = new Date(l[_[3]].value, l[_[2]].value, l[_[1]].value, 0, l[_[0]].value), d = new Date(o.getTime() + 60 * e.config.event_duration * 1e3), c(l, 4, d));
       }, g = 0; g < 4; g++)
-        d[g].$_eventAttached || (d[g].$_eventAttached = !0, e.event(d[g], "change", m));
-    function c(u, f, y) {
+        l[g].$_eventAttached || (l[g].$_eventAttached = !0, e.event(l[g], "change", v));
+    function c(f, u, y) {
       for (var w = a._time_values, D = 60 * y.getHours() + y.getMinutes(), M = D, k = !1, N = 0; N < w.length; N++) {
-        var v = w[N];
-        if (v === D) {
+        var m = w[N];
+        if (m === D) {
           k = !0;
           break;
         }
-        v < D && (M = v);
+        m < D && (M = m);
       }
-      u[f + l[0]].value = k ? D : M, k || M || (u[f + l[0]].selectedIndex = -1), u[f + l[1]].value = y.getDate(), u[f + l[2]].value = y.getMonth(), u[f + l[3]].value = y.getFullYear();
+      f[u + _[0]].value = k ? D : M, k || M || (f[u + _[0]].selectedIndex = -1), f[u + _[1]].value = y.getDate(), f[u + _[2]].value = y.getMonth(), f[u + _[3]].value = y.getFullYear();
     }
-    c(d, 0, s.start_date), c(d, 4, s.end_date);
+    c(l, 0, s.start_date), c(l, 4, s.end_date);
   }, get_value: function(t, n, s) {
     var a = t.getElementsByTagName("select"), o = s._time_format_order;
     if (n.start_date = new Date(a[o[3]].value, a[o[2]].value, a[o[1]].value, 0, a[o[0]].value), n.end_date = new Date(a[o[3] + 4].value, a[o[2] + 4].value, a[o[1] + 4].value, 0, a[o[0] + 4].value), !a[o[3]].value || !a[o[3] + 4].value) {
-      var _ = e.getEvent(e._lightbox_id);
-      _ && (n.start_date = _.start_date, n.end_date = _.end_date);
+      var d = e.getEvent(e._lightbox_id);
+      d && (n.start_date = d.start_date, n.end_date = d.end_date);
     }
     return n.end_date <= n.start_date && (n.end_date = e.date.add(n.start_date, e.config.time_step, "minute")), { start_date: new Date(n.start_date), end_date: new Date(n.end_date) };
   }, focus: function(t) {
@@ -1929,16 +2004,16 @@ function Bt(e) {
     var s = this.getEvent(t), a = n.getElementsByTagName("span"), o = [];
     if (e.templates.lightbox_header) {
       o.push("");
-      var _ = e.templates.lightbox_header(s.start_date, s.end_date, s);
-      o.push(_), a[1].innerHTML = "", a[2].innerHTML = _;
+      var d = e.templates.lightbox_header(s.start_date, s.end_date, s);
+      o.push(d), a[1].innerHTML = "", a[2].innerHTML = d;
     } else {
-      var r = this.templates.event_header(s.start_date, s.end_date, s), d = (this.templates.event_bar_text(s.start_date, s.end_date, s) || "").substr(0, 70);
-      o.push(r), o.push(d), a[1].innerHTML = r, a[2].innerHTML = d;
+      var r = this.templates.event_header(s.start_date, s.end_date, s), l = (this.templates.event_bar_text(s.start_date, s.end_date, s) || "").substr(0, 70);
+      o.push(r), o.push(l), a[1].innerHTML = r, a[2].innerHTML = l;
     }
     this._waiAria.lightboxHeader(n, o.join(" "));
-    for (var l = this.config.lightbox.sections, h = 0; h < l.length; h++) {
-      var p = l[h], m = e._get_lightbox_section_node(p), g = this.form_blocks[p.type], c = s[p.map_to] !== void 0 ? s[p.map_to] : p.default_value;
-      g.set_value.call(this, m, c, s, p), l[h].focus && g.focus.call(this, m);
+    for (var _ = this.config.lightbox.sections, h = 0; h < _.length; h++) {
+      var p = _[h], v = e._get_lightbox_section_node(p), g = this.form_blocks[p.type], c = s[p.map_to] !== void 0 ? s[p.map_to] : p.default_value;
+      g.set_value.call(this, v, c, s, p), _[h].focus && g.focus.call(this, v);
     }
     e._lightbox_id = t;
   }, e._get_lightbox_section_node = function(t) {
@@ -1985,10 +2060,10 @@ function Bt(e) {
       n.target.closest(".dhx_cal_ltitle_close_btn") && e.cancel_lightbox();
       const s = e.$domHelpers.closest(n.target, ".dhx_btn_set");
       if (!s) {
-        const _ = e.$domHelpers.closest(n.target, ".dhx_custom_button[data-section-index]");
-        if (_) {
-          const r = Number(_.getAttribute("data-section-index"));
-          e.form_blocks[e.config.lightbox.sections[r].type].button_click(e.$domHelpers.closest(_, ".dhx_cal_lsection"), _, n);
+        const d = e.$domHelpers.closest(n.target, ".dhx_custom_button[data-section-index]");
+        if (d) {
+          const r = Number(d.getAttribute("data-section-index"));
+          e.form_blocks[e.config.lightbox.sections[r].type].button_click(e.$domHelpers.closest(d, ".dhx_cal_lsection"), d, n);
         }
         return;
       }
@@ -2006,8 +2081,8 @@ function Bt(e) {
             return;
           var o = e.locale.labels.confirm_deleting;
           e._delete_event_confirm({ event: e.getEvent(e._lightbox_id), message: o, title: e.locale.labels.title_confirm_deleting, callback: function() {
-            let _ = e.getEvent(e._lightbox_id);
-            _._thisAndFollowing ? (_._removeFollowing = !0, e.callEvent("onRecurringEventSave", [_.id, _, e._new_event])) : e.deleteEvent(e._lightbox_id), e._new_event = null, delete _.$new, e.hide_lightbox();
+            let d = e.getEvent(e._lightbox_id);
+            d._thisAndFollowing ? (d._removeFollowing = !0, e.callEvent("onRecurringEventSave", [d.id, d, e._new_event])) : e.deleteEvent(e._lightbox_id), e._new_event = null, delete d.$new, e.hide_lightbox();
           }, config: { ok: e.locale.labels.icon_delete } });
           break;
         case "dhx_cancel_btn":
@@ -2042,20 +2117,20 @@ function Bt(e) {
     }), e.event(t, "click", function(n) {
       if (n.target.closest(".dhx_lightbox_day_select") || n.target.closest(".dhx_lightbox_month_select")) {
         const s = t.querySelectorAll(".dhx_lightbox_month_select"), a = t.querySelectorAll(".dhx_lightbox_day_select"), o = t.querySelectorAll(".dhx_lightbox_year_select");
-        s.length && a.length && o && s.forEach((_, r) => {
-          const d = a[r], l = parseInt(_.value, 10);
+        s.length && a.length && o && s.forEach((d, r) => {
+          const l = a[r], _ = parseInt(d.value, 10);
           let h = parseInt(o[r].value, 10);
           h || (h = new Date(e.getState().date).getFullYear());
-          const p = function(c, u) {
-            return new Date(c, u + 1, 0).getDate();
-          }(h, l), m = p || 31;
-          let g = d.value;
-          d.innerHTML = "";
-          for (let c = 1; c <= m; c++) {
-            const u = document.createElement("option");
-            u.value = c, u.textContent = c, d.appendChild(u);
+          const p = function(c, f) {
+            return new Date(c, f + 1, 0).getDate();
+          }(h, _), v = p || 31;
+          let g = l.value;
+          l.innerHTML = "";
+          for (let c = 1; c <= v; c++) {
+            const f = document.createElement("option");
+            f.value = c, f.textContent = c, l.appendChild(f);
           }
-          d.value = Math.min(g, m);
+          l.value = Math.min(g, v);
         });
       }
     });
@@ -2086,18 +2161,18 @@ function Bt(e) {
       var o = e.config.rtl;
       for (a = 0; a < s.length; a++)
         n += "<div class='dhx_cal_lcontrols_push_right'></div>", n += "<div " + this._waiAria.lightboxButtonAttrString(s[a]) + " data-action='" + s[a] + "' class='dhx_btn_set dhx_" + (o ? "left" : "right") + "_btn_set " + s[a] + "_set'><div class='dhx_btn_inner " + s[a] + "'></div><div>" + e.locale.labels[s[a]] + "</div></div>";
-      n += "</div>", n += "</div>", t.innerHTML = n, e.config.drag_lightbox && (e.event(t.firstChild, "mousedown", e._ready_to_dnd), e.event(t.firstChild, "selectstart", function(m) {
-        return m.preventDefault(), !1;
+      n += "</div>", n += "</div>", t.innerHTML = n, e.config.drag_lightbox && (e.event(t.firstChild, "mousedown", e._ready_to_dnd), e.event(t.firstChild, "selectstart", function(v) {
+        return v.preventDefault(), !1;
       }), t.firstChild.style.cursor = "move", e._init_dnd_events()), this._waiAria.lightboxAttr(t), this.show_cover(), this._cover.insertBefore(t, this._cover.firstChild), this._lightbox = t;
-      var _ = this.config.lightbox.sections;
-      for (n = "", a = 0; a < _.length; a++) {
-        var r = this.form_blocks[_[a].type];
+      var d = this.config.lightbox.sections;
+      for (n = "", a = 0; a < d.length; a++) {
+        var r = this.form_blocks[d[a].type];
         if (r) {
-          _[a].id = "area_" + this.uid();
-          var d = "";
-          _[a].button && (d = "<div " + e._waiAria.lightboxSectionButtonAttrString(this.locale.labels["button_" + _[a].button]) + " class='dhx_custom_button' data-section-index='" + a + "' index='" + a + "'><div class='dhx_custom_button_" + _[a].button + "'></div><div>" + this.locale.labels["button_" + _[a].button] + "</div></div>"), this.config.wide_form && (n += "<div class='dhx_wrap_section'>");
-          var l = this.locale.labels["section_" + _[a].name];
-          typeof l != "string" && (l = _[a].name), n += "<div id='" + _[a].id + "' class='dhx_cal_lsection dhx_cal_lsection_" + _[a].name + "'>" + d + "<label>" + l + "</label></div>" + r.render.call(this, _[a]), n += "</div>";
+          d[a].id = "area_" + this.uid();
+          var l = "";
+          d[a].button && (l = "<div " + e._waiAria.lightboxSectionButtonAttrString(this.locale.labels["button_" + d[a].button]) + " class='dhx_custom_button' data-section-index='" + a + "' index='" + a + "'><div class='dhx_custom_button_" + d[a].button + "'></div><div>" + this.locale.labels["button_" + d[a].button] + "</div></div>"), this.config.wide_form && (n += "<div class='dhx_wrap_section'>");
+          var _ = this.locale.labels["section_" + d[a].name];
+          typeof _ != "string" && (_ = d[a].name), n += "<div id='" + d[a].id + "' class='dhx_cal_lsection dhx_cal_lsection_" + d[a].name + "'>" + l + "<label>" + _ + "</label></div>" + r.render.call(this, d[a]), n += "</div>";
         }
       }
       var h = t.getElementsByTagName("div");
@@ -2108,7 +2183,7 @@ function Bt(e) {
           break;
         }
       }
-      e._bindLightboxLabels(_), this.setLightboxSize(), this._init_lightbox_events(this), t.style.visibility = "visible";
+      e._bindLightboxLabels(d), this.setLightboxSize(), this._init_lightbox_events(this), t.style.visibility = "visible";
     }
     return this._lightbox;
   }, e._bindLightboxLabels = function(t) {
@@ -2117,15 +2192,15 @@ function Bt(e) {
       if (s.id && e._lightbox.querySelector(`#${s.id}`)) {
         for (var a = e._lightbox.querySelector(`#${s.id}`).querySelector("label"), o = e._get_lightbox_section_node(s); o && !o.querySelector; )
           o = o.nextSibling;
-        var _ = !0;
+        var d = !0;
         if (o) {
           var r = o.querySelector("input, select, textarea");
-          r && (s.inputId = r.id || "input_" + e.uid(), r.id || (r.id = s.inputId), a.setAttribute("for", s.inputId), _ = !1);
+          r && (s.inputId = r.id || "input_" + e.uid(), r.id || (r.id = s.inputId), a.setAttribute("for", s.inputId), d = !1);
         }
-        _ && e.form_blocks[s.type].focus && e.event(a, "click", function(d) {
+        d && e.form_blocks[s.type].focus && e.event(a, "click", function(l) {
           return function() {
-            var l = e.form_blocks[d.type], h = e._get_lightbox_section_node(d);
-            l && l.focus && l.focus.call(e, h);
+            var _ = e.form_blocks[l.type], h = e._get_lightbox_section_node(l);
+            _ && _.focus && _.focus.call(e, h);
           };
         }(s));
       }
@@ -2138,7 +2213,7 @@ function Bt(e) {
 <a class="dhx_cal_ltitle_close_btn scheduler_icon close"></a>
 </div></div><div class='dhx_cal_larea'></div>`;
 }
-function Jt(e) {
+function Qt(e) {
   e._init_touch_events = function() {
     if ((this.config.touch && (navigator.userAgent.indexOf("Mobile") != -1 || navigator.userAgent.indexOf("iPad") != -1 || navigator.userAgent.indexOf("Android") != -1 || navigator.userAgent.indexOf("Touch") != -1) && !window.MSStream || navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) && (this.xy.scroll_width = 0, this._mobile = !0), this.config.touch) {
       var i = !0;
@@ -2162,64 +2237,64 @@ function Jt(e) {
       });
     }
   }, e._touch_events = function(i, t, n) {
-    var s, a, o, _, r, d, l = 0;
-    function h(m, g, c) {
-      e.event(m, g, function(u) {
-        return !!e._is_lightbox_open() || (n(u) ? void 0 : c(u));
+    var s, a, o, d, r, l, _ = 0;
+    function h(v, g, c) {
+      e.event(v, g, function(f) {
+        return !!e._is_lightbox_open() || (n(f) ? void 0 : c(f));
       }, { passive: !1 });
     }
-    function p(m) {
-      n(m) || (e._hide_global_tip(), _ && (e._on_mouse_up(t(m)), e._temp_touch_block = !1), e._drag_id = null, e._drag_mode = null, e._drag_pos = null, e._pointerDragId = null, clearTimeout(o), _ = d = !1, r = !0);
+    function p(v) {
+      n(v) || (e._hide_global_tip(), d && (e._on_mouse_up(t(v)), e._temp_touch_block = !1), e._drag_id = null, e._drag_mode = null, e._drag_pos = null, e._pointerDragId = null, clearTimeout(o), d = l = !1, r = !0);
     }
-    h(document.body, i[0], function(m) {
-      if (!n(m)) {
-        var g = t(m);
+    h(document.body, i[0], function(v) {
+      if (!n(v)) {
+        var g = t(v);
         if (g) {
-          if (_)
+          if (d)
             return function(c) {
               if (!n(c)) {
-                var u = e.getState().drag_mode, f = !!e.matrix && e.matrix[e._mode], y = e.render_view_data;
-                u == "create" && f && (e.render_view_data = function() {
-                  for (var w = e.getState().drag_id, D = e.getEvent(w), M = f.y_property, k = e.getEvents(D.start_date, D.end_date), N = 0; N < k.length; N++)
+                var f = e.getState().drag_mode, u = !!e.matrix && e.matrix[e._mode], y = e.render_view_data;
+                f == "create" && u && (e.render_view_data = function() {
+                  for (var w = e.getState().drag_id, D = e.getEvent(w), M = u.y_property, k = e.getEvents(D.start_date, D.end_date), N = 0; N < k.length; N++)
                     k[N][M] != D[M] && (k.splice(N, 1), N--);
                   D._sorder = k.length - 1, D._count = k.length, this.render_data([D], e.getState().mode);
-                }), e._on_mouse_move(c), u == "create" && f && (e.render_view_data = y), c.preventDefault && c.preventDefault(), c.cancelBubble = !0;
+                }), e._on_mouse_move(c), f == "create" && u && (e.render_view_data = y), c.preventDefault && c.preventDefault(), c.cancelBubble = !0;
               }
-            }(g), m.preventDefault && m.preventDefault(), m.cancelBubble = !0, e._update_global_tip(), !1;
-          a = t(m), d && (a ? (s.target != a.target || Math.abs(s.pageX - a.pageX) > 5 || Math.abs(s.pageY - a.pageY) > 5) && (r = !0, clearTimeout(o)) : r = !0);
+            }(g), v.preventDefault && v.preventDefault(), v.cancelBubble = !0, e._update_global_tip(), !1;
+          a = t(v), l && (a ? (s.target != a.target || Math.abs(s.pageX - a.pageX) > 5 || Math.abs(s.pageY - a.pageY) > 5) && (r = !0, clearTimeout(o)) : r = !0);
         }
       }
-    }), h(this._els.dhx_cal_data[0], "touchcancel", p), h(this._els.dhx_cal_data[0], "contextmenu", function(m) {
-      if (!n(m))
-        return d ? (m && m.preventDefault && m.preventDefault(), m.cancelBubble = !0, !1) : void 0;
-    }), h(this._obj, i[1], function(m) {
+    }), h(this._els.dhx_cal_data[0], "touchcancel", p), h(this._els.dhx_cal_data[0], "contextmenu", function(v) {
+      if (!n(v))
+        return l ? (v && v.preventDefault && v.preventDefault(), v.cancelBubble = !0, !1) : void 0;
+    }), h(this._obj, i[1], function(v) {
       var g;
-      if (document && document.body && document.body.classList.add("dhx_cal_touch_active"), !n(m))
-        if (e._pointerDragId = m.pointerId, _ = r = !1, d = !0, g = a = t(m)) {
+      if (document && document.body && document.body.classList.add("dhx_cal_touch_active"), !n(v))
+        if (e._pointerDragId = v.pointerId, d = r = !1, l = !0, g = a = t(v)) {
           var c = /* @__PURE__ */ new Date();
-          if (!r && !_ && c - l < 250)
+          if (!r && !d && c - _ < 250)
             return e._click.dhx_cal_data(g), window.setTimeout(function() {
               e.$destroyed || e._on_dbl_click(g);
-            }, 50), m.preventDefault && m.preventDefault(), m.cancelBubble = !0, e._block_next_stop = !0, !1;
-          if (l = c, !r && !_ && e.config.touch_drag) {
-            var u = e._locate_event(document.activeElement), f = e._locate_event(g.target), y = s ? e._locate_event(s.target) : null;
-            if (u && f && u == f && u != y)
-              return m.preventDefault && m.preventDefault(), m.cancelBubble = !0, e._ignore_next_click = !1, e._click.dhx_cal_data(g), s = g, !1;
+            }, 50), v.preventDefault && v.preventDefault(), v.cancelBubble = !0, e._block_next_stop = !0, !1;
+          if (_ = c, !r && !d && e.config.touch_drag) {
+            var f = e._locate_event(document.activeElement), u = e._locate_event(g.target), y = s ? e._locate_event(s.target) : null;
+            if (f && u && f == u && f != y)
+              return v.preventDefault && v.preventDefault(), v.cancelBubble = !0, e._ignore_next_click = !1, e._click.dhx_cal_data(g), s = g, !1;
             o = setTimeout(function() {
               if (!e.$destroyed) {
-                _ = !0;
+                d = !0;
                 var w = s.target, D = e._getClassName(w);
                 w && D.indexOf("dhx_body") != -1 && (w = w.previousSibling), e._on_mouse_down(s, w), e._drag_mode && e._drag_mode != "create" && e.for_rendered(e._drag_id, function(M, k) {
-                  M.style.display = "none", e._rendered.splice(k, 1);
+                  M.style.display = "none", e._forget_rendered_event(M, k);
                 }), e.config.touch_tip && e._show_global_tip(), e.updateEvent(e._drag_id);
               }
             }, e.config.touch_drag), s = g;
           }
         } else
           r = !0;
-    }), h(this._els.dhx_cal_data[0], i[2], function(m) {
-      if (document && document.body && document.body.classList.remove("dhx_cal_touch_active"), !n(m))
-        return e.config.touch_swipe_dates && !_ && function(g, c, u, f) {
+    }), h(this._els.dhx_cal_data[0], i[2], function(v) {
+      if (document && document.body && document.body.classList.remove("dhx_cal_touch_active"), !n(v))
+        return e.config.touch_swipe_dates && !d && function(g, c, f, u) {
           if (!g || !c)
             return !1;
           for (var y = g.target; y && y != e._obj; )
@@ -2227,10 +2302,10 @@ function Jt(e) {
           if (y != e._obj || e.matrix && e.matrix[e.getState().mode] && e.matrix[e.getState().mode].scrollable)
             return !1;
           var w = Math.abs(g.pageY - c.pageY), D = Math.abs(g.pageX - c.pageX);
-          return w < f && D > u && (!w || D / w > 3) && (g.pageX > c.pageX ? e._click.dhx_cal_next_button() : e._click.dhx_cal_prev_button(), !0);
-        }(s, a, 200, 100) && (e._block_next_stop = !0), _ && (e._ignore_next_click = !0, setTimeout(function() {
+          return w < u && D > f && (!w || D / w > 3) && (g.pageX > c.pageX ? e._click.dhx_cal_next_button() : e._click.dhx_cal_prev_button(), !0);
+        }(s, a, 200, 100) && (e._block_next_stop = !0), d && (e._ignore_next_click = !0, setTimeout(function() {
           e._ignore_next_click = !1;
-        }, 100)), p(m), e._block_next_stop ? (e._block_next_stop = !1, m.preventDefault && m.preventDefault(), m.cancelBubble = !0, !1) : void 0;
+        }, 100)), p(v), e._block_next_stop ? (e._block_next_stop = !1, v.preventDefault && v.preventDefault(), v.cancelBubble = !0, !1) : void 0;
     }), e.event(document.body, i[2], p);
   }, e._show_global_tip = function() {
     e._hide_global_tip();
@@ -2251,124 +2326,124 @@ function Jt(e) {
     i && i.parentNode && (i.parentNode.removeChild(i), e._global_tip = 0);
   };
 }
-function Wt(e) {
+function ea(e) {
   var i, t;
   function n() {
     if (e._is_material_skin())
       return !0;
     if (t !== void 0)
       return t;
-    var _ = document.createElement("div");
-    _.style.position = "absolute", _.style.left = "-9999px", _.style.top = "-9999px", _.innerHTML = "<div class='dhx_cal_container'><div class='dhx_cal_data'><div class='dhx_cal_event'><div class='dhx_body'></div></div><div>", document.body.appendChild(_);
-    var r = window.getComputedStyle(_.querySelector(".dhx_body")).getPropertyValue("box-sizing");
-    document.body.removeChild(_), (t = r === "border-box") || setTimeout(function() {
+    var d = document.createElement("div");
+    d.style.position = "absolute", d.style.left = "-9999px", d.style.top = "-9999px", d.innerHTML = "<div class='dhx_cal_container'><div class='dhx_cal_data'><div class='dhx_cal_event'><div class='dhx_body'></div></div><div>", document.body.appendChild(d);
+    var r = window.getComputedStyle(d.querySelector(".dhx_body")).getPropertyValue("box-sizing");
+    document.body.removeChild(d), (t = r === "border-box") || setTimeout(function() {
       t = void 0;
     }, 1e3);
   }
   function s() {
     if (!e._is_material_skin() && !e._border_box_events()) {
-      var _ = t;
-      t = void 0, i = void 0, _ !== n() && e.$container && e.getState().mode && e.setCurrentView();
+      var d = t;
+      t = void 0, i = void 0, d !== n() && e.$container && e.getState().mode && e.setCurrentView();
     }
   }
-  function a(_) {
-    var r = _.getMinutes();
-    return r = r < 10 ? "0" + r : r, "<span class='dhx_scale_h'>" + _.getHours() + "</span><span class='dhx_scale_m'>&nbsp;" + r + "</span>";
+  function a(d) {
+    var r = d.getMinutes();
+    return r = r < 10 ? "0" + r : r, "<span class='dhx_scale_h'>" + d.getHours() + "</span><span class='dhx_scale_m'>&nbsp;" + r + "</span>";
   }
   e._addThemeClass = function() {
     document.documentElement.setAttribute("data-scheduler-theme", e.skin);
   }, e._skin_settings = { fix_tab_position: [1, 0], use_select_menu_space: [1, 0], wide_form: [1, 0], hour_size_px: [44, 42], displayed_event_color: ["#ff4a4a", "ffc5ab"], displayed_event_text_color: ["#ffef80", "7e2727"] }, e._skin_xy = { lightbox_additional_height: [90, 50], nav_height: [59, 22], bar_height: [24, 20] }, e._is_material_skin = function() {
     return e.skin ? (e.skin + "").indexOf("material") > -1 : function() {
       if (i === void 0) {
-        var _ = document.createElement("div");
-        _.style.position = "absolute", _.style.left = "-9999px", _.style.top = "-9999px", _.innerHTML = "<div class='dhx_cal_container'><div class='dhx_cal_scale_placeholder'></div><div>", document.body.appendChild(_);
-        var r = window.getComputedStyle(_.querySelector(".dhx_cal_scale_placeholder")).getPropertyValue("position");
+        var d = document.createElement("div");
+        d.style.position = "absolute", d.style.left = "-9999px", d.style.top = "-9999px", d.innerHTML = "<div class='dhx_cal_container'><div class='dhx_cal_scale_placeholder'></div><div>", document.body.appendChild(d);
+        var r = window.getComputedStyle(d.querySelector(".dhx_cal_scale_placeholder")).getPropertyValue("position");
         i = r === "absolute", setTimeout(function() {
-          i = null, _ && _.parentNode && _.parentNode.removeChild(_);
+          i = null, d && d.parentNode && d.parentNode.removeChild(d);
         }, 500);
       }
       return i;
     }();
   }, e._build_skin_info = function() {
     (function() {
-      const m = e.$container;
-      clearInterval(o), m && (o = setInterval(() => {
-        const g = getComputedStyle(m).getPropertyValue("--dhx-scheduler-theme");
+      const v = e.$container;
+      clearInterval(o), v && (o = setInterval(() => {
+        const g = getComputedStyle(v).getPropertyValue("--dhx-scheduler-theme");
         g && g !== e.skin && e.setSkin(g);
       }, 100));
     })();
-    const _ = getComputedStyle(this.$container), r = _.getPropertyValue("--dhx-scheduler-theme");
-    let d, l = !!r, h = {}, p = !1;
-    if (l) {
-      d = r;
-      for (let m in e.xy)
-        h[m] = _.getPropertyValue(`--dhx-scheduler-xy-${m}`);
-      h.hour_size_px = _.getPropertyValue("--dhx-scheduler-config-hour_size_px"), h.wide_form = _.getPropertyValue("--dhx-scheduler-config-form_wide");
+    const d = getComputedStyle(this.$container), r = d.getPropertyValue("--dhx-scheduler-theme");
+    let l, _ = !!r, h = {}, p = !1;
+    if (_) {
+      l = r;
+      for (let v in e.xy)
+        h[v] = d.getPropertyValue(`--dhx-scheduler-xy-${v}`);
+      h.hour_size_px = d.getPropertyValue("--dhx-scheduler-config-hour_size_px"), h.wide_form = d.getPropertyValue("--dhx-scheduler-config-form_wide");
     } else
-      d = function() {
-        for (var m = document.getElementsByTagName("link"), g = 0; g < m.length; g++) {
-          var c = m[g].href.match("dhtmlxscheduler_([a-z]+).css");
+      l = function() {
+        for (var v = document.getElementsByTagName("link"), g = 0; g < v.length; g++) {
+          var c = v[g].href.match("dhtmlxscheduler_([a-z]+).css");
           if (c)
             return c[1];
         }
       }(), p = e._is_material_skin();
-    if (e._theme_info = { theme: d, cssVarTheme: l, oldMaterialTheme: p, values: h }, e._theme_info.cssVarTheme) {
-      const m = this._theme_info.values;
+    if (e._theme_info = { theme: l, cssVarTheme: _, oldMaterialTheme: p, values: h }, e._theme_info.cssVarTheme) {
+      const v = this._theme_info.values;
       for (let g in e.xy)
-        isNaN(parseInt(m[g])) || (e.xy[g] = parseInt(m[g]));
+        isNaN(parseInt(v[g])) || (e.xy[g] = parseInt(v[g]));
     }
   }, typeof window < "u" && (e.event(window, "DOMContentLoaded", s), e.event(window, "load", s)), e._border_box_events = function() {
     return n();
-  }, e._configure = function(_, r, d) {
-    for (var l in r)
-      _[l] === void 0 && (_[l] = r[l][d]);
-  }, e.setSkin = function(_) {
-    this.skin = _, e._addThemeClass(), e.$container && (this._skin_init(), this.render());
+  }, e._configure = function(d, r, l) {
+    for (var _ in r)
+      d[_] === void 0 && (d[_] = r[_][l]);
+  }, e.setSkin = function(d) {
+    this.skin = d, e._addThemeClass(), e.$container && (this._skin_init(), this.render());
   };
   let o = null;
   e.attachEvent("onDestroy", function() {
     clearInterval(o);
   }), e._skin_init = function() {
     this._build_skin_info(), this.skin || (this.skin = this._theme_info.theme), e._addThemeClass(), e.skin === "flat" ? e.templates.hour_scale = a : e.templates.hour_scale === a && (e.templates.hour_scale = e.date.date_to_str(e.config.hour_date)), e.attachEvent("onTemplatesReady", function() {
-      var _ = e.date.date_to_str("%d");
+      var d = e.date.date_to_str("%d");
       e.templates._old_month_day || (e.templates._old_month_day = e.templates.month_day);
       var r = e.templates._old_month_day;
-      e.templates.month_day = function(d) {
+      e.templates.month_day = function(l) {
         if (this._mode == "month") {
-          var l = _(d);
-          return d.getDate() == 1 && (l = e.locale.date.month_full[d.getMonth()] + " " + l), +d == +e.date.date_part(this._currentDate()) && (l = e.locale.labels.dhx_cal_today_button + " " + l), l;
+          var _ = d(l);
+          return l.getDate() == 1 && (_ = e.locale.date.month_full[l.getMonth()] + " " + _), +l == +e.date.date_part(this._currentDate()) && (_ = e.locale.labels.dhx_cal_today_button + " " + _), _;
         }
-        return r.call(this, d);
-      }, e.config.fix_tab_position && (e._els.dhx_cal_navline[0].querySelectorAll("[data-tab]").forEach((d) => {
-        switch (d.getAttribute("data-tab") || d.getAttribute("name")) {
+        return r.call(this, l);
+      }, e.config.fix_tab_position && (e._els.dhx_cal_navline[0].querySelectorAll("[data-tab]").forEach((l) => {
+        switch (l.getAttribute("data-tab") || l.getAttribute("name")) {
           case "day":
           case "day_tab":
-            d.classList.add("dhx_cal_tab_first"), d.classList.add("dhx_cal_tab_segmented");
+            l.classList.add("dhx_cal_tab_first"), l.classList.add("dhx_cal_tab_segmented");
             break;
           case "week":
           case "week_tab":
-            d.classList.add("dhx_cal_tab_segmented");
+            l.classList.add("dhx_cal_tab_segmented");
             break;
           case "month":
           case "month_tab":
-            d.classList.add("dhx_cal_tab_last"), d.classList.add("dhx_cal_tab_segmented");
+            l.classList.add("dhx_cal_tab_last"), l.classList.add("dhx_cal_tab_segmented");
             break;
           default:
-            d.classList.add("dhx_cal_tab_standalone");
+            l.classList.add("dhx_cal_tab_standalone");
         }
-      }), function(d) {
+      }), function(l) {
         if (e.config.header)
           return;
-        const l = Array.from(d.querySelectorAll(".dhx_cal_tab")), h = ["day", "week", "month"].map((m) => l.find((g) => g.getAttribute("data-tab") === m)).filter((m) => m !== void 0);
-        let p = l.length > 0 ? l[0] : null;
-        h.reverse().forEach((m) => {
-          d.insertBefore(m, p), p = m;
+        const _ = Array.from(l.querySelectorAll(".dhx_cal_tab")), h = ["day", "week", "month"].map((v) => _.find((g) => g.getAttribute("data-tab") === v)).filter((v) => v !== void 0);
+        let p = _.length > 0 ? _[0] : null;
+        h.reverse().forEach((v) => {
+          l.insertBefore(v, p), p = v;
         });
       }(e._els.dhx_cal_navline[0]));
     }, { once: !0 });
   };
 }
-function Kt(e, i) {
+function ta(e, i) {
   this.$scheduler = e, this.$dp = i, this._dataProcessorHandlers = [], this.attach = function() {
     var t = this.$dp, n = this.$scheduler;
     this._dataProcessorHandlers.push(n.attachEvent("onEventAdded", function(s) {
@@ -2396,50 +2471,50 @@ function Kt(e, i) {
 function $e(e) {
   return this.serverProcessor = e, this.action_param = "!nativeeditor_status", this.object = null, this.updatedRows = [], this.autoUpdate = !0, this.updateMode = "cell", this._tMode = "GET", this._headers = null, this._payload = null, this.post_delim = "_", this._waitMode = 0, this._in_progress = {}, this._invalid = {}, this.messages = [], this.styles = { updated: "font-weight:bold;", inserted: "font-weight:bold;", deleted: "text-decoration : line-through;", invalid: "background-color:FFE0E0;", invalid_cell: "border-bottom:2px solid red;", error: "color:red;", clear: "font-weight:normal;text-decoration:none;" }, this.enableUTFencoding(!0), Ye(this), this;
 }
-function Gt(e) {
+function aa(e) {
   var i = "data-dhxbox", t = null;
-  function n(f, y, w) {
-    var D = f.callback;
-    D && D(y, w), g.hide(f.box), t = f.box = null;
+  function n(u, y, w) {
+    var D = u.callback;
+    D && D(y, w), g.hide(u.box), t = u.box = null;
   }
-  function s(f) {
+  function s(u) {
     if (t) {
-      var y = f.which || f.keyCode, w = !1;
+      var y = u.which || u.keyCode, w = !1;
       if (c.keyboard) {
         if (y == 13 || y == 32) {
-          var D = f.target || f.srcElement;
+          var D = u.target || u.srcElement;
           he.getClassName(D).indexOf("scheduler_popup_button") > -1 && D.click ? D.click() : (n(t, !0), w = !0);
         }
         y == 27 && (n(t, !1), w = !0);
       }
-      return w ? (f.preventDefault && f.preventDefault(), !(f.cancelBubble = !0)) : void 0;
+      return w ? (u.preventDefault && u.preventDefault(), !(u.cancelBubble = !0)) : void 0;
     }
   }
-  function a(f) {
-    a.cover || (a.cover = document.createElement("div"), e.event(a.cover, "keydown", s), a.cover.className = "dhx_modal_cover", document.body.appendChild(a.cover)), a.cover.style.display = f ? "inline-block" : "none";
+  function a(u) {
+    a.cover || (a.cover = document.createElement("div"), e.event(a.cover, "keydown", s), a.cover.className = "dhx_modal_cover", document.body.appendChild(a.cover)), a.cover.style.display = u ? "inline-block" : "none";
   }
-  function o(f, y, w) {
-    var D = e._waiAria.messageButtonAttrString(f), M = (y || "").toLowerCase().replace(/ /g, "_");
-    return `<div ${D} class='scheduler_popup_button dhtmlx_popup_button ${`scheduler_${M}_button dhtmlx_${M}_button`}' data-result='${w}' result='${w}' ><div>${f}</div></div>`;
+  function o(u, y, w) {
+    var D = e._waiAria.messageButtonAttrString(u), M = (y || "").toLowerCase().replace(/ /g, "_");
+    return `<div ${D} class='scheduler_popup_button dhtmlx_popup_button ${`scheduler_${M}_button dhtmlx_${M}_button`}' data-result='${w}' result='${w}' ><div>${u}</div></div>`;
   }
-  function _() {
-    for (var f = [].slice.apply(arguments, [0]), y = 0; y < f.length; y++)
-      if (f[y])
-        return f[y];
+  function d() {
+    for (var u = [].slice.apply(arguments, [0]), y = 0; y < u.length; y++)
+      if (u[y])
+        return u[y];
   }
-  function r(f, y, w) {
-    var D = f.tagName ? f : function(N, v, x) {
+  function r(u, y, w) {
+    var D = u.tagName ? u : function(N, m, x) {
       var b = document.createElement("div"), E = ne.uid();
       e._waiAria.messageModalAttr(b, E), b.className = " scheduler_modal_box dhtmlx_modal_box scheduler-" + N.type + " dhtmlx-" + N.type, b.setAttribute(i, 1);
       var S = "";
-      if (N.width && (b.style.width = N.width), N.height && (b.style.height = N.height), N.title && (S += '<div class="scheduler_popup_title dhtmlx_popup_title">' + N.title + "</div>"), S += '<div class="scheduler_popup_text dhtmlx_popup_text" id="' + E + '"><span>' + (N.content ? "" : N.text) + '</span></div><div  class="scheduler_popup_controls dhtmlx_popup_controls">', v && (S += o(_(N.ok, e.locale.labels.message_ok, "OK"), "ok", !0)), x && (S += o(_(N.cancel, e.locale.labels.message_cancel, "Cancel"), "cancel", !1)), N.buttons)
+      if (N.width && (b.style.width = N.width), N.height && (b.style.height = N.height), N.title && (S += '<div class="scheduler_popup_title dhtmlx_popup_title">' + N.title + "</div>"), S += '<div class="scheduler_popup_text dhtmlx_popup_text" id="' + E + '"><span>' + (N.content ? "" : N.text) + '</span></div><div  class="scheduler_popup_controls dhtmlx_popup_controls">', m && (S += o(d(N.ok, e.locale.labels.message_ok, "OK"), "ok", !0)), x && (S += o(d(N.cancel, e.locale.labels.message_cancel, "Cancel"), "cancel", !1)), N.buttons)
         for (var T = 0; T < N.buttons.length; T++) {
-          var A = N.buttons[T];
-          S += typeof A == "object" ? o(A.label, A.css || "scheduler_" + A.label.toLowerCase() + "_button dhtmlx_" + A.label.toLowerCase() + "_button", A.value || T) : o(A, A, T);
+          var C = N.buttons[T];
+          S += typeof C == "object" ? o(C.label, C.css || "scheduler_" + C.label.toLowerCase() + "_button dhtmlx_" + C.label.toLowerCase() + "_button", C.value || T) : o(C, C, T);
         }
       if (S += "</div>", b.innerHTML = S, N.content) {
-        var C = N.content;
-        typeof C == "string" && (C = document.getElementById(C)), C.style.display == "none" && (C.style.display = ""), b.childNodes[N.title ? 1 : 0].appendChild(C);
+        var A = N.content;
+        typeof A == "string" && (A = document.getElementById(A)), A.style.display == "none" && (A.style.display = ""), b.childNodes[N.title ? 1 : 0].appendChild(A);
       }
       return e.event(b, "click", function($) {
         var H = $.target || $.srcElement;
@@ -2447,50 +2522,50 @@ function Gt(e) {
           var O = H.getAttribute("data-result");
           n(N, O = O == "true" || O != "false" && O, $);
         }
-      }), N.box = b, (v || x) && (t = N), b;
-    }(f, y, w);
-    f.hidden || a(!0), document.body.appendChild(D);
+      }), N.box = b, (m || x) && (t = N), b;
+    }(u, y, w);
+    u.hidden || a(!0), document.body.appendChild(D);
     var M = Math.abs(Math.floor(((window.innerWidth || document.documentElement.offsetWidth) - D.offsetWidth) / 2)), k = Math.abs(Math.floor(((window.innerHeight || document.documentElement.offsetHeight) - D.offsetHeight) / 2));
-    return f.position == "top" ? D.style.top = "-3px" : D.style.top = k + "px", D.style.left = M + "px", e.event(D, "keydown", s), g.focus(D), f.hidden && g.hide(D), e.callEvent("onMessagePopup", [D]), D;
+    return u.position == "top" ? D.style.top = "-3px" : D.style.top = k + "px", D.style.left = M + "px", e.event(D, "keydown", s), g.focus(D), u.hidden && g.hide(D), e.callEvent("onMessagePopup", [D]), D;
   }
-  function d(f) {
-    return r(f, !0, !1);
+  function l(u) {
+    return r(u, !0, !1);
   }
-  function l(f) {
-    return r(f, !0, !0);
+  function _(u) {
+    return r(u, !0, !0);
   }
-  function h(f) {
-    return r(f);
+  function h(u) {
+    return r(u);
   }
-  function p(f, y, w) {
-    return typeof f != "object" && (typeof y == "function" && (w = y, y = ""), f = { text: f, type: y, callback: w }), f;
+  function p(u, y, w) {
+    return typeof u != "object" && (typeof y == "function" && (w = y, y = ""), u = { text: u, type: y, callback: w }), u;
   }
-  function m(f, y, w, D, M) {
-    return typeof f != "object" && (f = { text: f, type: y, expire: w, id: D, callback: M }), f.id = f.id || ne.uid(), f.expire = f.expire || c.expire, f;
+  function v(u, y, w, D, M) {
+    return typeof u != "object" && (u = { text: u, type: y, expire: w, id: D, callback: M }), u.id = u.id || ne.uid(), u.expire = u.expire || c.expire, u;
   }
   typeof window < "u" && e.event(document, "keydown", s, !0);
   var g = function() {
-    var f = p.apply(this, arguments);
-    return f.type = f.type || "alert", h(f);
+    var u = p.apply(this, arguments);
+    return u.type = u.type || "alert", h(u);
   };
-  g.hide = function(f) {
-    for (; f && f.getAttribute && !f.getAttribute(i); )
-      f = f.parentNode;
-    f && (f.parentNode.removeChild(f), a(!1), e.callEvent("onAfterMessagePopup", [f]));
-  }, g.focus = function(f) {
+  g.hide = function(u) {
+    for (; u && u.getAttribute && !u.getAttribute(i); )
+      u = u.parentNode;
+    u && (u.parentNode.removeChild(u), a(!1), e.callEvent("onAfterMessagePopup", [u]));
+  }, g.focus = function(u) {
     setTimeout(function() {
-      var y = he.getFocusableNodes(f);
+      var y = he.getFocusableNodes(u);
       y.length && y[0].focus && y[0].focus();
     }, 1);
   };
-  var c = function(f, y, w, D) {
-    switch ((f = m.apply(this, arguments)).type = f.type || "info", f.type.split("-")[0]) {
+  var c = function(u, y, w, D) {
+    switch ((u = v.apply(this, arguments)).type = u.type || "info", u.type.split("-")[0]) {
       case "alert":
-        return d(f);
+        return l(u);
       case "confirm":
-        return l(f);
+        return _(u);
       case "modalbox":
-        return h(f);
+        return h(u);
       default:
         return function(M) {
           c.area || (c.area = document.createElement("div"), c.area.className = "scheduler_message_area dhtmlx_message_area", c.area.style[c.position] = "5px", document.body.appendChild(c.area)), c.hide(M.id);
@@ -2500,35 +2575,35 @@ function Gt(e) {
           }), e._waiAria.messageInfoAttr(k), c.position == "bottom" && c.area.firstChild ? c.area.insertBefore(k, c.area.firstChild) : c.area.appendChild(k), M.expire > 0 && (c.timers[M.id] = window.setTimeout(function() {
             c && c.hide(M.id);
           }, M.expire)), c.pull[M.id] = k, k = null, M.id;
-        }(f);
+        }(u);
     }
   };
   c.seed = (/* @__PURE__ */ new Date()).valueOf(), c.uid = ne.uid, c.expire = 4e3, c.keyboard = !0, c.position = "top", c.pull = {}, c.timers = {}, c.hideAll = function() {
-    for (var f in c.pull)
-      c.hide(f);
-  }, c.hide = function(f) {
-    var y = c.pull[f];
+    for (var u in c.pull)
+      c.hide(u);
+  }, c.hide = function(u) {
+    var y = c.pull[u];
     y && y.parentNode && (window.setTimeout(function() {
       y.parentNode.removeChild(y), y = null;
-    }, 2e3), y.className += " hidden", c.timers[f] && window.clearTimeout(c.timers[f]), delete c.pull[f]);
+    }, 2e3), y.className += " hidden", c.timers[u] && window.clearTimeout(c.timers[u]), delete c.pull[u]);
   };
-  var u = [];
-  return e.attachEvent("onMessagePopup", function(f) {
-    u.push(f);
-  }), e.attachEvent("onAfterMessagePopup", function(f) {
-    for (var y = 0; y < u.length; y++)
-      u[y] === f && (u.splice(y, 1), y--);
+  var f = [];
+  return e.attachEvent("onMessagePopup", function(u) {
+    f.push(u);
+  }), e.attachEvent("onAfterMessagePopup", function(u) {
+    for (var y = 0; y < f.length; y++)
+      f[y] === u && (f.splice(y, 1), y--);
   }), e.attachEvent("onDestroy", function() {
     a.cover && a.cover.parentNode && a.cover.parentNode.removeChild(a.cover);
-    for (var f = 0; f < u.length; f++)
-      u[f].parentNode && u[f].parentNode.removeChild(u[f]);
-    u = null, c.area && c.area.parentNode && c.area.parentNode.removeChild(c.area), c = null;
+    for (var u = 0; u < f.length; u++)
+      f[u].parentNode && f[u].parentNode.removeChild(f[u]);
+    f = null, c.area && c.area.parentNode && c.area.parentNode.removeChild(c.area), c = null;
   }), { alert: function() {
-    var f = p.apply(this, arguments);
-    return f.type = f.type || "confirm", d(f);
+    var u = p.apply(this, arguments);
+    return u.type = u.type || "confirm", l(u);
   }, confirm: function() {
-    var f = p.apply(this, arguments);
-    return f.type = f.type || "alert", l(f);
+    var u = p.apply(this, arguments);
+    return u.type = u.type || "alert", _(u);
   }, message: c, modalbox: g };
 }
 $e.prototype = { setTransactionMode: function(e, i) {
@@ -2619,81 +2694,81 @@ $e.prototype = { setTransactionMode: function(e, i) {
       var s = this.getState(i), a = this.getActionByState(s);
       delete e[this.action_param];
       var o = function(c) {
-        var u = s;
+        var f = s;
         if (c && c.responseText && c.setRequestHeader) {
-          c.status !== 200 && (u = "error");
+          c.status !== 200 && (f = "error");
           try {
             c = JSON.parse(c.responseText);
           } catch {
           }
         }
-        u = u || "updated";
-        var f = i, y = i;
-        c && (u = c.action || u, f = c.sid || f, y = c.id || c.tid || y), t.afterUpdateCallback(f, y, u, c);
+        f = f || "updated";
+        var u = i, y = i;
+        c && (f = c.action || f, u = c.sid || u, y = c.id || c.tid || y), t.afterUpdateCallback(u, y, f, c);
       };
       const g = "event";
-      var _;
+      var d;
       if (this._router instanceof Function)
-        _ = this._router(g, a, e, i);
+        d = this._router(g, a, e, i);
       else
         switch (s) {
           case "inserted":
-            _ = this._router[g].create(e);
+            d = this._router[g].create(e);
             break;
           case "deleted":
-            _ = this._router[g].delete(i);
+            d = this._router[g].delete(i);
             break;
           default:
-            _ = this._router[g].update(e, i);
+            d = this._router[g].update(e, i);
         }
-      if (_) {
-        if (!_.then && _.id === void 0 && _.tid === void 0 && _.action === void 0)
+      if (d) {
+        if (!d.then && d.id === void 0 && d.tid === void 0 && d.action === void 0)
           throw new Error("Incorrect router return value. A Promise or a response object is expected");
-        _.then ? _.then(o).catch(function(c) {
+        d.then ? d.then(o).catch(function(c) {
           c && c.action ? o(c) : o({ action: "error", value: c });
-        }) : o(_);
+        }) : o(d);
       } else
         o(null);
       return;
     }
-    var r, d = { callback: function(g) {
+    var r, l = { callback: function(g) {
       var c = [];
       if (i)
         c.push(i);
       else if (e)
-        for (var u in e)
-          c.push(u);
+        for (var f in e)
+          c.push(f);
       return t.afterUpdate(t, g, c);
-    }, headers: t._headers }, l = this.serverProcessor + (this._user ? n.urlSeparator(this.serverProcessor) + ["dhx_user=" + this._user, "dhx_version=" + this.$scheduler.getUserData(0, "version")].join("&") : ""), h = this._applyPayload(l);
+    }, headers: t._headers }, _ = this.serverProcessor + (this._user ? n.urlSeparator(this.serverProcessor) + ["dhx_user=" + this._user, "dhx_version=" + this.$scheduler.getUserData(0, "version")].join("&") : ""), h = this._applyPayload(_);
     switch (this._tMode) {
       case "GET":
-        r = this._cleanupArgumentsBeforeSend(e), d.url = h + n.urlSeparator(h) + this.serialize(r, i), d.method = "GET";
+        r = this._cleanupArgumentsBeforeSend(e), l.url = h + n.urlSeparator(h) + this.serialize(r, i), l.method = "GET";
         break;
       case "POST":
-        r = this._cleanupArgumentsBeforeSend(e), d.url = h, d.method = "POST", d.data = this.serialize(r, i);
+        r = this._cleanupArgumentsBeforeSend(e), l.url = h, l.method = "POST", l.data = this.serialize(r, i);
         break;
       case "JSON":
         r = {};
         var p = this._cleanupItemBeforeSend(e);
-        for (var m in p)
-          m !== this.action_param && m !== "id" && m !== "gr_id" && (r[m] = p[m]);
-        d.url = h, d.method = "POST", d.data = JSON.stringify({ id: i, action: e[this.action_param], data: r });
+        for (var v in p)
+          v !== this.action_param && v !== "id" && v !== "gr_id" && (r[v] = p[v]);
+        l.url = h, l.method = "POST", l.data = JSON.stringify({ id: i, action: e[this.action_param], data: r });
         break;
       case "REST":
       case "REST-JSON":
-        switch (h = l.replace(/(&|\?)editing=true/, ""), r = "", this.getState(i)) {
+        switch (h = _.replace(/(&|\?)editing=true/, ""), r = "", this.getState(i)) {
           case "inserted":
-            d.method = "POST", d.data = this.serialize(e, i);
+            l.method = "POST", l.data = this.serialize(e, i);
             break;
           case "deleted":
-            d.method = "DELETE", h = h + (h.slice(-1) === "/" ? "" : "/") + i;
+            l.method = "DELETE", h = h + (h.slice(-1) === "/" ? "" : "/") + i;
             break;
           default:
-            d.method = "PUT", d.data = this.serialize(e, i), h = h + (h.slice(-1) === "/" ? "" : "/") + i;
+            l.method = "PUT", l.data = this.serialize(e, i), h = h + (h.slice(-1) === "/" ? "" : "/") + i;
         }
-        d.url = this._applyPayload(h);
+        l.url = this._applyPayload(h);
     }
-    return this._waitMode++, n.query(d);
+    return this._waitMode++, n.query(l);
   }
 }, sendAllData: function() {
   if (this.updatedRows.length && this.updateMode !== "off") {
@@ -2758,18 +2833,18 @@ $e.prototype = { setTransactionMode: function(e, i) {
       i.xmlDoc.responseText.length || (s = {});
     }
     if (s) {
-      var a = s.action || this.getState(t) || "updated", o = s.sid || t[0], _ = s.tid || t[0];
-      return e.afterUpdateCallback(o, _, a, s), void e.finalizeUpdate();
+      var a = s.action || this.getState(t) || "updated", o = s.sid || t[0], d = s.tid || t[0];
+      return e.afterUpdateCallback(o, d, a, s), void e.finalizeUpdate();
     }
     var r = n.xmltop("data", i.xmlDoc);
     if (!r)
       return this._errorResponse(i, t);
-    var d = n.xpath("//data/action", r);
-    if (!d.length)
+    var l = n.xpath("//data/action", r);
+    if (!l.length)
       return this._errorResponse(i, t);
-    for (var l = 0; l < d.length; l++) {
-      var h = d[l];
-      a = h.getAttribute("type"), o = h.getAttribute("sid"), _ = h.getAttribute("tid"), e.afterUpdateCallback(o, _, a, h);
+    for (var _ = 0; _ < l.length; _++) {
+      var h = l[_];
+      a = h.getAttribute("type"), o = h.getAttribute("sid"), d = h.getAttribute("tid"), e.afterUpdateCallback(o, d, a, h);
     }
     e.finalizeUpdate();
   } else
@@ -2787,8 +2862,8 @@ $e.prototype = { setTransactionMode: function(e, i) {
         return !this._is_virtual_event || !this._is_virtual_event(s);
       }, t.setUserData = function(s, a, o) {
         if (s) {
-          var _ = this.getEvent(s);
-          _ && (_[a] = o);
+          var d = this.getEvent(s);
+          d && (d[a] = o);
         } else
           this._userdata[a] = o;
       }, t.getUserData = function(s, a) {
@@ -2799,8 +2874,8 @@ $e.prototype = { setTransactionMode: function(e, i) {
         return this._userdata[a];
       }, t._set_event_text_style = function(s, a) {
         if (t.getEvent(s)) {
-          this.for_rendered(s, function(_) {
-            _.style.cssText += ";" + a;
+          this.for_rendered(s, function(d) {
+            d.style.cssText += ";" + a;
           });
           var o = this.getEvent(s);
           o._text_style = a, this.event_updated(o);
@@ -2817,7 +2892,7 @@ $e.prototype = { setTransactionMode: function(e, i) {
         this._dp = n;
       }, t.setDp();
     }(this.$scheduler, this);
-    var i = new Kt(this.$scheduler, this);
+    var i = new ta(this.$scheduler, this);
     i.attach(), this.attachEvent("onDestroy", function() {
       delete this._getRowData, delete this.$scheduler._dp, delete this.$scheduler._dataprocessor, delete this.$scheduler._set_event_text_style, delete this.$scheduler._dp_change_event_id, delete this.$scheduler._dp_hook_delete, delete this.$scheduler, i.detach();
     }), this.$scheduler.callEvent("onDataProcessorReady", [this]), this._initialized = !0, e._dataprocessor = this;
@@ -2827,13 +2902,13 @@ $e.prototype = { setTransactionMode: function(e, i) {
 }, setOnBeforeUpdateHandler: function(e) {
   this.attachEvent("onBeforeDataSending", e);
 }, setAutoUpdate: function(e, i) {
-  e = e || 2e3, this._user = i || (/* @__PURE__ */ new Date()).valueOf(), this._need_update = !1, this._update_busy = !1, this.attachEvent("onAfterUpdate", function(s, a, o, _) {
-    this.afterAutoUpdate(s, a, o, _);
+  e = e || 2e3, this._user = i || (/* @__PURE__ */ new Date()).valueOf(), this._need_update = !1, this._update_busy = !1, this.attachEvent("onAfterUpdate", function(s, a, o, d) {
+    this.afterAutoUpdate(s, a, o, d);
   }), this.attachEvent("onFullSync", function() {
     this.fullSync();
   });
   var t = this;
-  let n = _e.setInterval(function() {
+  let n = le.setInterval(function() {
     t.loadUpdate();
   }, e);
   this.attachEvent("onDestroy", function() {
@@ -2858,17 +2933,17 @@ $e.prototype = { setTransactionMode: function(e, i) {
     var o = i.xpath("//update", s);
     if (o.length) {
       e._silent_mode = !0;
-      for (var _ = 0; _ < o.length; _++) {
-        var r = o[_].getAttribute("status"), d = o[_].getAttribute("id"), l = o[_].getAttribute("parent");
+      for (var d = 0; d < o.length; d++) {
+        var r = o[d].getAttribute("status"), l = o[d].getAttribute("id"), _ = o[d].getAttribute("parent");
         switch (r) {
           case "inserted":
-            this.callEvent("insertCallback", [o[_], d, l]);
+            this.callEvent("insertCallback", [o[d], l, _]);
             break;
           case "updated":
-            this.callEvent("updateCallback", [o[_], d, l]);
+            this.callEvent("updateCallback", [o[d], l, _]);
             break;
           case "deleted":
-            this.callEvent("deleteCallback", [o[_], d, l]);
+            this.callEvent("deleteCallback", [o[d], l, _]);
         }
       }
       e._silent_mode = !1;
@@ -2920,7 +2995,7 @@ $e.prototype = { setTransactionMode: function(e, i) {
   var i = this.$scheduler.getEvent(e);
   return i || (i = { id: e }), this._prepareDataItem(i);
 } };
-class Xt {
+class na {
   constructor(i) {
     this._locales = {};
     for (const t in i)
@@ -2933,8 +3008,8 @@ class Xt {
     return this._locales[i];
   }
 }
-const Zt = Object.freeze(Object.defineProperty({ __proto__: null, ar: { date: { month_full: ["كانون الثاني", "شباط", "آذار", "نيسان", "أيار", "حزيران", "تموز", "آب", "أيلول", "تشرين الأول", "تشرين الثاني", "كانون الأول"], month_short: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"], day_full: ["الأحد", "الأثنين", "ألثلاثاء", "الأربعاء", "ألحميس", "ألجمعة", "السبت"], day_short: ["احد", "اثنين", "ثلاثاء", "اربعاء", "خميس", "جمعة", "سبت"] }, labels: { dhx_cal_today_button: "اليوم", day_tab: "يوم", week_tab: "أسبوع", month_tab: "شهر", new_event: "حدث جديد", icon_save: "اخزن", icon_cancel: "الغاء", icon_details: "تفاصيل", icon_edit: "تحرير", icon_delete: "حذف", confirm_closing: "التغييرات سوف تضيع, هل انت متأكد؟", confirm_deleting: "الحدث سيتم حذفها نهائيا ، هل أنت متأكد؟", section_description: "الوصف", section_time: "الفترة الزمنية", full_day: "طوال اليوم", confirm_recurring: "هل تريد تحرير مجموعة كاملة من الأحداث المتكررة؟", section_recurring: "تكرار الحدث", button_recurring: "تعطيل", button_recurring_open: "تمكين", button_edit_series: "تحرير سلسلة", button_edit_occurrence: "تعديل نسخة", button_edit_occurrence_and_following: "This and following events", grid_tab: "جدول", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "يومي", repeat_radio_week: "أسبوعي", repeat_radio_month: "شهري", repeat_radio_year: "سنوي", repeat_radio_day_type: "كل", repeat_text_day_count: "يوم", repeat_radio_day_type2: "كل يوم عمل", repeat_week: " تكرار كل", repeat_text_week_count: "أسبوع في الأيام التالية:", repeat_radio_month_type: "تكرار", repeat_radio_month_start: "في", repeat_text_month_day: "يوم كل", repeat_text_month_count: "شهر", repeat_text_month_count2_before: "كل", repeat_text_month_count2_after: "شهر", repeat_year_label: "في", select_year_day2: "من", repeat_text_year_day: "يوم", select_year_month: "شهر", repeat_radio_end: "بدون تاريخ انتهاء", repeat_text_occurrences_count: "تكرارات", repeat_radio_end2: "بعد", repeat_radio_end3: "ينتهي في", repeat_never: "أبداً", repeat_daily: "كل يوم", repeat_workdays: "كل يوم عمل", repeat_weekly: "كل أسبوع", repeat_monthly: "كل شهر", repeat_yearly: "كل سنة", repeat_custom: "تخصيص", repeat_freq_day: "يوم", repeat_freq_week: "أسبوع", repeat_freq_month: "شهر", repeat_freq_year: "سنة", repeat_on_date: "في التاريخ", repeat_ends: "ينتهي", month_for_recurring: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"], day_for_recurring: ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"] } }, be: { date: { month_full: ["Студзень", "Люты", "Сакавік", "Красавік", "Maй", "Чэрвень", "Ліпень", "Жнівень", "Верасень", "Кастрычнік", "Лістапад", "Снежань"], month_short: ["Студз", "Лют", "Сак", "Крас", "Maй", "Чэр", "Ліп", "Жнів", "Вер", "Каст", "Ліст", "Снеж"], day_full: ["Нядзеля", "Панядзелак", "Аўторак", "Серада", "Чацвер", "Пятніца", "Субота"], day_short: ["Нд", "Пн", "Аўт", "Ср", "Чцв", "Пт", "Сб"] }, labels: { dhx_cal_today_button: "Сёння", day_tab: "Дзень", week_tab: "Тыдзень", month_tab: "Месяц", new_event: "Новая падзея", icon_save: "Захаваць", icon_cancel: "Адмяніць", icon_details: "Дэталі", icon_edit: "Змяніць", icon_delete: "Выдаліць", confirm_closing: "", confirm_deleting: "Падзея будзе выдалена незваротна, працягнуць?", section_description: "Апісанне", section_time: "Перыяд часу", full_day: "Увесь дзень", confirm_recurring: "Вы хочаце змяніць усю серыю паўтаральных падзей?", section_recurring: "Паўтарэнне", button_recurring: "Адключана", button_recurring_open: "Уключана", button_edit_series: "Рэдагаваць серыю", button_edit_occurrence: "Рэдагаваць асобнік", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Спіс", date: "Дата", description: "Апісанне", year_tab: "Год", week_agenda_tab: "Спіс", grid_tab: "Спic", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Дзень", repeat_radio_week: "Тыдзень", repeat_radio_month: "Месяц", repeat_radio_year: "Год", repeat_radio_day_type: "Кожны", repeat_text_day_count: "дзень", repeat_radio_day_type2: "Кожны працоўны дзень", repeat_week: " Паўтараць кожны", repeat_text_week_count: "тыдзень", repeat_radio_month_type: "Паўтараць", repeat_radio_month_start: "", repeat_text_month_day: " чысла кожнага", repeat_text_month_count: "месяцу", repeat_text_month_count2_before: "кожны ", repeat_text_month_count2_after: "месяц", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "дзень", select_year_month: "", repeat_radio_end: "Без даты заканчэння", repeat_text_occurrences_count: "паўтораў", repeat_radio_end2: "", repeat_radio_end3: "Да ", repeat_never: "Ніколі", repeat_daily: "Кожны дзень", repeat_workdays: "Кожны працоўны дзень", repeat_weekly: "Кожны тыдзень", repeat_monthly: "Кожны месяц", repeat_yearly: "Кожны год", repeat_custom: "Наладжвальны", repeat_freq_day: "Дзень", repeat_freq_week: "Тыдзень", repeat_freq_month: "Месяц", repeat_freq_year: "Год", repeat_on_date: "На дату", repeat_ends: "Заканчваецца", month_for_recurring: ["Студзеня", "Лютага", "Сакавіка", "Красавіка", "Мая", "Чэрвеня", "Ліпeня", "Жніўня", "Верасня", "Кастрычніка", "Лістапада", "Снежня"], day_for_recurring: ["Нядзелю", "Панядзелак", "Аўторак", "Сераду", "Чацвер", "Пятніцу", "Суботу"] } }, ca: { date: { month_full: ["Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"], month_short: ["Gen", "Feb", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Oct", "Nov", "Des"], day_full: ["Diumenge", "Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte"], day_short: ["Dg", "Dl", "Dm", "Dc", "Dj", "Dv", "Ds"] }, labels: { dhx_cal_today_button: "Hui", day_tab: "Dia", week_tab: "Setmana", month_tab: "Mes", new_event: "Nou esdeveniment", icon_save: "Guardar", icon_cancel: "Cancel·lar", icon_details: "Detalls", icon_edit: "Editar", icon_delete: "Esborrar", confirm_closing: "", confirm_deleting: "L'esdeveniment s'esborrarà definitivament, continuar ?", section_description: "Descripció", section_time: "Periode de temps", full_day: "Tot el dia", confirm_recurring: "¿Desitja modificar el conjunt d'esdeveniments repetits?", section_recurring: "Repeteixca l'esdeveniment", button_recurring: "Impedit", button_recurring_open: "Permés", button_edit_series: "Edit sèrie", button_edit_occurrence: "Edita Instància", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Data", description: "Descripció", year_tab: "Any", week_agenda_tab: "Agenda", grid_tab: "Taula", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Diari", repeat_radio_week: "Setmanal", repeat_radio_month: "Mensual", repeat_radio_year: "Anual", repeat_radio_day_type: "Cada", repeat_text_day_count: "dia", repeat_radio_day_type2: "Cada dia laborable", repeat_week: " Repetir cada", repeat_text_week_count: "setmana els dies següents:", repeat_radio_month_type: "Repetir", repeat_radio_month_start: "El", repeat_text_month_day: "dia cada", repeat_text_month_count: "mes", repeat_text_month_count2_before: "cada", repeat_text_month_count2_after: "mes", repeat_year_label: "El", select_year_day2: "de", repeat_text_year_day: "dia", select_year_month: "mes", repeat_radio_end: "Sense data de finalització", repeat_text_occurrences_count: "ocurrències", repeat_radio_end2: "Després", repeat_radio_end3: "Finalitzar el", repeat_never: "Mai", repeat_daily: "Cada dia", repeat_workdays: "Cada dia laborable", repeat_weekly: "Cada setmana", repeat_monthly: "Cada mes", repeat_yearly: "Cada any", repeat_custom: "Personalitzat", repeat_freq_day: "Dia", repeat_freq_week: "Setmana", repeat_freq_month: "Mes", repeat_freq_year: "Any", repeat_on_date: "En la data", repeat_ends: "Finalitza", month_for_recurring: ["Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"], day_for_recurring: ["Diumenge", "Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte"] } }, cn: { date: { month_full: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], month_short: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], day_full: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"], day_short: ["日", "一", "二", "三", "四", "五", "六"] }, labels: { dhx_cal_today_button: "今天", day_tab: "日", week_tab: "周", month_tab: "月", new_event: "新建日程", icon_save: "保存", icon_cancel: "关闭", icon_details: "详细", icon_edit: "编辑", icon_delete: "删除", confirm_closing: "请确认是否撤销修改!", confirm_deleting: "是否删除日程?", section_description: "描述", section_time: "时间范围", full_day: "整天", confirm_recurring: "请确认是否将日程设为重复模式?", section_recurring: "重复周期", button_recurring: "禁用", button_recurring_open: "启用", button_edit_series: "编辑系列", button_edit_occurrence: "编辑实例", button_edit_occurrence_and_following: "This and following events", agenda_tab: "议程", date: "日期", description: "说明", year_tab: "今年", week_agenda_tab: "议程", grid_tab: "电网", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "按天", repeat_radio_week: "按周", repeat_radio_month: "按月", repeat_radio_year: "按年", repeat_radio_day_type: "每", repeat_text_day_count: "天", repeat_radio_day_type2: "每个工作日", repeat_week: " 重复 每", repeat_text_week_count: "星期的:", repeat_radio_month_type: "重复", repeat_radio_month_start: "在", repeat_text_month_day: "日 每", repeat_text_month_count: "月", repeat_text_month_count2_before: "每", repeat_text_month_count2_after: "月", repeat_year_label: "在", select_year_day2: "的", repeat_text_year_day: "日", select_year_month: "月", repeat_radio_end: "无结束日期", repeat_text_occurrences_count: "次结束", repeat_radio_end2: "重复", repeat_radio_end3: "结束于", repeat_never: "从不", repeat_daily: "每天", repeat_workdays: "每个工作日", repeat_weekly: "每周", repeat_monthly: "每月", repeat_yearly: "每年", repeat_custom: "自定义", repeat_freq_day: "天", repeat_freq_week: "周", repeat_freq_month: "月", repeat_freq_year: "年", repeat_on_date: "在日期", repeat_ends: "结束", month_for_recurring: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], day_for_recurring: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"] } }, cs: { date: { month_full: ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"], month_short: ["Led", "Ún", "Bře", "Dub", "Kvě", "Čer", "Čec", "Srp", "Září", "Říj", "List", "Pro"], day_full: ["Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"], day_short: ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"] }, labels: { dhx_cal_today_button: "Dnes", day_tab: "Den", week_tab: "Týden", month_tab: "Měsíc", new_event: "Nová událost", icon_save: "Uložit", icon_cancel: "Zpět", icon_details: "Detail", icon_edit: "Edituj", icon_delete: "Smazat", confirm_closing: "", confirm_deleting: "Událost bude trvale smazána, opravdu?", section_description: "Poznámky", section_time: "Doba platnosti", confirm_recurring: "Přejete si upravit celou řadu opakovaných událostí?", section_recurring: "Opakování události", button_recurring: "Vypnuto", button_recurring_open: "Zapnuto", button_edit_series: "Edit series", button_edit_occurrence: "Upravit instance", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Program", date: "Datum", description: "Poznámka", year_tab: "Rok", full_day: "Full day", week_agenda_tab: "Program", grid_tab: "Mřížka", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Denně", repeat_radio_week: "Týdně", repeat_radio_month: "Měsíčně", repeat_radio_year: "Ročně", repeat_radio_day_type: "každý", repeat_text_day_count: "Den", repeat_radio_day_type2: "pracovní dny", repeat_week: "Opakuje každých", repeat_text_week_count: "Týdnů na:", repeat_radio_month_type: "u každého", repeat_radio_month_start: "na", repeat_text_month_day: "Den každého", repeat_text_month_count: "Měsíc", repeat_text_month_count2_before: "každý", repeat_text_month_count2_after: "Měsíc", repeat_year_label: "na", select_year_day2: "v", repeat_text_year_day: "Den v", select_year_month: "", repeat_radio_end: "bez data ukončení", repeat_text_occurrences_count: "Události", repeat_radio_end2: "po", repeat_radio_end3: "Konec", repeat_never: "Nikdy", repeat_daily: "Každý den", repeat_workdays: "Každý pracovní den", repeat_weekly: "Každý týden", repeat_monthly: "Každý měsíc", repeat_yearly: "Každý rok", repeat_custom: "Vlastní", repeat_freq_day: "Den", repeat_freq_week: "Týden", repeat_freq_month: "Měsíc", repeat_freq_year: "Rok", repeat_on_date: "Na datum", repeat_ends: "Končí", month_for_recurring: ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"], day_for_recurring: ["Neděle ", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"] } }, da: { date: { month_full: ["Januar", "Februar", "Marts", "April", "Maj", "Juni", "Juli", "August", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"], day_short: ["Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"] }, labels: { dhx_cal_today_button: "Idag", day_tab: "Dag", week_tab: "Uge", month_tab: "Måned", new_event: "Ny begivenhed", icon_save: "Gem", icon_cancel: "Fortryd", icon_details: "Detaljer", icon_edit: "Tilret", icon_delete: "Slet", confirm_closing: "Dine rettelser vil gå tabt.. Er dy sikker?", confirm_deleting: "Bigivenheden vil blive slettet permanent. Er du sikker?", section_description: "Beskrivelse", section_time: "Tidsperiode", confirm_recurring: "Vil du tilrette hele serien af gentagne begivenheder?", section_recurring: "Gentag begivenhed", button_recurring: "Frakoblet", button_recurring_open: "Tilkoblet", button_edit_series: "Rediger serien", button_edit_occurrence: "Rediger en kopi", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Dagsorden", date: "Dato", description: "Beskrivelse", year_tab: "År", week_agenda_tab: "Dagsorden", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daglig", repeat_radio_week: "Ugenlig", repeat_radio_month: "Månedlig", repeat_radio_year: "Årlig", repeat_radio_day_type: "Hver", repeat_text_day_count: "dag", repeat_radio_day_type2: "På hver arbejdsdag", repeat_week: " Gentager sig hver", repeat_text_week_count: "uge på følgende dage:", repeat_radio_month_type: "Hver den", repeat_radio_month_start: "Den", repeat_text_month_day: " i hver", repeat_text_month_count: "måned", repeat_text_month_count2_before: "hver", repeat_text_month_count2_after: "måned", repeat_year_label: "Den", select_year_day2: "i", repeat_text_year_day: "dag i", select_year_month: "", repeat_radio_end: "Ingen slutdato", repeat_text_occurrences_count: "gentagelse", repeat_radio_end2: "Efter", repeat_radio_end3: "Slut", repeat_never: "Aldrig", repeat_daily: "Hver dag", repeat_workdays: "Hver hverdag", repeat_weekly: "Hver uge", repeat_monthly: "Hver måned", repeat_yearly: "Hvert år", repeat_custom: "Brugerdefineret", repeat_freq_day: "Dag", repeat_freq_week: "Uge", repeat_freq_month: "Måned", repeat_freq_year: "År", repeat_on_date: "På dato", repeat_ends: "Slutter", month_for_recurring: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"], day_for_recurring: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"] } }, de: { date: { month_full: [" Januar", " Februar", " März ", " April", " Mai", " Juni", " Juli", " August", " September ", " Oktober", " November ", " Dezember"], month_short: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"], day_full: ["Sonntag", "Montag", "Dienstag", " Mittwoch", " Donnerstag", "Freitag", "Samstag"], day_short: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"] }, labels: { dhx_cal_today_button: "Heute", day_tab: "Tag", week_tab: "Woche", month_tab: "Monat", new_event: "neuer Eintrag", icon_save: "Speichern", icon_cancel: "Abbrechen", icon_details: "Details", icon_edit: "Ändern", icon_delete: "Löschen", confirm_closing: "", confirm_deleting: "Der Eintrag wird gelöscht", section_description: "Beschreibung", section_time: "Zeitspanne", full_day: "Ganzer Tag", confirm_recurring: "Wollen Sie alle Einträge bearbeiten oder nur diesen einzelnen Eintrag?", section_recurring: "Wiederholung", button_recurring: "Aus", button_recurring_open: "An", button_edit_series: "Bearbeiten Sie die Serie", button_edit_occurrence: "Bearbeiten Sie eine Kopie", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Datum", description: "Beschreibung", year_tab: "Jahre", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Täglich", repeat_radio_week: "Wöchentlich", repeat_radio_month: "Monatlich", repeat_radio_year: "Jährlich", repeat_radio_day_type: "jeden", repeat_text_day_count: "Tag", repeat_radio_day_type2: "an jedem Arbeitstag", repeat_week: " Wiederholt sich jede", repeat_text_week_count: "Woche am:", repeat_radio_month_type: "an jedem", repeat_radio_month_start: "am", repeat_text_month_day: "Tag eines jeden", repeat_text_month_count: "Monats", repeat_text_month_count2_before: "jeden", repeat_text_month_count2_after: "Monats", repeat_year_label: "am", select_year_day2: "im", repeat_text_year_day: "Tag im", select_year_month: "", repeat_radio_end: "kein Enddatum", repeat_text_occurrences_count: "Ereignissen", repeat_radio_end3: "Schluß", repeat_radio_end2: "nach", repeat_never: "Nie", repeat_daily: "Jeden Tag", repeat_workdays: "Jeden Werktag", repeat_weekly: "Jede Woche", repeat_monthly: "Jeden Monat", repeat_yearly: "Jedes Jahr", repeat_custom: "Benutzerdefiniert", repeat_freq_day: "Tag", repeat_freq_week: "Woche", repeat_freq_month: "Monat", repeat_freq_year: "Jahr", repeat_on_date: "Am Datum", repeat_ends: "Endet", month_for_recurring: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"], day_for_recurring: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"] } }, el: { date: { month_full: ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάϊος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"], month_short: ["ΙΑΝ", "ΦΕΒ", "ΜΑΡ", "ΑΠΡ", "ΜΑΙ", "ΙΟΥΝ", "ΙΟΥΛ", "ΑΥΓ", "ΣΕΠ", "ΟΚΤ", "ΝΟΕ", "ΔΕΚ"], day_full: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"], day_short: ["ΚΥ", "ΔΕ", "ΤΡ", "ΤΕ", "ΠΕ", "ΠΑ", "ΣΑ"] }, labels: { dhx_cal_today_button: "Σήμερα", day_tab: "Ημέρα", week_tab: "Εβδομάδα", month_tab: "Μήνας", new_event: "Νέο έργο", icon_save: "Αποθήκευση", icon_cancel: "Άκυρο", icon_details: "Λεπτομέρειες", icon_edit: "Επεξεργασία", icon_delete: "Διαγραφή", confirm_closing: "", confirm_deleting: "Το έργο θα διαγραφεί οριστικά. Θέλετε να συνεχίσετε;", section_description: "Περιγραφή", section_time: "Χρονική περίοδος", full_day: "Πλήρης Ημέρα", confirm_recurring: "Θέλετε να επεξεργασθείτε ολόκληρη την ομάδα των επαναλαμβανόμενων έργων;", section_recurring: "Επαναλαμβανόμενο έργο", button_recurring: "Ανενεργό", button_recurring_open: "Ενεργό", button_edit_series: "Επεξεργαστείτε τη σειρά", button_edit_occurrence: "Επεξεργασία ένα αντίγραφο", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Ημερήσια Διάταξη", date: "Ημερομηνία", description: "Περιγραφή", year_tab: "Έτος", week_agenda_tab: "Ημερήσια Διάταξη", grid_tab: "Πλέγμα", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Ημερησίως", repeat_radio_week: "Εβδομαδιαίως", repeat_radio_month: "Μηνιαίως", repeat_radio_year: "Ετησίως", repeat_radio_day_type: "Κάθε", repeat_text_day_count: "ημέρα", repeat_radio_day_type2: "Κάθε εργάσιμη", repeat_week: " Επανάληψη κάθε", repeat_text_week_count: "εβδομάδα τις επόμενες ημέρες:", repeat_radio_month_type: "Επανάληψη", repeat_radio_month_start: "Την", repeat_text_month_day: "ημέρα κάθε", repeat_text_month_count: "μήνα", repeat_text_month_count2_before: "κάθε", repeat_text_month_count2_after: "μήνα", repeat_year_label: "Την", select_year_day2: "του", repeat_text_year_day: "ημέρα", select_year_month: "μήνα", repeat_radio_end: "Χωρίς ημερομηνία λήξεως", repeat_text_occurrences_count: "επαναλήψεις", repeat_radio_end3: "Λήγει την", repeat_radio_end2: "Μετά από", repeat_never: "Ποτέ", repeat_daily: "Κάθε μέρα", repeat_workdays: "Κάθε εργάσιμη μέρα", repeat_weekly: "Κάθε εβδομάδα", repeat_monthly: "Κάθε μήνα", repeat_yearly: "Κάθε χρόνο", repeat_custom: "Προσαρμοσμένο", repeat_freq_day: "Ημέρα", repeat_freq_week: "Εβδομάδα", repeat_freq_month: "Μήνας", repeat_freq_year: "Χρόνος", repeat_on_date: "Σε ημερομηνία", repeat_ends: "Λήγει", month_for_recurring: ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάϊος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"], day_for_recurring: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"] } }, en: { date: { month_full: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], day_full: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], day_short: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] }, labels: { dhx_cal_today_button: "Today", day_tab: "Day", week_tab: "Week", month_tab: "Month", new_event: "New event", icon_save: "Save", icon_cancel: "Cancel", icon_details: "Details", icon_edit: "Edit", icon_delete: "Delete", confirm_closing: "", confirm_deleting: "Event will be deleted permanently, are you sure?", section_description: "Description", section_time: "Time period", full_day: "Full day", confirm_recurring: "Edit recurring event", section_recurring: "Repeat event", button_recurring: "Disabled", button_recurring_open: "Enabled", button_edit_series: "All events", button_edit_occurrence: "This event", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Date", description: "Description", year_tab: "Year", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daily", repeat_radio_week: "Weekly", repeat_radio_month: "Monthly", repeat_radio_year: "Yearly", repeat_radio_day_type: "Every", repeat_text_day_count: "day", repeat_radio_day_type2: "Every workday", repeat_week: " Repeat every", repeat_text_week_count: "week next days:", repeat_radio_month_type: "Repeat", repeat_radio_month_start: "On", repeat_text_month_day: "day every", repeat_text_month_count: "month", repeat_text_month_count2_before: "every", repeat_text_month_count2_after: "month", repeat_year_label: "On", select_year_day2: "of", repeat_text_year_day: "day", select_year_month: "month", repeat_radio_end: "No end date", repeat_text_occurrences_count: "occurrences", repeat_radio_end2: "After", repeat_radio_end3: "End by", repeat_never: "Never", repeat_daily: "Every day", repeat_workdays: "Every weekday", repeat_weekly: "Every week", repeat_monthly: "Every month", repeat_yearly: "Every year", repeat_custom: "Custom", repeat_freq_day: "Day", repeat_freq_week: "Week", repeat_freq_month: "Month", repeat_freq_year: "Year", repeat_on_date: "On date", repeat_ends: "Ends", month_for_recurring: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], day_for_recurring: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] } }, es: { date: { month_full: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"], month_short: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"], day_full: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"], day_short: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"] }, labels: { dhx_cal_today_button: "Hoy", day_tab: "Día", week_tab: "Semana", month_tab: "Mes", new_event: "Nuevo evento", icon_save: "Guardar", icon_cancel: "Cancelar", icon_details: "Detalles", icon_edit: "Editar", icon_delete: "Eliminar", confirm_closing: "", confirm_deleting: "El evento se borrará definitivamente, ¿continuar?", section_description: "Descripción", section_time: "Período", full_day: "Todo el día", confirm_recurring: "¿Desea modificar el conjunto de eventos repetidos?", section_recurring: "Repita el evento", button_recurring: "Impedido", button_recurring_open: "Permitido", button_edit_series: "Editar la serie", button_edit_occurrence: "Editar este evento", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Día", date: "Fecha", description: "Descripción", year_tab: "Año", week_agenda_tab: "Día", grid_tab: "Reja", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Diariamente", repeat_radio_week: "Semanalmente", repeat_radio_month: "Mensualmente", repeat_radio_year: "Anualmente", repeat_radio_day_type: "Cada", repeat_text_day_count: "dia", repeat_radio_day_type2: "Cada jornada de trabajo", repeat_week: " Repetir cada", repeat_text_week_count: "semana:", repeat_radio_month_type: "Repita", repeat_radio_month_start: "El", repeat_text_month_day: "dia cada ", repeat_text_month_count: "mes", repeat_text_month_count2_before: "cada", repeat_text_month_count2_after: "mes", repeat_year_label: "El", select_year_day2: "del", repeat_text_year_day: "dia", select_year_month: "mes", repeat_radio_end: "Sin fecha de finalización", repeat_text_occurrences_count: "ocurrencias", repeat_radio_end3: "Fin", repeat_radio_end2: "Después de", repeat_never: "Nunca", repeat_daily: "Cada día", repeat_workdays: "Cada día laborable", repeat_weekly: "Cada semana", repeat_monthly: "Cada mes", repeat_yearly: "Cada año", repeat_custom: "Personalizado", repeat_freq_day: "Día", repeat_freq_week: "Semana", repeat_freq_month: "Mes", repeat_freq_year: "Año", repeat_on_date: "En la fecha", repeat_ends: "Termina", month_for_recurring: ["Enero", "Febrero", "Маrzo", "Аbril", "Mayo", "Junio", "Julio", "Аgosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"], day_for_recurring: ["Domingo", "Lunes", "Martes", "Miércoles", "Jeuves", "Viernes", "Sabado"] } }, fi: { date: { month_full: ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kes&auml;kuu", "Hein&auml;kuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"], month_short: ["Tam", "Hel", "Maa", "Huh", "Tou", "Kes", "Hei", "Elo", "Syy", "Lok", "Mar", "Jou"], day_full: ["Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"], day_short: ["Su", "Ma", "Ti", "Ke", "To", "Pe", "La"] }, labels: { dhx_cal_today_button: "Tänään", day_tab: "Päivä", week_tab: "Viikko", month_tab: "Kuukausi", new_event: "Uusi tapahtuma", icon_save: "Tallenna", icon_cancel: "Peru", icon_details: "Tiedot", icon_edit: "Muokkaa", icon_delete: "Poista", confirm_closing: "", confirm_deleting: "Haluatko varmasti poistaa tapahtuman?", section_description: "Kuvaus", section_time: "Aikajakso", full_day: "Koko päivä", confirm_recurring: "Haluatko varmasti muokata toistuvan tapahtuman kaikkia jaksoja?", section_recurring: "Toista tapahtuma", button_recurring: "Ei k&auml;yt&ouml;ss&auml;", button_recurring_open: "K&auml;yt&ouml;ss&auml;", button_edit_series: "Muokkaa sarja", button_edit_occurrence: "Muokkaa kopio", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Esityslista", date: "Päivämäärä", description: "Kuvaus", year_tab: "Vuoden", week_agenda_tab: "Esityslista", grid_tab: "Ritilä", drag_to_create: "Luo uusi vetämällä", drag_to_move: "Siirrä vetämällä", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "P&auml;ivitt&auml;in", repeat_radio_week: "Viikoittain", repeat_radio_month: "Kuukausittain", repeat_radio_year: "Vuosittain", repeat_radio_day_type: "Joka", repeat_text_day_count: "p&auml;iv&auml;", repeat_radio_day_type2: "Joka arkip&auml;iv&auml;", repeat_week: "Toista joka", repeat_text_week_count: "viikko n&auml;in&auml; p&auml;ivin&auml;:", repeat_radio_month_type: "Toista", repeat_radio_month_start: "", repeat_text_month_day: "p&auml;iv&auml;n&auml; joka", repeat_text_month_count: "kuukausi", repeat_text_month_count2_before: "joka", repeat_text_month_count2_after: "kuukausi", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "p&auml;iv&auml;", select_year_month: "kuukausi", repeat_radio_end: "Ei loppumisaikaa", repeat_text_occurrences_count: "Toiston j&auml;lkeen", repeat_radio_end3: "Loppuu", repeat_radio_end2: "", repeat_never: "Ei koskaan", repeat_daily: "Joka päivä", repeat_workdays: "Joka arkipäivä", repeat_weekly: "Joka viikko", repeat_monthly: "Joka kuukausi", repeat_yearly: "Joka vuosi", repeat_custom: "Mukautettu", repeat_freq_day: "Päivä", repeat_freq_week: "Viikko", repeat_freq_month: "Kuukausi", repeat_freq_year: "Vuosi", repeat_on_date: "Tiettynä päivänä", repeat_ends: "Päättyy", month_for_recurring: ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kes&auml;kuu", "Hein&auml;kuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"], day_for_recurring: ["Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"] } }, fr: { date: { month_full: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"], month_short: ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"], day_full: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"], day_short: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"] }, labels: { dhx_cal_today_button: "Aujourd'hui", day_tab: "Jour", week_tab: "Semaine", month_tab: "Mois", new_event: "Nouvel événement", icon_save: "Enregistrer", icon_cancel: "Annuler", icon_details: "Détails", icon_edit: "Modifier", icon_delete: "Effacer", confirm_closing: "", confirm_deleting: "L'événement sera effacé sans appel, êtes-vous sûr ?", section_description: "Description", section_time: "Période", full_day: "Journée complète", confirm_recurring: "Voulez-vous éditer toute une série d'évènements répétés?", section_recurring: "Périodicité", button_recurring: "Désactivé", button_recurring_open: "Activé", button_edit_series: "Modifier la série", button_edit_occurrence: "Modifier une copie", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Jour", date: "Date", description: "Description", year_tab: "Année", week_agenda_tab: "Jour", grid_tab: "Grille", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Quotidienne", repeat_radio_week: "Hebdomadaire", repeat_radio_month: "Mensuelle", repeat_radio_year: "Annuelle", repeat_radio_day_type: "Chaque", repeat_text_day_count: "jour", repeat_radio_day_type2: "Chaque journée de travail", repeat_week: " Répéter toutes les", repeat_text_week_count: "semaine:", repeat_radio_month_type: "Répéter", repeat_radio_month_start: "Le", repeat_text_month_day: "jour chaque", repeat_text_month_count: "mois", repeat_text_month_count2_before: "chaque", repeat_text_month_count2_after: "mois", repeat_year_label: "Le", select_year_day2: "du", repeat_text_year_day: "jour", select_year_month: "mois", repeat_radio_end: "Pas de date d&quot;achèvement", repeat_text_occurrences_count: "occurrences", repeat_radio_end3: "Fin", repeat_radio_end2: "Après", repeat_never: "Jamais", repeat_daily: "Chaque jour", repeat_workdays: "Chaque jour ouvrable", repeat_weekly: "Chaque semaine", repeat_monthly: "Chaque mois", repeat_yearly: "Chaque année", repeat_custom: "Personnalisé", repeat_freq_day: "Jour", repeat_freq_week: "Semaine", repeat_freq_month: "Mois", repeat_freq_year: "Année", repeat_on_date: "À la date", repeat_ends: "Se termine", month_for_recurring: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"], day_for_recurring: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"] } }, he: { date: { month_full: ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"], month_short: ["ינו", "פבר", "מרץ", "אפר", "מאי", "יונ", "יול", "אוג", "ספט", "אוק", "נוב", "דצמ"], day_full: ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"], day_short: ["א", "ב", "ג", "ד", "ה", "ו", "ש"] }, labels: { dhx_cal_today_button: "היום", day_tab: "יום", week_tab: "שבוע", month_tab: "חודש", new_event: "ארוע חדש", icon_save: "שמור", icon_cancel: "בטל", icon_details: "פרטים", icon_edit: "ערוך", icon_delete: "מחק", confirm_closing: "", confirm_deleting: "ארוע ימחק סופית.להמשיך?", section_description: "תיאור", section_time: "תקופה", confirm_recurring: "האם ברצונך לשנות כל סדרת ארועים מתמשכים?", section_recurring: "להעתיק ארוע", button_recurring: "לא פעיל", button_recurring_open: "פעיל", full_day: "יום שלם", button_edit_series: "ערוך את הסדרה", button_edit_occurrence: "עריכת עותק", button_edit_occurrence_and_following: "This and following events", agenda_tab: "סדר יום", date: "תאריך", description: "תיאור", year_tab: "לשנה", week_agenda_tab: "סדר יום", grid_tab: "סורג", drag_to_create: "Drag to create", drag_to_move: "גרור כדי להזיז", message_ok: "OK", message_cancel: "בטל", next: "הבא", prev: "הקודם", year: "שנה", month: "חודש", day: "יום", hour: "שעה", minute: "דקה", repeat_radio_day: "יומי", repeat_radio_week: "שבועי", repeat_radio_month: "חודשי", repeat_radio_year: "שנתי", repeat_radio_day_type: "חזור כל", repeat_text_day_count: "ימים", repeat_radio_day_type2: "חזור כל יום עבודה", repeat_week: " חזור כל", repeat_text_week_count: "שבוע לפי ימים:", repeat_radio_month_type: "חזור כל", repeat_radio_month_start: "כל", repeat_text_month_day: "ימים כל", repeat_text_month_count: "חודשים", repeat_text_month_count2_before: "חזור כל", repeat_text_month_count2_after: "חודש", repeat_year_label: "כל", select_year_day2: "בחודש", repeat_text_year_day: "ימים", select_year_month: "חודש", repeat_radio_end: "לעולם לא מסתיים", repeat_text_occurrences_count: "אירועים", repeat_radio_end3: "מסתיים ב", repeat_radio_end2: "אחרי", repeat_never: "אף פעם", repeat_daily: "כל יום", repeat_workdays: "כל יום עבודה", repeat_weekly: "כל שבוע", repeat_monthly: "כל חודש", repeat_yearly: "כל שנה", repeat_custom: "מותאם אישית", repeat_freq_day: "יום", repeat_freq_week: "שבוע", repeat_freq_month: "חודש", repeat_freq_year: "שנה", repeat_on_date: "בתאריך", repeat_ends: "מסתיים", month_for_recurring: ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"], day_for_recurring: ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"] } }, hu: { date: { month_full: ["Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"], month_short: ["Jan", "Feb", "Már", "Ápr", "Máj", "Jún", "Júl", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Vasárnap", "Hétfõ", "Kedd", "Szerda", "Csütörtök", "Péntek", "szombat"], day_short: ["Va", "Hé", "Ke", "Sze", "Csü", "Pé", "Szo"] }, labels: { dhx_cal_today_button: "Ma", day_tab: "Nap", week_tab: "Hét", month_tab: "Hónap", new_event: "Új esemény", icon_save: "Mentés", icon_cancel: "Mégse", icon_details: "Részletek", icon_edit: "Szerkesztés", icon_delete: "Törlés", confirm_closing: "", confirm_deleting: "Az esemény törölve lesz, biztosan folytatja?", section_description: "Leírás", section_time: "Idõszak", full_day: "Egesz napos", confirm_recurring: "Biztosan szerkeszteni akarod az összes ismétlõdõ esemény beállítását?", section_recurring: "Esemény ismétlése", button_recurring: "Tiltás", button_recurring_open: "Engedélyezés", button_edit_series: "Edit series", button_edit_occurrence: "Szerkesztés bíróság", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Napirend", date: "Dátum", description: "Leírás", year_tab: "Év", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Napi", repeat_radio_week: "Heti", repeat_radio_month: "Havi", repeat_radio_year: "Éves", repeat_radio_day_type: "Minden", repeat_text_day_count: "nap", repeat_radio_day_type2: "Minden munkanap", repeat_week: " Ismételje meg minden", repeat_text_week_count: "héten a következő napokon:", repeat_radio_month_type: "Ismétlés", repeat_radio_month_start: "Ekkor", repeat_text_month_day: "nap minden", repeat_text_month_count: "hónapban", repeat_text_month_count2_before: "minden", repeat_text_month_count2_after: "hónapban", repeat_year_label: "Ekkor", select_year_day2: "-án/-én", repeat_text_year_day: "nap", select_year_month: "hónap", repeat_radio_end: "Nincs befejezési dátum", repeat_text_occurrences_count: "esemény", repeat_radio_end2: "Után", repeat_radio_end3: "Befejező dátum", repeat_never: "Soha", repeat_daily: "Minden nap", repeat_workdays: "Minden munkanap", repeat_weekly: "Minden héten", repeat_monthly: "Minden hónapban", repeat_yearly: "Minden évben", repeat_custom: "Egyedi", repeat_freq_day: "Nap", repeat_freq_week: "Hét", repeat_freq_month: "Hónap", repeat_freq_year: "Év", repeat_on_date: "Dátum szerint", repeat_ends: "Befejeződik", month_for_recurring: ["Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"], day_for_recurring: ["Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"] } }, id: { date: { month_full: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"], month_short: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"], day_full: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"], day_short: ["Ming", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"] }, labels: { dhx_cal_today_button: "Hari Ini", day_tab: "Hari", week_tab: "Minggu", month_tab: "Bulan", new_event: "Acara Baru", icon_save: "Simpan", icon_cancel: "Batal", icon_details: "Detail", icon_edit: "Edit", icon_delete: "Hapus", confirm_closing: "", confirm_deleting: "Acara akan dihapus", section_description: "Keterangan", section_time: "Periode", full_day: "Hari penuh", confirm_recurring: "Apakah acara ini akan berulang?", section_recurring: "Acara Rutin", button_recurring: "Tidak Difungsikan", button_recurring_open: "Difungsikan", button_edit_series: "Mengedit seri", button_edit_occurrence: "Mengedit salinan", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Tanggal", description: "Keterangan", year_tab: "Tahun", week_agenda_tab: "Agenda", grid_tab: "Tabel", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Harian", repeat_radio_week: "Mingguan", repeat_radio_month: "Bulanan", repeat_radio_year: "Tahunan", repeat_radio_day_type: "Setiap", repeat_text_day_count: "hari", repeat_radio_day_type2: "Setiap hari kerja", repeat_week: " Ulangi setiap", repeat_text_week_count: "minggu pada hari berikut:", repeat_radio_month_type: "Ulangi", repeat_radio_month_start: "Pada", repeat_text_month_day: "hari setiap", repeat_text_month_count: "bulan", repeat_text_month_count2_before: "setiap", repeat_text_month_count2_after: "bulan", repeat_year_label: "Pada", select_year_day2: "dari", repeat_text_year_day: "hari", select_year_month: "bulan", repeat_radio_end: "Tanpa tanggal akhir", repeat_text_occurrences_count: "kejadian", repeat_radio_end2: "Setelah", repeat_radio_end3: "Berakhir pada", repeat_never: "Tidak pernah", repeat_daily: "Setiap hari", repeat_workdays: "Setiap hari kerja", repeat_weekly: "Setiap minggu", repeat_monthly: "Setiap bulan", repeat_yearly: "Setiap tahun", repeat_custom: "Kustom", repeat_freq_day: "Hari", repeat_freq_week: "Minggu", repeat_freq_month: "Bulan", repeat_freq_year: "Tahun", repeat_on_date: "Pada tanggal", repeat_ends: "Berakhir", month_for_recurring: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"], day_for_recurring: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"] } }, it: { date: { month_full: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"], month_short: ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"], day_full: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"], day_short: ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"] }, labels: { dhx_cal_today_button: "Oggi", day_tab: "Giorno", week_tab: "Settimana", month_tab: "Mese", new_event: "Nuovo evento", icon_save: "Salva", icon_cancel: "Chiudi", icon_details: "Dettagli", icon_edit: "Modifica", icon_delete: "Elimina", confirm_closing: "", confirm_deleting: "L'evento sarà eliminato, siete sicuri?", section_description: "Descrizione", section_time: "Periodo di tempo", full_day: "Intera giornata", confirm_recurring: "Vuoi modificare l'intera serie di eventi?", section_recurring: "Ripetere l'evento", button_recurring: "Disattivato", button_recurring_open: "Attivato", button_edit_series: "Modificare la serie", button_edit_occurrence: "Modificare una copia", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Data", description: "Descrizione", year_tab: "Anno", week_agenda_tab: "Agenda", grid_tab: "Griglia", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Quotidiano", repeat_radio_week: "Settimanale", repeat_radio_month: "Mensile", repeat_radio_year: "Annuale", repeat_radio_day_type: "Ogni", repeat_text_day_count: "giorno", repeat_radio_day_type2: "Ogni giornata lavorativa", repeat_week: " Ripetere ogni", repeat_text_week_count: "settimana:", repeat_radio_month_type: "Ripetere", repeat_radio_month_start: "Il", repeat_text_month_day: "giorno ogni", repeat_text_month_count: "mese", repeat_text_month_count2_before: "ogni", repeat_text_month_count2_after: "mese", repeat_year_label: "Il", select_year_day2: "del", repeat_text_year_day: "giorno", select_year_month: "mese", repeat_radio_end: "Senza data finale", repeat_text_occurrences_count: "occorenze", repeat_radio_end3: "Fine", repeat_radio_end2: "Dopo", repeat_never: "Mai", repeat_daily: "Ogni giorno", repeat_workdays: "Ogni giorno feriale", repeat_weekly: "Ogni settimana", repeat_monthly: "Ogni mese", repeat_yearly: "Ogni anno", repeat_custom: "Personalizzato", repeat_freq_day: "Giorno", repeat_freq_week: "Settimana", repeat_freq_month: "Mese", repeat_freq_year: "Anno", repeat_on_date: "Alla data", repeat_ends: "Finisce", month_for_recurring: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Jiugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"], day_for_recurring: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Jovedì", "Venerdì", "Sabato"] } }, jp: { date: { month_full: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], month_short: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], day_full: ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"], day_short: ["日", "月", "火", "水", "木", "金", "土"] }, labels: { dhx_cal_today_button: "今日", day_tab: "日", week_tab: "週", month_tab: "月", new_event: "新イベント", icon_save: "保存", icon_cancel: "キャンセル", icon_details: "詳細", icon_edit: "編集", icon_delete: "削除", confirm_closing: "", confirm_deleting: "イベント完全に削除されます、宜しいですか？", section_description: "デスクリプション", section_time: "期間", confirm_recurring: "繰り返されているイベントを全て編集しますか？", section_recurring: "イベントを繰り返す", button_recurring: "無効", button_recurring_open: "有効", full_day: "終日", button_edit_series: "シリーズを編集します", button_edit_occurrence: "コピーを編集", button_edit_occurrence_and_following: "This and following events", agenda_tab: "議題は", date: "日付", description: "説明", year_tab: "今年", week_agenda_tab: "議題は", grid_tab: "グリッド", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "毎日", repeat_radio_week: "毎週", repeat_radio_month: "毎月", repeat_radio_year: "毎年", repeat_radio_day_type: "毎", repeat_text_day_count: "日", repeat_radio_day_type2: "毎営業日", repeat_week: " 繰り返し毎", repeat_text_week_count: "週 次の日:", repeat_radio_month_type: "繰り返し", repeat_radio_month_start: "オン", repeat_text_month_day: "日毎", repeat_text_month_count: "月", repeat_text_month_count2_before: "毎", repeat_text_month_count2_after: "月", repeat_year_label: "オン", select_year_day2: "の", repeat_text_year_day: "日", select_year_month: "月", repeat_radio_end: "終了日なし", repeat_text_occurrences_count: "回数", repeat_radio_end2: "後", repeat_radio_end3: "終了日まで", repeat_never: "決して", repeat_daily: "毎日", repeat_workdays: "毎営業日", repeat_weekly: "毎週", repeat_monthly: "毎月", repeat_yearly: "毎年", repeat_custom: "カスタム", repeat_freq_day: "日", repeat_freq_week: "週", repeat_freq_month: "月", repeat_freq_year: "年", repeat_on_date: "日にち", repeat_ends: "終了", month_for_recurring: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], day_for_recurring: ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"] } }, nb: { date: { month_full: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], month_short: ["Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des"], day_full: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"], day_short: ["Søn", "Mon", "Tir", "Ons", "Tor", "Fre", "Lør"] }, labels: { dhx_cal_today_button: "I dag", day_tab: "Dag", week_tab: "Uke", month_tab: "Måned", new_event: "Ny hendelse", icon_save: "Lagre", icon_cancel: "Avbryt", icon_details: "Detaljer", icon_edit: "Rediger", icon_delete: "Slett", confirm_closing: "", confirm_deleting: "Hendelsen vil bli slettet permanent. Er du sikker?", section_description: "Beskrivelse", section_time: "Tidsperiode", confirm_recurring: "Vil du forandre hele dette settet av repeterende hendelser?", section_recurring: "Repeter hendelsen", button_recurring: "Av", button_recurring_open: "På", button_edit_series: "Rediger serien", button_edit_occurrence: "Redigere en kopi", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Dato", description: "Beskrivelse", year_tab: "År", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daglig", repeat_radio_week: "Ukentlig", repeat_radio_month: "Månedlig", repeat_radio_year: "Årlig", repeat_radio_day_type: "Hver", repeat_text_day_count: "dag", repeat_radio_day_type2: "Alle hverdager", repeat_week: " Gjentas hver", repeat_text_week_count: "uke på:", repeat_radio_month_type: "På hver", repeat_radio_month_start: "På", repeat_text_month_day: "dag hver", repeat_text_month_count: "måned", repeat_text_month_count2_before: "hver", repeat_text_month_count2_after: "måned", repeat_year_label: "på", select_year_day2: "i", repeat_text_year_day: "dag i", select_year_month: "", repeat_radio_end: "Ingen sluttdato", repeat_text_occurrences_count: "forekomst", repeat_radio_end3: "Stop den", repeat_radio_end2: "Etter", repeat_never: "Aldri", repeat_daily: "Hver dag", repeat_workdays: "Hver ukedag", repeat_weekly: "Hver uke", repeat_monthly: "Hver måned", repeat_yearly: "Hvert år", repeat_custom: "Tilpasset", repeat_freq_day: "Dag", repeat_freq_week: "Uke", repeat_freq_month: "Måned", repeat_freq_year: "År", repeat_on_date: "På dato", repeat_ends: "Slutter", month_for_recurring: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], day_for_recurring: ["Sondag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"] } }, nl: { date: { month_full: ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "mrt", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"], day_short: ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"] }, labels: { dhx_cal_today_button: "Vandaag", day_tab: "Dag", week_tab: "Week", month_tab: "Maand", new_event: "Nieuw item", icon_save: "Opslaan", icon_cancel: "Annuleren", icon_details: "Details", icon_edit: "Bewerken", icon_delete: "Verwijderen", confirm_closing: "", confirm_deleting: "Item zal permanent worden verwijderd, doorgaan?", section_description: "Beschrijving", section_time: "Tijd periode", full_day: "Hele dag", confirm_recurring: "Wilt u alle terugkerende items bijwerken?", section_recurring: "Item herhalen", button_recurring: "Uit", button_recurring_open: "Aan", button_edit_series: "Bewerk de serie", button_edit_occurrence: "Bewerk een kopie", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Datum", description: "Omschrijving", year_tab: "Jaar", week_agenda_tab: "Agenda", grid_tab: "Tabel", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Dagelijks", repeat_radio_week: "Wekelijks", repeat_radio_month: "Maandelijks", repeat_radio_year: "Jaarlijks", repeat_radio_day_type: "Elke", repeat_text_day_count: "dag(en)", repeat_radio_day_type2: "Elke werkdag", repeat_week: " Herhaal elke", repeat_text_week_count: "week op de volgende dagen:", repeat_radio_month_type: "Herhaal", repeat_radio_month_start: "Op", repeat_text_month_day: "dag iedere", repeat_text_month_count: "maanden", repeat_text_month_count2_before: "iedere", repeat_text_month_count2_after: "maanden", repeat_year_label: "Op", select_year_day2: "van", repeat_text_year_day: "dag", select_year_month: "maand", repeat_radio_end: "Geen eind datum", repeat_text_occurrences_count: "keren", repeat_radio_end3: "Eindigd per", repeat_radio_end2: "Na", repeat_never: "Nooit", repeat_daily: "Elke dag", repeat_workdays: "Elke werkdag", repeat_weekly: "Elke week", repeat_monthly: "Elke maand", repeat_yearly: "Elk jaar", repeat_custom: "Aangepast", repeat_freq_day: "Dag", repeat_freq_week: "Week", repeat_freq_month: "Maand", repeat_freq_year: "Jaar", repeat_on_date: "Op datum", repeat_ends: "Eindigt", month_for_recurring: ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"], day_for_recurring: ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"] } }, no: { date: { month_full: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], month_short: ["Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des"], day_full: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"], day_short: ["Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"] }, labels: { dhx_cal_today_button: "Idag", day_tab: "Dag", week_tab: "Uke", month_tab: "Måned", new_event: "Ny", icon_save: "Lagre", icon_cancel: "Avbryt", icon_details: "Detaljer", icon_edit: "Endre", icon_delete: "Slett", confirm_closing: "Endringer blir ikke lagret, er du sikker?", confirm_deleting: "Oppføringen vil bli slettet, er du sikker?", section_description: "Beskrivelse", section_time: "Tidsperiode", full_day: "Full dag", confirm_recurring: "Vil du endre hele settet med repeterende oppføringer?", section_recurring: "Repeterende oppføring", button_recurring: "Ikke aktiv", button_recurring_open: "Aktiv", button_edit_series: "Rediger serien", button_edit_occurrence: "Redigere en kopi", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Dato", description: "Beskrivelse", year_tab: "År", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daglig", repeat_radio_week: "Ukentlig", repeat_radio_month: "Månedlig", repeat_radio_year: "Årlig", repeat_radio_day_type: "Hver", repeat_text_day_count: "dag", repeat_radio_day_type2: "Hver arbeidsdag", repeat_week: " Gjenta hver", repeat_text_week_count: "uke neste dager:", repeat_radio_month_type: "Gjenta", repeat_radio_month_start: "På", repeat_text_month_day: "dag hver", repeat_text_month_count: "måned", repeat_text_month_count2_before: "hver", repeat_text_month_count2_after: "måned", repeat_year_label: "På", select_year_day2: "av", repeat_text_year_day: "dag", select_year_month: "måned", repeat_radio_end: "Ingen sluttdato", repeat_text_occurrences_count: "forekomster", repeat_radio_end2: "Etter", repeat_radio_end3: "Slutt innen", repeat_never: "Aldri", repeat_daily: "Hver dag", repeat_workdays: "Hver ukedag", repeat_weekly: "Hver uke", repeat_monthly: "Hver måned", repeat_yearly: "Hvert år", repeat_custom: "Tilpasset", repeat_freq_day: "Dag", repeat_freq_week: "Uke", repeat_freq_month: "Måned", repeat_freq_year: "År", repeat_on_date: "På dato", repeat_ends: "Slutter", month_for_recurring: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], day_for_recurring: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"] } }, pl: { date: { month_full: ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"], month_short: ["Sty", "Lut", "Mar", "Kwi", "Maj", "Cze", "Lip", "Sie", "Wrz", "Paź", "Lis", "Gru"], day_full: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"], day_short: ["Nie", "Pon", "Wto", "Śro", "Czw", "Pią", "Sob"] }, labels: { dhx_cal_today_button: "Dziś", day_tab: "Dzień", week_tab: "Tydzień", month_tab: "Miesiąc", new_event: "Nowe zdarzenie", icon_save: "Zapisz", icon_cancel: "Anuluj", icon_details: "Szczegóły", icon_edit: "Edytuj", icon_delete: "Usuń", confirm_closing: "", confirm_deleting: "Zdarzenie zostanie usunięte na zawsze, kontynuować?", section_description: "Opis", section_time: "Okres czasu", full_day: "Cały dzień", confirm_recurring: "Czy chcesz edytować cały zbiór powtarzających się zdarzeń?", section_recurring: "Powtórz zdarzenie", button_recurring: "Nieaktywne", button_recurring_open: "Aktywne", button_edit_series: "Edytuj serię", button_edit_occurrence: "Edytuj kopię", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Data", description: "Opis", year_tab: "Rok", week_agenda_tab: "Agenda", grid_tab: "Tabela", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Codziennie", repeat_radio_week: "Co tydzie", repeat_radio_month: "Co miesic", repeat_radio_year: "Co rok", repeat_radio_day_type: "Kadego", repeat_text_day_count: "dnia", repeat_radio_day_type2: "Kadego dnia roboczego", repeat_week: " Powtarzaj kadego", repeat_text_week_count: "tygodnia w dni:", repeat_radio_month_type: "Powtrz", repeat_radio_month_start: "W", repeat_text_month_day: "dnia kadego", repeat_text_month_count: "miesica", repeat_text_month_count2_before: "kadego", repeat_text_month_count2_after: "miesica", repeat_year_label: "W", select_year_day2: "miesica", repeat_text_year_day: "dnia miesica", select_year_month: "", repeat_radio_end: "Bez daty kocowej", repeat_text_occurrences_count: "wystpieniu/ach", repeat_radio_end3: "Zakocz w", repeat_radio_end2: "Po", repeat_never: "Nigdy", repeat_daily: "Codziennie", repeat_workdays: "Każdy dzień roboczy", repeat_weekly: "Co tydzień", repeat_monthly: "Co miesiąc", repeat_yearly: "Co rok", repeat_custom: "Niestandardowy", repeat_freq_day: "Dzień", repeat_freq_week: "Tydzień", repeat_freq_month: "Miesiąc", repeat_freq_year: "Rok", repeat_on_date: "W dniu", repeat_ends: "Kończy się", month_for_recurring: ["Stycznia", "Lutego", "Marca", "Kwietnia", "Maja", "Czerwca", "Lipca", "Sierpnia", "Wrzenia", "Padziernka", "Listopada", "Grudnia"], day_for_recurring: ["Niedziela", "Poniedziaek", "Wtorek", "roda", "Czwartek", "Pitek", "Sobota"] } }, pt: { date: { month_full: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"], month_short: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"], day_full: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"], day_short: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"] }, labels: { dhx_cal_today_button: "Hoje", day_tab: "Dia", week_tab: "Semana", month_tab: "Mês", new_event: "Novo evento", icon_save: "Salvar", icon_cancel: "Cancelar", icon_details: "Detalhes", icon_edit: "Editar", icon_delete: "Deletar", confirm_closing: "", confirm_deleting: "Tem certeza que deseja excluir?", section_description: "Descrição", section_time: "Período de tempo", full_day: "Dia inteiro", confirm_recurring: "Deseja editar todos esses eventos repetidos?", section_recurring: "Repetir evento", button_recurring: "Desabilitar", button_recurring_open: "Habilitar", button_edit_series: "Editar a série", button_edit_occurrence: "Editar uma cópia", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Dia", date: "Data", description: "Descrição", year_tab: "Ano", week_agenda_tab: "Dia", grid_tab: "Grade", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Diário", repeat_radio_week: "Semanal", repeat_radio_month: "Mensal", repeat_radio_year: "Anual", repeat_radio_day_type: "Cada", repeat_text_day_count: "dia(s)", repeat_radio_day_type2: "Cada trabalho diário", repeat_week: " Repita cada", repeat_text_week_count: "semana:", repeat_radio_month_type: "Repetir", repeat_radio_month_start: "Em", repeat_text_month_day: "todo dia", repeat_text_month_count: "mês", repeat_text_month_count2_before: "todo", repeat_text_month_count2_after: "mês", repeat_year_label: "Em", select_year_day2: "of", repeat_text_year_day: "dia", select_year_month: "mês", repeat_radio_end: "Sem data final", repeat_text_occurrences_count: "ocorrências", repeat_radio_end3: "Fim", repeat_radio_end2: "Depois", repeat_never: "Nunca", repeat_daily: "Todos os dias", repeat_workdays: "Todos os dias úteis", repeat_weekly: "Toda semana", repeat_monthly: "Todo mês", repeat_yearly: "Todo ano", repeat_custom: "Personalizado", repeat_freq_day: "Dia", repeat_freq_week: "Semana", repeat_freq_month: "Mês", repeat_freq_year: "Ano", repeat_on_date: "Na data", repeat_ends: "Termina", month_for_recurring: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"], day_for_recurring: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"] } }, ro: { date: { month_full: ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "November", "December"], month_short: ["Ian", "Feb", "Mar", "Apr", "Mai", "Iun", "Iul", "Aug", "Sep", "Oct", "Nov", "Dec"], day_full: ["Duminica", "Luni", "Marti", "Miercuri", "Joi", "Vineri", "Sambata"], day_short: ["Du", "Lu", "Ma", "Mi", "Jo", "Vi", "Sa"] }, labels: { dhx_cal_today_button: "Astazi", day_tab: "Zi", week_tab: "Saptamana", month_tab: "Luna", new_event: "Eveniment nou", icon_save: "Salveaza", icon_cancel: "Anuleaza", icon_details: "Detalii", icon_edit: "Editeaza", icon_delete: "Sterge", confirm_closing: "Schimbarile nu vor fi salvate, esti sigur?", confirm_deleting: "Evenimentul va fi sters permanent, esti sigur?", section_description: "Descriere", section_time: "Interval", full_day: "Toata ziua", confirm_recurring: "Vrei sa editezi toata seria de evenimente repetate?", section_recurring: "Repetare", button_recurring: "Dezactivata", button_recurring_open: "Activata", button_edit_series: "Editeaza serie", button_edit_occurrence: "Editeaza doar intrare", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Data", description: "Descriere", year_tab: "An", week_agenda_tab: "Agenda", grid_tab: "Lista", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Zilnic", repeat_radio_week: "Saptamanal", repeat_radio_month: "Lunar", repeat_radio_year: "Anual", repeat_radio_day_type: "La fiecare", repeat_text_day_count: "zi(le)", repeat_radio_day_type2: "Fiecare zi lucratoare", repeat_week: " Repeta la fiecare", repeat_text_week_count: "saptamana in urmatoarele zile:", repeat_radio_month_type: "Repeta in", repeat_radio_month_start: "In a", repeat_text_month_day: "zi la fiecare", repeat_text_month_count: "luni", repeat_text_month_count2_before: "la fiecare", repeat_text_month_count2_after: "luni", repeat_year_label: "In", select_year_day2: "a lunii", repeat_text_year_day: "zi a lunii", select_year_month: "", repeat_radio_end: "Fara data de sfarsit", repeat_text_occurrences_count: "evenimente", repeat_radio_end3: "La data", repeat_radio_end2: "Dupa", repeat_never: "Niciodată", repeat_daily: "În fiecare zi", repeat_workdays: "În fiecare zi lucrătoare", repeat_weekly: "În fiecare săptămână", repeat_monthly: "În fiecare lună", repeat_yearly: "În fiecare an", repeat_custom: "Personalizat", repeat_freq_day: "Zi", repeat_freq_week: "Săptămână", repeat_freq_month: "Lună", repeat_freq_year: "An", repeat_on_date: "La data", repeat_ends: "Se termină", month_for_recurring: ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"], day_for_recurring: ["Duminica", "Luni", "Marti", "Miercuri", "Joi", "Vineri", "Sambata"] } }, ru: { date: { month_full: ["Январь", "Февраль", "Март", "Апрель", "Maй", "Июнь", "Июль", "Август", "Сентябрь", "Oктябрь", "Ноябрь", "Декабрь"], month_short: ["Янв", "Фев", "Maр", "Aпр", "Maй", "Июн", "Июл", "Aвг", "Сен", "Окт", "Ноя", "Дек"], day_full: ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"], day_short: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"] }, labels: { dhx_cal_today_button: "Сегодня", day_tab: "День", week_tab: "Неделя", month_tab: "Месяц", new_event: "Новое событие", icon_save: "Сохранить", icon_cancel: "Отменить", icon_details: "Детали", icon_edit: "Изменить", icon_delete: "Удалить", confirm_closing: "", confirm_deleting: "Событие будет удалено безвозвратно, продолжить?", section_description: "Описание", section_time: "Период времени", full_day: "Весь день", confirm_recurring: "Вы хотите изменить всю серию повторяющихся событий?", section_recurring: "Повторение", button_recurring: "Отключено", button_recurring_open: "Включено", button_edit_series: "Редактировать серию", button_edit_occurrence: "Редактировать экземпляр", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Список", date: "Дата", description: "Описание", year_tab: "Год", week_agenda_tab: "Список", grid_tab: "Таблица", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "День", repeat_radio_week: "Неделя", repeat_radio_month: "Месяц", repeat_radio_year: "Год", repeat_radio_day_type: "Каждый", repeat_text_day_count: "день", repeat_radio_day_type2: "Каждый рабочий день", repeat_week: " Повторять каждую", repeat_text_week_count: "неделю , в:", repeat_radio_month_type: "Повторять", repeat_radio_month_start: "", repeat_text_month_day: " числа каждый ", repeat_text_month_count: "месяц", repeat_text_month_count2_before: "каждый ", repeat_text_month_count2_after: "месяц", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "день", select_year_month: "", repeat_radio_end: "Без даты окончания", repeat_text_occurrences_count: "повторений", repeat_radio_end3: "До ", repeat_radio_end2: "", repeat_never: "Никогда", repeat_daily: "Каждый день", repeat_workdays: "Каждый будний день", repeat_weekly: "Каждую неделю", repeat_monthly: "Каждый месяц", repeat_yearly: "Каждый год", repeat_custom: "Настроить", repeat_freq_day: "День", repeat_freq_week: "Неделя", repeat_freq_month: "Месяц", repeat_freq_year: "Год", repeat_on_date: "В дату", repeat_ends: "Заканчивается", month_for_recurring: ["Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"], day_for_recurring: ["Воскресенье", "Понедельник", "Вторник", "Среду", "Четверг", "Пятницу", "Субботу"] } }, si: { date: { month_full: ["Januar", "Februar", "Marec", "April", "Maj", "Junij", "Julij", "Avgust", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Nedelja", "Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek", "Sobota"], day_short: ["Ned", "Pon", "Tor", "Sre", "Čet", "Pet", "Sob"] }, labels: { dhx_cal_today_button: "Danes", day_tab: "Dan", week_tab: "Teden", month_tab: "Mesec", new_event: "Nov dogodek", icon_save: "Shrani", icon_cancel: "Prekliči", icon_details: "Podrobnosti", icon_edit: "Uredi", icon_delete: "Izbriši", confirm_closing: "", confirm_deleting: "Dogodek bo izbrisan. Želite nadaljevati?", section_description: "Opis", section_time: "Časovni okvir", full_day: "Ves dan", confirm_recurring: "Želite urediti celoten set ponavljajočih dogodkov?", section_recurring: "Ponovi dogodek", button_recurring: "Onemogočeno", button_recurring_open: "Omogočeno", button_edit_series: "Edit series", button_edit_occurrence: "Edit occurrence", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Zadeva", date: "Datum", description: "Opis", year_tab: "Leto", week_agenda_tab: "Zadeva", grid_tab: "Miza", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Dnevno", repeat_radio_week: "Tedensko", repeat_radio_month: "Mesečno", repeat_radio_year: "Letno", repeat_radio_day_type: "Vsak", repeat_text_day_count: "dan", repeat_radio_day_type2: "Vsak delovni dan", repeat_week: " Ponavljaj vsak", repeat_text_week_count: "teden na naslednje dni:", repeat_radio_month_type: "Ponavljaj", repeat_radio_month_start: "Na", repeat_text_month_day: "dan vsak", repeat_text_month_count: "mesec", repeat_text_month_count2_before: "vsak", repeat_text_month_count2_after: "mesec", repeat_year_label: "Na", select_year_day2: "od", repeat_text_year_day: "dan", select_year_month: "mesec", repeat_radio_end: "Brez končnega datuma", repeat_text_occurrences_count: "pojavitve", repeat_radio_end2: "Po", repeat_radio_end3: "Končaj do", repeat_never: "Nikoli", repeat_daily: "Vsak dan", repeat_workdays: "Vsak delovni dan", repeat_weekly: "Vsak teden", repeat_monthly: "Vsak mesec", repeat_yearly: "Vsako leto", repeat_custom: "Po meri", repeat_freq_day: "Dan", repeat_freq_week: "Teden", repeat_freq_month: "Mesec", repeat_freq_year: "Leto", repeat_on_date: "Na datum", repeat_ends: "Konča se", month_for_recurring: ["Januar", "Februar", "Marec", "April", "Maj", "Junij", "Julij", "Avgust", "September", "Oktober", "November", "December"], day_for_recurring: ["Nedelja", "Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek", "Sobota"] } }, sk: { date: { month_full: ["Január", "Február", "Marec", "Apríl", "Máj", "Jún", "Júl", "August", "September", "Október", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Máj", "Jún", "Júl", "Aug", "Sept", "Okt", "Nov", "Dec"], day_full: ["Nedeľa", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"], day_short: ["Ne", "Po", "Ut", "St", "Št", "Pi", "So"] }, labels: { dhx_cal_today_button: "Dnes", day_tab: "Deň", week_tab: "Týždeň", month_tab: "Mesiac", new_event: "Nová udalosť", icon_save: "Uložiť", icon_cancel: "Späť", icon_details: "Detail", icon_edit: "Edituj", icon_delete: "Zmazať", confirm_closing: "Vaše zmeny nebudú uložené. Skutočne?", confirm_deleting: "Udalosť bude natrvalo vymazaná. Skutočne?", section_description: "Poznámky", section_time: "Doba platnosti", confirm_recurring: "Prajete si upraviť celú radu opakovaných udalostí?", section_recurring: "Opakovanie udalosti", button_recurring: "Vypnuté", button_recurring_open: "Zapnuté", button_edit_series: "Upraviť opakovania", button_edit_occurrence: "Upraviť inštancie", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Program", date: "Dátum", description: "Poznámka", year_tab: "Rok", full_day: "Celý deň", week_agenda_tab: "Program", grid_tab: "Mriežka", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Denne", repeat_radio_week: "Týždenne", repeat_radio_month: "Mesaène", repeat_radio_year: "Roène", repeat_radio_day_type: "Každý", repeat_text_day_count: "deò", repeat_radio_day_type2: "Každý prac. deò", repeat_week: "Opakova každý", repeat_text_week_count: "týždeò v dòoch:", repeat_radio_month_type: "Opakova", repeat_radio_month_start: "On", repeat_text_month_day: "deò každý", repeat_text_month_count: "mesiac", repeat_text_month_count2_before: "každý", repeat_text_month_count2_after: "mesiac", repeat_year_label: "On", select_year_day2: "poèas", repeat_text_year_day: "deò", select_year_month: "mesiac", repeat_radio_end: "Bez dátumu ukonèenia", repeat_text_occurrences_count: "udalostiach", repeat_radio_end3: "Ukonèi", repeat_radio_end2: "Po", repeat_never: "Nikdy", repeat_daily: "Každý deň", repeat_workdays: "Každý pracovný deň", repeat_weekly: "Každý týždeň", repeat_monthly: "Každý mesiac", repeat_yearly: "Každý rok", repeat_custom: "Vlastné", repeat_freq_day: "Deň", repeat_freq_week: "Týždeň", repeat_freq_month: "Mesiac", repeat_freq_year: "Rok", repeat_on_date: "Na dátum", repeat_ends: "Koniec", month_for_recurring: ["Január", "Február", "Marec", "Apríl", "Máj", "Jún", "Júl", "August", "September", "Október", "November", "December"], day_for_recurring: ["Nede¾a", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"] } }, sv: { date: { month_full: ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"], day_short: ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"] }, labels: { dhx_cal_today_button: "Idag", day_tab: "Dag", week_tab: "Vecka", month_tab: "Månad", new_event: "Ny händelse", icon_save: "Spara", icon_cancel: "Ångra", icon_details: "Detaljer", icon_edit: "Ändra", icon_delete: "Ta bort", confirm_closing: "", confirm_deleting: "Är du säker på att du vill ta bort händelsen permanent?", section_description: "Beskrivning", section_time: "Tid", full_day: "Hela dagen", confirm_recurring: "Vill du redigera hela serien med repeterande händelser?", section_recurring: "Upprepa händelse", button_recurring: "Inaktiverat", button_recurring_open: "Aktiverat", button_edit_series: "Redigera serien", button_edit_occurrence: "Redigera en kopia", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Dagordning", date: "Datum", description: "Beskrivning", year_tab: "År", week_agenda_tab: "Dagordning", grid_tab: "Galler", drag_to_create: "Dra för att skapa ny", drag_to_move: "Dra för att flytta", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Dagligen", repeat_radio_week: "Veckovis", repeat_radio_month: "Månadsvis", repeat_radio_year: "Årligen", repeat_radio_day_type: "Var", repeat_text_day_count: "dag", repeat_radio_day_type2: "Varje arbetsdag", repeat_week: " Upprepa var", repeat_text_week_count: "vecka dessa dagar:", repeat_radio_month_type: "Upprepa", repeat_radio_month_start: "Den", repeat_text_month_day: "dagen var", repeat_text_month_count: "månad", repeat_text_month_count2_before: "var", repeat_text_month_count2_after: "månad", repeat_year_label: "Den", select_year_day2: "i", repeat_text_year_day: "dag i", select_year_month: "månad", repeat_radio_end: "Inget slutdatum", repeat_text_occurrences_count: "upprepningar", repeat_radio_end3: "Sluta efter", repeat_radio_end2: "Efter", repeat_never: "Aldrig", repeat_daily: "Varje dag", repeat_workdays: "Varje vardag", repeat_weekly: "Varje vecka", repeat_monthly: "Varje månad", repeat_yearly: "Varje år", repeat_custom: "Anpassad", repeat_freq_day: "Dag", repeat_freq_week: "Vecka", repeat_freq_month: "Månad", repeat_freq_year: "År", repeat_on_date: "På datum", repeat_ends: "Slutar", month_for_recurring: ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"], day_for_recurring: ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"] } }, tr: { date: { month_full: ["Ocak", "Þubat", "Mart", "Nisan", "Mayýs", "Haziran", "Temmuz", "Aðustos", "Eylül", "Ekim", "Kasým", "Aralýk"], month_short: ["Oca", "Þub", "Mar", "Nis", "May", "Haz", "Tem", "Aðu", "Eyl", "Eki", "Kas", "Ara"], day_full: ["Pazar", "Pazartes,", "Salý", "Çarþamba", "Perþembe", "Cuma", "Cumartesi"], day_short: ["Paz", "Pts", "Sal", "Çar", "Per", "Cum", "Cts"] }, labels: { dhx_cal_today_button: "Bugün", day_tab: "Gün", week_tab: "Hafta", month_tab: "Ay", new_event: "Uygun", icon_save: "Kaydet", icon_cancel: "Ýptal", icon_details: "Detaylar", icon_edit: "Düzenle", icon_delete: "Sil", confirm_closing: "", confirm_deleting: "Etkinlik silinecek, devam?", section_description: "Açýklama", section_time: "Zaman aralýðý", full_day: "Tam gün", confirm_recurring: "Tüm tekrar eden etkinlikler silinecek, devam?", section_recurring: "Etkinliði tekrarla", button_recurring: "Pasif", button_recurring_open: "Aktif", button_edit_series: "Dizi düzenleme", button_edit_occurrence: "Bir kopyasını düzenleyin", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Ajanda", date: "Tarih", description: "Açýklama", year_tab: "Yýl", week_agenda_tab: "Ajanda", grid_tab: "Izgara", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Günlük", repeat_radio_week: "Haftalık", repeat_radio_month: "Aylık", repeat_radio_year: "Yıllık", repeat_radio_day_type: "Her", repeat_text_day_count: "gün", repeat_radio_day_type2: "Her iş günü", repeat_week: " Tekrar her", repeat_text_week_count: "hafta şu günlerde:", repeat_radio_month_type: "Tekrar et", repeat_radio_month_start: "Tarihinde", repeat_text_month_day: "gün her", repeat_text_month_count: "ay", repeat_text_month_count2_before: "her", repeat_text_month_count2_after: "ay", repeat_year_label: "Tarihinde", select_year_day2: "ayın", repeat_text_year_day: "günü", select_year_month: "ay", repeat_radio_end: "Bitiş tarihi yok", repeat_text_occurrences_count: "olay", repeat_radio_end2: "Sonra", repeat_radio_end3: "Tarihinde bitir", repeat_never: "Asla", repeat_daily: "Her gün", repeat_workdays: "Her iş günü", repeat_weekly: "Her hafta", repeat_monthly: "Her ay", repeat_yearly: "Her yıl", repeat_custom: "Özel", repeat_freq_day: "Gün", repeat_freq_week: "Hafta", repeat_freq_month: "Ay", repeat_freq_year: "Yıl", repeat_on_date: "Tarihinde", repeat_ends: "Biter", month_for_recurring: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"], day_for_recurring: ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"] } }, ua: { date: { month_full: ["Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень", "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"], month_short: ["Січ", "Лют", "Бер", "Кві", "Тра", "Чер", "Лип", "Сер", "Вер", "Жов", "Лис", "Гру"], day_full: ["Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота"], day_short: ["Нед", "Пон", "Вів", "Сер", "Чет", "Птн", "Суб"] }, labels: { dhx_cal_today_button: "Сьогодні", day_tab: "День", week_tab: "Тиждень", month_tab: "Місяць", new_event: "Нова подія", icon_save: "Зберегти", icon_cancel: "Відміна", icon_details: "Деталі", icon_edit: "Редагувати", icon_delete: "Вилучити", confirm_closing: "", confirm_deleting: "Подія вилучиться назавжди. Ви впевнені?", section_description: "Опис", section_time: "Часовий проміжок", full_day: "Весь день", confirm_recurring: "Хочете редагувати весь перелік повторюваних подій?", section_recurring: "Повторювана подія", button_recurring: "Відключено", button_recurring_open: "Включено", button_edit_series: "Редагувати серію", button_edit_occurrence: "Редагувати примірник", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Перелік", date: "Дата", description: "Опис", year_tab: "Рік", week_agenda_tab: "Перелік", grid_tab: "Таблиця", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "День", repeat_radio_week: "Тиждень", repeat_radio_month: "Місяць", repeat_radio_year: "Рік", repeat_radio_day_type: "Кожний", repeat_text_day_count: "день", repeat_radio_day_type2: "Кожний робочий день", repeat_week: " Повторювати кожен", repeat_text_week_count: "тиждень , по:", repeat_radio_month_type: "Повторювати", repeat_radio_month_start: "", repeat_text_month_day: " числа кожний ", repeat_text_month_count: "місяць", repeat_text_month_count2_before: "кожен ", repeat_text_month_count2_after: "місяць", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "день", select_year_month: "", repeat_radio_end: "Без дати закінчення", repeat_text_occurrences_count: "повторень", repeat_radio_end3: "До ", repeat_radio_end2: "", repeat_never: "Ніколи", repeat_daily: "Щодня", repeat_workdays: "Щодня в робочі дні", repeat_weekly: "Щотижня", repeat_monthly: "Щомісяця", repeat_yearly: "Щороку", repeat_custom: "Налаштоване", repeat_freq_day: "День", repeat_freq_week: "Тиждень", repeat_freq_month: "Місяць", repeat_freq_year: "Рік", repeat_on_date: "На дату", repeat_ends: "Закінчується", month_for_recurring: ["січня", "лютого", "березня", "квітня", "травня", "червня", "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"], day_for_recurring: ["Неділям", "Понеділкам", "Вівторкам", "Середам", "Четвергам", "П'ятницям", "Суботам"] } } }, Symbol.toStringTag, { value: "Module" }));
-class Qt {
+const ra = Object.freeze(Object.defineProperty({ __proto__: null, ar: { date: { month_full: ["كانون الثاني", "شباط", "آذار", "نيسان", "أيار", "حزيران", "تموز", "آب", "أيلول", "تشرين الأول", "تشرين الثاني", "كانون الأول"], month_short: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"], day_full: ["الأحد", "الأثنين", "ألثلاثاء", "الأربعاء", "ألحميس", "ألجمعة", "السبت"], day_short: ["احد", "اثنين", "ثلاثاء", "اربعاء", "خميس", "جمعة", "سبت"] }, labels: { dhx_cal_today_button: "اليوم", day_tab: "يوم", week_tab: "أسبوع", month_tab: "شهر", new_event: "حدث جديد", icon_save: "اخزن", icon_cancel: "الغاء", icon_details: "تفاصيل", icon_edit: "تحرير", icon_delete: "حذف", confirm_closing: "التغييرات سوف تضيع, هل انت متأكد؟", confirm_deleting: "الحدث سيتم حذفها نهائيا ، هل أنت متأكد؟", section_description: "الوصف", section_time: "الفترة الزمنية", full_day: "طوال اليوم", confirm_recurring: "هل تريد تحرير مجموعة كاملة من الأحداث المتكررة؟", section_recurring: "تكرار الحدث", button_recurring: "تعطيل", button_recurring_open: "تمكين", button_edit_series: "تحرير سلسلة", button_edit_occurrence: "تعديل نسخة", button_edit_occurrence_and_following: "This and following events", grid_tab: "جدول", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "يومي", repeat_radio_week: "أسبوعي", repeat_radio_month: "شهري", repeat_radio_year: "سنوي", repeat_radio_day_type: "كل", repeat_text_day_count: "يوم", repeat_radio_day_type2: "كل يوم عمل", repeat_week: " تكرار كل", repeat_text_week_count: "أسبوع في الأيام التالية:", repeat_radio_month_type: "تكرار", repeat_radio_month_start: "في", repeat_text_month_day: "يوم كل", repeat_text_month_count: "شهر", repeat_text_month_count2_before: "كل", repeat_text_month_count2_after: "شهر", repeat_year_label: "في", select_year_day2: "من", repeat_text_year_day: "يوم", select_year_month: "شهر", repeat_radio_end: "بدون تاريخ انتهاء", repeat_text_occurrences_count: "تكرارات", repeat_radio_end2: "بعد", repeat_radio_end3: "ينتهي في", repeat_never: "أبداً", repeat_daily: "كل يوم", repeat_workdays: "كل يوم عمل", repeat_weekly: "كل أسبوع", repeat_monthly: "كل شهر", repeat_yearly: "كل سنة", repeat_custom: "تخصيص", repeat_freq_day: "يوم", repeat_freq_week: "أسبوع", repeat_freq_month: "شهر", repeat_freq_year: "سنة", repeat_on_date: "في التاريخ", repeat_ends: "ينتهي", month_for_recurring: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"], day_for_recurring: ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"] } }, be: { date: { month_full: ["Студзень", "Люты", "Сакавік", "Красавік", "Maй", "Чэрвень", "Ліпень", "Жнівень", "Верасень", "Кастрычнік", "Лістапад", "Снежань"], month_short: ["Студз", "Лют", "Сак", "Крас", "Maй", "Чэр", "Ліп", "Жнів", "Вер", "Каст", "Ліст", "Снеж"], day_full: ["Нядзеля", "Панядзелак", "Аўторак", "Серада", "Чацвер", "Пятніца", "Субота"], day_short: ["Нд", "Пн", "Аўт", "Ср", "Чцв", "Пт", "Сб"] }, labels: { dhx_cal_today_button: "Сёння", day_tab: "Дзень", week_tab: "Тыдзень", month_tab: "Месяц", new_event: "Новая падзея", icon_save: "Захаваць", icon_cancel: "Адмяніць", icon_details: "Дэталі", icon_edit: "Змяніць", icon_delete: "Выдаліць", confirm_closing: "", confirm_deleting: "Падзея будзе выдалена незваротна, працягнуць?", section_description: "Апісанне", section_time: "Перыяд часу", full_day: "Увесь дзень", confirm_recurring: "Вы хочаце змяніць усю серыю паўтаральных падзей?", section_recurring: "Паўтарэнне", button_recurring: "Адключана", button_recurring_open: "Уключана", button_edit_series: "Рэдагаваць серыю", button_edit_occurrence: "Рэдагаваць асобнік", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Спіс", date: "Дата", description: "Апісанне", year_tab: "Год", week_agenda_tab: "Спіс", grid_tab: "Спic", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Дзень", repeat_radio_week: "Тыдзень", repeat_radio_month: "Месяц", repeat_radio_year: "Год", repeat_radio_day_type: "Кожны", repeat_text_day_count: "дзень", repeat_radio_day_type2: "Кожны працоўны дзень", repeat_week: " Паўтараць кожны", repeat_text_week_count: "тыдзень", repeat_radio_month_type: "Паўтараць", repeat_radio_month_start: "", repeat_text_month_day: " чысла кожнага", repeat_text_month_count: "месяцу", repeat_text_month_count2_before: "кожны ", repeat_text_month_count2_after: "месяц", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "дзень", select_year_month: "", repeat_radio_end: "Без даты заканчэння", repeat_text_occurrences_count: "паўтораў", repeat_radio_end2: "", repeat_radio_end3: "Да ", repeat_never: "Ніколі", repeat_daily: "Кожны дзень", repeat_workdays: "Кожны працоўны дзень", repeat_weekly: "Кожны тыдзень", repeat_monthly: "Кожны месяц", repeat_yearly: "Кожны год", repeat_custom: "Наладжвальны", repeat_freq_day: "Дзень", repeat_freq_week: "Тыдзень", repeat_freq_month: "Месяц", repeat_freq_year: "Год", repeat_on_date: "На дату", repeat_ends: "Заканчваецца", month_for_recurring: ["Студзеня", "Лютага", "Сакавіка", "Красавіка", "Мая", "Чэрвеня", "Ліпeня", "Жніўня", "Верасня", "Кастрычніка", "Лістапада", "Снежня"], day_for_recurring: ["Нядзелю", "Панядзелак", "Аўторак", "Сераду", "Чацвер", "Пятніцу", "Суботу"] } }, ca: { date: { month_full: ["Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"], month_short: ["Gen", "Feb", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Oct", "Nov", "Des"], day_full: ["Diumenge", "Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte"], day_short: ["Dg", "Dl", "Dm", "Dc", "Dj", "Dv", "Ds"] }, labels: { dhx_cal_today_button: "Hui", day_tab: "Dia", week_tab: "Setmana", month_tab: "Mes", new_event: "Nou esdeveniment", icon_save: "Guardar", icon_cancel: "Cancel·lar", icon_details: "Detalls", icon_edit: "Editar", icon_delete: "Esborrar", confirm_closing: "", confirm_deleting: "L'esdeveniment s'esborrarà definitivament, continuar ?", section_description: "Descripció", section_time: "Periode de temps", full_day: "Tot el dia", confirm_recurring: "¿Desitja modificar el conjunt d'esdeveniments repetits?", section_recurring: "Repeteixca l'esdeveniment", button_recurring: "Impedit", button_recurring_open: "Permés", button_edit_series: "Edit sèrie", button_edit_occurrence: "Edita Instància", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Data", description: "Descripció", year_tab: "Any", week_agenda_tab: "Agenda", grid_tab: "Taula", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Diari", repeat_radio_week: "Setmanal", repeat_radio_month: "Mensual", repeat_radio_year: "Anual", repeat_radio_day_type: "Cada", repeat_text_day_count: "dia", repeat_radio_day_type2: "Cada dia laborable", repeat_week: " Repetir cada", repeat_text_week_count: "setmana els dies següents:", repeat_radio_month_type: "Repetir", repeat_radio_month_start: "El", repeat_text_month_day: "dia cada", repeat_text_month_count: "mes", repeat_text_month_count2_before: "cada", repeat_text_month_count2_after: "mes", repeat_year_label: "El", select_year_day2: "de", repeat_text_year_day: "dia", select_year_month: "mes", repeat_radio_end: "Sense data de finalització", repeat_text_occurrences_count: "ocurrències", repeat_radio_end2: "Després", repeat_radio_end3: "Finalitzar el", repeat_never: "Mai", repeat_daily: "Cada dia", repeat_workdays: "Cada dia laborable", repeat_weekly: "Cada setmana", repeat_monthly: "Cada mes", repeat_yearly: "Cada any", repeat_custom: "Personalitzat", repeat_freq_day: "Dia", repeat_freq_week: "Setmana", repeat_freq_month: "Mes", repeat_freq_year: "Any", repeat_on_date: "En la data", repeat_ends: "Finalitza", month_for_recurring: ["Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"], day_for_recurring: ["Diumenge", "Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte"] } }, cn: { date: { month_full: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], month_short: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], day_full: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"], day_short: ["日", "一", "二", "三", "四", "五", "六"] }, labels: { dhx_cal_today_button: "今天", day_tab: "日", week_tab: "周", month_tab: "月", new_event: "新建日程", icon_save: "保存", icon_cancel: "关闭", icon_details: "详细", icon_edit: "编辑", icon_delete: "删除", confirm_closing: "请确认是否撤销修改!", confirm_deleting: "是否删除日程?", section_description: "描述", section_time: "时间范围", full_day: "整天", confirm_recurring: "请确认是否将日程设为重复模式?", section_recurring: "重复周期", button_recurring: "禁用", button_recurring_open: "启用", button_edit_series: "编辑系列", button_edit_occurrence: "编辑实例", button_edit_occurrence_and_following: "This and following events", agenda_tab: "议程", date: "日期", description: "说明", year_tab: "今年", week_agenda_tab: "议程", grid_tab: "电网", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "按天", repeat_radio_week: "按周", repeat_radio_month: "按月", repeat_radio_year: "按年", repeat_radio_day_type: "每", repeat_text_day_count: "天", repeat_radio_day_type2: "每个工作日", repeat_week: " 重复 每", repeat_text_week_count: "星期的:", repeat_radio_month_type: "重复", repeat_radio_month_start: "在", repeat_text_month_day: "日 每", repeat_text_month_count: "月", repeat_text_month_count2_before: "每", repeat_text_month_count2_after: "月", repeat_year_label: "在", select_year_day2: "的", repeat_text_year_day: "日", select_year_month: "月", repeat_radio_end: "无结束日期", repeat_text_occurrences_count: "次结束", repeat_radio_end2: "重复", repeat_radio_end3: "结束于", repeat_never: "从不", repeat_daily: "每天", repeat_workdays: "每个工作日", repeat_weekly: "每周", repeat_monthly: "每月", repeat_yearly: "每年", repeat_custom: "自定义", repeat_freq_day: "天", repeat_freq_week: "周", repeat_freq_month: "月", repeat_freq_year: "年", repeat_on_date: "在日期", repeat_ends: "结束", month_for_recurring: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"], day_for_recurring: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"] } }, cs: { date: { month_full: ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"], month_short: ["Led", "Ún", "Bře", "Dub", "Kvě", "Čer", "Čec", "Srp", "Září", "Říj", "List", "Pro"], day_full: ["Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"], day_short: ["Ne", "Po", "Út", "St", "Čt", "Pá", "So"] }, labels: { dhx_cal_today_button: "Dnes", day_tab: "Den", week_tab: "Týden", month_tab: "Měsíc", new_event: "Nová událost", icon_save: "Uložit", icon_cancel: "Zpět", icon_details: "Detail", icon_edit: "Edituj", icon_delete: "Smazat", confirm_closing: "", confirm_deleting: "Událost bude trvale smazána, opravdu?", section_description: "Poznámky", section_time: "Doba platnosti", confirm_recurring: "Přejete si upravit celou řadu opakovaných událostí?", section_recurring: "Opakování události", button_recurring: "Vypnuto", button_recurring_open: "Zapnuto", button_edit_series: "Edit series", button_edit_occurrence: "Upravit instance", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Program", date: "Datum", description: "Poznámka", year_tab: "Rok", full_day: "Full day", week_agenda_tab: "Program", grid_tab: "Mřížka", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Denně", repeat_radio_week: "Týdně", repeat_radio_month: "Měsíčně", repeat_radio_year: "Ročně", repeat_radio_day_type: "každý", repeat_text_day_count: "Den", repeat_radio_day_type2: "pracovní dny", repeat_week: "Opakuje každých", repeat_text_week_count: "Týdnů na:", repeat_radio_month_type: "u každého", repeat_radio_month_start: "na", repeat_text_month_day: "Den každého", repeat_text_month_count: "Měsíc", repeat_text_month_count2_before: "každý", repeat_text_month_count2_after: "Měsíc", repeat_year_label: "na", select_year_day2: "v", repeat_text_year_day: "Den v", select_year_month: "", repeat_radio_end: "bez data ukončení", repeat_text_occurrences_count: "Události", repeat_radio_end2: "po", repeat_radio_end3: "Konec", repeat_never: "Nikdy", repeat_daily: "Každý den", repeat_workdays: "Každý pracovní den", repeat_weekly: "Každý týden", repeat_monthly: "Každý měsíc", repeat_yearly: "Každý rok", repeat_custom: "Vlastní", repeat_freq_day: "Den", repeat_freq_week: "Týden", repeat_freq_month: "Měsíc", repeat_freq_year: "Rok", repeat_on_date: "Na datum", repeat_ends: "Končí", month_for_recurring: ["Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"], day_for_recurring: ["Neděle ", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"] } }, da: { date: { month_full: ["Januar", "Februar", "Marts", "April", "Maj", "Juni", "Juli", "August", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"], day_short: ["Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"] }, labels: { dhx_cal_today_button: "Idag", day_tab: "Dag", week_tab: "Uge", month_tab: "Måned", new_event: "Ny begivenhed", icon_save: "Gem", icon_cancel: "Fortryd", icon_details: "Detaljer", icon_edit: "Tilret", icon_delete: "Slet", confirm_closing: "Dine rettelser vil gå tabt.. Er dy sikker?", confirm_deleting: "Bigivenheden vil blive slettet permanent. Er du sikker?", section_description: "Beskrivelse", section_time: "Tidsperiode", confirm_recurring: "Vil du tilrette hele serien af gentagne begivenheder?", section_recurring: "Gentag begivenhed", button_recurring: "Frakoblet", button_recurring_open: "Tilkoblet", button_edit_series: "Rediger serien", button_edit_occurrence: "Rediger en kopi", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Dagsorden", date: "Dato", description: "Beskrivelse", year_tab: "År", week_agenda_tab: "Dagsorden", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daglig", repeat_radio_week: "Ugenlig", repeat_radio_month: "Månedlig", repeat_radio_year: "Årlig", repeat_radio_day_type: "Hver", repeat_text_day_count: "dag", repeat_radio_day_type2: "På hver arbejdsdag", repeat_week: " Gentager sig hver", repeat_text_week_count: "uge på følgende dage:", repeat_radio_month_type: "Hver den", repeat_radio_month_start: "Den", repeat_text_month_day: " i hver", repeat_text_month_count: "måned", repeat_text_month_count2_before: "hver", repeat_text_month_count2_after: "måned", repeat_year_label: "Den", select_year_day2: "i", repeat_text_year_day: "dag i", select_year_month: "", repeat_radio_end: "Ingen slutdato", repeat_text_occurrences_count: "gentagelse", repeat_radio_end2: "Efter", repeat_radio_end3: "Slut", repeat_never: "Aldrig", repeat_daily: "Hver dag", repeat_workdays: "Hver hverdag", repeat_weekly: "Hver uge", repeat_monthly: "Hver måned", repeat_yearly: "Hvert år", repeat_custom: "Brugerdefineret", repeat_freq_day: "Dag", repeat_freq_week: "Uge", repeat_freq_month: "Måned", repeat_freq_year: "År", repeat_on_date: "På dato", repeat_ends: "Slutter", month_for_recurring: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"], day_for_recurring: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"] } }, de: { date: { month_full: [" Januar", " Februar", " März ", " April", " Mai", " Juni", " Juli", " August", " September ", " Oktober", " November ", " Dezember"], month_short: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"], day_full: ["Sonntag", "Montag", "Dienstag", " Mittwoch", " Donnerstag", "Freitag", "Samstag"], day_short: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"] }, labels: { dhx_cal_today_button: "Heute", day_tab: "Tag", week_tab: "Woche", month_tab: "Monat", new_event: "neuer Eintrag", icon_save: "Speichern", icon_cancel: "Abbrechen", icon_details: "Details", icon_edit: "Ändern", icon_delete: "Löschen", confirm_closing: "", confirm_deleting: "Der Eintrag wird gelöscht", section_description: "Beschreibung", section_time: "Zeitspanne", full_day: "Ganzer Tag", confirm_recurring: "Wollen Sie alle Einträge bearbeiten oder nur diesen einzelnen Eintrag?", section_recurring: "Wiederholung", button_recurring: "Aus", button_recurring_open: "An", button_edit_series: "Bearbeiten Sie die Serie", button_edit_occurrence: "Bearbeiten Sie eine Kopie", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Datum", description: "Beschreibung", year_tab: "Jahre", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Täglich", repeat_radio_week: "Wöchentlich", repeat_radio_month: "Monatlich", repeat_radio_year: "Jährlich", repeat_radio_day_type: "jeden", repeat_text_day_count: "Tag", repeat_radio_day_type2: "an jedem Arbeitstag", repeat_week: " Wiederholt sich jede", repeat_text_week_count: "Woche am:", repeat_radio_month_type: "an jedem", repeat_radio_month_start: "am", repeat_text_month_day: "Tag eines jeden", repeat_text_month_count: "Monats", repeat_text_month_count2_before: "jeden", repeat_text_month_count2_after: "Monats", repeat_year_label: "am", select_year_day2: "im", repeat_text_year_day: "Tag im", select_year_month: "", repeat_radio_end: "kein Enddatum", repeat_text_occurrences_count: "Ereignissen", repeat_radio_end3: "Schluß", repeat_radio_end2: "nach", repeat_never: "Nie", repeat_daily: "Jeden Tag", repeat_workdays: "Jeden Werktag", repeat_weekly: "Jede Woche", repeat_monthly: "Jeden Monat", repeat_yearly: "Jedes Jahr", repeat_custom: "Benutzerdefiniert", repeat_freq_day: "Tag", repeat_freq_week: "Woche", repeat_freq_month: "Monat", repeat_freq_year: "Jahr", repeat_on_date: "Am Datum", repeat_ends: "Endet", month_for_recurring: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"], day_for_recurring: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"] } }, el: { date: { month_full: ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάϊος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"], month_short: ["ΙΑΝ", "ΦΕΒ", "ΜΑΡ", "ΑΠΡ", "ΜΑΙ", "ΙΟΥΝ", "ΙΟΥΛ", "ΑΥΓ", "ΣΕΠ", "ΟΚΤ", "ΝΟΕ", "ΔΕΚ"], day_full: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"], day_short: ["ΚΥ", "ΔΕ", "ΤΡ", "ΤΕ", "ΠΕ", "ΠΑ", "ΣΑ"] }, labels: { dhx_cal_today_button: "Σήμερα", day_tab: "Ημέρα", week_tab: "Εβδομάδα", month_tab: "Μήνας", new_event: "Νέο έργο", icon_save: "Αποθήκευση", icon_cancel: "Άκυρο", icon_details: "Λεπτομέρειες", icon_edit: "Επεξεργασία", icon_delete: "Διαγραφή", confirm_closing: "", confirm_deleting: "Το έργο θα διαγραφεί οριστικά. Θέλετε να συνεχίσετε;", section_description: "Περιγραφή", section_time: "Χρονική περίοδος", full_day: "Πλήρης Ημέρα", confirm_recurring: "Θέλετε να επεξεργασθείτε ολόκληρη την ομάδα των επαναλαμβανόμενων έργων;", section_recurring: "Επαναλαμβανόμενο έργο", button_recurring: "Ανενεργό", button_recurring_open: "Ενεργό", button_edit_series: "Επεξεργαστείτε τη σειρά", button_edit_occurrence: "Επεξεργασία ένα αντίγραφο", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Ημερήσια Διάταξη", date: "Ημερομηνία", description: "Περιγραφή", year_tab: "Έτος", week_agenda_tab: "Ημερήσια Διάταξη", grid_tab: "Πλέγμα", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Ημερησίως", repeat_radio_week: "Εβδομαδιαίως", repeat_radio_month: "Μηνιαίως", repeat_radio_year: "Ετησίως", repeat_radio_day_type: "Κάθε", repeat_text_day_count: "ημέρα", repeat_radio_day_type2: "Κάθε εργάσιμη", repeat_week: " Επανάληψη κάθε", repeat_text_week_count: "εβδομάδα τις επόμενες ημέρες:", repeat_radio_month_type: "Επανάληψη", repeat_radio_month_start: "Την", repeat_text_month_day: "ημέρα κάθε", repeat_text_month_count: "μήνα", repeat_text_month_count2_before: "κάθε", repeat_text_month_count2_after: "μήνα", repeat_year_label: "Την", select_year_day2: "του", repeat_text_year_day: "ημέρα", select_year_month: "μήνα", repeat_radio_end: "Χωρίς ημερομηνία λήξεως", repeat_text_occurrences_count: "επαναλήψεις", repeat_radio_end3: "Λήγει την", repeat_radio_end2: "Μετά από", repeat_never: "Ποτέ", repeat_daily: "Κάθε μέρα", repeat_workdays: "Κάθε εργάσιμη μέρα", repeat_weekly: "Κάθε εβδομάδα", repeat_monthly: "Κάθε μήνα", repeat_yearly: "Κάθε χρόνο", repeat_custom: "Προσαρμοσμένο", repeat_freq_day: "Ημέρα", repeat_freq_week: "Εβδομάδα", repeat_freq_month: "Μήνας", repeat_freq_year: "Χρόνος", repeat_on_date: "Σε ημερομηνία", repeat_ends: "Λήγει", month_for_recurring: ["Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάϊος", "Ιούνιος", "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"], day_for_recurring: ["Κυριακή", "Δευτέρα", "Τρίτη", "Τετάρτη", "Πέμπτη", "Παρασκευή", "Σάββατο"] } }, en: { date: { month_full: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], day_full: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], day_short: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] }, labels: { dhx_cal_today_button: "Today", day_tab: "Day", week_tab: "Week", month_tab: "Month", new_event: "New event", icon_save: "Save", icon_cancel: "Cancel", icon_details: "Details", icon_edit: "Edit", icon_delete: "Delete", confirm_closing: "", confirm_deleting: "Event will be deleted permanently, are you sure?", section_description: "Description", section_time: "Time period", full_day: "Full day", confirm_recurring: "Edit recurring event", section_recurring: "Repeat event", button_recurring: "Disabled", button_recurring_open: "Enabled", button_edit_series: "All events", button_edit_occurrence: "This event", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Date", description: "Description", year_tab: "Year", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daily", repeat_radio_week: "Weekly", repeat_radio_month: "Monthly", repeat_radio_year: "Yearly", repeat_radio_day_type: "Every", repeat_text_day_count: "day", repeat_radio_day_type2: "Every workday", repeat_week: " Repeat every", repeat_text_week_count: "week next days:", repeat_radio_month_type: "Repeat", repeat_radio_month_start: "On", repeat_text_month_day: "day every", repeat_text_month_count: "month", repeat_text_month_count2_before: "every", repeat_text_month_count2_after: "month", repeat_year_label: "On", select_year_day2: "of", repeat_text_year_day: "day", select_year_month: "month", repeat_radio_end: "No end date", repeat_text_occurrences_count: "occurrences", repeat_radio_end2: "After", repeat_radio_end3: "End by", repeat_never: "Never", repeat_daily: "Every day", repeat_workdays: "Every weekday", repeat_weekly: "Every week", repeat_monthly: "Every month", repeat_yearly: "Every year", repeat_custom: "Custom", repeat_freq_day: "Day", repeat_freq_week: "Week", repeat_freq_month: "Month", repeat_freq_year: "Year", repeat_on_date: "On date", repeat_ends: "Ends", month_for_recurring: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], day_for_recurring: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] } }, es: { date: { month_full: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"], month_short: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"], day_full: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"], day_short: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"] }, labels: { dhx_cal_today_button: "Hoy", day_tab: "Día", week_tab: "Semana", month_tab: "Mes", new_event: "Nuevo evento", icon_save: "Guardar", icon_cancel: "Cancelar", icon_details: "Detalles", icon_edit: "Editar", icon_delete: "Eliminar", confirm_closing: "", confirm_deleting: "El evento se borrará definitivamente, ¿continuar?", section_description: "Descripción", section_time: "Período", full_day: "Todo el día", confirm_recurring: "¿Desea modificar el conjunto de eventos repetidos?", section_recurring: "Repita el evento", button_recurring: "Impedido", button_recurring_open: "Permitido", button_edit_series: "Editar la serie", button_edit_occurrence: "Editar este evento", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Día", date: "Fecha", description: "Descripción", year_tab: "Año", week_agenda_tab: "Día", grid_tab: "Reja", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Diariamente", repeat_radio_week: "Semanalmente", repeat_radio_month: "Mensualmente", repeat_radio_year: "Anualmente", repeat_radio_day_type: "Cada", repeat_text_day_count: "dia", repeat_radio_day_type2: "Cada jornada de trabajo", repeat_week: " Repetir cada", repeat_text_week_count: "semana:", repeat_radio_month_type: "Repita", repeat_radio_month_start: "El", repeat_text_month_day: "dia cada ", repeat_text_month_count: "mes", repeat_text_month_count2_before: "cada", repeat_text_month_count2_after: "mes", repeat_year_label: "El", select_year_day2: "del", repeat_text_year_day: "dia", select_year_month: "mes", repeat_radio_end: "Sin fecha de finalización", repeat_text_occurrences_count: "ocurrencias", repeat_radio_end3: "Fin", repeat_radio_end2: "Después de", repeat_never: "Nunca", repeat_daily: "Cada día", repeat_workdays: "Cada día laborable", repeat_weekly: "Cada semana", repeat_monthly: "Cada mes", repeat_yearly: "Cada año", repeat_custom: "Personalizado", repeat_freq_day: "Día", repeat_freq_week: "Semana", repeat_freq_month: "Mes", repeat_freq_year: "Año", repeat_on_date: "En la fecha", repeat_ends: "Termina", month_for_recurring: ["Enero", "Febrero", "Маrzo", "Аbril", "Mayo", "Junio", "Julio", "Аgosto", "Setiembre", "Octubre", "Noviembre", "Diciembre"], day_for_recurring: ["Domingo", "Lunes", "Martes", "Miércoles", "Jeuves", "Viernes", "Sabado"] } }, fi: { date: { month_full: ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kes&auml;kuu", "Hein&auml;kuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"], month_short: ["Tam", "Hel", "Maa", "Huh", "Tou", "Kes", "Hei", "Elo", "Syy", "Lok", "Mar", "Jou"], day_full: ["Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"], day_short: ["Su", "Ma", "Ti", "Ke", "To", "Pe", "La"] }, labels: { dhx_cal_today_button: "Tänään", day_tab: "Päivä", week_tab: "Viikko", month_tab: "Kuukausi", new_event: "Uusi tapahtuma", icon_save: "Tallenna", icon_cancel: "Peru", icon_details: "Tiedot", icon_edit: "Muokkaa", icon_delete: "Poista", confirm_closing: "", confirm_deleting: "Haluatko varmasti poistaa tapahtuman?", section_description: "Kuvaus", section_time: "Aikajakso", full_day: "Koko päivä", confirm_recurring: "Haluatko varmasti muokata toistuvan tapahtuman kaikkia jaksoja?", section_recurring: "Toista tapahtuma", button_recurring: "Ei k&auml;yt&ouml;ss&auml;", button_recurring_open: "K&auml;yt&ouml;ss&auml;", button_edit_series: "Muokkaa sarja", button_edit_occurrence: "Muokkaa kopio", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Esityslista", date: "Päivämäärä", description: "Kuvaus", year_tab: "Vuoden", week_agenda_tab: "Esityslista", grid_tab: "Ritilä", drag_to_create: "Luo uusi vetämällä", drag_to_move: "Siirrä vetämällä", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "P&auml;ivitt&auml;in", repeat_radio_week: "Viikoittain", repeat_radio_month: "Kuukausittain", repeat_radio_year: "Vuosittain", repeat_radio_day_type: "Joka", repeat_text_day_count: "p&auml;iv&auml;", repeat_radio_day_type2: "Joka arkip&auml;iv&auml;", repeat_week: "Toista joka", repeat_text_week_count: "viikko n&auml;in&auml; p&auml;ivin&auml;:", repeat_radio_month_type: "Toista", repeat_radio_month_start: "", repeat_text_month_day: "p&auml;iv&auml;n&auml; joka", repeat_text_month_count: "kuukausi", repeat_text_month_count2_before: "joka", repeat_text_month_count2_after: "kuukausi", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "p&auml;iv&auml;", select_year_month: "kuukausi", repeat_radio_end: "Ei loppumisaikaa", repeat_text_occurrences_count: "Toiston j&auml;lkeen", repeat_radio_end3: "Loppuu", repeat_radio_end2: "", repeat_never: "Ei koskaan", repeat_daily: "Joka päivä", repeat_workdays: "Joka arkipäivä", repeat_weekly: "Joka viikko", repeat_monthly: "Joka kuukausi", repeat_yearly: "Joka vuosi", repeat_custom: "Mukautettu", repeat_freq_day: "Päivä", repeat_freq_week: "Viikko", repeat_freq_month: "Kuukausi", repeat_freq_year: "Vuosi", repeat_on_date: "Tiettynä päivänä", repeat_ends: "Päättyy", month_for_recurring: ["Tammikuu", "Helmikuu", "Maaliskuu", "Huhtikuu", "Toukokuu", "Kes&auml;kuu", "Hein&auml;kuu", "Elokuu", "Syyskuu", "Lokakuu", "Marraskuu", "Joulukuu"], day_for_recurring: ["Sunnuntai", "Maanantai", "Tiistai", "Keskiviikko", "Torstai", "Perjantai", "Lauantai"] } }, fr: { date: { month_full: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"], month_short: ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Aoû", "Sep", "Oct", "Nov", "Déc"], day_full: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"], day_short: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"] }, labels: { dhx_cal_today_button: "Aujourd'hui", day_tab: "Jour", week_tab: "Semaine", month_tab: "Mois", new_event: "Nouvel événement", icon_save: "Enregistrer", icon_cancel: "Annuler", icon_details: "Détails", icon_edit: "Modifier", icon_delete: "Effacer", confirm_closing: "", confirm_deleting: "L'événement sera effacé sans appel, êtes-vous sûr ?", section_description: "Description", section_time: "Période", full_day: "Journée complète", confirm_recurring: "Voulez-vous éditer toute une série d'évènements répétés?", section_recurring: "Périodicité", button_recurring: "Désactivé", button_recurring_open: "Activé", button_edit_series: "Modifier la série", button_edit_occurrence: "Modifier une copie", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Jour", date: "Date", description: "Description", year_tab: "Année", week_agenda_tab: "Jour", grid_tab: "Grille", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Quotidienne", repeat_radio_week: "Hebdomadaire", repeat_radio_month: "Mensuelle", repeat_radio_year: "Annuelle", repeat_radio_day_type: "Chaque", repeat_text_day_count: "jour", repeat_radio_day_type2: "Chaque journée de travail", repeat_week: " Répéter toutes les", repeat_text_week_count: "semaine:", repeat_radio_month_type: "Répéter", repeat_radio_month_start: "Le", repeat_text_month_day: "jour chaque", repeat_text_month_count: "mois", repeat_text_month_count2_before: "chaque", repeat_text_month_count2_after: "mois", repeat_year_label: "Le", select_year_day2: "du", repeat_text_year_day: "jour", select_year_month: "mois", repeat_radio_end: "Pas de date d&quot;achèvement", repeat_text_occurrences_count: "occurrences", repeat_radio_end3: "Fin", repeat_radio_end2: "Après", repeat_never: "Jamais", repeat_daily: "Chaque jour", repeat_workdays: "Chaque jour ouvrable", repeat_weekly: "Chaque semaine", repeat_monthly: "Chaque mois", repeat_yearly: "Chaque année", repeat_custom: "Personnalisé", repeat_freq_day: "Jour", repeat_freq_week: "Semaine", repeat_freq_month: "Mois", repeat_freq_year: "Année", repeat_on_date: "À la date", repeat_ends: "Se termine", month_for_recurring: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"], day_for_recurring: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"] } }, he: { date: { month_full: ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"], month_short: ["ינו", "פבר", "מרץ", "אפר", "מאי", "יונ", "יול", "אוג", "ספט", "אוק", "נוב", "דצמ"], day_full: ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"], day_short: ["א", "ב", "ג", "ד", "ה", "ו", "ש"] }, labels: { dhx_cal_today_button: "היום", day_tab: "יום", week_tab: "שבוע", month_tab: "חודש", new_event: "ארוע חדש", icon_save: "שמור", icon_cancel: "בטל", icon_details: "פרטים", icon_edit: "ערוך", icon_delete: "מחק", confirm_closing: "", confirm_deleting: "ארוע ימחק סופית.להמשיך?", section_description: "תיאור", section_time: "תקופה", confirm_recurring: "האם ברצונך לשנות כל סדרת ארועים מתמשכים?", section_recurring: "להעתיק ארוע", button_recurring: "לא פעיל", button_recurring_open: "פעיל", full_day: "יום שלם", button_edit_series: "ערוך את הסדרה", button_edit_occurrence: "עריכת עותק", button_edit_occurrence_and_following: "This and following events", agenda_tab: "סדר יום", date: "תאריך", description: "תיאור", year_tab: "לשנה", week_agenda_tab: "סדר יום", grid_tab: "סורג", drag_to_create: "Drag to create", drag_to_move: "גרור כדי להזיז", message_ok: "OK", message_cancel: "בטל", next: "הבא", prev: "הקודם", year: "שנה", month: "חודש", day: "יום", hour: "שעה", minute: "דקה", repeat_radio_day: "יומי", repeat_radio_week: "שבועי", repeat_radio_month: "חודשי", repeat_radio_year: "שנתי", repeat_radio_day_type: "חזור כל", repeat_text_day_count: "ימים", repeat_radio_day_type2: "חזור כל יום עבודה", repeat_week: " חזור כל", repeat_text_week_count: "שבוע לפי ימים:", repeat_radio_month_type: "חזור כל", repeat_radio_month_start: "כל", repeat_text_month_day: "ימים כל", repeat_text_month_count: "חודשים", repeat_text_month_count2_before: "חזור כל", repeat_text_month_count2_after: "חודש", repeat_year_label: "כל", select_year_day2: "בחודש", repeat_text_year_day: "ימים", select_year_month: "חודש", repeat_radio_end: "לעולם לא מסתיים", repeat_text_occurrences_count: "אירועים", repeat_radio_end3: "מסתיים ב", repeat_radio_end2: "אחרי", repeat_never: "אף פעם", repeat_daily: "כל יום", repeat_workdays: "כל יום עבודה", repeat_weekly: "כל שבוע", repeat_monthly: "כל חודש", repeat_yearly: "כל שנה", repeat_custom: "מותאם אישית", repeat_freq_day: "יום", repeat_freq_week: "שבוע", repeat_freq_month: "חודש", repeat_freq_year: "שנה", repeat_on_date: "בתאריך", repeat_ends: "מסתיים", month_for_recurring: ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"], day_for_recurring: ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"] } }, hu: { date: { month_full: ["Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"], month_short: ["Jan", "Feb", "Már", "Ápr", "Máj", "Jún", "Júl", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Vasárnap", "Hétfõ", "Kedd", "Szerda", "Csütörtök", "Péntek", "szombat"], day_short: ["Va", "Hé", "Ke", "Sze", "Csü", "Pé", "Szo"] }, labels: { dhx_cal_today_button: "Ma", day_tab: "Nap", week_tab: "Hét", month_tab: "Hónap", new_event: "Új esemény", icon_save: "Mentés", icon_cancel: "Mégse", icon_details: "Részletek", icon_edit: "Szerkesztés", icon_delete: "Törlés", confirm_closing: "", confirm_deleting: "Az esemény törölve lesz, biztosan folytatja?", section_description: "Leírás", section_time: "Idõszak", full_day: "Egesz napos", confirm_recurring: "Biztosan szerkeszteni akarod az összes ismétlõdõ esemény beállítását?", section_recurring: "Esemény ismétlése", button_recurring: "Tiltás", button_recurring_open: "Engedélyezés", button_edit_series: "Edit series", button_edit_occurrence: "Szerkesztés bíróság", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Napirend", date: "Dátum", description: "Leírás", year_tab: "Év", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Napi", repeat_radio_week: "Heti", repeat_radio_month: "Havi", repeat_radio_year: "Éves", repeat_radio_day_type: "Minden", repeat_text_day_count: "nap", repeat_radio_day_type2: "Minden munkanap", repeat_week: " Ismételje meg minden", repeat_text_week_count: "héten a következő napokon:", repeat_radio_month_type: "Ismétlés", repeat_radio_month_start: "Ekkor", repeat_text_month_day: "nap minden", repeat_text_month_count: "hónapban", repeat_text_month_count2_before: "minden", repeat_text_month_count2_after: "hónapban", repeat_year_label: "Ekkor", select_year_day2: "-án/-én", repeat_text_year_day: "nap", select_year_month: "hónap", repeat_radio_end: "Nincs befejezési dátum", repeat_text_occurrences_count: "esemény", repeat_radio_end2: "Után", repeat_radio_end3: "Befejező dátum", repeat_never: "Soha", repeat_daily: "Minden nap", repeat_workdays: "Minden munkanap", repeat_weekly: "Minden héten", repeat_monthly: "Minden hónapban", repeat_yearly: "Minden évben", repeat_custom: "Egyedi", repeat_freq_day: "Nap", repeat_freq_week: "Hét", repeat_freq_month: "Hónap", repeat_freq_year: "Év", repeat_on_date: "Dátum szerint", repeat_ends: "Befejeződik", month_for_recurring: ["Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"], day_for_recurring: ["Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"] } }, id: { date: { month_full: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"], month_short: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"], day_full: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"], day_short: ["Ming", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"] }, labels: { dhx_cal_today_button: "Hari Ini", day_tab: "Hari", week_tab: "Minggu", month_tab: "Bulan", new_event: "Acara Baru", icon_save: "Simpan", icon_cancel: "Batal", icon_details: "Detail", icon_edit: "Edit", icon_delete: "Hapus", confirm_closing: "", confirm_deleting: "Acara akan dihapus", section_description: "Keterangan", section_time: "Periode", full_day: "Hari penuh", confirm_recurring: "Apakah acara ini akan berulang?", section_recurring: "Acara Rutin", button_recurring: "Tidak Difungsikan", button_recurring_open: "Difungsikan", button_edit_series: "Mengedit seri", button_edit_occurrence: "Mengedit salinan", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Tanggal", description: "Keterangan", year_tab: "Tahun", week_agenda_tab: "Agenda", grid_tab: "Tabel", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Harian", repeat_radio_week: "Mingguan", repeat_radio_month: "Bulanan", repeat_radio_year: "Tahunan", repeat_radio_day_type: "Setiap", repeat_text_day_count: "hari", repeat_radio_day_type2: "Setiap hari kerja", repeat_week: " Ulangi setiap", repeat_text_week_count: "minggu pada hari berikut:", repeat_radio_month_type: "Ulangi", repeat_radio_month_start: "Pada", repeat_text_month_day: "hari setiap", repeat_text_month_count: "bulan", repeat_text_month_count2_before: "setiap", repeat_text_month_count2_after: "bulan", repeat_year_label: "Pada", select_year_day2: "dari", repeat_text_year_day: "hari", select_year_month: "bulan", repeat_radio_end: "Tanpa tanggal akhir", repeat_text_occurrences_count: "kejadian", repeat_radio_end2: "Setelah", repeat_radio_end3: "Berakhir pada", repeat_never: "Tidak pernah", repeat_daily: "Setiap hari", repeat_workdays: "Setiap hari kerja", repeat_weekly: "Setiap minggu", repeat_monthly: "Setiap bulan", repeat_yearly: "Setiap tahun", repeat_custom: "Kustom", repeat_freq_day: "Hari", repeat_freq_week: "Minggu", repeat_freq_month: "Bulan", repeat_freq_year: "Tahun", repeat_on_date: "Pada tanggal", repeat_ends: "Berakhir", month_for_recurring: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"], day_for_recurring: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"] } }, it: { date: { month_full: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"], month_short: ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"], day_full: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"], day_short: ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"] }, labels: { dhx_cal_today_button: "Oggi", day_tab: "Giorno", week_tab: "Settimana", month_tab: "Mese", new_event: "Nuovo evento", icon_save: "Salva", icon_cancel: "Chiudi", icon_details: "Dettagli", icon_edit: "Modifica", icon_delete: "Elimina", confirm_closing: "", confirm_deleting: "L'evento sarà eliminato, siete sicuri?", section_description: "Descrizione", section_time: "Periodo di tempo", full_day: "Intera giornata", confirm_recurring: "Vuoi modificare l'intera serie di eventi?", section_recurring: "Ripetere l'evento", button_recurring: "Disattivato", button_recurring_open: "Attivato", button_edit_series: "Modificare la serie", button_edit_occurrence: "Modificare una copia", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Data", description: "Descrizione", year_tab: "Anno", week_agenda_tab: "Agenda", grid_tab: "Griglia", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Quotidiano", repeat_radio_week: "Settimanale", repeat_radio_month: "Mensile", repeat_radio_year: "Annuale", repeat_radio_day_type: "Ogni", repeat_text_day_count: "giorno", repeat_radio_day_type2: "Ogni giornata lavorativa", repeat_week: " Ripetere ogni", repeat_text_week_count: "settimana:", repeat_radio_month_type: "Ripetere", repeat_radio_month_start: "Il", repeat_text_month_day: "giorno ogni", repeat_text_month_count: "mese", repeat_text_month_count2_before: "ogni", repeat_text_month_count2_after: "mese", repeat_year_label: "Il", select_year_day2: "del", repeat_text_year_day: "giorno", select_year_month: "mese", repeat_radio_end: "Senza data finale", repeat_text_occurrences_count: "occorenze", repeat_radio_end3: "Fine", repeat_radio_end2: "Dopo", repeat_never: "Mai", repeat_daily: "Ogni giorno", repeat_workdays: "Ogni giorno feriale", repeat_weekly: "Ogni settimana", repeat_monthly: "Ogni mese", repeat_yearly: "Ogni anno", repeat_custom: "Personalizzato", repeat_freq_day: "Giorno", repeat_freq_week: "Settimana", repeat_freq_month: "Mese", repeat_freq_year: "Anno", repeat_on_date: "Alla data", repeat_ends: "Finisce", month_for_recurring: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Jiugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"], day_for_recurring: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Jovedì", "Venerdì", "Sabato"] } }, jp: { date: { month_full: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], month_short: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], day_full: ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"], day_short: ["日", "月", "火", "水", "木", "金", "土"] }, labels: { dhx_cal_today_button: "今日", day_tab: "日", week_tab: "週", month_tab: "月", new_event: "新イベント", icon_save: "保存", icon_cancel: "キャンセル", icon_details: "詳細", icon_edit: "編集", icon_delete: "削除", confirm_closing: "", confirm_deleting: "イベント完全に削除されます、宜しいですか？", section_description: "デスクリプション", section_time: "期間", confirm_recurring: "繰り返されているイベントを全て編集しますか？", section_recurring: "イベントを繰り返す", button_recurring: "無効", button_recurring_open: "有効", full_day: "終日", button_edit_series: "シリーズを編集します", button_edit_occurrence: "コピーを編集", button_edit_occurrence_and_following: "This and following events", agenda_tab: "議題は", date: "日付", description: "説明", year_tab: "今年", week_agenda_tab: "議題は", grid_tab: "グリッド", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "毎日", repeat_radio_week: "毎週", repeat_radio_month: "毎月", repeat_radio_year: "毎年", repeat_radio_day_type: "毎", repeat_text_day_count: "日", repeat_radio_day_type2: "毎営業日", repeat_week: " 繰り返し毎", repeat_text_week_count: "週 次の日:", repeat_radio_month_type: "繰り返し", repeat_radio_month_start: "オン", repeat_text_month_day: "日毎", repeat_text_month_count: "月", repeat_text_month_count2_before: "毎", repeat_text_month_count2_after: "月", repeat_year_label: "オン", select_year_day2: "の", repeat_text_year_day: "日", select_year_month: "月", repeat_radio_end: "終了日なし", repeat_text_occurrences_count: "回数", repeat_radio_end2: "後", repeat_radio_end3: "終了日まで", repeat_never: "決して", repeat_daily: "毎日", repeat_workdays: "毎営業日", repeat_weekly: "毎週", repeat_monthly: "毎月", repeat_yearly: "毎年", repeat_custom: "カスタム", repeat_freq_day: "日", repeat_freq_week: "週", repeat_freq_month: "月", repeat_freq_year: "年", repeat_on_date: "日にち", repeat_ends: "終了", month_for_recurring: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], day_for_recurring: ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"] } }, nb: { date: { month_full: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], month_short: ["Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des"], day_full: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"], day_short: ["Søn", "Mon", "Tir", "Ons", "Tor", "Fre", "Lør"] }, labels: { dhx_cal_today_button: "I dag", day_tab: "Dag", week_tab: "Uke", month_tab: "Måned", new_event: "Ny hendelse", icon_save: "Lagre", icon_cancel: "Avbryt", icon_details: "Detaljer", icon_edit: "Rediger", icon_delete: "Slett", confirm_closing: "", confirm_deleting: "Hendelsen vil bli slettet permanent. Er du sikker?", section_description: "Beskrivelse", section_time: "Tidsperiode", confirm_recurring: "Vil du forandre hele dette settet av repeterende hendelser?", section_recurring: "Repeter hendelsen", button_recurring: "Av", button_recurring_open: "På", button_edit_series: "Rediger serien", button_edit_occurrence: "Redigere en kopi", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Dato", description: "Beskrivelse", year_tab: "År", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daglig", repeat_radio_week: "Ukentlig", repeat_radio_month: "Månedlig", repeat_radio_year: "Årlig", repeat_radio_day_type: "Hver", repeat_text_day_count: "dag", repeat_radio_day_type2: "Alle hverdager", repeat_week: " Gjentas hver", repeat_text_week_count: "uke på:", repeat_radio_month_type: "På hver", repeat_radio_month_start: "På", repeat_text_month_day: "dag hver", repeat_text_month_count: "måned", repeat_text_month_count2_before: "hver", repeat_text_month_count2_after: "måned", repeat_year_label: "på", select_year_day2: "i", repeat_text_year_day: "dag i", select_year_month: "", repeat_radio_end: "Ingen sluttdato", repeat_text_occurrences_count: "forekomst", repeat_radio_end3: "Stop den", repeat_radio_end2: "Etter", repeat_never: "Aldri", repeat_daily: "Hver dag", repeat_workdays: "Hver ukedag", repeat_weekly: "Hver uke", repeat_monthly: "Hver måned", repeat_yearly: "Hvert år", repeat_custom: "Tilpasset", repeat_freq_day: "Dag", repeat_freq_week: "Uke", repeat_freq_month: "Måned", repeat_freq_year: "År", repeat_on_date: "På dato", repeat_ends: "Slutter", month_for_recurring: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], day_for_recurring: ["Sondag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"] } }, nl: { date: { month_full: ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "mrt", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"], day_short: ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"] }, labels: { dhx_cal_today_button: "Vandaag", day_tab: "Dag", week_tab: "Week", month_tab: "Maand", new_event: "Nieuw item", icon_save: "Opslaan", icon_cancel: "Annuleren", icon_details: "Details", icon_edit: "Bewerken", icon_delete: "Verwijderen", confirm_closing: "", confirm_deleting: "Item zal permanent worden verwijderd, doorgaan?", section_description: "Beschrijving", section_time: "Tijd periode", full_day: "Hele dag", confirm_recurring: "Wilt u alle terugkerende items bijwerken?", section_recurring: "Item herhalen", button_recurring: "Uit", button_recurring_open: "Aan", button_edit_series: "Bewerk de serie", button_edit_occurrence: "Bewerk een kopie", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Datum", description: "Omschrijving", year_tab: "Jaar", week_agenda_tab: "Agenda", grid_tab: "Tabel", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Dagelijks", repeat_radio_week: "Wekelijks", repeat_radio_month: "Maandelijks", repeat_radio_year: "Jaarlijks", repeat_radio_day_type: "Elke", repeat_text_day_count: "dag(en)", repeat_radio_day_type2: "Elke werkdag", repeat_week: " Herhaal elke", repeat_text_week_count: "week op de volgende dagen:", repeat_radio_month_type: "Herhaal", repeat_radio_month_start: "Op", repeat_text_month_day: "dag iedere", repeat_text_month_count: "maanden", repeat_text_month_count2_before: "iedere", repeat_text_month_count2_after: "maanden", repeat_year_label: "Op", select_year_day2: "van", repeat_text_year_day: "dag", select_year_month: "maand", repeat_radio_end: "Geen eind datum", repeat_text_occurrences_count: "keren", repeat_radio_end3: "Eindigd per", repeat_radio_end2: "Na", repeat_never: "Nooit", repeat_daily: "Elke dag", repeat_workdays: "Elke werkdag", repeat_weekly: "Elke week", repeat_monthly: "Elke maand", repeat_yearly: "Elk jaar", repeat_custom: "Aangepast", repeat_freq_day: "Dag", repeat_freq_week: "Week", repeat_freq_month: "Maand", repeat_freq_year: "Jaar", repeat_on_date: "Op datum", repeat_ends: "Eindigt", month_for_recurring: ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"], day_for_recurring: ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"] } }, no: { date: { month_full: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], month_short: ["Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Des"], day_full: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"], day_short: ["Søn", "Man", "Tir", "Ons", "Tor", "Fre", "Lør"] }, labels: { dhx_cal_today_button: "Idag", day_tab: "Dag", week_tab: "Uke", month_tab: "Måned", new_event: "Ny", icon_save: "Lagre", icon_cancel: "Avbryt", icon_details: "Detaljer", icon_edit: "Endre", icon_delete: "Slett", confirm_closing: "Endringer blir ikke lagret, er du sikker?", confirm_deleting: "Oppføringen vil bli slettet, er du sikker?", section_description: "Beskrivelse", section_time: "Tidsperiode", full_day: "Full dag", confirm_recurring: "Vil du endre hele settet med repeterende oppføringer?", section_recurring: "Repeterende oppføring", button_recurring: "Ikke aktiv", button_recurring_open: "Aktiv", button_edit_series: "Rediger serien", button_edit_occurrence: "Redigere en kopi", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Dato", description: "Beskrivelse", year_tab: "År", week_agenda_tab: "Agenda", grid_tab: "Grid", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Daglig", repeat_radio_week: "Ukentlig", repeat_radio_month: "Månedlig", repeat_radio_year: "Årlig", repeat_radio_day_type: "Hver", repeat_text_day_count: "dag", repeat_radio_day_type2: "Hver arbeidsdag", repeat_week: " Gjenta hver", repeat_text_week_count: "uke neste dager:", repeat_radio_month_type: "Gjenta", repeat_radio_month_start: "På", repeat_text_month_day: "dag hver", repeat_text_month_count: "måned", repeat_text_month_count2_before: "hver", repeat_text_month_count2_after: "måned", repeat_year_label: "På", select_year_day2: "av", repeat_text_year_day: "dag", select_year_month: "måned", repeat_radio_end: "Ingen sluttdato", repeat_text_occurrences_count: "forekomster", repeat_radio_end2: "Etter", repeat_radio_end3: "Slutt innen", repeat_never: "Aldri", repeat_daily: "Hver dag", repeat_workdays: "Hver ukedag", repeat_weekly: "Hver uke", repeat_monthly: "Hver måned", repeat_yearly: "Hvert år", repeat_custom: "Tilpasset", repeat_freq_day: "Dag", repeat_freq_week: "Uke", repeat_freq_month: "Måned", repeat_freq_year: "År", repeat_on_date: "På dato", repeat_ends: "Slutter", month_for_recurring: ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"], day_for_recurring: ["Søndag", "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag"] } }, pl: { date: { month_full: ["Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"], month_short: ["Sty", "Lut", "Mar", "Kwi", "Maj", "Cze", "Lip", "Sie", "Wrz", "Paź", "Lis", "Gru"], day_full: ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"], day_short: ["Nie", "Pon", "Wto", "Śro", "Czw", "Pią", "Sob"] }, labels: { dhx_cal_today_button: "Dziś", day_tab: "Dzień", week_tab: "Tydzień", month_tab: "Miesiąc", new_event: "Nowe zdarzenie", icon_save: "Zapisz", icon_cancel: "Anuluj", icon_details: "Szczegóły", icon_edit: "Edytuj", icon_delete: "Usuń", confirm_closing: "", confirm_deleting: "Zdarzenie zostanie usunięte na zawsze, kontynuować?", section_description: "Opis", section_time: "Okres czasu", full_day: "Cały dzień", confirm_recurring: "Czy chcesz edytować cały zbiór powtarzających się zdarzeń?", section_recurring: "Powtórz zdarzenie", button_recurring: "Nieaktywne", button_recurring_open: "Aktywne", button_edit_series: "Edytuj serię", button_edit_occurrence: "Edytuj kopię", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Data", description: "Opis", year_tab: "Rok", week_agenda_tab: "Agenda", grid_tab: "Tabela", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Codziennie", repeat_radio_week: "Co tydzie", repeat_radio_month: "Co miesic", repeat_radio_year: "Co rok", repeat_radio_day_type: "Kadego", repeat_text_day_count: "dnia", repeat_radio_day_type2: "Kadego dnia roboczego", repeat_week: " Powtarzaj kadego", repeat_text_week_count: "tygodnia w dni:", repeat_radio_month_type: "Powtrz", repeat_radio_month_start: "W", repeat_text_month_day: "dnia kadego", repeat_text_month_count: "miesica", repeat_text_month_count2_before: "kadego", repeat_text_month_count2_after: "miesica", repeat_year_label: "W", select_year_day2: "miesica", repeat_text_year_day: "dnia miesica", select_year_month: "", repeat_radio_end: "Bez daty kocowej", repeat_text_occurrences_count: "wystpieniu/ach", repeat_radio_end3: "Zakocz w", repeat_radio_end2: "Po", repeat_never: "Nigdy", repeat_daily: "Codziennie", repeat_workdays: "Każdy dzień roboczy", repeat_weekly: "Co tydzień", repeat_monthly: "Co miesiąc", repeat_yearly: "Co rok", repeat_custom: "Niestandardowy", repeat_freq_day: "Dzień", repeat_freq_week: "Tydzień", repeat_freq_month: "Miesiąc", repeat_freq_year: "Rok", repeat_on_date: "W dniu", repeat_ends: "Kończy się", month_for_recurring: ["Stycznia", "Lutego", "Marca", "Kwietnia", "Maja", "Czerwca", "Lipca", "Sierpnia", "Wrzenia", "Padziernka", "Listopada", "Grudnia"], day_for_recurring: ["Niedziela", "Poniedziaek", "Wtorek", "roda", "Czwartek", "Pitek", "Sobota"] } }, pt: { date: { month_full: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"], month_short: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"], day_full: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"], day_short: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"] }, labels: { dhx_cal_today_button: "Hoje", day_tab: "Dia", week_tab: "Semana", month_tab: "Mês", new_event: "Novo evento", icon_save: "Salvar", icon_cancel: "Cancelar", icon_details: "Detalhes", icon_edit: "Editar", icon_delete: "Deletar", confirm_closing: "", confirm_deleting: "Tem certeza que deseja excluir?", section_description: "Descrição", section_time: "Período de tempo", full_day: "Dia inteiro", confirm_recurring: "Deseja editar todos esses eventos repetidos?", section_recurring: "Repetir evento", button_recurring: "Desabilitar", button_recurring_open: "Habilitar", button_edit_series: "Editar a série", button_edit_occurrence: "Editar uma cópia", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Dia", date: "Data", description: "Descrição", year_tab: "Ano", week_agenda_tab: "Dia", grid_tab: "Grade", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Diário", repeat_radio_week: "Semanal", repeat_radio_month: "Mensal", repeat_radio_year: "Anual", repeat_radio_day_type: "Cada", repeat_text_day_count: "dia(s)", repeat_radio_day_type2: "Cada trabalho diário", repeat_week: " Repita cada", repeat_text_week_count: "semana:", repeat_radio_month_type: "Repetir", repeat_radio_month_start: "Em", repeat_text_month_day: "todo dia", repeat_text_month_count: "mês", repeat_text_month_count2_before: "todo", repeat_text_month_count2_after: "mês", repeat_year_label: "Em", select_year_day2: "of", repeat_text_year_day: "dia", select_year_month: "mês", repeat_radio_end: "Sem data final", repeat_text_occurrences_count: "ocorrências", repeat_radio_end3: "Fim", repeat_radio_end2: "Depois", repeat_never: "Nunca", repeat_daily: "Todos os dias", repeat_workdays: "Todos os dias úteis", repeat_weekly: "Toda semana", repeat_monthly: "Todo mês", repeat_yearly: "Todo ano", repeat_custom: "Personalizado", repeat_freq_day: "Dia", repeat_freq_week: "Semana", repeat_freq_month: "Mês", repeat_freq_year: "Ano", repeat_on_date: "Na data", repeat_ends: "Termina", month_for_recurring: ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"], day_for_recurring: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"] } }, ro: { date: { month_full: ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "November", "December"], month_short: ["Ian", "Feb", "Mar", "Apr", "Mai", "Iun", "Iul", "Aug", "Sep", "Oct", "Nov", "Dec"], day_full: ["Duminica", "Luni", "Marti", "Miercuri", "Joi", "Vineri", "Sambata"], day_short: ["Du", "Lu", "Ma", "Mi", "Jo", "Vi", "Sa"] }, labels: { dhx_cal_today_button: "Astazi", day_tab: "Zi", week_tab: "Saptamana", month_tab: "Luna", new_event: "Eveniment nou", icon_save: "Salveaza", icon_cancel: "Anuleaza", icon_details: "Detalii", icon_edit: "Editeaza", icon_delete: "Sterge", confirm_closing: "Schimbarile nu vor fi salvate, esti sigur?", confirm_deleting: "Evenimentul va fi sters permanent, esti sigur?", section_description: "Descriere", section_time: "Interval", full_day: "Toata ziua", confirm_recurring: "Vrei sa editezi toata seria de evenimente repetate?", section_recurring: "Repetare", button_recurring: "Dezactivata", button_recurring_open: "Activata", button_edit_series: "Editeaza serie", button_edit_occurrence: "Editeaza doar intrare", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Agenda", date: "Data", description: "Descriere", year_tab: "An", week_agenda_tab: "Agenda", grid_tab: "Lista", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Zilnic", repeat_radio_week: "Saptamanal", repeat_radio_month: "Lunar", repeat_radio_year: "Anual", repeat_radio_day_type: "La fiecare", repeat_text_day_count: "zi(le)", repeat_radio_day_type2: "Fiecare zi lucratoare", repeat_week: " Repeta la fiecare", repeat_text_week_count: "saptamana in urmatoarele zile:", repeat_radio_month_type: "Repeta in", repeat_radio_month_start: "In a", repeat_text_month_day: "zi la fiecare", repeat_text_month_count: "luni", repeat_text_month_count2_before: "la fiecare", repeat_text_month_count2_after: "luni", repeat_year_label: "In", select_year_day2: "a lunii", repeat_text_year_day: "zi a lunii", select_year_month: "", repeat_radio_end: "Fara data de sfarsit", repeat_text_occurrences_count: "evenimente", repeat_radio_end3: "La data", repeat_radio_end2: "Dupa", repeat_never: "Niciodată", repeat_daily: "În fiecare zi", repeat_workdays: "În fiecare zi lucrătoare", repeat_weekly: "În fiecare săptămână", repeat_monthly: "În fiecare lună", repeat_yearly: "În fiecare an", repeat_custom: "Personalizat", repeat_freq_day: "Zi", repeat_freq_week: "Săptămână", repeat_freq_month: "Lună", repeat_freq_year: "An", repeat_on_date: "La data", repeat_ends: "Se termină", month_for_recurring: ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"], day_for_recurring: ["Duminica", "Luni", "Marti", "Miercuri", "Joi", "Vineri", "Sambata"] } }, ru: { date: { month_full: ["Январь", "Февраль", "Март", "Апрель", "Maй", "Июнь", "Июль", "Август", "Сентябрь", "Oктябрь", "Ноябрь", "Декабрь"], month_short: ["Янв", "Фев", "Maр", "Aпр", "Maй", "Июн", "Июл", "Aвг", "Сен", "Окт", "Ноя", "Дек"], day_full: ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"], day_short: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"] }, labels: { dhx_cal_today_button: "Сегодня", day_tab: "День", week_tab: "Неделя", month_tab: "Месяц", new_event: "Новое событие", icon_save: "Сохранить", icon_cancel: "Отменить", icon_details: "Детали", icon_edit: "Изменить", icon_delete: "Удалить", confirm_closing: "", confirm_deleting: "Событие будет удалено безвозвратно, продолжить?", section_description: "Описание", section_time: "Период времени", full_day: "Весь день", confirm_recurring: "Вы хотите изменить всю серию повторяющихся событий?", section_recurring: "Повторение", button_recurring: "Отключено", button_recurring_open: "Включено", button_edit_series: "Редактировать серию", button_edit_occurrence: "Редактировать экземпляр", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Список", date: "Дата", description: "Описание", year_tab: "Год", week_agenda_tab: "Список", grid_tab: "Таблица", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "День", repeat_radio_week: "Неделя", repeat_radio_month: "Месяц", repeat_radio_year: "Год", repeat_radio_day_type: "Каждый", repeat_text_day_count: "день", repeat_radio_day_type2: "Каждый рабочий день", repeat_week: " Повторять каждую", repeat_text_week_count: "неделю , в:", repeat_radio_month_type: "Повторять", repeat_radio_month_start: "", repeat_text_month_day: " числа каждый ", repeat_text_month_count: "месяц", repeat_text_month_count2_before: "каждый ", repeat_text_month_count2_after: "месяц", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "день", select_year_month: "", repeat_radio_end: "Без даты окончания", repeat_text_occurrences_count: "повторений", repeat_radio_end3: "До ", repeat_radio_end2: "", repeat_never: "Никогда", repeat_daily: "Каждый день", repeat_workdays: "Каждый будний день", repeat_weekly: "Каждую неделю", repeat_monthly: "Каждый месяц", repeat_yearly: "Каждый год", repeat_custom: "Настроить", repeat_freq_day: "День", repeat_freq_week: "Неделя", repeat_freq_month: "Месяц", repeat_freq_year: "Год", repeat_on_date: "В дату", repeat_ends: "Заканчивается", month_for_recurring: ["Января", "Февраля", "Марта", "Апреля", "Мая", "Июня", "Июля", "Августа", "Сентября", "Октября", "Ноября", "Декабря"], day_for_recurring: ["Воскресенье", "Понедельник", "Вторник", "Среду", "Четверг", "Пятницу", "Субботу"] } }, si: { date: { month_full: ["Januar", "Februar", "Marec", "April", "Maj", "Junij", "Julij", "Avgust", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Nedelja", "Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek", "Sobota"], day_short: ["Ned", "Pon", "Tor", "Sre", "Čet", "Pet", "Sob"] }, labels: { dhx_cal_today_button: "Danes", day_tab: "Dan", week_tab: "Teden", month_tab: "Mesec", new_event: "Nov dogodek", icon_save: "Shrani", icon_cancel: "Prekliči", icon_details: "Podrobnosti", icon_edit: "Uredi", icon_delete: "Izbriši", confirm_closing: "", confirm_deleting: "Dogodek bo izbrisan. Želite nadaljevati?", section_description: "Opis", section_time: "Časovni okvir", full_day: "Ves dan", confirm_recurring: "Želite urediti celoten set ponavljajočih dogodkov?", section_recurring: "Ponovi dogodek", button_recurring: "Onemogočeno", button_recurring_open: "Omogočeno", button_edit_series: "Edit series", button_edit_occurrence: "Edit occurrence", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Zadeva", date: "Datum", description: "Opis", year_tab: "Leto", week_agenda_tab: "Zadeva", grid_tab: "Miza", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Dnevno", repeat_radio_week: "Tedensko", repeat_radio_month: "Mesečno", repeat_radio_year: "Letno", repeat_radio_day_type: "Vsak", repeat_text_day_count: "dan", repeat_radio_day_type2: "Vsak delovni dan", repeat_week: " Ponavljaj vsak", repeat_text_week_count: "teden na naslednje dni:", repeat_radio_month_type: "Ponavljaj", repeat_radio_month_start: "Na", repeat_text_month_day: "dan vsak", repeat_text_month_count: "mesec", repeat_text_month_count2_before: "vsak", repeat_text_month_count2_after: "mesec", repeat_year_label: "Na", select_year_day2: "od", repeat_text_year_day: "dan", select_year_month: "mesec", repeat_radio_end: "Brez končnega datuma", repeat_text_occurrences_count: "pojavitve", repeat_radio_end2: "Po", repeat_radio_end3: "Končaj do", repeat_never: "Nikoli", repeat_daily: "Vsak dan", repeat_workdays: "Vsak delovni dan", repeat_weekly: "Vsak teden", repeat_monthly: "Vsak mesec", repeat_yearly: "Vsako leto", repeat_custom: "Po meri", repeat_freq_day: "Dan", repeat_freq_week: "Teden", repeat_freq_month: "Mesec", repeat_freq_year: "Leto", repeat_on_date: "Na datum", repeat_ends: "Konča se", month_for_recurring: ["Januar", "Februar", "Marec", "April", "Maj", "Junij", "Julij", "Avgust", "September", "Oktober", "November", "December"], day_for_recurring: ["Nedelja", "Ponedeljek", "Torek", "Sreda", "Četrtek", "Petek", "Sobota"] } }, sk: { date: { month_full: ["Január", "Február", "Marec", "Apríl", "Máj", "Jún", "Júl", "August", "September", "Október", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Máj", "Jún", "Júl", "Aug", "Sept", "Okt", "Nov", "Dec"], day_full: ["Nedeľa", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"], day_short: ["Ne", "Po", "Ut", "St", "Št", "Pi", "So"] }, labels: { dhx_cal_today_button: "Dnes", day_tab: "Deň", week_tab: "Týždeň", month_tab: "Mesiac", new_event: "Nová udalosť", icon_save: "Uložiť", icon_cancel: "Späť", icon_details: "Detail", icon_edit: "Edituj", icon_delete: "Zmazať", confirm_closing: "Vaše zmeny nebudú uložené. Skutočne?", confirm_deleting: "Udalosť bude natrvalo vymazaná. Skutočne?", section_description: "Poznámky", section_time: "Doba platnosti", confirm_recurring: "Prajete si upraviť celú radu opakovaných udalostí?", section_recurring: "Opakovanie udalosti", button_recurring: "Vypnuté", button_recurring_open: "Zapnuté", button_edit_series: "Upraviť opakovania", button_edit_occurrence: "Upraviť inštancie", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Program", date: "Dátum", description: "Poznámka", year_tab: "Rok", full_day: "Celý deň", week_agenda_tab: "Program", grid_tab: "Mriežka", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Denne", repeat_radio_week: "Týždenne", repeat_radio_month: "Mesaène", repeat_radio_year: "Roène", repeat_radio_day_type: "Každý", repeat_text_day_count: "deò", repeat_radio_day_type2: "Každý prac. deò", repeat_week: "Opakova každý", repeat_text_week_count: "týždeò v dòoch:", repeat_radio_month_type: "Opakova", repeat_radio_month_start: "On", repeat_text_month_day: "deò každý", repeat_text_month_count: "mesiac", repeat_text_month_count2_before: "každý", repeat_text_month_count2_after: "mesiac", repeat_year_label: "On", select_year_day2: "poèas", repeat_text_year_day: "deò", select_year_month: "mesiac", repeat_radio_end: "Bez dátumu ukonèenia", repeat_text_occurrences_count: "udalostiach", repeat_radio_end3: "Ukonèi", repeat_radio_end2: "Po", repeat_never: "Nikdy", repeat_daily: "Každý deň", repeat_workdays: "Každý pracovný deň", repeat_weekly: "Každý týždeň", repeat_monthly: "Každý mesiac", repeat_yearly: "Každý rok", repeat_custom: "Vlastné", repeat_freq_day: "Deň", repeat_freq_week: "Týždeň", repeat_freq_month: "Mesiac", repeat_freq_year: "Rok", repeat_on_date: "Na dátum", repeat_ends: "Koniec", month_for_recurring: ["Január", "Február", "Marec", "Apríl", "Máj", "Jún", "Júl", "August", "September", "Október", "November", "December"], day_for_recurring: ["Nede¾a", "Pondelok", "Utorok", "Streda", "Štvrtok", "Piatok", "Sobota"] } }, sv: { date: { month_full: ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"], month_short: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"], day_full: ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"], day_short: ["Sön", "Mån", "Tis", "Ons", "Tor", "Fre", "Lör"] }, labels: { dhx_cal_today_button: "Idag", day_tab: "Dag", week_tab: "Vecka", month_tab: "Månad", new_event: "Ny händelse", icon_save: "Spara", icon_cancel: "Ångra", icon_details: "Detaljer", icon_edit: "Ändra", icon_delete: "Ta bort", confirm_closing: "", confirm_deleting: "Är du säker på att du vill ta bort händelsen permanent?", section_description: "Beskrivning", section_time: "Tid", full_day: "Hela dagen", confirm_recurring: "Vill du redigera hela serien med repeterande händelser?", section_recurring: "Upprepa händelse", button_recurring: "Inaktiverat", button_recurring_open: "Aktiverat", button_edit_series: "Redigera serien", button_edit_occurrence: "Redigera en kopia", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Dagordning", date: "Datum", description: "Beskrivning", year_tab: "År", week_agenda_tab: "Dagordning", grid_tab: "Galler", drag_to_create: "Dra för att skapa ny", drag_to_move: "Dra för att flytta", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Dagligen", repeat_radio_week: "Veckovis", repeat_radio_month: "Månadsvis", repeat_radio_year: "Årligen", repeat_radio_day_type: "Var", repeat_text_day_count: "dag", repeat_radio_day_type2: "Varje arbetsdag", repeat_week: " Upprepa var", repeat_text_week_count: "vecka dessa dagar:", repeat_radio_month_type: "Upprepa", repeat_radio_month_start: "Den", repeat_text_month_day: "dagen var", repeat_text_month_count: "månad", repeat_text_month_count2_before: "var", repeat_text_month_count2_after: "månad", repeat_year_label: "Den", select_year_day2: "i", repeat_text_year_day: "dag i", select_year_month: "månad", repeat_radio_end: "Inget slutdatum", repeat_text_occurrences_count: "upprepningar", repeat_radio_end3: "Sluta efter", repeat_radio_end2: "Efter", repeat_never: "Aldrig", repeat_daily: "Varje dag", repeat_workdays: "Varje vardag", repeat_weekly: "Varje vecka", repeat_monthly: "Varje månad", repeat_yearly: "Varje år", repeat_custom: "Anpassad", repeat_freq_day: "Dag", repeat_freq_week: "Vecka", repeat_freq_month: "Månad", repeat_freq_year: "År", repeat_on_date: "På datum", repeat_ends: "Slutar", month_for_recurring: ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"], day_for_recurring: ["Söndag", "Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag"] } }, tr: { date: { month_full: ["Ocak", "Þubat", "Mart", "Nisan", "Mayýs", "Haziran", "Temmuz", "Aðustos", "Eylül", "Ekim", "Kasým", "Aralýk"], month_short: ["Oca", "Þub", "Mar", "Nis", "May", "Haz", "Tem", "Aðu", "Eyl", "Eki", "Kas", "Ara"], day_full: ["Pazar", "Pazartes,", "Salý", "Çarþamba", "Perþembe", "Cuma", "Cumartesi"], day_short: ["Paz", "Pts", "Sal", "Çar", "Per", "Cum", "Cts"] }, labels: { dhx_cal_today_button: "Bugün", day_tab: "Gün", week_tab: "Hafta", month_tab: "Ay", new_event: "Uygun", icon_save: "Kaydet", icon_cancel: "Ýptal", icon_details: "Detaylar", icon_edit: "Düzenle", icon_delete: "Sil", confirm_closing: "", confirm_deleting: "Etkinlik silinecek, devam?", section_description: "Açýklama", section_time: "Zaman aralýðý", full_day: "Tam gün", confirm_recurring: "Tüm tekrar eden etkinlikler silinecek, devam?", section_recurring: "Etkinliði tekrarla", button_recurring: "Pasif", button_recurring_open: "Aktif", button_edit_series: "Dizi düzenleme", button_edit_occurrence: "Bir kopyasını düzenleyin", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Ajanda", date: "Tarih", description: "Açýklama", year_tab: "Yýl", week_agenda_tab: "Ajanda", grid_tab: "Izgara", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "Günlük", repeat_radio_week: "Haftalık", repeat_radio_month: "Aylık", repeat_radio_year: "Yıllık", repeat_radio_day_type: "Her", repeat_text_day_count: "gün", repeat_radio_day_type2: "Her iş günü", repeat_week: " Tekrar her", repeat_text_week_count: "hafta şu günlerde:", repeat_radio_month_type: "Tekrar et", repeat_radio_month_start: "Tarihinde", repeat_text_month_day: "gün her", repeat_text_month_count: "ay", repeat_text_month_count2_before: "her", repeat_text_month_count2_after: "ay", repeat_year_label: "Tarihinde", select_year_day2: "ayın", repeat_text_year_day: "günü", select_year_month: "ay", repeat_radio_end: "Bitiş tarihi yok", repeat_text_occurrences_count: "olay", repeat_radio_end2: "Sonra", repeat_radio_end3: "Tarihinde bitir", repeat_never: "Asla", repeat_daily: "Her gün", repeat_workdays: "Her iş günü", repeat_weekly: "Her hafta", repeat_monthly: "Her ay", repeat_yearly: "Her yıl", repeat_custom: "Özel", repeat_freq_day: "Gün", repeat_freq_week: "Hafta", repeat_freq_month: "Ay", repeat_freq_year: "Yıl", repeat_on_date: "Tarihinde", repeat_ends: "Biter", month_for_recurring: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"], day_for_recurring: ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"] } }, ua: { date: { month_full: ["Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень", "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"], month_short: ["Січ", "Лют", "Бер", "Кві", "Тра", "Чер", "Лип", "Сер", "Вер", "Жов", "Лис", "Гру"], day_full: ["Неділя", "Понеділок", "Вівторок", "Середа", "Четвер", "П'ятниця", "Субота"], day_short: ["Нед", "Пон", "Вів", "Сер", "Чет", "Птн", "Суб"] }, labels: { dhx_cal_today_button: "Сьогодні", day_tab: "День", week_tab: "Тиждень", month_tab: "Місяць", new_event: "Нова подія", icon_save: "Зберегти", icon_cancel: "Відміна", icon_details: "Деталі", icon_edit: "Редагувати", icon_delete: "Вилучити", confirm_closing: "", confirm_deleting: "Подія вилучиться назавжди. Ви впевнені?", section_description: "Опис", section_time: "Часовий проміжок", full_day: "Весь день", confirm_recurring: "Хочете редагувати весь перелік повторюваних подій?", section_recurring: "Повторювана подія", button_recurring: "Відключено", button_recurring_open: "Включено", button_edit_series: "Редагувати серію", button_edit_occurrence: "Редагувати примірник", button_edit_occurrence_and_following: "This and following events", agenda_tab: "Перелік", date: "Дата", description: "Опис", year_tab: "Рік", week_agenda_tab: "Перелік", grid_tab: "Таблиця", drag_to_create: "Drag to create", drag_to_move: "Drag to move", message_ok: "OK", message_cancel: "Cancel", next: "Next", prev: "Previous", year: "Year", month: "Month", day: "Day", hour: "Hour", minute: "Minute", repeat_radio_day: "День", repeat_radio_week: "Тиждень", repeat_radio_month: "Місяць", repeat_radio_year: "Рік", repeat_radio_day_type: "Кожний", repeat_text_day_count: "день", repeat_radio_day_type2: "Кожний робочий день", repeat_week: " Повторювати кожен", repeat_text_week_count: "тиждень , по:", repeat_radio_month_type: "Повторювати", repeat_radio_month_start: "", repeat_text_month_day: " числа кожний ", repeat_text_month_count: "місяць", repeat_text_month_count2_before: "кожен ", repeat_text_month_count2_after: "місяць", repeat_year_label: "", select_year_day2: "", repeat_text_year_day: "день", select_year_month: "", repeat_radio_end: "Без дати закінчення", repeat_text_occurrences_count: "повторень", repeat_radio_end3: "До ", repeat_radio_end2: "", repeat_never: "Ніколи", repeat_daily: "Щодня", repeat_workdays: "Щодня в робочі дні", repeat_weekly: "Щотижня", repeat_monthly: "Щомісяця", repeat_yearly: "Щороку", repeat_custom: "Налаштоване", repeat_freq_day: "День", repeat_freq_week: "Тиждень", repeat_freq_month: "Місяць", repeat_freq_year: "Рік", repeat_on_date: "На дату", repeat_ends: "Закінчується", month_for_recurring: ["січня", "лютого", "березня", "квітня", "травня", "червня", "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"], day_for_recurring: ["Неділям", "Понеділкам", "Вівторкам", "Середам", "Четвергам", "П'ятницям", "Суботам"] } } }, Symbol.toStringTag, { value: "Module" }));
+class ia {
   constructor(i, t, n = {}) {
     this.state = { date: /* @__PURE__ */ new Date(), modes: ["days", "months", "years"], currentRange: [], eventDates: [], filterDays: null, currentModeIndex: 0, ...n }, this.container = null, this.element = null, this.onStateChangeHandlers = [], this.scheduler = i, this._domEvents = i._createDomEventScope(), this.state = this.getState(), Ye(this), t && (this.container = t, this.render(this.container)), this.onStateChange((s, a) => {
       this.callEvent("onStateChange", [a, s]);
@@ -2979,8 +3054,8 @@ class Qt {
       o.innerText = `${r} - ${r + 9}`;
     }
     this._domEvents.attach(o, "click", this._toggleMode.bind(this)), s.appendChild(o);
-    const _ = document.createElement("button");
-    _.classList.add("dhx_cal_datepicker_arrow", "scheduler_icon", "arrow_right"), s.appendChild(_), i.appendChild(s), this._domEvents.attach(a, "click", this._adjustDate.bind(this, -1)), this._domEvents.attach(_, "click", this._adjustDate.bind(this, 1));
+    const d = document.createElement("button");
+    d.classList.add("dhx_cal_datepicker_arrow", "scheduler_icon", "arrow_right"), s.appendChild(d), i.appendChild(s), this._domEvents.attach(a, "click", this._adjustDate.bind(this, -1)), this._domEvents.attach(d, "click", this._adjustDate.bind(this, 1));
   }
   render(i) {
     this._domEvents.detachAll(), this.container = i || this.container, this.container.innerHTML = "", this.element || (this.element = document.createElement("div"), this.element.classList.add("dhx_cal_datepicker")), this.element.innerHTML = "", this.container.appendChild(this.element), this._renderCalendarHeader(this.element);
@@ -2994,11 +3069,11 @@ class Qt {
     let a = s.date.week_start(new Date(t));
     const o = s.date.add(s.date.week_start(new Date(t)), 1, "week");
     i.classList.add("dhx_cal_datepicker_days");
-    const _ = s.date.date_to_str("%D");
+    const d = s.date.date_to_str("%D");
     for (; a.valueOf() < o.valueOf(); ) {
       if (!n || !n(a)) {
-        const r = _(a), d = document.createElement("div");
-        d.setAttribute("data-day", a.getDay()), d.classList.add("dhx_cal_datepicker_dayname"), d.innerText = r, i.appendChild(d);
+        const r = d(a), l = document.createElement("div");
+        l.setAttribute("data-day", a.getDay()), l.classList.add("dhx_cal_datepicker_dayname"), l.innerText = r, i.appendChild(l);
       }
       a = s.date.add(a, 1, "day");
     }
@@ -3012,30 +3087,30 @@ class Qt {
   }
   _renderDayGrid(i) {
     const { date: t, currentRange: n, eventDates: s, minWeeks: a, filterDays: o } = this.getState();
-    let _ = n[0], r = n[1];
-    const d = s.reduce((M, k) => (M[this.scheduler.date.day_start(new Date(k)).valueOf()] = !0, M), {}), l = document.createElement("div");
-    this._renderDayGridHeader(l);
-    const h = l.children.length;
-    i.appendChild(l), h !== 7 && i.style.setProperty("--dhx-scheduler-week-length", h);
-    const p = this.scheduler, m = p.date.week_start(p.date.month_start(new Date(t))), g = p.date.month_start(new Date(t)), c = p.date.add(p.date.month_start(new Date(t)), 1, "month");
-    let u = p.date.add(p.date.month_start(new Date(t)), 1, "month");
-    const f = p.date.date_part(p._currentDate());
-    if (u.getDay() !== 0 && p.config.start_on_monday) {
-      const M = (7 - u.getDay()) % 7;
-      u = p.date.add(u, M + 1, "day");
+    let d = n[0], r = n[1];
+    const l = s.reduce((M, k) => (M[this.scheduler.date.day_start(new Date(k)).valueOf()] = !0, M), {}), _ = document.createElement("div");
+    this._renderDayGridHeader(_);
+    const h = _.children.length;
+    i.appendChild(_), h !== 7 && i.style.setProperty("--dhx-scheduler-week-length", h);
+    const p = this.scheduler, v = p.date.week_start(p.date.month_start(new Date(t))), g = p.date.month_start(new Date(t)), c = p.date.add(p.date.month_start(new Date(t)), 1, "month");
+    let f = p.date.add(p.date.month_start(new Date(t)), 1, "month");
+    const u = p.date.date_part(p._currentDate());
+    if (f.getDay() !== 0 && p.config.start_on_monday) {
+      const M = (7 - f.getDay()) % 7;
+      f = p.date.add(f, M + 1, "day");
     } else
-      u = p.date.add(p.date.week_start(u), 1, "week");
-    let y = this._weeksBetween(m, u);
-    a && y < a && (u = p.date.add(u, a - y, "week"));
-    let w = m;
+      f = p.date.add(p.date.week_start(f), 1, "week");
+    let y = this._weeksBetween(v, f);
+    a && y < a && (f = p.date.add(f, a - y, "week"));
+    let w = v;
     const D = document.createElement("div");
     for (D.classList.add("dhx_cal_datepicker_days"), this._domEvents.attach(D, "click", (M) => {
       const k = M.target.closest("[data-cell-date]"), N = new Date(k.getAttribute("data-cell-date"));
       this.callEvent("onDateClick", [N, M]);
-    }); w.valueOf() < u.valueOf(); ) {
+    }); w.valueOf() < f.valueOf(); ) {
       if (!o || !o(w)) {
         const M = document.createElement("div");
-        M.setAttribute("data-cell-date", p.templates.format_date(w)), M.setAttribute("data-day", w.getDay()), M.innerHTML = p.templates.month_day(w), w.valueOf() < g.valueOf() ? M.classList.add("dhx_before") : w.valueOf() >= c.valueOf() && M.classList.add("dhx_after"), w.getDay() !== 0 && w.getDay() !== 6 || M.classList.add("dhx_cal_datepicker_weekend"), w.valueOf() == f.valueOf() && M.classList.add("dhx_now"), _ && r && w.valueOf() >= _.valueOf() && w.valueOf() < r.valueOf() && M.classList.add("dhx_cal_datepicker_current"), d[w.valueOf()] && M.classList.add("dhx_cal_datepicker_event"), M.classList.add("dhx_cal_datepicker_date"), D.appendChild(M);
+        M.setAttribute("data-cell-date", p.templates.format_date(w)), M.setAttribute("data-day", w.getDay()), M.innerHTML = p.templates.month_day(w), w.valueOf() < g.valueOf() ? M.classList.add("dhx_before") : w.valueOf() >= c.valueOf() && M.classList.add("dhx_after"), w.getDay() !== 0 && w.getDay() !== 6 || M.classList.add("dhx_cal_datepicker_weekend"), w.valueOf() == u.valueOf() && M.classList.add("dhx_now"), d && r && w.valueOf() >= d.valueOf() && w.valueOf() < r.valueOf() && M.classList.add("dhx_cal_datepicker_current"), l[w.valueOf()] && M.classList.add("dhx_cal_datepicker_event"), M.classList.add("dhx_cal_datepicker_date"), D.appendChild(M);
       }
       w = p.date.add(w, 1, "day");
     }
@@ -3049,26 +3124,26 @@ class Qt {
       s.push(new Date(t.getFullYear(), r, 1));
     const a = this.scheduler.date.date_to_str("%M");
     s.forEach((r) => {
-      const d = document.createElement("div");
-      d.classList.add("dhx_cal_datepicker_month"), t.getMonth() === r.getMonth() && d.classList.add("dhx_cal_datepicker_current"), d.setAttribute("data-month", r.getMonth()), d.innerHTML = a(r), this._domEvents.attach(d, "click", () => {
-        const l = new Date(r);
-        this.setState({ date: l, mode: "days" });
-      }), n.appendChild(d);
+      const l = document.createElement("div");
+      l.classList.add("dhx_cal_datepicker_month"), t.getMonth() === r.getMonth() && l.classList.add("dhx_cal_datepicker_current"), l.setAttribute("data-month", r.getMonth()), l.innerHTML = a(r), this._domEvents.attach(l, "click", () => {
+        const _ = new Date(r);
+        this.setState({ date: _, mode: "days" });
+      }), n.appendChild(l);
     }), i.appendChild(n);
     const o = document.createElement("div");
     o.classList.add("dhx_cal_datepicker_done");
-    const _ = document.createElement("button");
-    _.innerText = "Done", _.classList.add("dhx_cal_datepicker_done_btn"), this._domEvents.attach(_, "click", () => {
+    const d = document.createElement("button");
+    d.innerText = "Done", d.classList.add("dhx_cal_datepicker_done_btn"), this._domEvents.attach(d, "click", () => {
       this.setState({ mode: "days" });
-    }), o.appendChild(_), i.appendChild(o);
+    }), o.appendChild(d), i.appendChild(o);
   }
   _renderYearGrid(i) {
     const { date: t } = this.getState(), n = 10 * Math.floor(t.getFullYear() / 10), s = document.createElement("div");
     s.classList.add("dhx_cal_datepicker_years");
-    for (let _ = n - 1; _ <= n + 10; _++) {
+    for (let d = n - 1; d <= n + 10; d++) {
       const r = document.createElement("div");
-      r.innerText = _, r.classList.add("dhx_cal_datepicker_year"), r.setAttribute("data-year", _), t.getFullYear() === _ && r.classList.add("dhx_cal_datepicker_current"), this._domEvents.attach(r, "click", () => {
-        this.setState({ date: new Date(_, t.getMonth(), 1), mode: "months" });
+      r.innerText = d, r.classList.add("dhx_cal_datepicker_year"), r.setAttribute("data-year", d), t.getFullYear() === d && r.classList.add("dhx_cal_datepicker_current"), this._domEvents.attach(r, "click", () => {
+        this.setState({ date: new Date(d, t.getMonth(), 1), mode: "months" });
       }), s.appendChild(r);
     }
     i.appendChild(s);
@@ -3083,29 +3158,29 @@ class Qt {
     this.onStateChangeHandlers = [], this.element && (this.element.innerHTML = "", this.element.remove()), this._domEvents.detachAll(), this.callEvent("onDestroy", []), this.detachAllEvents(), this.scheduler = null;
   }
 }
-function ea(e) {
-  const i = { version: "7.2.14" };
+function oa(e) {
+  const i = { version: "7.2.15" };
   i.$stateProvider = function() {
     const r = {};
-    return { getState: function(d) {
-      if (r[d])
-        return r[d].method();
+    return { getState: function(l) {
+      if (r[l])
+        return r[l].method();
       {
-        const l = {};
+        const _ = {};
         for (const h in r)
-          r[h].internal || ne.mixin(l, r[h].method(), !0);
-        return l;
+          r[h].internal || ne.mixin(_, r[h].method(), !0);
+        return _;
       }
-    }, registerProvider: function(d, l, h) {
-      r[d] = { method: l, internal: h };
-    }, unregisterProvider: function(d) {
-      delete r[d];
+    }, registerProvider: function(l, _, h) {
+      r[l] = { method: _, internal: h };
+    }, unregisterProvider: function(l) {
+      delete r[l];
     } };
   }(), i.getState = i.$stateProvider.getState, function(r) {
-    var d = { agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html", grid: "https://docs.dhtmlx.com/scheduler/grid_view.html", map: "https://docs.dhtmlx.com/scheduler/map_view.html", unit: "https://docs.dhtmlx.com/scheduler/units_view.html", timeline: "https://docs.dhtmlx.com/scheduler/timeline_view.html", week_agenda: "https://docs.dhtmlx.com/scheduler/weekagenda_view.html", year: "https://docs.dhtmlx.com/scheduler/year_view.html", anythingElse: "https://docs.dhtmlx.com/scheduler/views.html" }, l = { agenda: "scheduler.plugins({ agenda_view: true })", grid: "scheduler.plugins({ grid_view: true })", map: "scheduler.plugins({ map_view: true })", unit: "scheduler.plugins({ units: true })", timeline: "scheduler.plugins({ timeline: true, treetimeline: true, daytimeline: true})", week_agenda: "scheduler.plugins({ week_agenda: true })", year: "scheduler.plugins({ year_view: true })", limit: "scheduler.plugins({ limit: true })" };
+    var l = { agenda: "https://docs.dhtmlx.com/scheduler/agenda_view.html", grid: "https://docs.dhtmlx.com/scheduler/grid_view.html", map: "https://docs.dhtmlx.com/scheduler/map_view.html", unit: "https://docs.dhtmlx.com/scheduler/units_view.html", timeline: "https://docs.dhtmlx.com/scheduler/timeline_view.html", week_agenda: "https://docs.dhtmlx.com/scheduler/weekagenda_view.html", year: "https://docs.dhtmlx.com/scheduler/year_view.html", anythingElse: "https://docs.dhtmlx.com/scheduler/views.html" }, _ = { agenda: "scheduler.plugins({ agenda_view: true })", grid: "scheduler.plugins({ grid_view: true })", map: "scheduler.plugins({ map_view: true })", unit: "scheduler.plugins({ units: true })", timeline: "scheduler.plugins({ timeline: true, treetimeline: true, daytimeline: true})", week_agenda: "scheduler.plugins({ week_agenda: true })", year: "scheduler.plugins({ year_view: true })", limit: "scheduler.plugins({ limit: true })" };
     r._commonErrorMessages = { unknownView: function(h) {
-      var p = l[h] ? "You're probably missing " + l[h] + "." : "";
-      return "`" + h + "` view is not defined. \nPlease check parameters you pass to `scheduler.init` or `scheduler.setCurrentView` in your code and ensure you've imported appropriate extensions. \nRelated docs: " + (d[h] || d.anythingElse) + `
+      var p = _[h] ? "You're probably missing " + _[h] + "." : "";
+      return "`" + h + "` view is not defined. \nPlease check parameters you pass to `scheduler.init` or `scheduler.setCurrentView` in your code and ensure you've imported appropriate extensions. \nRelated docs: " + (l[h] || l.anythingElse) + `
 ` + (p ? p + `
 ` : "");
     }, collapsedContainer: function(h) {
@@ -3114,14 +3189,14 @@ Make sure that the container has some initial height or use different units. For
 <div id='scheduler_here' class='dhx_cal_container' style='width:100%; height:600px;'> 
 `;
     } }, r.createTimelineView = function() {
-      throw new Error("scheduler.createTimelineView is not implemented. Be sure to add the required extension: " + l.timeline + `
-Related docs: ` + d.timeline);
+      throw new Error("scheduler.createTimelineView is not implemented. Be sure to add the required extension: " + _.timeline + `
+Related docs: ` + l.timeline);
     }, r.createUnitsView = function() {
-      throw new Error("scheduler.createUnitsView is not implemented. Be sure to add the required extension: " + l.unit + `
-Related docs: ` + d.unit);
+      throw new Error("scheduler.createUnitsView is not implemented. Be sure to add the required extension: " + _.unit + `
+Related docs: ` + l.unit);
     }, r.createGridView = function() {
-      throw new Error("scheduler.createGridView is not implemented. Be sure to add the required extension: " + l.grid + `
-Related docs: ` + d.grid);
+      throw new Error("scheduler.createGridView is not implemented. Be sure to add the required extension: " + _.grid + `
+Related docs: ` + l.grid);
     }, r.addMarkedTimespan = function() {
       throw new Error(`scheduler.addMarkedTimespan is not implemented. Be sure to add the required extension: scheduler.plugins({ limit: true })
 Related docs: https://docs.dhtmlx.com/scheduler/limits.html`);
@@ -3135,28 +3210,28 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
       throw new Error(["scheduler.exportToPDF is not implemented.", "This feature requires an additional module, be sure to check the related doc here https://docs.dhtmlx.com/scheduler/pdf.html", "Licensing info: https://dhtmlx.com/docs/products/dhtmlxScheduler/export.shtml"].join(`
 `));
     };
-  }(i), jt(i), function(r) {
-    Ye(r), Ht(r), r._detachDomEvent = function(c, u, f) {
-      c.removeEventListener ? c.removeEventListener(u, f, !1) : c.detachEvent && c.detachEvent("on" + u, f);
+  }(i), Ut(i), function(r) {
+    Ye(r), qt(r), r._detachDomEvent = function(c, f, u) {
+      c.removeEventListener ? c.removeEventListener(f, u, !1) : c.detachEvent && c.detachEvent("on" + f, u);
     }, r._init_once = function() {
-      zt(r), r._init_once = function() {
+      jt(r), r._init_once = function() {
       };
     };
-    const d = { render: function(c) {
+    const l = { render: function(c) {
       return r._init_nav_bar(c);
-    } }, l = { render: function(c) {
-      const u = document.createElement("div");
-      return u.className = "dhx_cal_header", u;
+    } }, _ = { render: function(c) {
+      const f = document.createElement("div");
+      return f.className = "dhx_cal_header", f;
     } }, h = { render: function(c) {
-      const u = document.createElement("div");
-      return u.className = "dhx_cal_data", u;
+      const f = document.createElement("div");
+      return f.className = "dhx_cal_data", f;
     } };
     function p(c) {
       return !!(c.querySelector(".dhx_cal_header") && c.querySelector(".dhx_cal_data") && c.querySelector(".dhx_cal_navline"));
     }
     r._getInitialState = function(c) {
       return { date: c.date || this._currentDate(), mode: c.mode || "week" };
-    }, r.init = function(c, u, f) {
+    }, r.init = function(c, f, u) {
       if (this.$destroyed)
         return;
       if (this._obj = typeof c == "string" ? document.getElementById(c) : c, this.$container = this._obj, this.$root = this._obj, this._obj && this.unset_actions(), !this.$container.offsetHeight && this.$container.offsetWidth && this.$container.style.height === "100%" && window.console.error(r._commonErrorMessages.collapsedContainer(), this.$container), this.config.wai_aria_attributes && this.config.wai_aria_application_role && this.$container.setAttribute("role", "application"), this.config.header || p(this.$container) || (this.config.header = function(M) {
@@ -3175,74 +3250,74 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
         }), k.concat(["date"]).concat(["prev", "today", "next"]);
       }(this), window.console.log(["Required DOM elements are missing from the scheduler container and **scheduler.config.header** is not specified.", "Using a default header configuration: ", "scheduler.config.header = " + JSON.stringify(this.config.header, null, 2), "Check this article for the details: https://docs.dhtmlx.com/scheduler/initialization.html"].join(`
 `))), this.config.header)
-        this.$container.innerHTML = "", this.$container.classList.add("dhx_cal_container"), this.config.header.height && (this.xy.nav_height = this.config.header.height), this.$container.appendChild(d.render(this.config.header)), this.$container.appendChild(l.render()), this.$container.appendChild(h.render());
+        this.$container.innerHTML = "", this.$container.classList.add("dhx_cal_container"), this.config.header.height && (this.xy.nav_height = this.config.header.height), this.$container.appendChild(l.render(this.config.header)), this.$container.appendChild(_.render()), this.$container.appendChild(h.render());
       else if (!p(this.$container))
         throw new Error(["Required DOM elements are missing from the scheduler container.", "Be sure to either specify them manually in the markup: https://docs.dhtmlx.com/scheduler/initialization.html#initializingschedulerviamarkup", "Or to use **scheduler.config.header** setting so they could be created automatically: https://docs.dhtmlx.com/scheduler/initialization.html#initializingschedulerviaheaderconfig"].join(`
 `));
       this.config.rtl && (this.$container.className += " dhx_cal_container_rtl"), this._skin_init && r._skin_init(), r.date.init(), this._scroll = !0, this._els = [], this.get_elements(), this.init_templates(), this.set_actions(), this._init_once(), this._init_touch_events(), this.set_sizes();
-      const y = r._getInitialState({ date: u, mode: f }), w = y.date, D = y.mode;
+      const y = r._getInitialState({ date: f, mode: u }), w = y.date, D = y.mode;
       r.callEvent("onSchedulerReady", []), r.$initialized = !0, this.setCurrentView(w, D);
-    }, r.xy = { min_event_height: 20, bar_height: 24, scale_width: 50, scroll_width: 18, scale_height: 20, month_scale_height: 20, menu_width: 25, margin_top: 0, margin_left: 0, editor_width: 140, month_head_height: 22, event_header_height: 14 }, r.keys = { edit_save: 13, edit_cancel: 27 }, r.bind = function(c, u) {
-      return c.bind ? c.bind(u) : function() {
-        return c.apply(u, arguments);
+    }, r.xy = { min_event_height: 20, bar_height: 24, scale_width: 50, scroll_width: 18, scale_height: 20, month_scale_height: 20, menu_width: 25, margin_top: 0, margin_left: 0, editor_width: 140, month_head_height: 22, event_header_height: 14 }, r.keys = { edit_save: 13, edit_cancel: 27 }, r.bind = function(c, f) {
+      return c.bind ? c.bind(f) : function() {
+        return c.apply(f, arguments);
       };
     }, r.set_sizes = function() {
-      var c = this._x = this._obj.clientWidth - this.xy.margin_left, u = this._table_view ? 0 : this.xy.scale_width + this.xy.scroll_width, f = this.$container.querySelector(".dhx_cal_scale_placeholder");
+      var c = this._x = this._obj.clientWidth - this.xy.margin_left, f = this._table_view ? 0 : this.xy.scale_width + this.xy.scroll_width, u = this.$container.querySelector(".dhx_cal_scale_placeholder");
       if (r._is_material_skin()) {
-        f || ((f = document.createElement("div")).className = "dhx_cal_scale_placeholder", this.$container.insertBefore(f, this._els.dhx_cal_header[0])), f.style.display = "block";
+        u || ((u = document.createElement("div")).className = "dhx_cal_scale_placeholder", this.$container.insertBefore(u, this._els.dhx_cal_header[0])), u.style.display = "block";
         const w = r.$root.querySelector(".dhx_cal_navline");
         let D = 0;
         w && (D += w.offsetHeight);
         const M = r.$root.querySelector(".dhx_cal_header");
-        let k, N, v = 0;
-        M && (v += M.offsetHeight), v ? (k = D + 1, N = v) : (k = D - 4, N = 5), this.set_xy(f, c, N, 0, k);
+        let k, N, m = 0;
+        M && (m += M.offsetHeight), m ? (k = D + 1, N = m) : (k = D - 4, N = 5), this.set_xy(u, c, N, 0, k);
       } else
-        f && f.parentNode.removeChild(f);
-      this._lightbox && (r.$container.offsetWidth < 1200 || this._setLbPosition(document.querySelector(".dhx_cal_light"))), this._data_width = c - u, this._els.dhx_cal_navline[0].style.width = c + "px";
+        u && u.parentNode.removeChild(u);
+      this._lightbox && (r.$container.offsetWidth < 1200 || this._setLbPosition(document.querySelector(".dhx_cal_light"))), this._data_width = c - f, this._els.dhx_cal_navline[0].style.width = c + "px";
       const y = this._els.dhx_cal_header[0];
       this.set_xy(y, this._data_width, this.xy.scale_height), y.style.left = "", y.style.right = "", this._table_view ? this.config.rtl ? y.style.right = "-1px" : y.style.left = "-1px" : this.config.rtl ? y.style.right = `${this.xy.scale_width}px` : y.style.left = `${this.xy.scale_width}px`;
-    }, r.set_xy = function(c, u, f, y, w) {
+    }, r.set_xy = function(c, f, u, y, w) {
       function D(k) {
         let N = k;
         return isNaN(Number(N)) || (N = Math.max(0, N) + "px"), N;
       }
       var M = "left";
-      u !== void 0 && (c.style.width = D(u)), f !== void 0 && (c.style.height = D(f)), arguments.length > 3 && (y !== void 0 && (this.config.rtl && (M = "right"), c.style[M] = y + "px"), w !== void 0 && (c.style.top = w + "px"));
+      f !== void 0 && (c.style.width = D(f)), u !== void 0 && (c.style.height = D(u)), arguments.length > 3 && (y !== void 0 && (this.config.rtl && (M = "right"), c.style[M] = y + "px"), w !== void 0 && (c.style.top = w + "px"));
     }, r.get_elements = function() {
       const c = this._obj.getElementsByTagName("DIV");
-      for (let u = 0; u < c.length; u++) {
-        let f = r._getClassName(c[u]);
-        const y = c[u].getAttribute("data-tab") || c[u].getAttribute("name") || "";
-        f && (f = f.split(" ")[0]), this._els[f] || (this._els[f] = []), this._els[f].push(c[u]);
-        let w = r.locale.labels[y + "_tab"] || r.locale.labels[y || f];
-        typeof w != "string" && y && !c[u].innerHTML && (w = y.split("_")[0]), w && (this._waiAria.labelAttr(c[u], w), c[u].innerHTML = w);
+      for (let f = 0; f < c.length; f++) {
+        let u = r._getClassName(c[f]);
+        const y = c[f].getAttribute("data-tab") || c[f].getAttribute("name") || "";
+        u && (u = u.split(" ")[0]), this._els[u] || (this._els[u] = []), this._els[u].push(c[f]);
+        let w = r.locale.labels[y + "_tab"] || r.locale.labels[y || u];
+        typeof w != "string" && y && !c[f].innerHTML && (w = y.split("_")[0]), w && (this._waiAria.labelAttr(c[f], w), c[f].innerHTML = w);
       }
     };
-    const m = r._createDomEventScope();
-    function g(c, u) {
-      const f = new Date(c), y = (new Date(u).getTime() - f.getTime()) / 864e5;
+    const v = r._createDomEventScope();
+    function g(c, f) {
+      const u = new Date(c), y = (new Date(f).getTime() - u.getTime()) / 864e5;
       return Math.abs(y);
     }
     r.unset_actions = function() {
-      m.detachAll();
+      v.detachAll();
     }, r.set_actions = function() {
       for (const c in this._els)
         if (this._click[c])
-          for (let u = 0; u < this._els[c].length; u++) {
-            const f = this._els[c][u], y = this._click[c].bind(f);
-            m.attach(f, "click", y);
+          for (let f = 0; f < this._els[c].length; f++) {
+            const u = this._els[c][f], y = this._click[c].bind(u);
+            v.attach(u, "click", y);
           }
-      m.attach(this._obj, "selectstart", function(c) {
+      v.attach(this._obj, "selectstart", function(c) {
         return c.preventDefault(), !1;
-      }), m.attach(this._obj, "mousemove", function(c) {
+      }), v.attach(this._obj, "mousemove", function(c) {
         r._temp_touch_block || r._on_mouse_move(c);
-      }), m.attach(this._obj, "mousedown", function(c) {
+      }), v.attach(this._obj, "mousedown", function(c) {
         r._ignore_next_click || r._on_mouse_down(c);
-      }), m.attach(this._obj, "mouseup", function(c) {
+      }), v.attach(this._obj, "mouseup", function(c) {
         r._ignore_next_click || r._on_mouse_up(c);
-      }), m.attach(this._obj, "dblclick", function(c) {
+      }), v.attach(this._obj, "dblclick", function(c) {
         r._on_dbl_click(c);
-      }), m.attach(this._obj, "contextmenu", function(c) {
+      }), v.attach(this._obj, "contextmenu", function(c) {
         return r.checkEvent("onContextMenu") && c.preventDefault(), r.callEvent("onContextMenu", [r._locate_event(c.target), c]);
       });
     }, r.select = function(c) {
@@ -3250,38 +3325,38 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
     }, r.unselect = function(c) {
       if (c && c != this._select_id)
         return;
-      const u = this._select_id;
-      this._select_id = null, u && this.getEvent(u) && this.updateEvent(u), this.callEvent("onEventUnselected", [u]);
+      const f = this._select_id;
+      this._select_id = null, f && this.getEvent(f) && this.updateEvent(f), this.callEvent("onEventUnselected", [f]);
     }, r.$stateProvider.registerProvider("global", (function() {
       return { mode: this._mode, date: new Date(this._date), min_date: new Date(this._min_date), max_date: new Date(this._max_date), editor_id: this._edit_id, lightbox_id: this._lightbox_id, new_event: this._new_event, select_id: this._select_id, expanded: this.expanded, drag_id: this._drag_id, drag_mode: this._drag_mode };
     }).bind(r)), r._click = { dhx_cal_data: function(c) {
       if (r._ignore_next_click)
         return c.preventDefault && c.preventDefault(), c.cancelBubble = !0, r._ignore_next_click = !1, !1;
-      const u = r._locate_event(c.target);
-      if (u) {
-        if (!r.callEvent("onClick", [u, c]) || r.config.readonly)
+      const f = r._locate_event(c.target);
+      if (f) {
+        if (!r.callEvent("onClick", [f, c]) || r.config.readonly)
           return;
       } else
         r.callEvent("onEmptyClick", [r.getActionData(c).date, c]);
-      if (u && r.config.select) {
-        r.select(u);
-        const f = c.target.closest(".dhx_menu_icon"), y = r._getClassName(f);
-        y.indexOf("_icon") != -1 && r._click.buttons[y.split(" ")[1].replace("icon_", "")](u);
+      if (f && r.config.select) {
+        r.select(f);
+        const u = c.target.closest(".dhx_menu_icon"), y = r._getClassName(u);
+        y.indexOf("_icon") != -1 && r._click.buttons[y.split(" ")[1].replace("icon_", "")](f);
       } else
         r._close_not_saved(), r.getState().select_id && (/* @__PURE__ */ new Date()).valueOf() - (r._new_event || 0) > 500 && r.unselect();
     }, dhx_cal_prev_button: function() {
       r._click.dhx_cal_next_button(0, -1);
-    }, dhx_cal_next_button: function(c, u) {
-      let f = 1;
-      r.config.rtl && (u = -u, f = -f), r.setCurrentView(r.date.add(r.date[r._mode + "_start"](new Date(r._date)), u || f, r._mode));
+    }, dhx_cal_next_button: function(c, f) {
+      let u = 1;
+      r.config.rtl && (f = -f, u = -u), r.setCurrentView(r.date.add(r.date[r._mode + "_start"](new Date(r._date)), f || u, r._mode));
     }, dhx_cal_today_button: function() {
       r.callEvent("onBeforeTodayDisplayed", []) && r.setCurrentView(r._currentDate());
     }, dhx_cal_tab: function() {
-      const c = this.getAttribute("data-tab"), u = this.getAttribute("name"), f = c || u.substring(0, u.search("_tab"));
-      r.setCurrentView(r._date, f);
+      const c = this.getAttribute("data-tab"), f = this.getAttribute("name"), u = c || f.substring(0, f.search("_tab"));
+      r.setCurrentView(r._date, u);
     }, buttons: { delete: function(c) {
-      const u = r.locale.labels.confirm_deleting;
-      r._delete_event_confirm({ event: r.getEvent(c), message: u, title: r.locale.labels.title_confirm_deleting, callback: function() {
+      const f = r.locale.labels.confirm_deleting;
+      r._delete_event_confirm({ event: r.getEvent(c), message: f, title: r.locale.labels.title_confirm_deleting, callback: function() {
         r.deleteEvent(c);
       }, config: { ok: r.locale.labels.icon_delete } });
     }, edit: function(c) {
@@ -3294,33 +3369,33 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
       r.showLightbox(c);
     }, cancel: function(c) {
       r.editStop(!1);
-    } } }, r._dhtmlx_confirm = function({ message: c, title: u, callback: f, config: y }) {
+    } } }, r._dhtmlx_confirm = function({ message: c, title: f, callback: u, config: y }) {
       if (!c)
-        return f();
+        return u();
       y = y || {};
       const w = { ...y, text: c };
-      u && (w.title = u), f && (w.callback = function(D) {
-        D && f();
+      f && (w.title = f), u && (w.callback = function(D) {
+        D && u();
       }), r.confirm(w);
-    }, r.addEventNow = function(c, u, f) {
+    }, r.addEventNow = function(c, f, u) {
       let y = {};
       r._isObject(c) && !r._isDate(c) && (y = c, c = null);
       const w = 6e4 * (this.config.event_duration || this.config.time_step);
       c || (c = y.start_date || Math.round(r._currentDate().valueOf() / w) * w);
       let D = new Date(c);
-      if (!u) {
+      if (!f) {
         let N = this.config.first_hour;
-        N > D.getHours() && (D.setHours(N), c = D.valueOf()), u = c.valueOf() + w;
+        N > D.getHours() && (D.setHours(N), c = D.valueOf()), f = c.valueOf() + w;
       }
-      let M = new Date(u);
+      let M = new Date(f);
       D.valueOf() == M.valueOf() && M.setTime(M.valueOf() + w), y.start_date = y.start_date || D, y.end_date = y.end_date || M, y.text = y.text || this.locale.labels.new_event, y.id = this._drag_id = y.id || this.uid(), this._drag_mode = "new-size", this._loading = !0;
       const k = this.addEvent(y);
-      return this.callEvent("onEventCreated", [this._drag_id, f]), this._loading = !1, this._drag_event = {}, this._on_mouse_up(f), k;
-    }, r._on_dbl_click = function(c, u) {
-      if (u = u || c.target, this.config.readonly)
+      return this.callEvent("onEventCreated", [this._drag_id, u]), this._loading = !1, this._drag_event = {}, this._on_mouse_up(u), k;
+    }, r._on_dbl_click = function(c, f) {
+      if (f = f || c.target, this.config.readonly)
         return;
-      const f = r._getClassName(u).split(" ")[0];
-      switch (f) {
+      const u = r._getClassName(f).split(" ")[0];
+      switch (u) {
         case "dhx_scale_bar":
           this.callEvent("onScaleDblClick");
           break;
@@ -3339,7 +3414,7 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
         case "dhx_grid_event":
         case "dhx_cal_event_line":
         case "dhx_cal_event_clear": {
-          const y = this._locate_event(u);
+          const y = this._locate_event(f);
           if (!this.callEvent("onDblClick", [y, c]))
             return;
           this.config.details_on_dblclick || this._table_view || !this.getEvent(y)._timed || !this.config.select ? this.showLightbox(y) : this.edit(y);
@@ -3349,51 +3424,51 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
         case "dhx_cal_container":
           return;
         default: {
-          const y = this["dblclick_" + f];
+          const y = this["dblclick_" + u];
           if (y)
             y.call(this, c);
-          else if (u.parentNode && u != this)
-            return r._on_dbl_click(c, u.parentNode);
+          else if (f.parentNode && f != this)
+            return r._on_dbl_click(c, f.parentNode);
           break;
         }
       }
     }, r._get_column_index = function(c) {
-      let u = 0;
+      let f = 0;
       if (this._cols) {
-        let f = 0, y = 0;
-        for (; f + this._cols[y] < c && y < this._cols.length; )
-          f += this._cols[y], y++;
-        if (u = y + (this._cols[y] ? (c - f) / this._cols[y] : 0), this._ignores && u >= this._cols.length)
-          for (; u >= 1 && this._ignores[Math.floor(u)]; )
-            u--;
+        let u = 0, y = 0;
+        for (; u + this._cols[y] < c && y < this._cols.length; )
+          u += this._cols[y], y++;
+        if (f = y + (this._cols[y] ? (c - u) / this._cols[y] : 0), this._ignores && f >= this._cols.length)
+          for (; f >= 1 && this._ignores[Math.floor(f)]; )
+            f--;
       }
-      return u;
+      return f;
     }, r._week_indexes_from_pos = function(c) {
       if (this._cols) {
-        const u = this._get_column_index(c.x);
-        return c.x = Math.min(this._cols.length - 1, Math.max(0, Math.ceil(u) - 1)), c.y = Math.max(0, Math.ceil(60 * c.y / (this.config.time_step * this.config.hour_size_px)) - 1) + this.config.first_hour * (60 / this.config.time_step), c;
+        const f = this._get_column_index(c.x);
+        return c.x = Math.min(this._cols.length - 1, Math.max(0, Math.ceil(f) - 1)), c.y = Math.max(0, Math.ceil(60 * c.y / (this.config.time_step * this.config.hour_size_px)) - 1) + this.config.first_hour * (60 / this.config.time_step), c;
       }
       return c;
     }, r._mouse_coords = function(c) {
-      let u;
-      const f = document.body, y = document.documentElement;
-      u = this.$env.isIE || !c.pageX && !c.pageY ? { x: c.clientX + (f.scrollLeft || y.scrollLeft || 0) - f.clientLeft, y: c.clientY + (f.scrollTop || y.scrollTop || 0) - f.clientTop } : { x: c.pageX, y: c.pageY }, this.config.rtl && this._colsS ? (u.x = this.$container.querySelector(".dhx_cal_data").offsetWidth - u.x, u.x += this.$domHelpers.getAbsoluteLeft(this._obj), this._mode !== "month" && (u.x -= this.xy.scale_width)) : u.x -= this.$domHelpers.getAbsoluteLeft(this._obj) + (this._table_view ? 0 : this.xy.scale_width);
+      let f;
+      const u = document.body, y = document.documentElement;
+      f = this.$env.isIE || !c.pageX && !c.pageY ? { x: c.clientX + (u.scrollLeft || y.scrollLeft || 0) - u.clientLeft, y: c.clientY + (u.scrollTop || y.scrollTop || 0) - u.clientTop } : { x: c.pageX, y: c.pageY }, this.config.rtl && this._colsS ? (f.x = this.$container.querySelector(".dhx_cal_data").offsetWidth - f.x, f.x += this.$domHelpers.getAbsoluteLeft(this._obj), this._mode !== "month" && (f.x -= this.xy.scale_width)) : f.x -= this.$domHelpers.getAbsoluteLeft(this._obj) + (this._table_view ? 0 : this.xy.scale_width);
       const w = this.$container.querySelector(".dhx_cal_data");
-      u.y -= this.$domHelpers.getAbsoluteTop(w) - this._els.dhx_cal_data[0].scrollTop, u.ev = c;
+      f.y -= this.$domHelpers.getAbsoluteTop(w) - this._els.dhx_cal_data[0].scrollTop, f.ev = c;
       const D = this["mouse_" + this._mode];
       if (D)
-        u = D.call(this, u);
+        f = D.call(this, f);
       else if (this._table_view) {
-        const M = this._get_column_index(u.x);
+        const M = this._get_column_index(f.x);
         if (!this._cols || !this._colsS)
-          return u;
+          return f;
         let k = 0;
-        for (k = 1; k < this._colsS.heights.length && !(this._colsS.heights[k] > u.y); k++)
+        for (k = 1; k < this._colsS.heights.length && !(this._colsS.heights[k] > f.y); k++)
           ;
-        u.y = Math.ceil(24 * (Math.max(0, M) + 7 * Math.max(0, k - 1)) * 60 / this.config.time_step), (r._drag_mode || this._mode == "month") && (u.y = 24 * (Math.max(0, Math.ceil(M) - 1) + 7 * Math.max(0, k - 1)) * 60 / this.config.time_step), this._drag_mode == "move" && r._ignores_detected && r.config.preserve_length && (u._ignores = !0, this._drag_event._event_length || (this._drag_event._event_length = this._get_real_event_length(this._drag_event.start_date, this._drag_event.end_date, { x_step: 1, x_unit: "day" }))), u.x = 0;
+        f.y = Math.ceil(24 * (Math.max(0, M) + 7 * Math.max(0, k - 1)) * 60 / this.config.time_step), (r._drag_mode || this._mode == "month") && (f.y = 24 * (Math.max(0, Math.ceil(M) - 1) + 7 * Math.max(0, k - 1)) * 60 / this.config.time_step), this._drag_mode == "move" && r._ignores_detected && r.config.preserve_length && (f._ignores = !0, this._drag_event._event_length || (this._drag_event._event_length = this._get_real_event_length(this._drag_event.start_date, this._drag_event.end_date, { x_step: 1, x_unit: "day" }))), f.x = 0;
       } else
-        u = this._week_indexes_from_pos(u);
-      return u.timestamp = +/* @__PURE__ */ new Date(), u;
+        f = this._week_indexes_from_pos(f);
+      return f.timestamp = +/* @__PURE__ */ new Date(), f;
     }, r._close_not_saved = function() {
       if ((/* @__PURE__ */ new Date()).valueOf() - (r._new_event || 0) > 500 && r._edit_id) {
         const c = r.locale.labels.confirm_closing;
@@ -3401,92 +3476,92 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
           r.editStop(r.config.positive_closing);
         } }), c && (this._drag_id = this._drag_pos = this._drag_mode = null);
       }
-    }, r._correct_shift = function(c, u) {
-      return c - 6e4 * (new Date(r._min_date).getTimezoneOffset() - new Date(c).getTimezoneOffset()) * (u ? -1 : 1);
-    }, r._is_pos_changed = function(c, u) {
-      function f(y, w, D) {
+    }, r._correct_shift = function(c, f) {
+      return c - 6e4 * (new Date(r._min_date).getTimezoneOffset() - new Date(c).getTimezoneOffset()) * (f ? -1 : 1);
+    }, r._is_pos_changed = function(c, f) {
+      function u(y, w, D) {
         return Math.abs(y - w) > D;
       }
-      return !c || !this._drag_pos || !!(this._drag_pos.has_moved || !this._drag_pos.timestamp || u.timestamp - this._drag_pos.timestamp > 100 || f(c.ev.clientX, u.ev.clientX, 5) || f(c.ev.clientY, u.ev.clientY, 5));
+      return !c || !this._drag_pos || !!(this._drag_pos.has_moved || !this._drag_pos.timestamp || f.timestamp - this._drag_pos.timestamp > 100 || u(c.ev.clientX, f.ev.clientX, 5) || u(c.ev.clientY, f.ev.clientY, 5));
     }, r._correct_drag_start_date = function(c) {
-      let u;
-      r.matrix && (u = r.matrix[r._mode]), u = u || { x_step: 1, x_unit: "day" }, c = new Date(c);
-      let f = 1;
-      return (u._start_correction || u._end_correction) && (f = 60 * (u.last_hour || 0) - (60 * c.getHours() + c.getMinutes()) || 1), 1 * c + (r._get_fictional_event_length(c, f, u) - f);
-    }, r._correct_drag_end_date = function(c, u) {
       let f;
-      r.matrix && (f = r.matrix[r._mode]), f = f || { x_step: 1, x_unit: "day" };
-      const y = 1 * c + r._get_fictional_event_length(c, u, f);
-      return new Date(1 * y - (r._get_fictional_event_length(y, -1, f, -1) + 1));
+      r.matrix && (f = r.matrix[r._mode]), f = f || { x_step: 1, x_unit: "day" }, c = new Date(c);
+      let u = 1;
+      return (f._start_correction || f._end_correction) && (u = 60 * (f.last_hour || 0) - (60 * c.getHours() + c.getMinutes()) || 1), 1 * c + (r._get_fictional_event_length(c, u, f) - u);
+    }, r._correct_drag_end_date = function(c, f) {
+      let u;
+      r.matrix && (u = r.matrix[r._mode]), u = u || { x_step: 1, x_unit: "day" };
+      const y = 1 * c + r._get_fictional_event_length(c, f, u);
+      return new Date(1 * y - (r._get_fictional_event_length(y, -1, u, -1) + 1));
     }, r._on_mouse_move = function(c) {
       if (this._drag_mode) {
-        var u = this._mouse_coords(c);
-        if (this._is_pos_changed(this._drag_pos, u)) {
-          var f, y;
+        var f = this._mouse_coords(c);
+        if (this._is_pos_changed(this._drag_pos, f)) {
+          var u, y;
           if (this._edit_id != this._drag_id && this._close_not_saved(), !this._drag_mode)
             return;
           var w = null;
-          if (this._drag_pos && !this._drag_pos.has_moved && ((w = this._drag_pos).has_moved = !0), this._drag_pos = u, this._drag_pos.has_moved = !0, this._drag_mode == "create") {
-            if (w && (u = w), this._close_not_saved(), this.unselect(this._select_id), this._loading = !0, f = this._get_date_from_pos(u).valueOf(), !this._drag_start)
-              return this.callEvent("onBeforeEventCreated", [c, this._drag_id]) ? (this._loading = !1, void (this._drag_start = f)) : void (this._loading = !1);
-            y = f, this._drag_start;
+          if (this._drag_pos && !this._drag_pos.has_moved && ((w = this._drag_pos).has_moved = !0), this._drag_pos = f, this._drag_pos.has_moved = !0, this._drag_mode == "create") {
+            if (w && (f = w), this._close_not_saved(), this.unselect(this._select_id), this._loading = !0, u = this._get_date_from_pos(f).valueOf(), !this._drag_start)
+              return this.callEvent("onBeforeEventCreated", [c, this._drag_id]) ? (this._loading = !1, void (this._drag_start = u)) : void (this._loading = !1);
+            y = u, this._drag_start;
             var D = new Date(this._drag_start), M = new Date(y);
-            this._mode != "day" && this._mode != "week" || D.getHours() != M.getHours() || D.getMinutes() != M.getMinutes() || (M = new Date(this._drag_start + 1e3)), this._drag_id = this.uid(), this.addEvent(D, M, this.locale.labels.new_event, this._drag_id, u.fields), this.callEvent("onEventCreated", [this._drag_id, c]), this._loading = !1, this._drag_mode = "new-size";
+            this._mode != "day" && this._mode != "week" || D.getHours() != M.getHours() || D.getMinutes() != M.getMinutes() || (M = new Date(this._drag_start + 1e3)), this._drag_id = this.uid(), this.addEvent(D, M, this.locale.labels.new_event, this._drag_id, f.fields), this.callEvent("onEventCreated", [this._drag_id, c]), this._loading = !1, this._drag_mode = "new-size";
           }
-          var k, N = this.config.time_step, v = this.getEvent(this._drag_id);
+          var k, N = this.config.time_step, m = this.getEvent(this._drag_id);
           if (r.matrix && (k = r.matrix[r._mode]), k = k || { x_step: 1, x_unit: "day" }, this._drag_mode == "move")
-            f = this._min_date.valueOf() + 6e4 * (u.y * this.config.time_step + 24 * u.x * 60), !u.custom && this._table_view && (f += 1e3 * this.date.time_part(v.start_date)), !this._table_view && this._dragEventBody && this._drag_event._move_event_shift === void 0 && (this._drag_event._move_event_shift = f - v.start_date), this._drag_event._move_event_shift && (f -= this._drag_event._move_event_shift), f = this._correct_shift(f), u._ignores && this.config.preserve_length && this._table_view && k ? (f = r._correct_drag_start_date(f), y = r._correct_drag_end_date(f, this._drag_event._event_length)) : y = v.end_date.valueOf() - (v.start_date.valueOf() - f);
+            u = this._min_date.valueOf() + 6e4 * (f.y * this.config.time_step + 24 * f.x * 60), !f.custom && this._table_view && (u += 1e3 * this.date.time_part(m.start_date)), !this._table_view && this._dragEventBody && this._drag_event._move_event_shift === void 0 && (this._drag_event._move_event_shift = u - m.start_date), this._drag_event._move_event_shift && (u -= this._drag_event._move_event_shift), u = this._correct_shift(u), f._ignores && this.config.preserve_length && this._table_view && k ? (u = r._correct_drag_start_date(u), y = r._correct_drag_end_date(u, this._drag_event._event_length)) : y = m.end_date.valueOf() - (m.start_date.valueOf() - u);
           else {
-            if (f = v.start_date.valueOf(), y = v.end_date.valueOf(), this._table_view) {
-              var x = this._min_date.valueOf() + u.y * this.config.time_step * 6e4 + (u.custom ? 0 : 864e5);
+            if (u = m.start_date.valueOf(), y = m.end_date.valueOf(), this._table_view) {
+              var x = this._min_date.valueOf() + f.y * this.config.time_step * 6e4 + (f.custom ? 0 : 864e5);
               if (this._mode == "month")
                 if (x = this._correct_shift(x, !1), this._drag_from_start) {
                   var b = 864e5;
-                  x <= r.date.date_part(new Date(y + b - 1)).valueOf() && (f = x - b);
+                  x <= r.date.date_part(new Date(y + b - 1)).valueOf() && (u = x - b);
                 } else
                   y = x;
               else if (this.config.preserve_length) {
-                if (u.resize_from_start)
-                  f = r._correct_drag_start_date(x), k.round_position && k.first_hour && k.last_hour && k.x_unit == "day" && (f = new Date(1 * f + k._start_correction));
+                if (f.resize_from_start)
+                  u = r._correct_drag_start_date(x), k.round_position && k.first_hour && k.last_hour && k.x_unit == "day" && (u = new Date(1 * u + k._start_correction));
                 else if (y = r._correct_drag_end_date(x, 0), k.round_position && k.first_hour && k.last_hour && k.x_unit == "day" && (y = r.date.date_part(new Date(y)), y = new Date(1 * y - k._end_correction)), k.round_position && r["ignore_" + r._mode] && k.x_unit == "day") {
                   const W = this["ignore_" + this._mode];
                   let pe = r.date.add(new Date(y), -k.x_step, k.x_unit);
                   W(pe) && (y = pe);
                 }
               } else
-                u.resize_from_start ? f = x : y = x;
+                f.resize_from_start ? u = x : y = x;
             } else {
-              var E = this.date.date_part(new Date(v.end_date.valueOf() - 1)).valueOf(), S = new Date(E), T = this.config.first_hour, A = 60 / N * (this.config.last_hour - T);
+              var E = this.date.date_part(new Date(m.end_date.valueOf() - 1)).valueOf(), S = new Date(E), T = this.config.first_hour, C = 60 / N * (this.config.last_hour - T);
               this.config.time_step = 1;
-              var C = this._mouse_coords(c);
+              var A = this._mouse_coords(c);
               this.config.time_step = N;
-              var $ = u.y * N * 6e4, H = Math.min(u.y + 1, A) * N * 6e4, O = 6e4 * C.y;
+              var $ = f.y * N * 6e4, H = Math.min(f.y + 1, C) * N * 6e4, O = 6e4 * A.y;
               y = Math.abs($ - O) > Math.abs(H - O) ? E + H : E + $, y += 6e4 * (new Date(y).getTimezoneOffset() - S.getTimezoneOffset()), this._els.dhx_cal_data[0].style.cursor = "s-resize", this._mode != "week" && this._mode != "day" || (y = this._correct_shift(y));
             }
             if (this._drag_mode == "new-size")
               if (y <= this._drag_start) {
-                var R = u.shift || (this._table_view && !u.custom ? 864e5 : 0);
-                f = y - (u.shift ? 0 : R), y = this._drag_start + (R || 6e4 * N);
+                var P = f.shift || (this._table_view && !f.custom ? 864e5 : 0);
+                u = y - (f.shift ? 0 : P), y = this._drag_start + (P || 6e4 * N);
               } else
-                f = this._drag_start;
+                u = this._drag_start;
             else
-              y <= f && (y = k && k.round_position ? k.x_unit == "hour" || k.x_unit == "minute" ? r.date.add(f, k.x_step, k.x_unit) : r.date.add(r.date.date_part(new Date(f)), 1, k.x_unit) : f + 6e4 * N);
+              y <= u && (y = k && k.round_position ? k.x_unit == "hour" || k.x_unit == "minute" ? r.date.add(u, k.x_step, k.x_unit) : r.date.add(r.date.date_part(new Date(u)), 1, k.x_unit) : u + 6e4 * N);
           }
-          var P = new Date(y - 1), j = new Date(f);
+          var R = new Date(y - 1), j = new Date(u);
           if (this._drag_mode == "move" && r.config.limit_drag_out && (+j < +r._min_date || +y > +r._max_date)) {
-            if (+v.start_date < +r._min_date || +v.end_date > +r._max_date)
-              j = new Date(v.start_date), y = new Date(v.end_date);
+            if (+m.start_date < +r._min_date || +m.end_date > +r._max_date)
+              j = new Date(m.start_date), y = new Date(m.end_date);
             else {
               var I = y - j;
-              +j < +r._min_date ? (j = new Date(r._min_date), u._ignores && this.config.preserve_length && this._table_view ? (j = new Date(r._correct_drag_start_date(j)), k._start_correction && (j = new Date(j.valueOf() + k._start_correction)), y = new Date(1 * j + this._get_fictional_event_length(j, this._drag_event._event_length, k))) : y = new Date(+j + I)) : (y = new Date(r._max_date), u._ignores && this.config.preserve_length && this._table_view ? (k._end_correction && (y = new Date(y.valueOf() - k._end_correction)), y = new Date(1 * y - this._get_fictional_event_length(y, 0, k, !0)), j = new Date(1 * y - this._get_fictional_event_length(y, this._drag_event._event_length, k, !0)), this._ignores_detected && (j = r.date.add(j, k.x_step, k.x_unit), y = new Date(1 * y - this._get_fictional_event_length(y, 0, k, !0)), y = r.date.add(y, k.x_step, k.x_unit))) : j = new Date(+y - I));
+              +j < +r._min_date ? (j = new Date(r._min_date), f._ignores && this.config.preserve_length && this._table_view ? (j = new Date(r._correct_drag_start_date(j)), k._start_correction && (j = new Date(j.valueOf() + k._start_correction)), y = new Date(1 * j + this._get_fictional_event_length(j, this._drag_event._event_length, k))) : y = new Date(+j + I)) : (y = new Date(r._max_date), f._ignores && this.config.preserve_length && this._table_view ? (k._end_correction && (y = new Date(y.valueOf() - k._end_correction)), y = new Date(1 * y - this._get_fictional_event_length(y, 0, k, !0)), j = new Date(1 * y - this._get_fictional_event_length(y, this._drag_event._event_length, k, !0)), this._ignores_detected && (j = r.date.add(j, k.x_step, k.x_unit), y = new Date(1 * y - this._get_fictional_event_length(y, 0, k, !0)), y = r.date.add(y, k.x_step, k.x_unit))) : j = new Date(+y - I));
             }
-            P = new Date(y - 1);
+            R = new Date(y - 1);
           }
-          if (!this._table_view && this._dragEventBody && !r.config.all_timed && (!r._get_section_view() && u.x != this._get_event_sday({ start_date: new Date(f), end_date: new Date(f) }) || new Date(f).getHours() < this.config.first_hour) && (I = y - j, this._drag_mode == "move" && (b = this._min_date.valueOf() + 24 * u.x * 60 * 6e4, (j = new Date(b)).setHours(this.config.first_hour), +j <= +v.start_date ? y = new Date(+j + I) : j = new Date(+y - I))), this._table_view || r.config.all_timed || !(!r.getView() && u.x != this._get_event_sday({ start_date: new Date(y), end_date: new Date(y) }) || new Date(y).getHours() >= this.config.last_hour) || (I = y - j, b = this._min_date.valueOf() + 24 * u.x * 60 * 6e4, (y = r.date.date_part(new Date(b))).setHours(this.config.last_hour), P = new Date(y - 1), this._drag_mode == "move" && (+j <= +v.start_date ? y = new Date(+j + I) : j = new Date(+y - I))), !this._table_view && r.config.all_timed) {
-            let W = this._min_date.valueOf() + 24 * u.x * 60 * 6e4;
+          if (!this._table_view && this._dragEventBody && !r.config.all_timed && (!r._get_section_view() && f.x != this._get_event_sday({ start_date: new Date(u), end_date: new Date(u) }) || new Date(u).getHours() < this.config.first_hour) && (I = y - j, this._drag_mode == "move" && (b = this._min_date.valueOf() + 24 * f.x * 60 * 6e4, (j = new Date(b)).setHours(this.config.first_hour), +j <= +m.start_date ? y = new Date(+j + I) : j = new Date(+y - I))), this._table_view || r.config.all_timed || !(!r.getView() && f.x != this._get_event_sday({ start_date: new Date(y), end_date: new Date(y) }) || new Date(y).getHours() >= this.config.last_hour) || (I = y - j, b = this._min_date.valueOf() + 24 * f.x * 60 * 6e4, (y = r.date.date_part(new Date(b))).setHours(this.config.last_hour), R = new Date(y - 1), this._drag_mode == "move" && (+j <= +m.start_date ? y = new Date(+j + I) : j = new Date(+y - I))), !this._table_view && r.config.all_timed) {
+            let W = this._min_date.valueOf() + 24 * f.x * 60 * 6e4;
             new Date(r._drag_start).getDay() != new Date(W) && (W = new Date(r._drag_start));
             let pe = new Date(W).setHours(this.config.last_hour);
-            r._drag_start && this._drag_mode == "new-size" && pe < new Date(y) && ((y = r.date.date_part(new Date(W))).setHours(this.config.last_hour), P = new Date(y - 1));
+            r._drag_start && this._drag_mode == "new-size" && pe < new Date(y) && ((y = r.date.date_part(new Date(W))).setHours(this.config.last_hour), R = new Date(y - 1));
           }
           if (this._table_view && r["ignore_" + this._mode] && (this._drag_mode == "resize" || this._drag_mode == "new-size") && +y > +r._max_date) {
             y = new Date(r._max_date);
@@ -3495,8 +3570,8 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
               y = r.date.add(y, -k.x_step, k.x_unit);
             y = r.date.add(y, k.x_step, k.x_unit);
           }
-          if (this._table_view || P.getDate() == j.getDate() && P.getHours() < this.config.last_hour || r._allow_dnd)
-            if (v.start_date = j, v.end_date = new Date(y), this.config.update_render) {
+          if (this._table_view || R.getDate() == j.getDate() && R.getHours() < this.config.last_hour || r._allow_dnd)
+            if (m.start_date = j, m.end_date = new Date(y), this.config.update_render) {
               var U = r._els.dhx_cal_data[0].scrollTop;
               this.update_view(), r._els.dhx_cal_data[0].scrollTop = U;
             } else
@@ -3509,11 +3584,11 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
         var B = this._locate_event(c.target || c.srcElement);
         this.callEvent("onMouseMove", [B, c]);
       }
-    }, r._on_mouse_down = function(c, u) {
+    }, r._on_mouse_down = function(c, f) {
       if (c.button != 2 && !this.config.readonly && !this._drag_mode) {
-        u = u || c.target || c.srcElement;
-        var f = r._getClassName(u).split(" ")[0];
-        switch (this.config.drag_event_body && f == "dhx_body" && u.parentNode && u.parentNode.className.indexOf("dhx_cal_select_menu") === -1 && (f = "dhx_event_move", this._dragEventBody = !0), f) {
+        f = f || c.target || c.srcElement;
+        var u = r._getClassName(f).split(" ")[0];
+        switch (this.config.drag_event_body && u == "dhx_body" && f.parentNode && f.parentNode.className.indexOf("dhx_cal_select_menu") === -1 && (u = "dhx_event_move", this._dragEventBody = !0), u) {
           case "dhx_cal_event_line":
           case "dhx_cal_event_clear":
             this._table_view && (this._drag_mode = "move");
@@ -3523,7 +3598,7 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
             this._drag_mode = "move";
             break;
           case "dhx_event_resize":
-            this._drag_mode = "resize", r._getClassName(u).indexOf("dhx_event_resize_end") < 0 ? r._drag_from_start = !0 : r._drag_from_start = !1;
+            this._drag_mode = "resize", r._getClassName(f).indexOf("dhx_event_resize_end") < 0 ? r._drag_from_start = !0 : r._drag_from_start = !1;
             break;
           case "dhx_scale_holder":
           case "dhx_scale_holder_now":
@@ -3533,16 +3608,16 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
             this._drag_mode = "create";
             break;
           case "":
-            if (u.parentNode)
-              return r._on_mouse_down(c, u.parentNode);
+            if (f.parentNode)
+              return r._on_mouse_down(c, f.parentNode);
             break;
           default:
-            if ((!r.checkEvent("onMouseDown") || r.callEvent("onMouseDown", [f, c])) && u.parentNode && u != this && f != "dhx_body")
-              return r._on_mouse_down(c, u.parentNode);
+            if ((!r.checkEvent("onMouseDown") || r.callEvent("onMouseDown", [u, c])) && f.parentNode && f != this && u != "dhx_body")
+              return r._on_mouse_down(c, f.parentNode);
             this._drag_mode = null, this._drag_id = null;
         }
         if (this._drag_mode) {
-          var y = this._locate_event(u);
+          var y = this._locate_event(f);
           if (this.config["drag_" + this._drag_mode] && this.callEvent("onBeforeDrag", [y, this._drag_mode, c])) {
             if (this._drag_id = y, (this._edit_id != this._drag_id || this._edit_id && this._drag_mode == "create") && this._close_not_saved(), !this._drag_mode)
               return;
@@ -3553,34 +3628,34 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
         this._drag_start = null;
       }
     }, r._get_private_properties = function(c) {
-      var u = {};
-      for (var f in c)
-        f.indexOf("_") === 0 && (u[f] = !0);
-      return u;
-    }, r._clear_temporary_properties = function(c, u) {
-      var f = this._get_private_properties(c), y = this._get_private_properties(u);
+      var f = {};
+      for (var u in c)
+        u.indexOf("_") === 0 && (f[u] = !0);
+      return f;
+    }, r._clear_temporary_properties = function(c, f) {
+      var u = this._get_private_properties(c), y = this._get_private_properties(f);
       for (var w in y)
-        f[w] || delete u[w];
+        u[w] || delete f[w];
     }, r._on_mouse_up = function(c) {
       if (!c || c.button != 2 || !this._mobile) {
         if (this._drag_mode && this._drag_id) {
           this._els.dhx_cal_data[0].style.cursor = "default";
-          var u = this._drag_id, f = this._drag_mode, y = !this._drag_pos || this._drag_pos.has_moved;
+          var f = this._drag_id, u = this._drag_mode, y = !this._drag_pos || this._drag_pos.has_moved;
           delete this._drag_event._move_event_shift;
           var w = this.getEvent(this._drag_id);
           if (y && (this._drag_event._dhx_changed || !this._drag_event.start_date || w.start_date.valueOf() != this._drag_event.start_date.valueOf() || w.end_date.valueOf() != this._drag_event.end_date.valueOf())) {
             var D = this._drag_mode == "new-size";
             if (this.callEvent("onBeforeEventChanged", [w, c, D, this._drag_event]))
               if (this._drag_id = this._drag_mode = null, D && this.config.edit_on_create) {
-                if (this.unselect(), this._new_event = /* @__PURE__ */ new Date(), w.$new = !0, this._table_view || this.config.details_on_create || !this.config.select || !this.isOneDayEvent(this.getEvent(u)))
-                  return r.callEvent("onDragEnd", [u, f, c]), this.showLightbox(u);
-                this._drag_pos = !0, this._select_id = this._edit_id = u;
+                if (this.unselect(), this._new_event = /* @__PURE__ */ new Date(), w.$new = !0, this._table_view || this.config.details_on_create || !this.config.select || !this.isOneDayEvent(this.getEvent(f)))
+                  return r.callEvent("onDragEnd", [f, u, c]), this.showLightbox(f);
+                this._drag_pos = !0, this._select_id = this._edit_id = f;
               } else
-                this._new_event || this.callEvent(D ? "onEventAdded" : "onEventChanged", [u, this.getEvent(u)]);
+                this._new_event || this.callEvent(D ? "onEventAdded" : "onEventChanged", [f, this.getEvent(f)]);
             else
               D ? this.deleteEvent(w.id, !0) : (this._drag_event._dhx_changed = !1, this._clear_temporary_properties(w, this._drag_event), r._lame_copy(w, this._drag_event), this.updateEvent(w.id));
           }
-          this._drag_pos && (this._drag_pos.has_moved || this._drag_pos === !0) && (this._drag_id = this._drag_mode = null, this.render_view_data()), r.callEvent("onDragEnd", [u, f, c]);
+          this._drag_pos && (this._drag_pos.has_moved || this._drag_pos === !0) && (this._drag_id = this._drag_mode = null, this.render_view_data()), r.callEvent("onDragEnd", [f, u, c]);
         }
         this._drag_id = null, this._drag_mode = null, this._drag_pos = null, this._drag_event = null, this._drag_from_start = null;
       }
@@ -3595,116 +3670,116 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
     }, r.isViewExists = function(c) {
       return !!(r[c + "_view"] || r.date[c + "_start"] && r.templates[c + "_date"] && r.templates[c + "_scale_date"]);
     }, r._set_aria_buttons_attrs = function() {
-      for (var c = ["dhx_cal_next_button", "dhx_cal_prev_button", "dhx_cal_tab", "dhx_cal_today_button"], u = 0; u < c.length; u++)
-        for (var f = this._els[c[u]], y = 0; f && y < f.length; y++) {
-          var w = f[y].getAttribute("data-tab") || f[y].getAttribute("name"), D = this.locale.labels[c[u]];
-          w && (D = this.locale.labels[w + "_tab"] || this.locale.labels[w] || D), c[u] == "dhx_cal_next_button" ? D = this.locale.labels.next : c[u] == "dhx_cal_prev_button" && (D = this.locale.labels.prev), this._waiAria.headerButtonsAttributes(f[y], D || "");
+      for (var c = ["dhx_cal_next_button", "dhx_cal_prev_button", "dhx_cal_tab", "dhx_cal_today_button"], f = 0; f < c.length; f++)
+        for (var u = this._els[c[f]], y = 0; u && y < u.length; y++) {
+          var w = u[y].getAttribute("data-tab") || u[y].getAttribute("name"), D = this.locale.labels[c[f]];
+          w && (D = this.locale.labels[w + "_tab"] || this.locale.labels[w] || D), c[f] == "dhx_cal_next_button" ? D = this.locale.labels.next : c[f] == "dhx_cal_prev_button" && (D = this.locale.labels.prev), this._waiAria.headerButtonsAttributes(u[y], D || "");
         }
-    }, r.updateView = function(c, u) {
+    }, r.updateView = function(c, f) {
       if (!this.$container)
         throw new Error(`The scheduler is not initialized. 
  **scheduler.updateView** or **scheduler.setCurrentView** can be called only after **scheduler.init**`);
-      c = c || this._date, u = u || this._mode;
-      var f = "dhx_cal_data";
+      c = c || this._date, f = f || this._mode;
+      var u = "dhx_cal_data";
       this.locale.labels.icon_form || (this.locale.labels.icon_form = this.locale.labels.icon_edit);
-      var y = this._obj, w = "dhx_scheduler_" + this._mode, D = "dhx_scheduler_" + u;
+      var y = this._obj, w = "dhx_scheduler_" + this._mode, D = "dhx_scheduler_" + f;
       y.classList.remove(w), y.classList.add(D);
-      var M, k = "dhx_multi_day", N = !(this._mode != u || !this.config.preserve_scroll) && this._els[f][0].scrollTop;
-      this._els[k] && this._els[k][0] && (M = this._els[k][0].scrollTop), this[this._mode + "_view"] && u && this._mode != u && this[this._mode + "_view"](!1), this._close_not_saved(), this._els[k] && (this._els[k][0].parentNode.removeChild(this._els[k][0]), this._els[k] = null), this._mode = u, this._date = c, this._table_view = this._mode == "month", this._dy_shift = 0, this.update_view(), this._set_aria_buttons_attrs();
-      var v = this._els.dhx_cal_tab;
-      if (v)
-        for (var x = 0; x < v.length; x++) {
-          var b = v[x];
+      var M, k = "dhx_multi_day", N = !(this._mode != f || !this.config.preserve_scroll) && this._els[u][0].scrollTop;
+      this._els[k] && this._els[k][0] && (M = this._els[k][0].scrollTop), this[this._mode + "_view"] && f && this._mode != f && this[this._mode + "_view"](!1), this._close_not_saved(), this._els[k] && (this._els[k][0].parentNode.removeChild(this._els[k][0]), this._els[k] = null), this._mode = f, this._date = c, this._table_view = this._mode == "month", this._dy_shift = 0, this.update_view(), this._set_aria_buttons_attrs();
+      var m = this._els.dhx_cal_tab;
+      if (m)
+        for (var x = 0; x < m.length; x++) {
+          var b = m[x];
           b.getAttribute("data-tab") == this._mode || b.getAttribute("name") == this._mode + "_tab" ? (b.classList.add("active"), this._waiAria.headerToggleState(b, !0)) : (b.classList.remove("active"), this._waiAria.headerToggleState(b, !1));
         }
-      typeof N == "number" && (this._els[f][0].scrollTop = N), typeof M == "number" && this._els[k] && this._els[k][0] && (this._els[k][0].scrollTop = M);
-    }, r.setCurrentView = function(c, u) {
-      this.callEvent("onBeforeViewChange", [this._mode, this._date, u || this._mode, c || this._date]) && (this.updateView(c, u), this.callEvent("onViewChange", [this._mode, this._date]));
-    }, r.render = function(c, u) {
-      r.setCurrentView(c, u);
-    }, r._render_x_header = function(c, u, f, y, w) {
+      typeof N == "number" && (this._els[u][0].scrollTop = N), typeof M == "number" && this._els[k] && this._els[k][0] && (this._els[k][0].scrollTop = M);
+    }, r.setCurrentView = function(c, f) {
+      this.callEvent("onBeforeViewChange", [this._mode, this._date, f || this._mode, c || this._date]) && (this.updateView(c, f), this.callEvent("onViewChange", [this._mode, this._date]));
+    }, r.render = function(c, f) {
+      r.setCurrentView(c, f);
+    }, r._render_x_header = function(c, f, u, y, w) {
       w = w || 0;
       var D = document.createElement("div");
-      D.className = "dhx_scale_bar", this.templates[this._mode + "_scalex_class"] && (D.className += " " + this.templates[this._mode + "_scalex_class"](f));
+      D.className = "dhx_scale_bar", this.templates[this._mode + "_scalex_class"] && (D.className += " " + this.templates[this._mode + "_scalex_class"](u));
       var M = this._cols[c];
-      this._mode == "month" && c === 0 && this.config.left_border && (D.className += " dhx_scale_bar_border", u += 1), this.set_xy(D, M, this.xy.scale_height - 1, u, w);
-      var k = this.templates[this._mode + "_scale_date"](f, this._mode);
+      this._mode == "month" && c === 0 && this.config.left_border && (D.className += " dhx_scale_bar_border", f += 1), this.set_xy(D, M, this.xy.scale_height - 1, f, w);
+      var k = this.templates[this._mode + "_scale_date"](u, this._mode);
       D.innerHTML = k, this._waiAria.dayHeaderAttr(D, k), y.appendChild(D);
-    }, r._get_columns_num = function(c, u) {
-      var f = 7;
+    }, r._get_columns_num = function(c, f) {
+      var u = 7;
       if (!r._table_view) {
         var y = r.date["get_" + r._mode + "_end"];
-        y && (u = y(c)), f = Math.round((u.valueOf() - c.valueOf()) / 864e5);
+        y && (f = y(c)), u = Math.round((f.valueOf() - c.valueOf()) / 864e5);
       }
-      return f;
+      return u;
     }, r._get_timeunit_start = function() {
       return this.date[this._mode + "_start"](new Date(this._date.valueOf()));
     }, r._get_view_end = function() {
-      var c = this._get_timeunit_start(), u = r.date.add(c, 1, this._mode);
+      var c = this._get_timeunit_start(), f = r.date.add(c, 1, this._mode);
       if (!r._table_view) {
-        var f = r.date["get_" + r._mode + "_end"];
-        f && (u = f(c));
+        var u = r.date["get_" + r._mode + "_end"];
+        u && (f = u(c));
       }
-      return u;
-    }, r._calc_scale_sizes = function(c, u, f) {
-      var y = this.config.rtl, w = c, D = this._get_columns_num(u, f);
-      this._process_ignores(u, D, "day", 1);
+      return f;
+    }, r._calc_scale_sizes = function(c, f, u) {
+      var y = this.config.rtl, w = c, D = this._get_columns_num(f, u);
+      this._process_ignores(f, D, "day", 1);
       for (var M = D - this._ignores_detected, k = 0; k < D; k++)
         this._ignores[k] ? (this._cols[k] = 0, M++) : this._cols[k] = Math.floor(w / (M - k)), w -= this._cols[k], this._colsS[k] = (this._cols[k - 1] || 0) + (this._colsS[k - 1] || (this._table_view ? 0 : y ? this.xy.scroll_width : this.xy.scale_width));
       this._colsS.col_length = D, this._colsS[D] = this._cols[D - 1] + this._colsS[D - 1] || 0;
-    }, r._set_scale_col_size = function(c, u, f) {
+    }, r._set_scale_col_size = function(c, f, u) {
       var y = this.config;
-      this.set_xy(c, u, y.hour_size_px * (y.last_hour - y.first_hour), f + this.xy.scale_width + 1, 0);
-    }, r._render_scales = function(c, u) {
-      var f = new Date(r._min_date), y = new Date(r._max_date), w = this.date.date_part(r._currentDate()), D = parseInt(c.style.width, 10) - 1, M = new Date(this._min_date), k = this._get_columns_num(f, y);
-      this._calc_scale_sizes(D, f, y);
+      this.set_xy(c, f, y.hour_size_px * (y.last_hour - y.first_hour), u + this.xy.scale_width + 1, 0);
+    }, r._render_scales = function(c, f) {
+      var u = new Date(r._min_date), y = new Date(r._max_date), w = this.date.date_part(r._currentDate()), D = parseInt(c.style.width, 10) - 1, M = new Date(this._min_date), k = this._get_columns_num(u, y);
+      this._calc_scale_sizes(D, u, y);
       var N = 0;
       c.innerHTML = "";
-      for (var v = 0; v < k; v++) {
-        if (this._ignores[v] || this._render_x_header(v, N, M, c), !this._table_view) {
+      for (var m = 0; m < k; m++) {
+        if (this._ignores[m] || this._render_x_header(m, N, M, c), !this._table_view) {
           var x = document.createElement("div"), b = "dhx_scale_holder";
-          M.valueOf() == w.valueOf() && (b += " dhx_scale_holder_now"), x.setAttribute("data-column-index", v), this._ignores_detected && this._ignores[v] && (b += " dhx_scale_ignore");
+          M.valueOf() == w.valueOf() && (b += " dhx_scale_holder_now"), x.setAttribute("data-column-index", m), this._ignores_detected && this._ignores[m] && (b += " dhx_scale_ignore");
           for (let E = 1 * this.config.first_hour; E < this.config.last_hour; E++) {
             const S = document.createElement("div");
             S.className = "dhx_scale_time_slot dhx_scale_time_slot_hour_start", S.style.height = this.config.hour_size_px / 2 + "px";
             let T = new Date(M.getFullYear(), M.getMonth(), M.getDate(), E, 0);
             S.setAttribute("data-slot-date", this.templates.format_date(T));
-            let A = this.templates.time_slot_text(T);
-            A && (S.innerHTML = A);
-            let C = this.templates.time_slot_class(T);
-            C && S.classList.add(C), x.appendChild(S);
+            let C = this.templates.time_slot_text(T);
+            C && (S.innerHTML = C);
+            let A = this.templates.time_slot_class(T);
+            A && S.classList.add(A), x.appendChild(S);
             const $ = document.createElement("div");
-            $.className = "dhx_scale_time_slot", T = new Date(M.getFullYear(), M.getMonth(), M.getDate(), E, 30), $.setAttribute("data-slot-date", this.templates.format_date(T)), $.style.height = this.config.hour_size_px / 2 + "px", A = this.templates.time_slot_text(T), A && ($.innerHTML = A), C = this.templates.time_slot_class(T), C && $.classList.add(C), x.appendChild($);
+            $.className = "dhx_scale_time_slot", T = new Date(M.getFullYear(), M.getMonth(), M.getDate(), E, 30), $.setAttribute("data-slot-date", this.templates.format_date(T)), $.style.height = this.config.hour_size_px / 2 + "px", C = this.templates.time_slot_text(T), C && ($.innerHTML = C), A = this.templates.time_slot_class(T), A && $.classList.add(A), x.appendChild($);
           }
-          x.className = b + " " + this.templates.week_date_class(M, w), this._waiAria.dayColumnAttr(x, M), this._set_scale_col_size(x, this._cols[v], N), u.appendChild(x), this.callEvent("onScaleAdd", [x, M]);
+          x.className = b + " " + this.templates.week_date_class(M, w), this._waiAria.dayColumnAttr(x, M), this._set_scale_col_size(x, this._cols[m], N), f.appendChild(x), this.callEvent("onScaleAdd", [x, M]);
         }
-        N += this._cols[v], M = this.date.add(M, 1, "day"), M = this.date.day_start(M);
+        N += this._cols[m], M = this.date.add(M, 1, "day"), M = this.date.day_start(M);
       }
     }, r._getNavDateElement = function() {
       return this.$container.querySelector(".dhx_cal_date");
     }, r._reset_scale = function() {
       if (this.templates[this._mode + "_date"]) {
-        var c = this._els.dhx_cal_header[0], u = this._els.dhx_cal_data[0], f = this.config;
-        c.innerHTML = "", u.innerHTML = "";
-        var y, w, D = (f.readonly || !f.drag_resize ? " dhx_resize_denied" : "") + (f.readonly || !f.drag_move ? " dhx_move_denied" : "");
-        u.className = "dhx_cal_data" + D, this._scales = {}, this._cols = [], this._colsS = { height: 0 }, this._dy_shift = 0, this.set_sizes();
+        var c = this._els.dhx_cal_header[0], f = this._els.dhx_cal_data[0], u = this.config;
+        c.innerHTML = "", f.innerHTML = "";
+        var y, w, D = (u.readonly || !u.drag_resize ? " dhx_resize_denied" : "") + (u.readonly || !u.drag_move ? " dhx_move_denied" : "");
+        f.className = "dhx_cal_data" + D, this._scales = {}, this._cols = [], this._colsS = { height: 0 }, this._dy_shift = 0, this.set_sizes();
         var M = this._get_timeunit_start(), k = r._get_view_end();
         y = w = this._table_view ? r.date.week_start(M) : M, this._min_date = y;
-        var N = this.templates[this._mode + "_date"](M, k, this._mode), v = this._getNavDateElement();
-        if (v && (v.innerHTML = N, this._waiAria.navBarDateAttr(v, N)), this._max_date = k, r._render_scales(c, u), this._table_view)
-          this._reset_month_scale(u, M, w);
-        else if (this._reset_hours_scale(u, M, w), f.multi_day) {
+        var N = this.templates[this._mode + "_date"](M, k, this._mode), m = this._getNavDateElement();
+        if (m && (m.innerHTML = N, this._waiAria.navBarDateAttr(m, N)), this._max_date = k, r._render_scales(c, f), this._table_view)
+          this._reset_month_scale(f, M, w);
+        else if (this._reset_hours_scale(f, M, w), u.multi_day) {
           var x = "dhx_multi_day";
           this._els[x] && (this._els[x][0].parentNode.removeChild(this._els[x][0]), this._els[x] = null);
           var b = document.createElement("div");
           b.className = x, b.style.visibility = "hidden", b.style.display = "none";
-          var E = this._colsS[this._colsS.col_length], S = f.rtl ? this.xy.scale_width : this.xy.scroll_width, T = Math.max(E + S, 0);
-          this.set_xy(b, T, 0, 0), u.parentNode.insertBefore(b, u);
-          var A = b.cloneNode(!0);
-          A.className = x + "_icon", A.style.visibility = "hidden", A.style.display = "none", this.set_xy(A, this.xy.scale_width + 1, 0, 0), b.appendChild(A), this._els[x] = [b, A], r.event(this._els[x][0], "click", this._click.dhx_cal_data);
+          var E = this._colsS[this._colsS.col_length], S = u.rtl ? this.xy.scale_width : this.xy.scroll_width, T = Math.max(E + S, 0);
+          this.set_xy(b, T, 0, 0), f.parentNode.insertBefore(b, f);
+          var C = b.cloneNode(!0);
+          C.className = x + "_icon", C.style.visibility = "hidden", C.style.display = "none", this.set_xy(C, this.xy.scale_width + 1, 0, 0), b.appendChild(C), this._els[x] = [b, C], r.event(this._els[x][0], "click", this._click.dhx_cal_data);
         }
       }
-    }, r._reset_hours_scale = function(c, u, f) {
+    }, r._reset_hours_scale = function(c, f, u) {
       var y = document.createElement("div");
       y.className = "dhx_scale_holder";
       for (var w = new Date(1980, 1, 1, this.config.first_hour, 0, 0), D = 1 * this.config.first_hour; D < this.config.last_hour; D++) {
@@ -3720,18 +3795,18 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
       return r.config.now_date ? new Date(r.config.now_date) : /* @__PURE__ */ new Date();
     }, r._reset_ignores = function() {
       this._ignores = {}, this._ignores_detected = 0;
-    }, r._process_ignores = function(c, u, f, y, w) {
+    }, r._process_ignores = function(c, f, u, y, w) {
       this._reset_ignores();
       var D = r["ignore_" + this._mode];
       if (D)
-        for (var M = new Date(c), k = 0; k < u; k++)
-          D(M) && (this._ignores_detected += 1, this._ignores[k] = !0, w && u++), M = r.date.add(M, y, f), r.date[f + "_start"] && (M = r.date[f + "_start"](M));
-    }, r._render_month_scale = function(c, u, f, y) {
-      var w = r.date.add(u, 1, "month"), D = new Date(f), M = r._currentDate();
-      M = this.date.date_part(M), f = this.date.date_part(f), y = y || Math.ceil(Math.round((w.valueOf() - f.valueOf()) / 864e5) / 7);
+        for (var M = new Date(c), k = 0; k < f; k++)
+          D(M) && (this._ignores_detected += 1, this._ignores[k] = !0, w && f++), M = r.date.add(M, y, u), r.date[u + "_start"] && (M = r.date[u + "_start"](M));
+    }, r._render_month_scale = function(c, f, u, y) {
+      var w = r.date.add(f, 1, "month"), D = new Date(u), M = r._currentDate();
+      M = this.date.date_part(M), u = this.date.date_part(u), y = y || Math.ceil(Math.round((w.valueOf() - u.valueOf()) / 864e5) / 7);
       for (var k = [], N = 0; N <= 7; N++) {
-        var v = this._cols[N] || 0;
-        isNaN(Number(v)) || (v += "px"), k[N] = v;
+        var m = this._cols[N] || 0;
+        isNaN(Number(m)) || (m += "px"), k[N] = m;
       }
       function x(j) {
         var I = r._colsS.height;
@@ -3743,70 +3818,70 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
         var S = document.createElement("div");
         S.classList.add("dhx_cal_month_row"), S.style.height = x(N) + "px", E.appendChild(S);
         for (var T = 0; T < 7; T++) {
-          var A = document.createElement("div");
-          S.appendChild(A);
-          var C = "dhx_cal_month_cell";
-          f < u ? C += " dhx_before" : f >= w ? C += " dhx_after" : f.valueOf() == M.valueOf() && (C += " dhx_now"), this._ignores_detected && this._ignores[T] && (C += " dhx_scale_ignore"), A.className = C + " " + this.templates.month_date_class(f, M), A.setAttribute("data-cell-date", r.templates.format_date(f));
+          var C = document.createElement("div");
+          S.appendChild(C);
+          var A = "dhx_cal_month_cell";
+          u < f ? A += " dhx_before" : u >= w ? A += " dhx_after" : u.valueOf() == M.valueOf() && (A += " dhx_now"), this._ignores_detected && this._ignores[T] && (A += " dhx_scale_ignore"), C.className = A + " " + this.templates.month_date_class(u, M), C.setAttribute("data-cell-date", r.templates.format_date(u));
           var $ = "dhx_month_body", H = "dhx_month_head";
           if (T === 0 && this.config.left_border && ($ += " dhx_month_body_border", H += " dhx_month_head_border"), this._ignores_detected && this._ignores[T])
-            A.appendChild(document.createElement("div")), A.appendChild(document.createElement("div"));
+            C.appendChild(document.createElement("div")), C.appendChild(document.createElement("div"));
           else {
-            A.style.width = k[T], this._waiAria.monthCellAttr(A, f);
+            C.style.width = k[T], this._waiAria.monthCellAttr(C, u);
             var O = document.createElement("div");
-            O.style.height = r.xy.month_head_height + "px", O.className = H, O.innerHTML = this.templates.month_day(f), A.appendChild(O);
-            var R = document.createElement("div");
-            R.className = $, A.appendChild(R);
+            O.style.height = r.xy.month_head_height + "px", O.className = H, O.innerHTML = this.templates.month_day(u), C.appendChild(O);
+            var P = document.createElement("div");
+            P.className = $, C.appendChild(P);
           }
-          var P = f.getDate();
-          (f = this.date.add(f, 1, "day")).getDate() - P > 1 && (f = new Date(f.getFullYear(), f.getMonth(), P + 1, 12, 0));
+          var R = u.getDate();
+          (u = this.date.add(u, 1, "day")).getDate() - R > 1 && (u = new Date(u.getFullYear(), u.getMonth(), R + 1, 12, 0));
         }
         r._colsS.heights[N] = b, b += x(N);
       }
-      return this._min_date = D, this._max_date = f, c.innerHTML = "", c.appendChild(E), this._scales = {}, c.querySelectorAll("[data-cell-date]").forEach((j) => {
+      return this._min_date = D, this._max_date = u, c.innerHTML = "", c.appendChild(E), this._scales = {}, c.querySelectorAll("[data-cell-date]").forEach((j) => {
         const I = r.templates.parse_date(j.getAttribute("data-cell-date")), U = j.querySelector(".dhx_month_body");
         this._scales[+I] = U, this.callEvent("onScaleAdd", [this._scales[+I], I]);
       }), this._max_date;
-    }, r._reset_month_scale = function(c, u, f, y) {
-      var w = r.date.add(u, 1, "month");
-      f = this.date.date_part(f), y = y || Math.ceil(Math.round((w.valueOf() - f.valueOf()) / 864e5) / 7);
+    }, r._reset_month_scale = function(c, f, u, y) {
+      var w = r.date.add(f, 1, "month");
+      u = this.date.date_part(u), y = y || Math.ceil(Math.round((w.valueOf() - u.valueOf()) / 864e5) / 7);
       var D = Math.floor(c.clientHeight / y) - this.xy.month_head_height;
-      return this._colsS.height = D + this.xy.month_head_height, this._colsS.heights = [], r._render_month_scale(c, u, f, y);
+      return this._colsS.height = D + this.xy.month_head_height, this._colsS.heights = [], r._render_month_scale(c, f, u, y);
     }, r.getView = function(c) {
       return c || (c = r.getState().mode), r.matrix && r.matrix[c] ? r.matrix[c] : r._props && r._props[c] ? r._props[c] : null;
-    }, r.getLabel = function(c, u) {
-      for (var f = this.config.lightbox.sections, y = 0; y < f.length; y++)
-        if (f[y].map_to == c) {
-          for (var w = f[y].options, D = 0; D < w.length; D++)
-            if (w[D].key == u)
+    }, r.getLabel = function(c, f) {
+      for (var u = this.config.lightbox.sections, y = 0; y < u.length; y++)
+        if (u[y].map_to == c) {
+          for (var w = u[y].options, D = 0; D < w.length; D++)
+            if (w[D].key == f)
               return w[D].label;
         }
       return "";
-    }, r.updateCollection = function(c, u) {
-      var f = r.serverList(c);
-      return !!f && (f.splice(0, f.length), f.push.apply(f, u || []), r.callEvent("onOptionsLoad", []), r.resetLightbox(), r.hideCover(), !0);
-    }, r._lame_clone = function(c, u) {
-      var f, y, w;
-      for (u = u || [], f = 0; f < u.length; f += 2)
-        if (c === u[f])
-          return u[f + 1];
+    }, r.updateCollection = function(c, f) {
+      var u = r.serverList(c);
+      return !!u && (u.splice(0, u.length), u.push.apply(u, f || []), r.callEvent("onOptionsLoad", []), r.resetLightbox(), r.hideCover(), !0);
+    }, r._lame_clone = function(c, f) {
+      var u, y, w;
+      for (f = f || [], u = 0; u < f.length; u += 2)
+        if (c === f[u])
+          return f[u + 1];
       if (c && typeof c == "object") {
-        for (w = Object.create(c), y = [Array, Date, Number, String, Boolean], f = 0; f < y.length; f++)
-          c instanceof y[f] && (w = f ? new y[f](c) : new y[f]());
-        for (f in u.push(c, w), c)
-          Object.prototype.hasOwnProperty.apply(c, [f]) && (w[f] = r._lame_clone(c[f], u));
+        for (w = Object.create(c), y = [Array, Date, Number, String, Boolean], u = 0; u < y.length; u++)
+          c instanceof y[u] && (w = u ? new y[u](c) : new y[u]());
+        for (u in f.push(c, w), c)
+          Object.prototype.hasOwnProperty.apply(c, [u]) && (w[u] = r._lame_clone(c[u], f));
       }
       return w || c;
-    }, r._lame_copy = function(c, u) {
-      for (var f in u)
-        u.hasOwnProperty(f) && (c[f] = u[f]);
+    }, r._lame_copy = function(c, f) {
+      for (var u in f)
+        f.hasOwnProperty(u) && (c[u] = f[u]);
       return c;
     }, r._get_date_from_pos = function(c) {
-      var u = this._min_date.valueOf() + 6e4 * (c.y * this.config.time_step + 24 * (this._table_view ? 0 : c.x) * 60);
-      return new Date(this._correct_shift(u));
+      var f = this._min_date.valueOf() + 6e4 * (c.y * this.config.time_step + 24 * (this._table_view ? 0 : c.x) * 60);
+      return new Date(this._correct_shift(f));
     }, r.getActionData = function(c) {
-      var u = this._mouse_coords(c);
-      return { date: this._get_date_from_pos(u), section: u.section };
-    }, r._focus = function(c, u) {
+      var f = this._mouse_coords(c);
+      return { date: this._get_date_from_pos(f), section: f.section };
+    }, r._focus = function(c, f) {
       if (c && c.focus)
         if (this._mobile)
           window.setTimeout(function() {
@@ -3814,41 +3889,41 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
           }, 10);
         else
           try {
-            u && c.select && c.offsetWidth && c.select(), c.focus();
+            f && c.select && c.offsetWidth && c.select(), c.focus();
           } catch {
           }
-    }, r._get_real_event_length = function(c, u, f) {
-      var y, w = u - c, D = this["ignore_" + this._mode], M = 0;
-      f.render ? (M = this._get_date_index(f, c), y = this._get_date_index(f, u), c.valueOf() < r.getState().min_date.valueOf() && (M = -g(c, r.getState().min_date)), u.valueOf() > r.getState().max_date.valueOf() && (y += g(u, r.getState().max_date))) : y = Math.round(w / 60 / 60 / 1e3 / 24);
+    }, r._get_real_event_length = function(c, f, u) {
+      var y, w = f - c, D = this["ignore_" + this._mode], M = 0;
+      u.render ? (M = this._get_date_index(u, c), y = this._get_date_index(u, f), c.valueOf() < r.getState().min_date.valueOf() && (M = -g(c, r.getState().min_date)), f.valueOf() > r.getState().max_date.valueOf() && (y += g(f, r.getState().max_date))) : y = Math.round(w / 60 / 60 / 1e3 / 24);
       for (var k = !0; M < y; ) {
-        var N = r.date.add(u, -f.x_step, f.x_unit);
-        if (D && D(u) && (!k || k && D(N)))
-          w -= u - N;
+        var N = r.date.add(f, -u.x_step, u.x_unit);
+        if (D && D(f) && (!k || k && D(N)))
+          w -= f - N;
         else {
-          let v = 0;
-          const x = new Date(Math.max(N.valueOf(), c.valueOf())), b = u, E = new Date(x.getFullYear(), x.getMonth(), x.getDate(), f.first_hour || 0), S = new Date(x.getFullYear(), x.getMonth(), x.getDate(), f.last_hour || 24), T = new Date(u.getFullYear(), u.getMonth(), u.getDate(), f.first_hour || 0), A = new Date(u.getFullYear(), u.getMonth(), u.getDate(), f.last_hour || 24);
-          b.valueOf() > A.valueOf() && (v += b - A), b.valueOf() > T.valueOf() ? v += f._start_correction : v += 60 * b.getHours() * 60 * 1e3 + 60 * b.getMinutes() * 1e3, x.valueOf() <= S.valueOf() && (v += f._end_correction), x.valueOf() < E.valueOf() && (v += E.valueOf() - x.valueOf()), w -= v, k = !1;
+          let m = 0;
+          const x = new Date(Math.max(N.valueOf(), c.valueOf())), b = f, E = new Date(x.getFullYear(), x.getMonth(), x.getDate(), u.first_hour || 0), S = new Date(x.getFullYear(), x.getMonth(), x.getDate(), u.last_hour || 24), T = new Date(f.getFullYear(), f.getMonth(), f.getDate(), u.first_hour || 0), C = new Date(f.getFullYear(), f.getMonth(), f.getDate(), u.last_hour || 24);
+          b.valueOf() > C.valueOf() && (m += b - C), b.valueOf() > T.valueOf() ? m += u._start_correction : m += 60 * b.getHours() * 60 * 1e3 + 60 * b.getMinutes() * 1e3, x.valueOf() <= S.valueOf() && (m += u._end_correction), x.valueOf() < E.valueOf() && (m += E.valueOf() - x.valueOf()), w -= m, k = !1;
         }
-        u = N, y--;
+        f = N, y--;
       }
       return w;
-    }, r._get_fictional_event_length = function(c, u, f, y) {
+    }, r._get_fictional_event_length = function(c, f, u, y) {
       var w = new Date(c), D = y ? -1 : 1;
-      if (f._start_correction || f._end_correction) {
+      if (u._start_correction || u._end_correction) {
         var M;
-        M = y ? 60 * w.getHours() + w.getMinutes() - 60 * (f.first_hour || 0) : 60 * (f.last_hour || 0) - (60 * w.getHours() + w.getMinutes());
-        var k = 60 * (f.last_hour - f.first_hour), N = Math.ceil((u / 6e4 - M) / k);
-        N < 0 && (N = 0), u += N * (1440 - k) * 60 * 1e3;
+        M = y ? 60 * w.getHours() + w.getMinutes() - 60 * (u.first_hour || 0) : 60 * (u.last_hour || 0) - (60 * w.getHours() + w.getMinutes());
+        var k = 60 * (u.last_hour - u.first_hour), N = Math.ceil((f / 6e4 - M) / k);
+        N < 0 && (N = 0), f += N * (1440 - k) * 60 * 1e3;
       }
-      var v, x = new Date(1 * c + u * D), b = this["ignore_" + this._mode], E = 0;
+      var m, x = new Date(1 * c + f * D), b = this["ignore_" + this._mode], E = 0;
       function S() {
-        return f.x_unit === "day" ? E * D < v * D : E * D <= v * D;
+        return u.x_unit === "day" ? E * D < m * D : E * D <= m * D;
       }
-      for (f.render ? (E = this._get_date_index(f, w), v = this._get_date_index(f, x)) : v = Math.round(u / 60 / 60 / 1e3 / 24); S(); ) {
-        var T = r.date.add(w, f.x_step * D, f.x_unit);
-        b && b(w) && (u += (T - w) * D, v += D), w = T, E += D;
+      for (u.render ? (E = this._get_date_index(u, w), m = this._get_date_index(u, x)) : m = Math.round(f / 60 / 60 / 1e3 / 24); S(); ) {
+        var T = r.date.add(w, u.x_step * D, u.x_unit);
+        b && b(w) && (f += (T - w) * D, m += D), w = T, E += D;
       }
-      return u;
+      return f;
     }, r._get_section_view = function() {
       return this.getView();
     }, r._get_section_property = function() {
@@ -3862,58 +3937,58 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
     };
   }(i), function(r) {
     (function() {
-      var d = new RegExp(`<(?:.|
-)*?>`, "gm"), l = new RegExp(" +", "gm");
+      var l = new RegExp(`<(?:.|
+)*?>`, "gm"), _ = new RegExp(" +", "gm");
       function h(c) {
-        return (c + "").replace(d, " ").replace(l, " ");
+        return (c + "").replace(l, " ").replace(_, " ");
       }
       var p = new RegExp("'", "gm");
-      function m(c) {
+      function v(c) {
         return (c + "").replace(p, "&#39;");
       }
       for (var g in r._waiAria = { getAttributeString: function(c) {
-        var u = [" "];
-        for (var f in c)
-          if (typeof c[f] != "function" && typeof c[f] != "object") {
-            var y = m(h(c[f]));
-            u.push(f + "='" + y + "'");
+        var f = [" "];
+        for (var u in c)
+          if (typeof c[u] != "function" && typeof c[u] != "object") {
+            var y = v(h(c[u]));
+            f.push(u + "='" + y + "'");
           }
-        return u.push(" "), u.join(" ");
-      }, setAttributes: function(c, u) {
-        for (var f in u)
-          c.setAttribute(f, h(u[f]));
+        return f.push(" "), f.join(" ");
+      }, setAttributes: function(c, f) {
+        for (var u in f)
+          c.setAttribute(u, h(f[u]));
         return c;
-      }, labelAttr: function(c, u) {
-        return this.setAttributes(c, { "aria-label": u });
+      }, labelAttr: function(c, f) {
+        return this.setAttributes(c, { "aria-label": f });
       }, label: function(c) {
         return r._waiAria.getAttributeString({ "aria-label": c });
-      }, hourScaleAttr: function(c, u) {
-        this.labelAttr(c, u);
-      }, monthCellAttr: function(c, u) {
-        this.labelAttr(c, r.templates.day_date(u));
-      }, navBarDateAttr: function(c, u) {
-        this.labelAttr(c, u);
-      }, dayHeaderAttr: function(c, u) {
-        this.labelAttr(c, u);
-      }, dayColumnAttr: function(c, u) {
-        this.dayHeaderAttr(c, r.templates.day_date(u));
-      }, headerButtonsAttributes: function(c, u) {
-        return this.setAttributes(c, { role: "button", "aria-label": u });
-      }, headerToggleState: function(c, u) {
-        return this.setAttributes(c, { "aria-pressed": u ? "true" : "false" });
+      }, hourScaleAttr: function(c, f) {
+        this.labelAttr(c, f);
+      }, monthCellAttr: function(c, f) {
+        this.labelAttr(c, r.templates.day_date(f));
+      }, navBarDateAttr: function(c, f) {
+        this.labelAttr(c, f);
+      }, dayHeaderAttr: function(c, f) {
+        this.labelAttr(c, f);
+      }, dayColumnAttr: function(c, f) {
+        this.dayHeaderAttr(c, r.templates.day_date(f));
+      }, headerButtonsAttributes: function(c, f) {
+        return this.setAttributes(c, { role: "button", "aria-label": f });
+      }, headerToggleState: function(c, f) {
+        return this.setAttributes(c, { "aria-pressed": f ? "true" : "false" });
       }, getHeaderCellAttr: function(c) {
         return r._waiAria.getAttributeString({ "aria-label": c });
-      }, eventAttr: function(c, u) {
-        this._eventCommonAttr(c, u);
-      }, _eventCommonAttr: function(c, u) {
-        u.setAttribute("aria-label", h(r.templates.event_text(c.start_date, c.end_date, c))), r.config.readonly && u.setAttribute("aria-readonly", !0), c.$dataprocessor_class && u.setAttribute("aria-busy", !0), u.setAttribute("aria-selected", r.getState().select_id == c.id ? "true" : "false");
-      }, setEventBarAttr: function(c, u) {
-        this._eventCommonAttr(c, u);
-      }, _getAttributes: function(c, u) {
-        var f = { setAttribute: function(y, w) {
+      }, eventAttr: function(c, f) {
+        this._eventCommonAttr(c, f);
+      }, _eventCommonAttr: function(c, f) {
+        f.setAttribute("aria-label", h(r.templates.event_text(c.start_date, c.end_date, c))), r.config.readonly && f.setAttribute("aria-readonly", !0), c.$dataprocessor_class && f.setAttribute("aria-busy", !0), f.setAttribute("aria-selected", r.getState().select_id == c.id ? "true" : "false");
+      }, setEventBarAttr: function(c, f) {
+        this._eventCommonAttr(c, f);
+      }, _getAttributes: function(c, f) {
+        var u = { setAttribute: function(y, w) {
           this[y] = w;
         } };
-        return c.apply(this, [u, f]), f;
+        return c.apply(this, [f, u]), u;
       }, eventBarAttrString: function(c) {
         return this.getAttributeString(this._getAttributes(this.setEventBarAttr, c));
       }, agendaHeadAttrString: function() {
@@ -3925,48 +4000,48 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
       }, agendaDataAttrString: function() {
         return this.getAttributeString({ role: "grid" });
       }, agendaEventAttrString: function(c) {
-        var u = this._getAttributes(this._eventCommonAttr, c);
-        return u.role = "row", this.getAttributeString(u);
+        var f = this._getAttributes(this._eventCommonAttr, c);
+        return f.role = "row", this.getAttributeString(f);
       }, agendaDetailsBtnString: function() {
         return this.getAttributeString({ role: "button", "aria-label": r.locale.labels.icon_details });
       }, gridAttrString: function() {
         return this.getAttributeString({ role: "grid" });
       }, gridRowAttrString: function(c) {
         return this.agendaEventAttrString(c);
-      }, gridCellAttrString: function(c, u, f) {
-        return this.getAttributeString({ role: "gridcell", "aria-label": [u.label === void 0 ? u.id : u.label, ": ", f] });
+      }, gridCellAttrString: function(c, f, u) {
+        return this.getAttributeString({ role: "gridcell", "aria-label": [f.label === void 0 ? f.id : f.label, ": ", u] });
       }, mapAttrString: function() {
         return this.gridAttrString();
       }, mapRowAttrString: function(c) {
         return this.gridRowAttrString(c);
       }, mapDetailsBtnString: function() {
         return this.agendaDetailsBtnString();
-      }, minicalHeader: function(c, u) {
-        this.setAttributes(c, { id: u + "", "aria-live": "assertice", "aria-atomic": "true" });
-      }, minicalGrid: function(c, u) {
-        this.setAttributes(c, { "aria-labelledby": u + "", role: "grid" });
+      }, minicalHeader: function(c, f) {
+        this.setAttributes(c, { id: f + "", "aria-live": "assertice", "aria-atomic": "true" });
+      }, minicalGrid: function(c, f) {
+        this.setAttributes(c, { "aria-labelledby": f + "", role: "grid" });
       }, minicalRow: function(c) {
         this.setAttributes(c, { role: "row" });
-      }, minicalDayCell: function(c, u) {
-        var f = u.valueOf() < r._max_date.valueOf() && u.valueOf() >= r._min_date.valueOf();
-        this.setAttributes(c, { role: "gridcell", "aria-label": r.templates.day_date(u), "aria-selected": f ? "true" : "false" });
+      }, minicalDayCell: function(c, f) {
+        var u = f.valueOf() < r._max_date.valueOf() && f.valueOf() >= r._min_date.valueOf();
+        this.setAttributes(c, { role: "gridcell", "aria-label": r.templates.day_date(f), "aria-selected": u ? "true" : "false" });
       }, minicalHeadCell: function(c) {
         this.setAttributes(c, { role: "columnheader" });
-      }, weekAgendaDayCell: function(c, u) {
-        var f = c.querySelector(".dhx_wa_scale_bar"), y = c.querySelector(".dhx_wa_day_data"), w = r.uid() + "";
-        this.setAttributes(f, { id: w }), this.setAttributes(y, { "aria-labelledby": w });
-      }, weekAgendaEvent: function(c, u) {
-        this.eventAttr(u, c);
+      }, weekAgendaDayCell: function(c, f) {
+        var u = c.querySelector(".dhx_wa_scale_bar"), y = c.querySelector(".dhx_wa_day_data"), w = r.uid() + "";
+        this.setAttributes(u, { id: w }), this.setAttributes(y, { "aria-labelledby": w });
+      }, weekAgendaEvent: function(c, f) {
+        this.eventAttr(f, c);
       }, lightboxHiddenAttr: function(c) {
         c.setAttribute("aria-hidden", "true");
       }, lightboxVisibleAttr: function(c) {
         c.setAttribute("aria-hidden", "false");
       }, lightboxSectionButtonAttrString: function(c) {
         return this.getAttributeString({ role: "button", "aria-label": c, tabindex: "0" });
-      }, yearHeader: function(c, u) {
-        this.setAttributes(c, { id: u + "" });
-      }, yearGrid: function(c, u) {
-        this.minicalGrid(c, u);
+      }, yearHeader: function(c, f) {
+        this.setAttributes(c, { id: f + "" });
+      }, yearGrid: function(c, f) {
+        this.minicalGrid(c, f);
       }, yearHeadCell: function(c) {
         return this.minicalHeadCell(c);
       }, yearRow: function(c) {
@@ -3979,36 +4054,36 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
         return this.getAttributeString({ role: "button", "aria-label": r.locale.labels[c], tabindex: "0" });
       }, eventMenuAttrString: function(c) {
         return this.getAttributeString({ role: "button", "aria-label": r.locale.labels[c] });
-      }, lightboxHeader: function(c, u) {
-        c.setAttribute("aria-label", u);
+      }, lightboxHeader: function(c, f) {
+        c.setAttribute("aria-label", f);
       }, lightboxSelectAttrString: function(c) {
-        var u = "";
+        var f = "";
         switch (c) {
           case "%Y":
-            u = r.locale.labels.year;
+            f = r.locale.labels.year;
             break;
           case "%m":
-            u = r.locale.labels.month;
+            f = r.locale.labels.month;
             break;
           case "%d":
-            u = r.locale.labels.day;
+            f = r.locale.labels.day;
             break;
           case "%H:%i":
-            u = r.locale.labels.hour + " " + r.locale.labels.minute;
+            f = r.locale.labels.hour + " " + r.locale.labels.minute;
         }
-        return r._waiAria.getAttributeString({ "aria-label": u });
+        return r._waiAria.getAttributeString({ "aria-label": f });
       }, messageButtonAttrString: function(c) {
         return "tabindex='0' role='button' aria-label='" + c + "'";
       }, messageInfoAttr: function(c) {
         c.setAttribute("role", "alert");
-      }, messageModalAttr: function(c, u) {
-        c.setAttribute("role", "dialog"), u && c.setAttribute("aria-labelledby", u);
+      }, messageModalAttr: function(c, f) {
+        c.setAttribute("role", "dialog"), f && c.setAttribute("aria-labelledby", f);
       }, quickInfoAttr: function(c) {
         c.setAttribute("role", "dialog");
       }, quickInfoHeaderAttrString: function() {
         return " role='heading' ";
-      }, quickInfoHeader: function(c, u) {
-        c.setAttribute("aria-label", u);
+      }, quickInfoHeader: function(c, f) {
+        c.setAttribute("aria-label", f);
       }, quickInfoButtonAttrString: function(c) {
         return r._waiAria.getAttributeString({ role: "button", "aria-label": c, tabindex: "0" });
       }, tooltipAttr: function(c) {
@@ -4025,721 +4100,725 @@ https://docs.dhtmlx.com/scheduler/minicalendar.html`);
         }(r._waiAria[g]);
     })();
   }(i), i.utils = ne, i.$domHelpers = he, i.utils.dom = he, i.uid = ne.uid, i.mixin = ne.mixin, i.defined = ne.defined, i.assert = function(r) {
-    return function(d, l) {
-      d || r.config.show_errors && r.callEvent("onError", [l]) !== !1 && (r.message ? r.message({ type: "error", text: l, expire: -1 }) : console.log(l));
+    return function(l, _) {
+      l || r.config.show_errors && r.callEvent("onError", [_]) !== !1 && (r.message ? r.message({ type: "error", text: _, expire: -1 }) : console.log(_));
     };
-  }(i), i.copy = ne.copy, i._createDatePicker = function(r, d) {
-    return new Qt(i, r, d);
+  }(i), i.copy = ne.copy, i._createDatePicker = function(r, l) {
+    return new ia(i, r, l);
   }, i._getFocusableNodes = he.getFocusableNodes, i._getClassName = he.getClassName, i._locate_css = he.locateCss;
-  const t = Gt(i);
+  const t = aa(i);
   var n, s, a;
-  i.utils.mixin(i, t), i.env = i.$env = Yt, i.Promise = Promise, function(r) {
+  i.utils.mixin(i, t), i.env = i.$env = Jt, i.Promise = Promise, function(r) {
     r.destructor = function() {
-      for (var d in r.callEvent("onDestroy", []), this.clearAll(), this.$container && (this.$container.innerHTML = "", this.$container.classList.remove(`dhx_scheduler_${this._mode}`)), this._eventRemoveAll && this._eventRemoveAll(), this.resetLightbox && this.resetLightbox(), this._dp && this._dp.destructor && this._dp.destructor(), this.detachAllEvents(), this)
-        d.indexOf("$") === 0 && delete this[d];
+      for (var l in r.callEvent("onDestroy", []), this.clearAll(), this.$container && (this.$container.innerHTML = "", this.$container.classList.remove(`dhx_scheduler_${this._mode}`)), this._eventRemoveAll && this._eventRemoveAll(), this.resetLightbox && this.resetLightbox(), this._dp && this._dp.destructor && this._dp.destructor(), this.detachAllEvents(), this)
+        l.indexOf("$") === 0 && delete this[l];
       r.$destroyed = !0;
     };
   }(i), function(r) {
-    function d(l, h) {
-      var p = { method: l };
-      if (h.length === 0)
-        throw new Error("Arguments list of query is wrong.");
-      if (h.length === 1)
-        return typeof h[0] == "string" ? (p.url = h[0], p.async = !0) : (p.url = h[0].url, p.async = h[0].async || !0, p.callback = h[0].callback, p.headers = h[0].headers), h[0].data ? typeof h[0].data != "string" ? p.data = Ae(h[0].data) : p.data = h[0].data : p.data = "", p;
-      switch (p.url = h[0], l) {
-        case "GET":
-        case "DELETE":
-          p.callback = h[1], p.headers = h[2];
-          break;
-        case "POST":
-        case "PUT":
-          h[1] ? typeof h[1] != "string" ? p.data = Ae(h[1]) : p.data = h[1] : p.data = "", p.callback = h[2], p.headers = h[3];
-      }
-      return p;
-    }
-    r.Promise = typeof window < "u" ? window.Promise : Promise, r.ajax = { cache: !0, method: "get", serializeRequestParams: Ae, parse: function(l) {
-      return typeof l != "string" ? l : (l = l.replace(/^[\s]+/, ""), typeof DOMParser > "u" || r.$env.isIE ? window.ActiveXObject !== void 0 && ((h = new window.ActiveXObject("Microsoft.XMLDOM")).async = "false", h.loadXML(l)) : h = new DOMParser().parseFromString(l, "text/xml"), h);
-      var h;
-    }, xmltop: function(l, h, p) {
+    r.Promise = typeof window < "u" ? window.Promise : Promise;
+    const l = { cache: !0, method: "get", serializeRequestParams: vt, parse(_) {
+      if (typeof _ != "string")
+        return _;
+      let h;
+      const p = _.replace(/^[\s]+/, "");
+      return typeof DOMParser > "u" || r.$env.isIE ? typeof window < "u" && window.ActiveXObject !== void 0 && (h = new window.ActiveXObject("Microsoft.XMLDOM"), h.async = "false", h.loadXML(p)) : h = new DOMParser().parseFromString(p, "text/xml"), h || p;
+    }, xmltop(_, h, p) {
       if (h.status === void 0 || h.status < 400) {
-        var m = h.responseXML ? h.responseXML || h : this.parse(h.responseText || h);
-        if (m && m.documentElement !== null && !m.getElementsByTagName("parsererror").length)
-          return m.getElementsByTagName(l)[0];
+        const v = h.responseXML ? h.responseXML : this.parse(h.responseText || h);
+        if (typeof v != "string" && v.documentElement !== null && !v.getElementsByTagName("parsererror").length)
+          return v.getElementsByTagName(_)[0];
       }
-      return p !== -1 && r.callEvent("onLoadXMLError", ["Incorrect XML", arguments[1], p]), document.createElement("DIV");
-    }, xpath: function(l, h) {
-      if (h.nodeName || (h = h.responseXML || h), r.$env.isIE)
-        return h.selectNodes(l) || [];
-      for (var p, m = [], g = (h.ownerDocument || h).evaluate(l, h, null, XPathResult.ANY_TYPE, null); p = g.iterateNext(); )
-        m.push(p);
-      return m;
-    }, query: function(l) {
-      return this._call(l.method || "GET", l.url, l.data || "", l.async || !0, l.callback, l.headers);
-    }, get: function(l, h, p) {
-      var m = d("GET", arguments);
-      return this.query(m);
-    }, getSync: function(l, h) {
-      var p = d("GET", arguments);
+      return p !== -1 && r.callEvent("onLoadXMLError", ["Incorrect XML", h, p]), document.createElement("DIV");
+    }, xpath(_, h) {
+      var c;
+      const p = "nodeName" in h ? h : h.responseXML || h;
+      if (r.$env.isIE)
+        return ((c = p.selectNodes) == null ? void 0 : c.call(p, _)) || [];
+      const v = [], g = (p.ownerDocument || p).evaluate(_, p, null, XPathResult.ANY_TYPE, null);
+      for (; ; ) {
+        const f = g.iterateNext();
+        if (!f)
+          break;
+        v.push(f);
+      }
+      return v;
+    }, query(_) {
+      return this._call(_.method || "GET", _.url, String(_.data || ""), _.async ?? !0, _.callback, _.headers);
+    }, get(_, h, p) {
+      const v = ve("GET", arguments);
+      return this.query(v);
+    }, getSync(_, h) {
+      const p = ve("GET", arguments);
       return p.async = !1, this.query(p);
-    }, put: function(l, h, p, m) {
-      var g = d("PUT", arguments);
+    }, put(_, h, p, v) {
+      const g = ve("PUT", arguments);
       return this.query(g);
-    }, del: function(l, h, p) {
-      var m = d("DELETE", arguments);
-      return this.query(m);
-    }, post: function(l, h, p, m) {
-      arguments.length == 1 ? h = "" : arguments.length == 2 && typeof h == "function" && (p = h, h = "");
-      var g = d("POST", arguments);
-      return this.query(g);
-    }, postSync: function(l, h, p) {
-      h = h === null ? "" : String(h);
-      var m = d("POST", arguments);
-      return m.async = !1, this.query(m);
-    }, _call: function(l, h, p, m, g, c) {
-      return new r.Promise((function(u, f) {
-        var y = typeof XMLHttpRequest === void 0 || r.$env.isIE ? new window.ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest(), w = navigator.userAgent.match(/AppleWebKit/) !== null && navigator.userAgent.match(/Qt/) !== null && navigator.userAgent.match(/Safari/) !== null;
-        if (m && y.addEventListener("readystatechange", function() {
-          if (y.readyState == 4 || w && y.readyState == 3) {
-            if ((y.status != 200 || y.responseText === "") && !r.callEvent("onAjaxError", [y]))
+    }, del(_, h, p) {
+      const v = ve("DELETE", arguments);
+      return this.query(v);
+    }, post(_, h, p, v) {
+      let g = h, c = p;
+      arguments.length === 1 ? g = "" : arguments.length === 2 && typeof g == "function" && (c = g, g = "");
+      const f = ve("POST", [_, g, c, v]);
+      return this.query(f);
+    }, postSync(_, h, p) {
+      const v = ve("POST", [_, h === null ? "" : String(h), p]);
+      return v.async = !1, this.query(v);
+    }, _call(_, h, p, v, g, c) {
+      return new r.Promise((f) => {
+        let u = typeof XMLHttpRequest > "u" || r.$env.isIE ? new window.ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
+        const y = typeof navigator < "u" ? navigator.userAgent : "", w = y.match(/AppleWebKit/) !== null && y.match(/Qt/) !== null && y.match(/Safari/) !== null;
+        v && u.addEventListener("readystatechange", () => {
+          if (u.readyState === 4 || w && u.readyState === 3) {
+            if ((u.status !== 200 || u.responseText === "") && !r.callEvent("onAjaxError", [u]))
               return;
-            setTimeout(function() {
-              typeof g == "function" && g.apply(window, [{ xmlDoc: y, filePath: h }]), u(y), typeof g == "function" && (g = null, y = null);
+            setTimeout(() => {
+              typeof g == "function" && g.apply(window, [{ xmlDoc: u, filePath: h }]), f(u);
             }, 0);
           }
-        }), l != "GET" || this.cache || (h += (h.indexOf("?") >= 0 ? "&" : "?") + "dhxr" + (/* @__PURE__ */ new Date()).getTime() + "=1"), y.open(l, h, m), c)
-          for (var D in c)
-            y.setRequestHeader(D, c[D]);
+        });
+        let D = h;
+        if (_ !== "GET" || this.cache || (D += `${D.indexOf("?") >= 0 ? "&" : "?"}dhxr${Date.now()}=1`), u.open(_, D, v), c)
+          for (const M in c)
+            u.setRequestHeader(M, c[M]);
         else
-          l.toUpperCase() == "POST" || l == "PUT" || l == "DELETE" ? y.setRequestHeader("Content-Type", "application/x-www-form-urlencoded") : l == "GET" && (p = null);
-        if (y.setRequestHeader("X-Requested-With", "XMLHttpRequest"), y.send(p), !m)
-          return { xmlDoc: y, filePath: h };
-      }).bind(this));
-    }, urlSeparator: function(l) {
-      return l.indexOf("?") != -1 ? "&" : "?";
-    } }, r.$ajax = r.ajax;
-  }(i), Vt(i), function(r) {
-    r.config = { default_date: "%j %M %Y", month_date: "%F %Y", load_date: "%Y-%m-%d", week_date: "%l", day_date: "%D %j", hour_date: "%H:%i", month_day: "%d", date_format: "%Y-%m-%d %H:%i", api_date: "%d-%m-%Y %H:%i", parse_exact_format: !1, preserve_length: !0, time_step: 5, displayed_event_color: "#ff4a4a", displayed_event_text_color: "#ffef80", wide_form: 0, day_column_padding: 8, use_select_menu_space: !0, fix_tab_position: !0, start_on_monday: !0, first_hour: 0, last_hour: 24, readonly: !1, drag_resize: !0, drag_move: !0, drag_create: !0, drag_event_body: !0, dblclick_create: !0, details_on_dblclick: !0, edit_on_create: !0, details_on_create: !0, header: null, hour_size_px: 44, resize_month_events: !1, resize_month_timed: !1, responsive_lightbox: !1, separate_short_events: !0, rtl: !1, cascade_event_display: !1, cascade_event_count: 4, cascade_event_margin: 30, multi_day: !0, multi_day_height_limit: 200, drag_lightbox: !0, preserve_scroll: !0, select: !0, undo_deleted: !0, server_utc: !1, touch: !0, touch_tip: !0, touch_drag: 500, touch_swipe_dates: !1, quick_info_detached: !0, positive_closing: !1, drag_highlight: !0, limit_drag_out: !1, icons_edit: ["icon_save", "icon_cancel"], icons_select: ["icon_details", "icon_edit", "icon_delete"], buttons_right: ["dhx_save_btn", "dhx_cancel_btn"], buttons_left: ["dhx_delete_btn"], lightbox: { sections: [{ name: "description", map_to: "text", type: "textarea", focus: !0 }, { name: "time", height: 72, type: "time", map_to: "auto" }] }, highlight_displayed_event: !0, left_border: !1, ajax_error: "alert", delay_render: 0, timeline_swap_resize: !0, wai_aria_attributes: !0, wai_aria_application_role: !0, csp: "auto", event_attribute: "data-event-id", show_errors: !0 }, r.config.buttons_left.$initial = r.config.buttons_left.join(), r.config.buttons_right.$initial = r.config.buttons_right.join(), r._helpers = { parseDate: function(d) {
-      return (r.templates.xml_date || r.templates.parse_date)(d);
-    }, formatDate: function(d) {
-      return (r.templates.xml_format || r.templates.format_date)(d);
+          _ === "POST" || _ === "PUT" || _ === "DELETE" ? u.setRequestHeader("Content-Type", "application/x-www-form-urlencoded") : _ === "GET" && (p = null);
+        u.setRequestHeader("X-Requested-With", "XMLHttpRequest"), u.send(p), v || f(u);
+      });
+    }, urlSeparator: (_) => _.indexOf("?") !== -1 ? "&" : "?" };
+    r.ajax = l, r.$ajax = r.ajax;
+  }(i), Wt(i), function(r) {
+    r.config = { default_date: "%j %M %Y", month_date: "%F %Y", load_date: "%Y-%m-%d", week_date: "%l", day_date: "%D %j", hour_date: "%H:%i", month_day: "%d", date_format: "%Y-%m-%d %H:%i", api_date: "%d-%m-%Y %H:%i", parse_exact_format: !1, preserve_length: !0, time_step: 5, displayed_event_color: "#ff4a4a", displayed_event_text_color: "#ffef80", wide_form: 0, day_column_padding: 8, use_select_menu_space: !0, fix_tab_position: !0, start_on_monday: !0, first_hour: 0, last_hour: 24, readonly: !1, drag_resize: !0, drag_move: !0, drag_create: !0, drag_event_body: !0, dblclick_create: !0, details_on_dblclick: !0, edit_on_create: !0, details_on_create: !0, header: null, hour_size_px: 44, resize_month_events: !1, resize_month_timed: !1, responsive_lightbox: !1, separate_short_events: !0, rtl: !1, cascade_event_display: !1, cascade_event_count: 4, cascade_event_margin: 30, multi_day: !0, multi_day_height_limit: 200, drag_lightbox: !0, preserve_scroll: !0, select: !0, undo_deleted: !0, server_utc: !1, touch: !0, touch_tip: !0, touch_drag: 500, touch_swipe_dates: !1, quick_info_detached: !0, positive_closing: !1, drag_highlight: !0, limit_drag_out: !1, icons_edit: ["icon_save", "icon_cancel"], icons_select: ["icon_details", "icon_edit", "icon_delete"], buttons_right: ["dhx_save_btn", "dhx_cancel_btn"], buttons_left: ["dhx_delete_btn"], lightbox: { sections: [{ name: "description", map_to: "text", type: "textarea", focus: !0 }, { name: "time", height: 72, type: "time", map_to: "auto" }] }, highlight_displayed_event: !0, left_border: !1, ajax_error: "alert", delay_render: 0, timeline_swap_resize: !0, wai_aria_attributes: !0, wai_aria_application_role: !0, csp: "auto", event_attribute: "data-event-id", show_errors: !0 }, r.config.buttons_left.$initial = r.config.buttons_left.join(), r.config.buttons_right.$initial = r.config.buttons_right.join(), r._helpers = { parseDate: function(l) {
+      return (r.templates.xml_date || r.templates.parse_date)(l);
+    }, formatDate: function(l) {
+      return (r.templates.xml_format || r.templates.format_date)(l);
     } }, r.templates = {}, r.init_templates = function() {
-      var d = r.date.date_to_str, l = r.config;
+      var l = r.date.date_to_str, _ = r.config;
       (function(h, p) {
-        for (var m in p)
-          h[m] || (h[m] = p[m]);
-      })(r.templates, { day_date: d(l.default_date), month_date: d(l.month_date), week_date: function(h, p) {
-        return l.rtl ? r.templates.day_date(r.date.add(p, -1, "day")) + " &ndash; " + r.templates.day_date(h) : r.templates.day_date(h) + " &ndash; " + r.templates.day_date(r.date.add(p, -1, "day"));
-      }, day_scale_date: d(l.default_date), time_slot_text: function(h) {
+        for (var v in p)
+          h[v] || (h[v] = p[v]);
+      })(r.templates, { day_date: l(_.default_date), month_date: l(_.month_date), week_date: function(h, p) {
+        return _.rtl ? r.templates.day_date(r.date.add(p, -1, "day")) + " &ndash; " + r.templates.day_date(h) : r.templates.day_date(h) + " &ndash; " + r.templates.day_date(r.date.add(p, -1, "day"));
+      }, day_scale_date: l(_.default_date), time_slot_text: function(h) {
         return "";
       }, time_slot_class: function(h) {
         return "";
-      }, month_scale_date: d(l.week_date), week_scale_date: d(l.day_date), hour_scale: d(l.hour_date), time_picker: d(l.hour_date), event_date: d(l.hour_date), month_day: d(l.month_day), load_format: d(l.load_date), format_date: d(l.date_format, l.server_utc), parse_date: r.date.str_to_date(l.date_format, l.server_utc), api_date: r.date.str_to_date(l.api_date, !1, !1), event_header: function(h, p, m) {
-        return m._mode === "small" || m._mode === "smallest" ? r.templates.event_date(h) : r.templates.event_date(h) + " - " + r.templates.event_date(p);
-      }, event_text: function(h, p, m) {
-        return m.text;
-      }, event_class: function(h, p, m) {
+      }, month_scale_date: l(_.week_date), week_scale_date: l(_.day_date), hour_scale: l(_.hour_date), time_picker: l(_.hour_date), event_date: l(_.hour_date), month_day: l(_.month_day), load_format: l(_.load_date), format_date: l(_.date_format, _.server_utc), parse_date: r.date.str_to_date(_.date_format, _.server_utc), api_date: r.date.str_to_date(_.api_date, !1, !1), event_header: function(h, p, v) {
+        return v._mode === "small" || v._mode === "smallest" ? r.templates.event_date(h) : r.templates.event_date(h) + " - " + r.templates.event_date(p);
+      }, event_text: function(h, p, v) {
+        return v.text;
+      }, event_class: function(h, p, v) {
         return "";
       }, month_date_class: function(h) {
         return "";
       }, week_date_class: function(h) {
         return "";
-      }, event_bar_date: function(h, p, m) {
+      }, event_bar_date: function(h, p, v) {
         return r.templates.event_date(h);
-      }, event_bar_text: function(h, p, m) {
-        return m.text;
+      }, event_bar_text: function(h, p, v) {
+        return v.text;
       }, month_events_link: function(h, p) {
         return "<a>View more(" + p + " events)</a>";
-      }, drag_marker_class: function(h, p, m) {
+      }, drag_marker_class: function(h, p, v) {
         return "";
-      }, drag_marker_content: function(h, p, m) {
+      }, drag_marker_content: function(h, p, v) {
         return "";
-      }, tooltip_date_format: r.date.date_to_str("%Y-%m-%d %H:%i"), tooltip_text: function(h, p, m) {
-        return "<b>Event:</b> " + m.text + "<br/><b>Start date:</b> " + r.templates.tooltip_date_format(h) + "<br/><b>End date:</b> " + r.templates.tooltip_date_format(p);
-      }, calendar_month: d("%F %Y"), calendar_scale_date: d("%D"), calendar_date: d("%d"), calendar_time: d("%d-%m-%Y") }), this.callEvent("onTemplatesReady", []);
+      }, tooltip_date_format: r.date.date_to_str("%Y-%m-%d %H:%i"), tooltip_text: function(h, p, v) {
+        return "<b>Event:</b> " + v.text + "<br/><b>Start date:</b> " + r.templates.tooltip_date_format(h) + "<br/><b>End date:</b> " + r.templates.tooltip_date_format(p);
+      }, calendar_month: l("%F %Y"), calendar_scale_date: l("%D"), calendar_date: l("%d"), calendar_time: l("%d-%m-%Y") }), this.callEvent("onTemplatesReady", []);
     };
   }(i), function(r) {
+    const l = Gt(r);
     r._events = {}, r.clearAll = function() {
       this._events = {}, this._loaded = {}, this._edit_id = null, this._select_id = null, this._drag_id = null, this._drag_mode = null, this._drag_pos = null, this._new_event = null, this.clear_view(), this.callEvent("onClearAll", []);
-    }, r.addEvent = function(d, l, h, p, m) {
+    }, r.addEvent = function(_, h, p, v, g) {
       if (!arguments.length)
         return this.addEventNow();
-      var g = d;
-      arguments.length != 1 && ((g = m || {}).start_date = d, g.end_date = l, g.text = h, g.id = p), g.id = g.id || r.uid(), g.text = g.text || "", typeof g.start_date == "string" && (g.start_date = this.templates.api_date(g.start_date)), typeof g.end_date == "string" && (g.end_date = this.templates.api_date(g.end_date));
-      var c = 6e4 * (this.config.event_duration || this.config.time_step);
-      new Date(g.end_date).valueOf() - new Date(g.start_date).valueOf() <= c && g.end_date.setTime(g.start_date.valueOf() + c), g.start_date.setMilliseconds(0), g.end_date.setMilliseconds(0), g._timed = this.isOneDayEvent(g);
-      var u = !this._events[g.id];
-      return this._events[g.id] = g, this.event_updated(g), this._loading || this.callEvent(u ? "onEventAdded" : "onEventChanged", [g.id, g]), g.id;
-    }, r.deleteEvent = function(d, l) {
-      var h = this._events[d];
-      (l || this.callEvent("onBeforeEventDelete", [d, h]) && this.callEvent("onConfirmedBeforeEventDelete", [d, h])) && (h && (r.getState().select_id == d && r.unselect(), delete this._events[d], this.event_updated(h), this._drag_id == h.id && (this._drag_id = null, this._drag_mode = null, this._drag_pos = null)), this.callEvent("onEventDeleted", [d, h]));
-    }, r.getEvent = function(d) {
-      return this._events[d];
-    }, r.setEvent = function(d, l) {
-      l.id || (l.id = d), this._events[d] = l;
-    }, r.for_rendered = function(d, l) {
-      for (var h = this._rendered.length - 1; h >= 0; h--)
-        this._rendered[h].getAttribute(this.config.event_attribute) == d && l(this._rendered[h], h);
-    }, r.changeEventId = function(d, l) {
-      if (d != l) {
-        var h = this._events[d];
-        h && (h.id = l, this._events[l] = h, delete this._events[d]), this.for_rendered(d, function(p) {
-          p.setAttribute("event_id", l), p.setAttribute(r.config.event_attribute, l);
-        }), this._select_id == d && (this._select_id = l), this._edit_id == d && (this._edit_id = l), this.callEvent("onEventIdChange", [d, l]);
+      var c = _;
+      arguments.length != 1 && ((c = g || {}).start_date = _, c.end_date = h, c.text = p, c.id = v), c.id = c.id || r.uid(), c.text = c.text || "", typeof c.start_date == "string" && (c.start_date = this.templates.api_date(c.start_date)), typeof c.end_date == "string" && (c.end_date = this.templates.api_date(c.end_date));
+      var f = 6e4 * (this.config.event_duration || this.config.time_step);
+      new Date(c.end_date).valueOf() - new Date(c.start_date).valueOf() <= f && c.end_date.setTime(c.start_date.valueOf() + f), c.start_date.setMilliseconds(0), c.end_date.setMilliseconds(0), c._timed = this.isOneDayEvent(c);
+      var u = !this._events[c.id];
+      return this._events[c.id] = c, this.event_updated(c), this._loading || this.callEvent(u ? "onEventAdded" : "onEventChanged", [c.id, c]), c.id;
+    }, r.deleteEvent = function(_, h) {
+      var p = this._events[_];
+      (h || this.callEvent("onBeforeEventDelete", [_, p]) && this.callEvent("onConfirmedBeforeEventDelete", [_, p])) && (p && (r.getState().select_id == _ && r.unselect(), delete this._events[_], this.event_updated(p), this._drag_id == p.id && (this._drag_id = null, this._drag_mode = null, this._drag_pos = null)), this.callEvent("onEventDeleted", [_, p]));
+    }, r.getEvent = function(_) {
+      return this._events[_];
+    }, r.setEvent = function(_, h) {
+      h.id || (h.id = _), this._events[_] = h;
+    }, r.for_rendered = function(_, h) {
+      for (var p = l.lookup(_), v = p.length - 1; v >= 0; v--) {
+        var g = this._rendered.indexOf(p[v]);
+        g < 0 || h(p[v], g);
+      }
+    }, r._forget_rendered_event = function(_, h) {
+      l.sync();
+      var p = h === void 0 || this._rendered[h] !== _ ? this._rendered.indexOf(_) : h;
+      return !(p < 0 || (this._rendered.splice(p, 1), l.forget(_), 0));
+    }, r.changeEventId = function(_, h) {
+      if (_ != h) {
+        var p = this._events[_];
+        p && (p.id = h, this._events[h] = p, delete this._events[_]), this.for_rendered(_, function(v) {
+          v.setAttribute("event_id", h), v.setAttribute(r.config.event_attribute, h);
+        }), l.invalidate(), this._select_id == _ && (this._select_id = h), this._edit_id == _ && (this._edit_id = h), this.callEvent("onEventIdChange", [_, h]);
       }
     }, function() {
-      for (var d = ["text", "Text", "start_date", "StartDate", "end_date", "EndDate"], l = function(m) {
-        return function(g) {
-          return r.getEvent(g)[m];
+      for (var _ = ["text", "Text", "start_date", "StartDate", "end_date", "EndDate"], h = function(g) {
+        return function(c) {
+          return r.getEvent(c)[g];
         };
-      }, h = function(m) {
-        return function(g, c) {
-          var u = r.getEvent(g);
-          u[m] = c, u._changed = !0, u._timed = this.isOneDayEvent(u), r.event_updated(u, !0);
+      }, p = function(g) {
+        return function(c, f) {
+          var u = r.getEvent(c);
+          u[g] = f, u._changed = !0, u._timed = this.isOneDayEvent(u), r.event_updated(u, !0);
         };
-      }, p = 0; p < d.length; p += 2)
-        r["getEvent" + d[p + 1]] = l(d[p]), r["setEvent" + d[p + 1]] = h(d[p]);
-    }(), r.event_updated = function(d, l) {
-      this.is_visible_events(d) ? this.render_view_data() : this.clear_event(d.id);
-    }, r.is_visible_events = function(d) {
+      }, v = 0; v < _.length; v += 2)
+        r["getEvent" + _[v + 1]] = h(_[v]), r["setEvent" + _[v + 1]] = p(_[v]);
+    }(), r.event_updated = function(_, h) {
+      this.is_visible_events(_) ? this.render_view_data() : this.clear_event(_.id);
+    }, r.is_visible_events = function(_) {
       if (!this._min_date || !this._max_date)
         return !1;
-      if (d.start_date.valueOf() < this._max_date.valueOf() && this._min_date.valueOf() < d.end_date.valueOf()) {
-        var l = d.start_date.getHours(), h = d.end_date.getHours() + d.end_date.getMinutes() / 60, p = this.config.last_hour, m = this.config.first_hour;
-        return !(!this._table_view && (h > p || h <= m) && (l >= p || l < m) && !((d.end_date.valueOf() - d.start_date.valueOf()) / 36e5 > 24 - (this.config.last_hour - this.config.first_hour) || l < p && h > m));
+      if (_.start_date.valueOf() < this._max_date.valueOf() && this._min_date.valueOf() < _.end_date.valueOf()) {
+        var h = _.start_date.getHours(), p = _.end_date.getHours() + _.end_date.getMinutes() / 60, v = this.config.last_hour, g = this.config.first_hour;
+        return !(!this._table_view && (p > v || p <= g) && (h >= v || h < g) && !((_.end_date.valueOf() - _.start_date.valueOf()) / 36e5 > 24 - (this.config.last_hour - this.config.first_hour) || h < v && p > g));
       }
       return !1;
-    }, r.isOneDayEvent = function(d) {
-      var l = new Date(d.end_date.valueOf() - 1);
-      return d.start_date.getFullYear() === l.getFullYear() && d.start_date.getMonth() === l.getMonth() && d.start_date.getDate() === l.getDate() && d.end_date.valueOf() - d.start_date.valueOf() < 864e5;
-    }, r.get_visible_events = function(d) {
-      var l = [];
-      for (var h in this._events)
-        this.is_visible_events(this._events[h]) && (d && !this._events[h]._timed || this.filter_event(h, this._events[h]) && l.push(this._events[h]));
-      return l;
-    }, r.filter_event = function(d, l) {
-      var h = this["filter_" + this._mode];
-      return !h || h(d, l);
-    }, r._is_main_area_event = function(d) {
-      return !!d._timed;
-    }, r.render_view_data = function(d, l) {
-      var h = !1;
-      if (!d) {
-        if (h = !0, this._not_render)
+    }, r.isOneDayEvent = function(_) {
+      var h = new Date(_.end_date.valueOf() - 1);
+      return _.start_date.getFullYear() === h.getFullYear() && _.start_date.getMonth() === h.getMonth() && _.start_date.getDate() === h.getDate() && _.end_date.valueOf() - _.start_date.valueOf() < 864e5;
+    }, r.get_visible_events = function(_) {
+      var h = [];
+      for (var p in this._events)
+        this.is_visible_events(this._events[p]) && (_ && !this._events[p]._timed || this.filter_event(p, this._events[p]) && h.push(this._events[p]));
+      return h;
+    }, r.filter_event = function(_, h) {
+      var p = this["filter_" + this._mode];
+      return !p || p(_, h);
+    }, r._is_main_area_event = function(_) {
+      return !!_._timed;
+    }, r.render_view_data = function(_, h) {
+      var p = !1;
+      if (!_) {
+        if (p = !0, this._not_render)
           return void (this._render_wait = !0);
-        this._render_wait = !1, this.clear_view(), d = this.get_visible_events(!(this._table_view || this.config.multi_day));
+        this._render_wait = !1, this.clear_view(), _ = this.get_visible_events(!(this._table_view || this.config.multi_day));
       }
-      for (var p = 0, m = d.length; p < m; p++)
-        this._recalculate_timed(d[p]);
+      for (var v = 0, g = _.length; v < g; v++)
+        this._recalculate_timed(_[v]);
       if (this.config.multi_day && !this._table_view) {
-        var g = [], c = [];
-        for (p = 0; p < d.length; p++)
-          this._is_main_area_event(d[p]) ? g.push(d[p]) : c.push(d[p]);
+        var c = [], f = [];
+        for (v = 0; v < _.length; v++)
+          this._is_main_area_event(_[v]) ? c.push(_[v]) : f.push(_[v]);
         if (!this._els.dhx_multi_day) {
           var u = r._commonErrorMessages.unknownView(this._mode);
           throw new Error(u);
         }
-        this._rendered_location = this._els.dhx_multi_day[0], this._table_view = !0, this.render_data(c, l), this._table_view = !1, this._rendered_location = this._els.dhx_cal_data[0], this._table_view = !1, this.render_data(g, l);
+        this._rendered_location = this._els.dhx_multi_day[0], this._table_view = !0, this.render_data(f, h), this._table_view = !1, this._rendered_location = this._els.dhx_cal_data[0], this._table_view = !1, this.render_data(c, h);
       } else {
-        var f = document.createDocumentFragment(), y = this._els.dhx_cal_data[0];
-        this._rendered_location = f, this.render_data(d, l), y.appendChild(f), this._rendered_location = y;
+        var y = document.createDocumentFragment(), w = this._els.dhx_cal_data[0];
+        this._rendered_location = y, this.render_data(_, h), w.appendChild(y), this._rendered_location = w;
       }
-      h && this.callEvent("onDataRender", []);
-    }, r._view_month_day = function(d) {
-      var l = r.getActionData(d).date;
-      r.callEvent("onViewMoreClick", [l]) && r.setCurrentView(l, "day");
-    }, r._render_month_link = function(d) {
-      for (var l = this._rendered_location, h = this._lame_clone(d), p = d._sday; p < d._eday; p++) {
-        h._sday = p, h._eday = p + 1;
-        var m = r.date, g = r._min_date;
-        g = m.add(g, h._sweek, "week"), g = m.add(g, h._sday, "day");
-        var c = r.getEvents(g, m.add(g, 1, "day")).length, u = this._get_event_bar_pos(h), f = u.x2 - u.x, y = document.createElement("div");
-        r.event(y, "click", function(w) {
-          r._view_month_day(w);
-        }), y.className = "dhx_month_link", y.style.top = u.y + "px", y.style.left = u.x + "px", y.style.width = f + "px", y.innerHTML = r.templates.month_events_link(g, c), this._rendered.push(y), l.appendChild(y);
+      p && this.callEvent("onDataRender", []);
+    }, r._view_month_day = function(_) {
+      var h = r.getActionData(_).date;
+      r.callEvent("onViewMoreClick", [h]) && r.setCurrentView(h, "day");
+    }, r._render_month_link = function(_) {
+      for (var h = this._rendered_location, p = this._lame_clone(_), v = _._sday; v < _._eday; v++) {
+        p._sday = v, p._eday = v + 1;
+        var g = r.date, c = r._min_date;
+        c = g.add(c, p._sweek, "week"), c = g.add(c, p._sday, "day");
+        var f = r.getEvents(c, g.add(c, 1, "day")).length, u = this._get_event_bar_pos(p), y = u.x2 - u.x, w = document.createElement("div");
+        r.event(w, "click", function(D) {
+          r._view_month_day(D);
+        }), w.className = "dhx_month_link", w.style.top = u.y + "px", w.style.left = u.x + "px", w.style.width = y + "px", w.innerHTML = r.templates.month_events_link(c, f), this._rendered.push(w), h.appendChild(w);
       }
-    }, r._recalculate_timed = function(d) {
-      var l;
-      d && (l = typeof d != "object" ? this._events[d] : d) && (l._timed = r.isOneDayEvent(l));
-    }, r.attachEvent("onEventChanged", r._recalculate_timed), r.attachEvent("onEventAdded", r._recalculate_timed), r.render_data = function(d, l) {
-      d = this._pre_render_events(d, l);
-      for (var h = {}, p = 0; p < d.length; p++)
+    }, r._recalculate_timed = function(_) {
+      var h;
+      _ && (h = typeof _ != "object" ? this._events[_] : _) && (h._timed = r.isOneDayEvent(h));
+    }, r.attachEvent("onEventChanged", r._recalculate_timed), r.attachEvent("onEventAdded", r._recalculate_timed), r.render_data = function(_, h) {
+      _ = this._pre_render_events(_, h);
+      for (var p = {}, v = 0; v < _.length; v++)
         if (this._table_view)
           if (r._mode != "month")
-            this.render_event_bar(d[p]);
+            this.render_event_bar(_[v]);
           else {
-            var m = r.config.max_month_events;
-            m !== 1 * m || d[p]._sorder < m ? this.render_event_bar(d[p]) : m !== void 0 && d[p]._sorder == m && r._render_month_link(d[p]);
+            var g = r.config.max_month_events;
+            g !== 1 * g || _[v]._sorder < g ? this.render_event_bar(_[v]) : g !== void 0 && _[v]._sorder == g && r._render_month_link(_[v]);
           }
         else {
-          var g = d[p], c = r.locate_holder(g._sday);
-          if (!c)
+          var c = _[v], f = r.locate_holder(c._sday);
+          if (!f)
             continue;
-          h[g._sday] || (h[g._sday] = { real: c, buffer: document.createDocumentFragment(), width: c.clientWidth });
-          var u = h[g._sday];
-          this.render_event(g, u.buffer, u.width);
+          p[c._sday] || (p[c._sday] = { real: f, buffer: document.createDocumentFragment(), width: f.clientWidth });
+          var u = p[c._sday];
+          this.render_event(c, u.buffer, u.width);
         }
-      for (var p in h)
-        (u = h[p]).real && u.buffer && u.real.appendChild(u.buffer);
-    }, r._get_first_visible_cell = function(d) {
-      for (var l = 0; l < d.length; l++)
-        if ((d[l].className || "").indexOf("dhx_scale_ignore") == -1)
-          return d[l];
-      return d[0];
-    }, r._pre_render_events = function(d, l) {
-      var h = this.xy.bar_height, p = this._colsS.heights, m = this._colsS.heights = [0, 0, 0, 0, 0, 0, 0], g = this._els.dhx_cal_data[0];
-      if (d = this._table_view ? this._pre_render_events_table(d, l) : this._pre_render_events_line(d, l), this._table_view)
-        if (l)
-          this._colsS.heights = p;
+      for (var v in p)
+        (u = p[v]).real && u.buffer && u.real.appendChild(u.buffer);
+    }, r._get_first_visible_cell = function(_) {
+      for (var h = 0; h < _.length; h++)
+        if ((_[h].className || "").indexOf("dhx_scale_ignore") == -1)
+          return _[h];
+      return _[0];
+    }, r._pre_render_events = function(_, h) {
+      var p = this.xy.bar_height, v = this._colsS.heights, g = this._colsS.heights = [0, 0, 0, 0, 0, 0, 0], c = this._els.dhx_cal_data[0];
+      if (_ = this._table_view ? this._pre_render_events_table(_, h) : this._pre_render_events_line(_, h), this._table_view)
+        if (h)
+          this._colsS.heights = v;
         else {
-          var c = g.querySelectorAll(".dhx_cal_month_row");
-          if (c.length) {
-            for (var u = 0; u < c.length; u++) {
-              m[u]++;
-              var f = c[u].querySelectorAll(".dhx_cal_month_cell"), y = this._colsS.height - this.xy.month_head_height;
-              if (m[u] * h > y) {
-                var w = y;
-                1 * this.config.max_month_events !== this.config.max_month_events || m[u] <= this.config.max_month_events ? w = m[u] * h : (this.config.max_month_events + 1) * h > y && (w = (this.config.max_month_events + 1) * h), c[u].style.height = w + this.xy.month_head_height + "px";
+          var f = c.querySelectorAll(".dhx_cal_month_row");
+          if (f.length) {
+            for (var u = 0; u < f.length; u++) {
+              g[u]++;
+              var y = f[u].querySelectorAll(".dhx_cal_month_cell"), w = this._colsS.height - this.xy.month_head_height;
+              if (g[u] * p > w) {
+                var D = w;
+                1 * this.config.max_month_events !== this.config.max_month_events || g[u] <= this.config.max_month_events ? D = g[u] * p : (this.config.max_month_events + 1) * p > w && (D = (this.config.max_month_events + 1) * p), f[u].style.height = D + this.xy.month_head_height + "px";
               }
-              m[u] = (m[u - 1] || 0) + r._get_first_visible_cell(f).offsetHeight;
+              g[u] = (g[u - 1] || 0) + r._get_first_visible_cell(y).offsetHeight;
             }
-            m.unshift(0);
-            const S = this.$container.querySelector(".dhx_cal_data");
-            if (S.offsetHeight < S.scrollHeight && !r._colsS.scroll_fix && r.xy.scroll_width) {
-              var D = r._colsS, M = D[D.col_length], k = D.heights.slice();
-              M -= r.xy.scroll_width || 0, this._calc_scale_sizes(M, this._min_date, this._max_date), r._colsS.heights = k, this.set_xy(this._els.dhx_cal_header[0], M), r._render_scales(this._els.dhx_cal_header[0]), r._render_month_scale(this._els.dhx_cal_data[0], this._get_timeunit_start(), this._min_date), D.scroll_fix = !0;
+            g.unshift(0);
+            const T = this.$container.querySelector(".dhx_cal_data");
+            if (T.offsetHeight < T.scrollHeight && !r._colsS.scroll_fix && r.xy.scroll_width) {
+              var M = r._colsS, k = M[M.col_length], N = M.heights.slice();
+              k -= r.xy.scroll_width || 0, this._calc_scale_sizes(k, this._min_date, this._max_date), r._colsS.heights = N, this.set_xy(this._els.dhx_cal_header[0], k), r._render_scales(this._els.dhx_cal_header[0]), r._render_month_scale(this._els.dhx_cal_data[0], this._get_timeunit_start(), this._min_date), M.scroll_fix = !0;
             }
-          } else if (d.length || this._els.dhx_multi_day[0].style.visibility != "visible" || (m[0] = -1), d.length || m[0] == -1) {
-            var N = (m[0] + 1) * h + 4, v = N, x = N + "px";
-            this.config.multi_day_height_limit && (x = (v = Math.min(N, this.config.multi_day_height_limit)) + "px");
-            var b = this._els.dhx_multi_day[0];
-            b.style.height = x, b.style.visibility = m[0] == -1 ? "hidden" : "visible", b.style.display = m[0] == -1 ? "none" : "";
-            var E = this._els.dhx_multi_day[1];
-            E.style.height = x, E.style.visibility = m[0] == -1 ? "hidden" : "visible", E.style.display = m[0] == -1 ? "none" : "", E.className = m[0] ? "dhx_multi_day_icon" : "dhx_multi_day_icon_small", this._dy_shift = (m[0] + 1) * h, this.config.multi_day_height_limit && (this._dy_shift = Math.min(this.config.multi_day_height_limit, this._dy_shift)), m[0] = 0, v != N && (b.style.overflowY = "auto", E.style.position = "fixed", E.style.top = "", E.style.left = "");
+          } else if (_.length || this._els.dhx_multi_day[0].style.visibility != "visible" || (g[0] = -1), _.length || g[0] == -1) {
+            var m = (g[0] + 1) * p + 4, x = m, b = m + "px";
+            this.config.multi_day_height_limit && (b = (x = Math.min(m, this.config.multi_day_height_limit)) + "px");
+            var E = this._els.dhx_multi_day[0];
+            E.style.height = b, E.style.visibility = g[0] == -1 ? "hidden" : "visible", E.style.display = g[0] == -1 ? "none" : "";
+            var S = this._els.dhx_multi_day[1];
+            S.style.height = b, S.style.visibility = g[0] == -1 ? "hidden" : "visible", S.style.display = g[0] == -1 ? "none" : "", S.className = g[0] ? "dhx_multi_day_icon" : "dhx_multi_day_icon_small", this._dy_shift = (g[0] + 1) * p, this.config.multi_day_height_limit && (this._dy_shift = Math.min(this.config.multi_day_height_limit, this._dy_shift)), g[0] = 0, x != m && (E.style.overflowY = "auto", S.style.position = "fixed", S.style.top = "", S.style.left = "");
           }
         }
-      return d;
-    }, r._get_event_sday = function(d) {
-      var l = this.date.day_start(new Date(d.start_date));
-      return Math.round((l.valueOf() - this._min_date.valueOf()) / 864e5);
-    }, r._get_event_mapped_end_date = function(d) {
-      var l = d.end_date;
+      return _;
+    }, r._get_event_sday = function(_) {
+      var h = this.date.day_start(new Date(_.start_date));
+      return Math.round((h.valueOf() - this._min_date.valueOf()) / 864e5);
+    }, r._get_event_mapped_end_date = function(_) {
+      var h = _.end_date;
       if (this.config.separate_short_events) {
-        var h = (d.end_date - d.start_date) / 6e4;
-        h < this._min_mapped_duration && (l = this.date.add(l, this._min_mapped_duration - h, "minute"));
+        var p = (_.end_date - _.start_date) / 6e4;
+        p < this._min_mapped_duration && (h = this.date.add(h, this._min_mapped_duration - p, "minute"));
       }
-      return l;
-    }, r._pre_render_events_line = function(d, l) {
-      d.sort(function(E, S) {
-        return E.start_date.valueOf() == S.start_date.valueOf() ? E.id > S.id ? 1 : -1 : E.start_date > S.start_date ? 1 : -1;
+      return h;
+    }, r._pre_render_events_line = function(_, h) {
+      _.sort(function(S, T) {
+        return S.start_date.valueOf() == T.start_date.valueOf() ? S.id > T.id ? 1 : -1 : S.start_date > T.start_date ? 1 : -1;
       });
-      var h = [], p = [];
+      var p = [], v = [];
       this._min_mapped_duration = Math.floor(60 * this.xy.min_event_height / this.config.hour_size_px);
-      for (var m = 0; m < d.length; m++) {
-        var g = d[m], c = g.start_date, u = g.end_date, f = c.getHours(), y = u.getHours();
-        if (g._sday = this._get_event_sday(g), this._ignores[g._sday])
-          d.splice(m, 1), m--;
+      for (var g = 0; g < _.length; g++) {
+        var c = _[g], f = c.start_date, u = c.end_date, y = f.getHours(), w = u.getHours();
+        if (c._sday = this._get_event_sday(c), this._ignores[c._sday])
+          _.splice(g, 1), g--;
         else {
-          if (h[g._sday] || (h[g._sday] = []), !l) {
-            g._inner = !1;
-            for (var w = h[g._sday]; w.length; ) {
-              var D = w[w.length - 1];
-              if (!(this._get_event_mapped_end_date(D).valueOf() <= g.start_date.valueOf()))
+          if (p[c._sday] || (p[c._sday] = []), !h) {
+            c._inner = !1;
+            for (var D = p[c._sday]; D.length; ) {
+              var M = D[D.length - 1];
+              if (!(this._get_event_mapped_end_date(M).valueOf() <= c.start_date.valueOf()))
                 break;
-              w.splice(w.length - 1, 1);
+              D.splice(D.length - 1, 1);
             }
-            for (var M = w.length, k = !1, N = 0; N < w.length; N++)
-              if (D = w[N], this._get_event_mapped_end_date(D).valueOf() <= g.start_date.valueOf()) {
-                k = !0, g._sorder = D._sorder, M = N, g._inner = !0;
+            for (var k = D.length, N = !1, m = 0; m < D.length; m++)
+              if (M = D[m], this._get_event_mapped_end_date(M).valueOf() <= c.start_date.valueOf()) {
+                N = !0, c._sorder = M._sorder, k = m, c._inner = !0;
                 break;
               }
-            if (w.length && (w[w.length - 1]._inner = !0), !k)
-              if (w.length)
-                if (w.length <= w[w.length - 1]._sorder) {
-                  if (w[w.length - 1]._sorder)
-                    for (N = 0; N < w.length; N++) {
-                      for (var v = !1, x = 0; x < w.length; x++)
-                        if (w[x]._sorder == N) {
-                          v = !0;
+            if (D.length && (D[D.length - 1]._inner = !0), !N)
+              if (D.length)
+                if (D.length <= D[D.length - 1]._sorder) {
+                  if (D[D.length - 1]._sorder)
+                    for (m = 0; m < D.length; m++) {
+                      for (var x = !1, b = 0; b < D.length; b++)
+                        if (D[b]._sorder == m) {
+                          x = !0;
                           break;
                         }
-                      if (!v) {
-                        g._sorder = N;
+                      if (!x) {
+                        c._sorder = m;
                         break;
                       }
                     }
                   else
-                    g._sorder = 0;
-                  g._inner = !0;
+                    c._sorder = 0;
+                  c._inner = !0;
                 } else {
-                  var b = w[0]._sorder;
-                  for (N = 1; N < w.length; N++)
-                    w[N]._sorder > b && (b = w[N]._sorder);
-                  g._sorder = b + 1, g._inner = !1;
+                  var E = D[0]._sorder;
+                  for (m = 1; m < D.length; m++)
+                    D[m]._sorder > E && (E = D[m]._sorder);
+                  c._sorder = E + 1, c._inner = !1;
                 }
               else
-                g._sorder = 0;
-            w.splice(M, M == w.length ? 0 : 1, g), w.length > (w.max_count || 0) ? (w.max_count = w.length, g._count = w.length) : g._count = g._count ? g._count : 1;
+                c._sorder = 0;
+            D.splice(k, k == D.length ? 0 : 1, c), D.length > (D.max_count || 0) ? (D.max_count = D.length, c._count = D.length) : c._count = c._count ? c._count : 1;
           }
-          (f < this.config.first_hour || y >= this.config.last_hour) && (p.push(g), d[m] = g = this._copy_event(g), f < this.config.first_hour && (g.start_date.setHours(this.config.first_hour), g.start_date.setMinutes(0)), y >= this.config.last_hour && (g.end_date.setMinutes(0), g.end_date.setHours(this.config.last_hour)), g.start_date > g.end_date || f == this.config.last_hour) && (d.splice(m, 1), m--);
+          (y < this.config.first_hour || w >= this.config.last_hour) && (v.push(c), _[g] = c = this._copy_event(c), y < this.config.first_hour && (c.start_date.setHours(this.config.first_hour), c.start_date.setMinutes(0)), w >= this.config.last_hour && (c.end_date.setMinutes(0), c.end_date.setHours(this.config.last_hour)), c.start_date > c.end_date || y == this.config.last_hour) && (_.splice(g, 1), g--);
         }
       }
-      if (!l) {
-        for (m = 0; m < d.length; m++)
-          d[m]._count = h[d[m]._sday].max_count;
-        for (m = 0; m < p.length; m++)
-          p[m]._count = h[p[m]._sday].max_count;
+      if (!h) {
+        for (g = 0; g < _.length; g++)
+          _[g]._count = p[_[g]._sday].max_count;
+        for (g = 0; g < v.length; g++)
+          v[g]._count = p[v[g]._sday].max_count;
       }
-      return d;
-    }, r._time_order = function(d) {
-      d.sort(function(l, h) {
-        return l.start_date.valueOf() == h.start_date.valueOf() ? l._timed && !h._timed ? 1 : !l._timed && h._timed ? -1 : l.id > h.id ? 1 : -1 : l.start_date > h.start_date ? 1 : -1;
+      return _;
+    }, r._time_order = function(_) {
+      _.sort(function(h, p) {
+        return h.start_date.valueOf() == p.start_date.valueOf() ? h._timed && !p._timed ? 1 : !h._timed && p._timed ? -1 : h.id > p.id ? 1 : -1 : h.start_date > p.start_date ? 1 : -1;
       });
-    }, r._is_any_multiday_cell_visible = function(d, l, h) {
-      var p = this._cols.length, m = !1, g = d, c = !0, u = new Date(l);
-      for (r.date.day_start(new Date(l)).valueOf() != l.valueOf() && (u = r.date.day_start(u), u = r.date.add(u, 1, "day")); g < u; ) {
-        c = !1;
-        var f = this.locate_holder_day(g, !1, h) % p;
-        if (!this._ignores[f]) {
-          m = !0;
+    }, r._is_any_multiday_cell_visible = function(_, h, p) {
+      var v = this._cols.length, g = !1, c = _, f = !0, u = new Date(h);
+      for (r.date.day_start(new Date(h)).valueOf() != h.valueOf() && (u = r.date.day_start(u), u = r.date.add(u, 1, "day")); c < u; ) {
+        f = !1;
+        var y = this.locate_holder_day(c, !1, p) % v;
+        if (!this._ignores[y]) {
+          g = !0;
           break;
         }
-        g = r.date.add(g, 1, "day");
+        c = r.date.add(c, 1, "day");
       }
-      return c || m;
-    }, r._pre_render_events_table = function(d, l) {
-      this._time_order(d);
-      for (var h, p = [], m = [[], [], [], [], [], [], []], g = this._colsS.heights, c = this._cols.length, u = {}, f = 0; f < d.length; f++) {
-        var y = d[f], w = y.id;
-        u[w] || (u[w] = { first_chunk: !0, last_chunk: !0 });
-        var D = u[w], M = h || y.start_date, k = y.end_date;
-        M < this._min_date && (D.first_chunk = !1, M = this._min_date), k > this._max_date && (D.last_chunk = !1, k = this._max_date);
-        var N = this.locate_holder_day(M, !1, y);
-        if (y._sday = N % c, !this._ignores[y._sday] || !y._timed) {
-          var v = this.locate_holder_day(k, !0, y) || c;
-          if (y._eday = v % c || c, y._length = v - N, y._sweek = Math.floor((this._correct_shift(M.valueOf(), 1) - this._min_date.valueOf()) / (864e5 * c)), r._is_any_multiday_cell_visible(M, k, y)) {
-            var x, b = m[y._sweek];
-            for (x = 0; x < b.length && !(b[x]._eday <= y._sday); x++)
+      return f || g;
+    }, r._pre_render_events_table = function(_, h) {
+      this._time_order(_);
+      for (var p, v = [], g = [[], [], [], [], [], [], []], c = this._colsS.heights, f = this._cols.length, u = {}, y = 0; y < _.length; y++) {
+        var w = _[y], D = w.id;
+        u[D] || (u[D] = { first_chunk: !0, last_chunk: !0 });
+        var M = u[D], k = p || w.start_date, N = w.end_date;
+        k < this._min_date && (M.first_chunk = !1, k = this._min_date), N > this._max_date && (M.last_chunk = !1, N = this._max_date);
+        var m = this.locate_holder_day(k, !1, w);
+        if (w._sday = m % f, !this._ignores[w._sday] || !w._timed) {
+          var x = this.locate_holder_day(N, !0, w) || f;
+          if (w._eday = x % f || f, w._length = x - m, w._sweek = Math.floor((this._correct_shift(k.valueOf(), 1) - this._min_date.valueOf()) / (864e5 * f)), r._is_any_multiday_cell_visible(k, N, w)) {
+            var b, E = g[w._sweek];
+            for (b = 0; b < E.length && !(E[b]._eday <= w._sday); b++)
               ;
-            if (y._sorder && l || (y._sorder = x), y._sday + y._length <= c)
-              h = null, p.push(y), b[x] = y, g[y._sweek] = b.length - 1, y._first_chunk = D.first_chunk, y._last_chunk = D.last_chunk;
+            if (w._sorder && h || (w._sorder = b), w._sday + w._length <= f)
+              p = null, v.push(w), E[b] = w, c[w._sweek] = E.length - 1, w._first_chunk = M.first_chunk, w._last_chunk = M.last_chunk;
             else {
-              var E = this._copy_event(y);
-              E.id = y.id, E._length = c - y._sday, E._eday = c, E._sday = y._sday, E._sweek = y._sweek, E._sorder = y._sorder, E.end_date = this.date.add(M, E._length, "day"), E._first_chunk = D.first_chunk, D.first_chunk && (D.first_chunk = !1), p.push(E), b[x] = E, h = E.end_date, g[y._sweek] = b.length - 1, f--;
+              var S = this._copy_event(w);
+              S.id = w.id, S._length = f - w._sday, S._eday = f, S._sday = w._sday, S._sweek = w._sweek, S._sorder = w._sorder, S.end_date = this.date.add(k, S._length, "day"), S._first_chunk = M.first_chunk, M.first_chunk && (M.first_chunk = !1), v.push(S), E[b] = S, p = S.end_date, c[w._sweek] = E.length - 1, y--;
             }
           } else
-            h = null;
+            p = null;
         }
       }
-      return p;
+      return v;
     }, r._copy_dummy = function() {
-      var d = new Date(this.start_date), l = new Date(this.end_date);
-      this.start_date = d, this.end_date = l;
-    }, r._copy_event = function(d) {
-      return this._copy_dummy.prototype = d, new this._copy_dummy();
-    }, r._rendered = [], r.clear_view = function() {
-      for (var d = 0; d < this._rendered.length; d++) {
-        var l = this._rendered[d];
-        l.parentNode && l.parentNode.removeChild(l);
+      var _ = new Date(this.start_date), h = new Date(this.end_date);
+      this.start_date = _, this.end_date = h;
+    }, r._copy_event = function(_) {
+      return this._copy_dummy.prototype = _, new this._copy_dummy();
+    }, r._rendered = [], r._reset_rendered_events = function() {
+      this._rendered = [], l.invalidate();
+    }, r.clear_view = function() {
+      for (var _ = 0; _ < this._rendered.length; _++) {
+        var h = this._rendered[_];
+        h.parentNode && h.parentNode.removeChild(h);
       }
-      this._rendered = [];
-    }, r.updateEvent = function(d) {
-      var l = this.getEvent(d);
-      this.clear_event(d), l && this.is_visible_events(l) && this.filter_event(d, l) && (this._table_view || this.config.multi_day || l._timed) && (this.config.update_render ? this.render_view_data() : this.getState().mode != "month" || this.getState().drag_id || this.isOneDayEvent(l) ? this.render_view_data([l], !0) : this.render_view_data());
-    }, r.clear_event = function(d) {
-      this.for_rendered(d, function(l, h) {
-        l.parentNode && l.parentNode.removeChild(l), r._rendered.splice(h, 1);
+      this._reset_rendered_events();
+    }, r.updateEvent = function(_) {
+      var h = this.getEvent(_);
+      this.clear_event(_), h && this.is_visible_events(h) && this.filter_event(_, h) && (this._table_view || this.config.multi_day || h._timed) && (this.config.update_render ? this.render_view_data() : this.getState().mode != "month" || this.getState().drag_id || this.isOneDayEvent(h) ? this.render_view_data([h], !0) : this.render_view_data());
+    }, r.clear_event = function(_) {
+      this.for_rendered(_, function(h, p) {
+        h.parentNode && h.parentNode.removeChild(h), r._forget_rendered_event(h, p);
       });
-    }, r._y_from_date = function(d) {
-      var l = 60 * d.getHours() + d.getMinutes();
-      return Math.round((60 * l * 1e3 - 60 * this.config.first_hour * 60 * 1e3) * this.config.hour_size_px / 36e5) % (24 * this.config.hour_size_px);
-    }, r._calc_event_y = function(d, l) {
-      l = l || 0;
-      var h = 60 * d.start_date.getHours() + d.start_date.getMinutes(), p = 60 * d.end_date.getHours() + d.end_date.getMinutes() || 60 * r.config.last_hour;
-      return { top: this._y_from_date(d.start_date), height: Math.max(l, (p - h) * this.config.hour_size_px / 60) };
-    }, r.render_event = function(d, l, h) {
-      var p = r.xy.menu_width, m = this.config.use_select_menu_space ? 0 : p;
-      if (!(d._sday < 0)) {
-        var g = r.locate_holder(d._sday);
-        if (g) {
-          l = l || g;
-          var c = this._calc_event_y(d, r.xy.min_event_height), u = c.top, f = c.height, y = d._count || 1, w = d._sorder || 0;
-          h = h || g.clientWidth, this.config.day_column_padding && (h -= this.config.day_column_padding);
-          var D = Math.floor((h - m) / y), M = w * D + 1;
-          if (d._inner || (D *= y - w), this.config.cascade_event_display) {
-            const A = this.config.cascade_event_count, C = this.config.cascade_event_margin;
-            let $, H = (y - w - 1) % A * C, O = w % A * C;
-            y * C < h - this.config.day_column_padding ? $ = d._inner ? H / 2 : 0 : ($ = d._inner ? H / 3 : 0, M = O / 3, y * C / 2 > h - this.config.day_column_padding && ($ = d._inner ? H / A : 0, M = O / A)), D = Math.floor(h - m - M - $);
+    }, r._y_from_date = function(_) {
+      var h = 60 * _.getHours() + _.getMinutes();
+      return Math.round((60 * h * 1e3 - 60 * this.config.first_hour * 60 * 1e3) * this.config.hour_size_px / 36e5) % (24 * this.config.hour_size_px);
+    }, r._calc_event_y = function(_, h) {
+      h = h || 0;
+      var p = 60 * _.start_date.getHours() + _.start_date.getMinutes(), v = 60 * _.end_date.getHours() + _.end_date.getMinutes() || 60 * r.config.last_hour;
+      return { top: this._y_from_date(_.start_date), height: Math.max(h, (v - p) * this.config.hour_size_px / 60) };
+    }, r.render_event = function(_, h, p) {
+      var v = r.xy.menu_width, g = this.config.use_select_menu_space ? 0 : v;
+      if (!(_._sday < 0)) {
+        var c = r.locate_holder(_._sday);
+        if (c) {
+          h = h || c;
+          var f = this._calc_event_y(_, r.xy.min_event_height), u = f.top, y = f.height, w = _._count || 1, D = _._sorder || 0;
+          p = p || c.clientWidth, this.config.day_column_padding && (p -= this.config.day_column_padding);
+          var M = Math.floor((p - g) / w), k = D * M + 1;
+          if (_._inner || (M *= w - D), this.config.cascade_event_display) {
+            const A = this.config.cascade_event_count, $ = this.config.cascade_event_margin;
+            let H, O = (w - D - 1) % A * $, P = D % A * $;
+            w * $ < p - this.config.day_column_padding ? H = _._inner ? O / 2 : 0 : (H = _._inner ? O / 3 : 0, k = P / 3, w * $ / 2 > p - this.config.day_column_padding && (H = _._inner ? O / A : 0, k = P / A)), M = Math.floor(p - g - k - H);
           }
-          d._mode = f < 30 ? "smallest" : f < 42 ? "small" : null;
-          var k = this._render_v_bar(d, m + M, u, D, f, d._text_style, r.templates.event_header(d.start_date, d.end_date, d), r.templates.event_text(d.start_date, d.end_date, d));
-          if (d._mode === "smallest" ? k.classList.add("dhx_cal_event--xsmall") : d._mode === "small" && k.classList.add("dhx_cal_event--small"), this._waiAria.eventAttr(d, k), this._rendered.push(k), l.appendChild(k), M = M + parseInt(this.config.rtl ? g.style.right : g.style.left, 10) + m, this._edit_id == d.id) {
-            k.style.zIndex = 1, D = Math.max(D, r.xy.editor_width), (k = document.createElement("div")).setAttribute("event_id", d.id), k.setAttribute(this.config.event_attribute, d.id), this._waiAria.eventAttr(d, k), k.className = "dhx_cal_event dhx_cal_editor", this.config.rtl && M++, this.set_xy(k, D, f, M, u), d.color && k.style.setProperty("--dhx-scheduler-event-background", d.color);
-            var N = r.templates.event_class(d.start_date, d.end_date, d);
-            N && (k.className += " " + N);
-            var v = document.createElement("div");
-            v.style.cssText += "overflow:hidden;height:100%", k.appendChild(v), this._els.dhx_cal_data[0].appendChild(k), this._rendered.push(k), v.innerHTML = "<textarea class='dhx_cal_editor'>" + d.text + "</textarea>", this._editor = v.querySelector("textarea"), r.event(this._editor, "keydown", function(A) {
+          _._mode = y < 30 ? "smallest" : y < 42 ? "small" : null;
+          var N = this._render_v_bar(_, g + k, u, M, y, _._text_style, r.templates.event_header(_.start_date, _.end_date, _), r.templates.event_text(_.start_date, _.end_date, _));
+          if (_._mode === "smallest" ? N.classList.add("dhx_cal_event--xsmall") : _._mode === "small" && N.classList.add("dhx_cal_event--small"), this._waiAria.eventAttr(_, N), this._rendered.push(N), h.appendChild(N), k = k + parseInt(this.config.rtl ? c.style.right : c.style.left, 10) + g, this._edit_id == _.id) {
+            N.style.zIndex = 1, M = Math.max(M, r.xy.editor_width), (N = document.createElement("div")).setAttribute("event_id", _.id), N.setAttribute(this.config.event_attribute, _.id), this._waiAria.eventAttr(_, N), N.className = "dhx_cal_event dhx_cal_editor", this.config.rtl && k++, this.set_xy(N, M, y, k, u), _.color && N.style.setProperty("--dhx-scheduler-event-background", _.color);
+            var m = r.templates.event_class(_.start_date, _.end_date, _);
+            m && (N.className += " " + m);
+            var x = document.createElement("div");
+            x.style.cssText += "overflow:hidden;height:100%", N.appendChild(x), this._els.dhx_cal_data[0].appendChild(N), this._rendered.push(N), x.innerHTML = "<textarea class='dhx_cal_editor'>" + _.text + "</textarea>", this._editor = x.querySelector("textarea"), r.event(this._editor, "keydown", function(A) {
               if (A.shiftKey)
                 return !0;
-              var C = A.keyCode;
-              C == r.keys.edit_save && r.editStop(!0), C == r.keys.edit_cancel && r.editStop(!1), C != r.keys.edit_save && C != r.keys.edit_cancel || A.preventDefault && A.preventDefault();
+              var $ = A.keyCode;
+              $ == r.keys.edit_save && r.editStop(!0), $ == r.keys.edit_cancel && r.editStop(!1), $ != r.keys.edit_save && $ != r.keys.edit_cancel || A.preventDefault && A.preventDefault();
             }), r.event(this._editor, "selectstart", function(A) {
               return A.cancelBubble = !0, !0;
             }), r._focus(this._editor, !0), this._els.dhx_cal_data[0].scrollLeft = 0;
           }
-          if (this.xy.menu_width !== 0 && this._select_id == d.id) {
-            this.config.cascade_event_display && this._drag_mode && (k.style.zIndex = 1);
-            for (var x, b = this.config["icons_" + (this._edit_id == d.id ? "edit" : "select")], E = "", S = 0; S < b.length; S++) {
-              const A = b[S];
-              x = this._waiAria.eventMenuAttrString(A), E += `<div class='dhx_menu_icon ${A}' title='${this.locale.labels[A]}' ${x}></div>`;
+          if (this.xy.menu_width !== 0 && this._select_id == _.id) {
+            this.config.cascade_event_display && this._drag_mode && (N.style.zIndex = 1);
+            for (var b, E = this.config["icons_" + (this._edit_id == _.id ? "edit" : "select")], S = "", T = 0; T < E.length; T++) {
+              const A = E[T];
+              b = this._waiAria.eventMenuAttrString(A), S += `<div class='dhx_menu_icon ${A}' title='${this.locale.labels[A]}' ${b}></div>`;
             }
-            var T = this._render_v_bar(d, M - p - 1, u, p, null, "", "<div class='dhx_menu_head'></div>", E, !0);
-            d.color && T.style.setProperty("--dhx-scheduler-event-background", d.color), d.textColor && T.style.setProperty("--dhx-scheduler-event-color", d.textColor), this._els.dhx_cal_data[0].appendChild(T), this._rendered.push(T);
+            var C = this._render_v_bar(_, k - v - 1, u, v, null, "", "<div class='dhx_menu_head'></div>", S, !0);
+            _.color && C.style.setProperty("--dhx-scheduler-event-background", _.color), _.textColor && C.style.setProperty("--dhx-scheduler-event-color", _.textColor), this._els.dhx_cal_data[0].appendChild(C), this._rendered.push(C);
           }
-          this.config.drag_highlight && this._drag_id == d.id && this.highlightEventPosition(d);
+          this.config.drag_highlight && this._drag_id == _.id && this.highlightEventPosition(_);
         }
       }
-    }, r._render_v_bar = function(d, l, h, p, m, g, c, u, f) {
-      var y = document.createElement("div"), w = d.id, D = f ? "dhx_cal_event dhx_cal_select_menu" : "dhx_cal_event", M = r.getState();
-      M.drag_id == d.id && (D += " dhx_cal_event_drag"), M.select_id == d.id && (D += " dhx_cal_event_selected");
-      var k = r.templates.event_class(d.start_date, d.end_date, d);
-      k && (D = D + " " + k), this.config.cascade_event_display && (D += " dhx_cal_event_cascade");
-      var N = p - 1, v = `<div event_id="${w}" ${this.config.event_attribute}="${w}" class="${D}"
-				style="position:absolute; top:${h}px; ${this.config.rtl ? "right:" : "left:"}${l}px; width:${N}px; height:${m}px; ${g || ""}" 
-				data-bar-start="${d.start_date.valueOf()}" data-bar-end="${d.end_date.valueOf()}">
+    }, r._render_v_bar = function(_, h, p, v, g, c, f, u, y) {
+      var w = document.createElement("div"), D = _.id, M = y ? "dhx_cal_event dhx_cal_select_menu" : "dhx_cal_event", k = r.getState();
+      k.drag_id == _.id && (M += " dhx_cal_event_drag"), k.select_id == _.id && (M += " dhx_cal_event_selected");
+      var N = r.templates.event_class(_.start_date, _.end_date, _);
+      N && (M = M + " " + N), this.config.cascade_event_display && (M += " dhx_cal_event_cascade");
+      var m = v - 1, x = `<div event_id="${D}" ${this.config.event_attribute}="${D}" class="${M}"
+				style="position:absolute; top:${p}px; ${this.config.rtl ? "right:" : "left:"}${h}px; width:${m}px; height:${g}px; ${c || ""}" 
+				data-bar-start="${_.start_date.valueOf()}" data-bar-end="${_.end_date.valueOf()}">
 				</div>`;
-      y.innerHTML = v;
-      var x = y.cloneNode(!0).firstChild;
-      if (!f && r.renderEvent(x, d, p, m, c, u))
-        return d.color && x.style.setProperty("--dhx-scheduler-event-background", d.color), d.textColor && x.style.setProperty("--dhx-scheduler-event-color", d.textColor), x;
-      x = y.firstChild, d.color && x.style.setProperty("--dhx-scheduler-event-background", d.color), d.textColor && x.style.setProperty("--dhx-scheduler-event-color", d.textColor);
-      var b = '<div class="dhx_event_move dhx_header" >&nbsp;</div>';
-      b += '<div class="dhx_event_move dhx_title">' + c + "</div>", b += '<div class="dhx_body">' + u + "</div>";
-      var E = "dhx_event_resize dhx_footer";
-      return (f || d._drag_resize === !1) && (E = "dhx_resize_denied " + E), b += '<div class="' + E + '" style=" width:' + (f ? " margin-top:-1px;" : "") + '" ></div>', x.innerHTML = b, x;
+      w.innerHTML = x;
+      var b = w.cloneNode(!0).firstChild;
+      if (!y && r.renderEvent(b, _, v, g, f, u))
+        return _.color && b.style.setProperty("--dhx-scheduler-event-background", _.color), _.textColor && b.style.setProperty("--dhx-scheduler-event-color", _.textColor), b;
+      b = w.firstChild, _.color && b.style.setProperty("--dhx-scheduler-event-background", _.color), _.textColor && b.style.setProperty("--dhx-scheduler-event-color", _.textColor);
+      var E = '<div class="dhx_event_move dhx_header" >&nbsp;</div>';
+      E += '<div class="dhx_event_move dhx_title">' + f + "</div>", E += '<div class="dhx_body">' + u + "</div>";
+      var S = "dhx_event_resize dhx_footer";
+      return (y || _._drag_resize === !1) && (S = "dhx_resize_denied " + S), E += '<div class="' + S + '" style=" width:' + (y ? " margin-top:-1px;" : "") + '" ></div>', b.innerHTML = E, b;
     }, r.renderEvent = function() {
       return !1;
-    }, r.locate_holder = function(d) {
-      return this._mode == "day" ? this._els.dhx_cal_data[0].firstChild : this._els.dhx_cal_data[0].childNodes[d];
-    }, r.locate_holder_day = function(d, l) {
-      var h = Math.floor((this._correct_shift(d, 1) - this._min_date) / 864e5);
-      return l && this.date.time_part(d) && h++, h;
-    }, r._get_dnd_order = function(d, l, h) {
+    }, r.locate_holder = function(_) {
+      return this._mode == "day" ? this._els.dhx_cal_data[0].firstChild : this._els.dhx_cal_data[0].childNodes[_];
+    }, r.locate_holder_day = function(_, h) {
+      var p = Math.floor((this._correct_shift(_, 1) - this._min_date) / 864e5);
+      return h && this.date.time_part(_) && p++, p;
+    }, r._get_dnd_order = function(_, h, p) {
       if (!this._drag_event)
-        return d;
-      this._drag_event._orig_sorder ? d = this._drag_event._orig_sorder : this._drag_event._orig_sorder = d;
-      for (var p = l * d; p + l > h; )
-        d--, p -= l;
-      return Math.max(d, 0);
-    }, r._get_event_bar_pos = function(d) {
-      var l = this.config.rtl, h = this._colsS, p = h[d._sday], m = h[d._eday];
-      l && (p = h[h.col_length] - h[d._eday] + h[0], m = h[h.col_length] - h[d._sday] + h[0]), m == p && (m = h[d._eday + 1]);
-      var g = this.xy.bar_height, c = d._sorder;
-      if (d.id == this._drag_id) {
-        var u = h.heights[d._sweek + 1] - h.heights[d._sweek] - this.xy.month_head_height;
-        c = r._get_dnd_order(c, g, u);
+        return _;
+      this._drag_event._orig_sorder ? _ = this._drag_event._orig_sorder : this._drag_event._orig_sorder = _;
+      for (var v = h * _; v + h > p; )
+        _--, v -= h;
+      return Math.max(_, 0);
+    }, r._get_event_bar_pos = function(_) {
+      var h = this.config.rtl, p = this._colsS, v = p[_._sday], g = p[_._eday];
+      h && (v = p[p.col_length] - p[_._eday] + p[0], g = p[p.col_length] - p[_._sday] + p[0]), g == v && (g = p[_._eday + 1]);
+      var c = this.xy.bar_height, f = _._sorder;
+      if (_.id == this._drag_id) {
+        var u = p.heights[_._sweek + 1] - p.heights[_._sweek] - this.xy.month_head_height;
+        f = r._get_dnd_order(f, c, u);
       }
-      var f = c * g;
-      return { x: p, x2: m, y: h.heights[d._sweek] + (h.height ? this.xy.month_scale_height + 2 : 2) + f };
-    }, r.render_event_bar = function(d) {
-      var l = this._rendered_location, h = this._get_event_bar_pos(d), p = h.y, m = h.x, g = h.x2, c = "";
-      if (g) {
-        var u = r.config.resize_month_events && this._mode == "month" && (!d._timed || r.config.resize_month_timed), f = document.createElement("div"), y = d.hasOwnProperty("_first_chunk") && d._first_chunk, w = d.hasOwnProperty("_last_chunk") && d._last_chunk, D = u && (d._timed || y), M = u && (d._timed || w), k = !0, N = "dhx_cal_event_clear";
-        d._timed && !u || (k = !1, N = "dhx_cal_event_line"), y && (N += " dhx_cal_event_line_start"), w && (N += " dhx_cal_event_line_end"), D && (c += "<div class='dhx_event_resize dhx_event_resize_start'></div>"), M && (c += "<div class='dhx_event_resize dhx_event_resize_end'></div>");
-        var v = r.templates.event_class(d.start_date, d.end_date, d);
-        v && (N += " " + v);
-        var x = d.color ? "--dhx-scheduler-event-background:" + d.color + ";" : "", b = d.textColor ? "--dhx-scheduler-event-color:" + d.textColor + ";" : "", E = ["position:absolute", "top:" + p + "px", "left:" + m + "px", "width:" + (g - m - (k ? 1 : 0)) + "px", "height:" + (this.xy.bar_height - 2) + "px", b, x, d._text_style || ""].join(";"), S = "<div event_id='" + d.id + "' " + this.config.event_attribute + "='" + d.id + "' class='" + N + "' style='" + E + "'" + this._waiAria.eventBarAttrString(d) + ">";
-        u && (S += c), r.getState().mode != "month" || d._beforeEventChangedFlag || (d = r.getEvent(d.id)), d._timed && (S += `<span class='dhx_cal_event_clear_date'>${r.templates.event_bar_date(d.start_date, d.end_date, d)}</span>`), S += "<div class='dhx_cal_event_line_content'>", S += r.templates.event_bar_text(d.start_date, d.end_date, d) + "</div>", S += "</div>", S += "</div>", f.innerHTML = S, this._rendered.push(f.firstChild), l.appendChild(f.firstChild);
+      var y = f * c;
+      return { x: v, x2: g, y: p.heights[_._sweek] + (p.height ? this.xy.month_scale_height + 2 : 2) + y };
+    }, r.render_event_bar = function(_) {
+      var h = this._rendered_location, p = this._get_event_bar_pos(_), v = p.y, g = p.x, c = p.x2, f = "";
+      if (c) {
+        var u = r.config.resize_month_events && this._mode == "month" && (!_._timed || r.config.resize_month_timed), y = document.createElement("div"), w = _.hasOwnProperty("_first_chunk") && _._first_chunk, D = _.hasOwnProperty("_last_chunk") && _._last_chunk, M = u && (_._timed || w), k = u && (_._timed || D), N = !0, m = "dhx_cal_event_clear";
+        _._timed && !u || (N = !1, m = "dhx_cal_event_line"), w && (m += " dhx_cal_event_line_start"), D && (m += " dhx_cal_event_line_end"), M && (f += "<div class='dhx_event_resize dhx_event_resize_start'></div>"), k && (f += "<div class='dhx_event_resize dhx_event_resize_end'></div>");
+        var x = r.templates.event_class(_.start_date, _.end_date, _);
+        x && (m += " " + x);
+        var b = _.color ? "--dhx-scheduler-event-background:" + _.color + ";" : "", E = _.textColor ? "--dhx-scheduler-event-color:" + _.textColor + ";" : "", S = ["position:absolute", "top:" + v + "px", "left:" + g + "px", "width:" + (c - g - (N ? 1 : 0)) + "px", "height:" + (this.xy.bar_height - 2) + "px", E, b, _._text_style || ""].join(";"), T = "<div event_id='" + _.id + "' " + this.config.event_attribute + "='" + _.id + "' class='" + m + "' style='" + S + "'" + this._waiAria.eventBarAttrString(_) + ">";
+        u && (T += f), r.getState().mode != "month" || _._beforeEventChangedFlag || (_ = r.getEvent(_.id)), _._timed && (T += `<span class='dhx_cal_event_clear_date'>${r.templates.event_bar_date(_.start_date, _.end_date, _)}</span>`), T += "<div class='dhx_cal_event_line_content'>", T += r.templates.event_bar_text(_.start_date, _.end_date, _) + "</div>", T += "</div>", T += "</div>", y.innerHTML = T, this._rendered.push(y.firstChild), h.appendChild(y.firstChild);
       }
-    }, r._locate_event = function(d) {
-      for (var l = null; d && !l && d.getAttribute; )
-        l = d.getAttribute(this.config.event_attribute), d = d.parentNode;
-      return l;
-    }, r.edit = function(d) {
-      this._edit_id != d && (this.editStop(!1, d), this._edit_id = d, this.updateEvent(d));
-    }, r.editStop = function(d, l) {
-      if (!l || this._edit_id != l) {
-        var h = this.getEvent(this._edit_id);
-        h && (d && (h.text = this._editor.value), this._edit_id = null, this._editor = null, this.updateEvent(h.id), this._edit_stop_event(h, d));
-      }
-    }, r._edit_stop_event = function(d, l) {
-      this._new_event ? (l ? this.callEvent("onEventAdded", [d.id, d]) : d && this.deleteEvent(d.id, !0), delete d.$new, this._new_event = null) : l && this.callEvent("onEventChanged", [d.id, d]);
-    }, r.getEvents = function(d, l) {
-      var h = [];
-      for (var p in this._events) {
-        var m = this._events[p];
-        m && (!d && !l || m.start_date < l && m.end_date > d) && h.push(m);
-      }
+    }, r._locate_event = function(_) {
+      for (var h = null; _ && !h && _.getAttribute; )
+        h = _.getAttribute(this.config.event_attribute), _ = _.parentNode;
       return h;
-    }, r.getRenderedEvent = function(d) {
-      if (d) {
-        for (var l = r._rendered, h = 0; h < l.length; h++) {
-          var p = l[h];
-          if (p.getAttribute(r.config.event_attribute) == d)
-            return p;
+    }, r.edit = function(_) {
+      this._edit_id != _ && (this.editStop(!1, _), this._edit_id = _, this.updateEvent(_));
+    }, r.editStop = function(_, h) {
+      if (!h || this._edit_id != h) {
+        var p = this.getEvent(this._edit_id);
+        p && (_ && (p.text = this._editor.value), this._edit_id = null, this._editor = null, this.updateEvent(p.id), this._edit_stop_event(p, _));
+      }
+    }, r._edit_stop_event = function(_, h) {
+      this._new_event ? (h ? this.callEvent("onEventAdded", [_.id, _]) : _ && this.deleteEvent(_.id, !0), delete _.$new, this._new_event = null) : h && this.callEvent("onEventChanged", [_.id, _]);
+    }, r.getEvents = function(_, h) {
+      var p = [];
+      for (var v in this._events) {
+        var g = this._events[v];
+        g && (!_ && !h || g.start_date < h && g.end_date > _) && p.push(g);
+      }
+      return p;
+    }, r.getRenderedEvent = function(_) {
+      if (_) {
+        for (var h = r._rendered, p = 0; p < h.length; p++) {
+          var v = h[p];
+          if (v.getAttribute(r.config.event_attribute) == _)
+            return v;
         }
         return null;
       }
-    }, r.showEvent = function(d, l) {
-      d && typeof d == "object" && (l = d.mode, w = d.section, d = d.section);
-      var h = typeof d == "number" || typeof d == "string" ? r.getEvent(d) : d;
-      if (l = l || r._mode, h && (!this.checkEvent("onBeforeEventDisplay") || this.callEvent("onBeforeEventDisplay", [h, l]))) {
-        var p = r.config.scroll_hour;
-        r.config.scroll_hour = h.start_date.getHours();
-        var m = r.config.preserve_scroll;
+    }, r.showEvent = function(_, h) {
+      _ && typeof _ == "object" && (h = _.mode, D = _.section, _ = _.section);
+      var p = typeof _ == "number" || typeof _ == "string" ? r.getEvent(_) : _;
+      if (h = h || r._mode, p && (!this.checkEvent("onBeforeEventDisplay") || this.callEvent("onBeforeEventDisplay", [p, h]))) {
+        var v = r.config.scroll_hour;
+        r.config.scroll_hour = p.start_date.getHours();
+        var g = r.config.preserve_scroll;
         r.config.preserve_scroll = !1;
-        var g = h.color, c = h.textColor;
-        if (r.config.highlight_displayed_event && (h.color = r.config.displayed_event_color, h.textColor = r.config.displayed_event_text_color), r.setCurrentView(new Date(h.start_date), l), r.config.scroll_hour = p, r.config.preserve_scroll = m, r.matrix && r.matrix[l]) {
-          var u = r.getView(), f = u.y_property, y = r.getEvent(h.id);
-          if (y) {
-            if (!w) {
-              var w = y[f];
-              Array.isArray(w) ? w = w[0] : typeof w == "string" && r.config.section_delimiter && w.indexOf(r.config.section_delimiter) > -1 && (w = w.split(r.config.section_delimiter)[0]);
+        var c = p.color, f = p.textColor;
+        if (r.config.highlight_displayed_event && (p.color = r.config.displayed_event_color, p.textColor = r.config.displayed_event_text_color), r.setCurrentView(new Date(p.start_date), h), r.config.scroll_hour = v, r.config.preserve_scroll = g, r.matrix && r.matrix[h]) {
+          var u = r.getView(), y = u.y_property, w = r.getEvent(p.id);
+          if (w) {
+            if (!D) {
+              var D = w[y];
+              Array.isArray(D) ? D = D[0] : typeof D == "string" && r.config.section_delimiter && D.indexOf(r.config.section_delimiter) > -1 && (D = D.split(r.config.section_delimiter)[0]);
             }
-            var D = u.getSectionTop(w), M = u.posFromDate(y.start_date), k = r.$container.querySelector(".dhx_timeline_data_wrapper");
-            if (M -= (k.offsetWidth - u.dx) / 2, D = D - k.offsetHeight / 2 + u.dy / 2, u._smartRenderingEnabled())
-              var N = u.attachEvent("onScroll", function() {
-                v(), u.detachEvent(N);
+            var M = u.getSectionTop(D), k = u.posFromDate(w.start_date), N = r.$container.querySelector(".dhx_timeline_data_wrapper");
+            if (k -= (N.offsetWidth - u.dx) / 2, M = M - N.offsetHeight / 2 + u.dy / 2, u._smartRenderingEnabled())
+              var m = u.attachEvent("onScroll", function() {
+                x(), u.detachEvent(m);
               });
-            u.scrollTo({ left: M, top: D }), u._smartRenderingEnabled() || v();
+            u.scrollTo({ left: k, top: M }), u._smartRenderingEnabled() || x();
           }
         } else
-          v();
-        r.callEvent("onAfterEventDisplay", [h, l]);
+          x();
+        r.callEvent("onAfterEventDisplay", [p, h]);
       }
-      function v() {
-        h.color = g, h.textColor = c;
+      function x() {
+        p.color = c, p.textColor = f;
       }
     };
   }(i), function(r) {
-    r._append_drag_marker = function(d) {
-      if (!d.parentNode) {
-        var l = r._els.dhx_cal_data[0].lastChild, h = r._getClassName(l);
-        h.indexOf("dhx_scale_holder") < 0 && l.previousSibling && (l = l.previousSibling), h = r._getClassName(l), l && h.indexOf("dhx_scale_holder") === 0 && l.appendChild(d);
+    r._append_drag_marker = function(l) {
+      if (!l.parentNode) {
+        var _ = r._els.dhx_cal_data[0].lastChild, h = r._getClassName(_);
+        h.indexOf("dhx_scale_holder") < 0 && _.previousSibling && (_ = _.previousSibling), h = r._getClassName(_), _ && h.indexOf("dhx_scale_holder") === 0 && _.appendChild(l);
       }
-    }, r._update_marker_position = function(d, l) {
-      var h = r._calc_event_y(l, 0);
-      d.style.top = h.top + "px", d.style.height = h.height + "px";
-    }, r.highlightEventPosition = function(d) {
-      var l = document.createElement("div");
-      l.setAttribute("event_id", d.id), l.setAttribute(this.config.event_attribute, d.id), this._rendered.push(l), this._update_marker_position(l, d);
-      var h = this.templates.drag_marker_class(d.start_date, d.end_date, d), p = this.templates.drag_marker_content(d.start_date, d.end_date, d);
-      l.className = "dhx_drag_marker", h && (l.className += " " + h), p && (l.innerHTML = p), this._append_drag_marker(l);
+    }, r._update_marker_position = function(l, _) {
+      var h = r._calc_event_y(_, 0);
+      l.style.top = h.top + "px", l.style.height = h.height + "px";
+    }, r.highlightEventPosition = function(l) {
+      var _ = document.createElement("div");
+      _.setAttribute("event_id", l.id), _.setAttribute(this.config.event_attribute, l.id), this._rendered.push(_), this._update_marker_position(_, l);
+      var h = this.templates.drag_marker_class(l.start_date, l.end_date, l), p = this.templates.drag_marker_content(l.start_date, l.end_date, l);
+      _.className = "dhx_drag_marker", h && (_.className += " " + h), p && (_.innerHTML = p), this._append_drag_marker(_);
     };
-  }(i), Ft(i), Bt(i), Jt(i), function(r) {
+  }(i), Xt(i), Zt(i), Qt(i), function(r) {
     r.getRootView = function() {
       return { view: { render: function() {
         return { tag: "div", type: 1, attrs: { style: "width:100%;height:100%;" }, hooks: { didInsert: function() {
           r.setCurrentView();
         } }, body: [{ el: this.el, type: 1 }] };
       }, init: function() {
-        var d = document.createElement("DIV");
-        d.id = "scheduler_" + r.uid(), d.style.width = "100%", d.style.height = "100%", d.classList.add("dhx_cal_container"), d.cmp = "grid", d.innerHTML = '<div class="dhx_cal_navline"><div class="dhx_cal_prev_button"></div><div class="dhx_cal_next_button"></div><div class="dhx_cal_today_button"></div><div class="dhx_cal_date"></div><div class="dhx_cal_tab" data-tab="day"></div><div class="dhx_cal_tab" data-tab="week"></div><div class="dhx_cal_tab" data-tab="month"></div></div><div class="dhx_cal_header"></div><div class="dhx_cal_data"></div>', r.init(d), this.el = d;
+        var l = document.createElement("DIV");
+        l.id = "scheduler_" + r.uid(), l.style.width = "100%", l.style.height = "100%", l.classList.add("dhx_cal_container"), l.cmp = "grid", l.innerHTML = '<div class="dhx_cal_navline"><div class="dhx_cal_prev_button"></div><div class="dhx_cal_next_button"></div><div class="dhx_cal_today_button"></div><div class="dhx_cal_date"></div><div class="dhx_cal_tab" data-tab="day"></div><div class="dhx_cal_tab" data-tab="week"></div><div class="dhx_cal_tab" data-tab="month"></div></div><div class="dhx_cal_header"></div><div class="dhx_cal_data"></div>', r.init(l), this.el = l;
       } }, type: 4 };
     };
-  }(i), Wt(i), typeof window < "u" && window.jQuery && (n = window.jQuery, s = 0, a = [], n.fn.dhx_scheduler = function(r) {
+  }(i), ea(i), typeof window < "u" && window.jQuery && (n = window.jQuery, s = 0, a = [], n.fn.dhx_scheduler = function(r) {
     if (typeof r != "string") {
-      var d = [];
+      var l = [];
       return this.each(function() {
         if (this && this.getAttribute)
           if (this.getAttribute("dhxscheduler"))
-            d.push(window[this.getAttribute("dhxscheduler")]);
+            l.push(window[this.getAttribute("dhxscheduler")]);
           else {
-            var l = "scheduler";
-            s && (l = "scheduler" + (s + 1), window[l] = Scheduler.getSchedulerInstance());
-            var h = window[l];
-            for (var p in this.setAttribute("dhxscheduler", l), r)
+            var _ = "scheduler";
+            s && (_ = "scheduler" + (s + 1), window[_] = Scheduler.getSchedulerInstance());
+            var h = window[_];
+            for (var p in this.setAttribute("dhxscheduler", _), r)
               p != "data" && (h.config[p] = r[p]);
-            this.getElementsByTagName("div").length || (this.innerHTML = '<div class="dhx_cal_navline"><div class="dhx_cal_prev_button"></div><div class="dhx_cal_next_button"></div><div class="dhx_cal_today_button"></div><div class="dhx_cal_date"></div><div class="dhx_cal_tab" name="day_tab" data-tab="day" style="right:204px;"></div><div class="dhx_cal_tab" name="week_tab" data-tab="week" style="right:140px;"></div><div class="dhx_cal_tab" name="month_tab" data-tab="month" style="right:76px;"></div></div><div class="dhx_cal_header"></div><div class="dhx_cal_data"></div>', this.className += " dhx_cal_container"), h.init(this, h.config.date, h.config.mode), r.data && h.parse(r.data), d.push(h), s++;
+            this.getElementsByTagName("div").length || (this.innerHTML = '<div class="dhx_cal_navline"><div class="dhx_cal_prev_button"></div><div class="dhx_cal_next_button"></div><div class="dhx_cal_today_button"></div><div class="dhx_cal_date"></div><div class="dhx_cal_tab" name="day_tab" data-tab="day" style="right:204px;"></div><div class="dhx_cal_tab" name="week_tab" data-tab="week" style="right:140px;"></div><div class="dhx_cal_tab" name="month_tab" data-tab="month" style="right:76px;"></div></div><div class="dhx_cal_header"></div><div class="dhx_cal_data"></div>', this.className += " dhx_cal_container"), h.init(this, h.config.date, h.config.mode), r.data && h.parse(r.data), l.push(h), s++;
           }
-      }), d.length === 1 ? d[0] : d;
+      }), l.length === 1 ? l[0] : l;
     }
     if (a[r])
       return a[r].apply(this, []);
     n.error("Method " + r + " does not exist on jQuery.dhx_scheduler");
   }), function(r) {
     (function() {
-      var d = r.setCurrentView, l = r.updateView, h = null, p = null, m = function(u, f) {
+      var l = r.setCurrentView, _ = r.updateView, h = null, p = null, v = function(f, u) {
         var y = this;
-        _e.clearTimeout(p), _e.clearTimeout(h);
+        le.clearTimeout(p), le.clearTimeout(h);
         var w = y._date, D = y._mode;
-        c(this, u, f), p = setTimeout(function() {
-          r.$destroyed || (y.callEvent("onBeforeViewChange", [D, w, f || y._mode, u || y._date]) ? (l.call(y, u, f), y.callEvent("onViewChange", [y._mode, y._date]), _e.clearTimeout(h), p = 0) : c(y, w, D));
+        c(this, f, u), p = setTimeout(function() {
+          r.$destroyed || (y.callEvent("onBeforeViewChange", [D, w, u || y._mode, f || y._date]) ? (_.call(y, f, u), y.callEvent("onViewChange", [y._mode, y._date]), le.clearTimeout(h), p = 0) : c(y, w, D));
         }, r.config.delay_render);
-      }, g = function(u, f) {
+      }, g = function(f, u) {
         var y = this, w = arguments;
-        c(this, u, f), _e.clearTimeout(h), h = setTimeout(function() {
-          r.$destroyed || p || l.apply(y, w);
+        c(this, f, u), le.clearTimeout(h), h = setTimeout(function() {
+          r.$destroyed || p || _.apply(y, w);
         }, r.config.delay_render);
       };
-      function c(u, f, y) {
-        f && (u._date = f), y && (u._mode = y);
+      function c(f, u, y) {
+        u && (f._date = u), y && (f._mode = y);
       }
       r.attachEvent("onSchedulerReady", function() {
-        r.config.delay_render ? (r.setCurrentView = m, r.updateView = g) : (r.setCurrentView = d, r.updateView = l);
+        r.config.delay_render ? (r.setCurrentView = v, r.updateView = g) : (r.setCurrentView = l, r.updateView = _);
       });
     })();
   }(i), function(r) {
-    r.createDataProcessor = function(d) {
-      var l, h;
-      d instanceof Function ? l = d : d.hasOwnProperty("router") ? l = d.router : d.hasOwnProperty("event") && (l = d), h = l ? "CUSTOM" : d.mode || "REST-JSON";
-      var p = new $e(d.url);
-      return p.init(r), p.setTransactionMode({ mode: h, router: l }, d.batchUpdate), p;
+    r.createDataProcessor = function(l) {
+      var _, h;
+      l instanceof Function ? _ = l : l.hasOwnProperty("router") ? _ = l.router : l.hasOwnProperty("event") && (_ = l), h = _ ? "CUSTOM" : l.mode || "REST-JSON";
+      var p = new $e(l.url);
+      return p.init(r), p.setTransactionMode({ mode: h, router: _ }, l.batchUpdate), p;
     }, r.DataProcessor = $e;
   }(i), function(r) {
     r.attachEvent("onSchedulerReady", function() {
-      typeof dhtmlxError < "u" && window.dhtmlxError.catchError("LoadXML", function(d, l, h) {
+      typeof dhtmlxError < "u" && window.dhtmlxError.catchError("LoadXML", function(l, _, h) {
         var p = h[0].responseText;
         switch (r.config.ajax_error) {
           case "alert":
-            _e.alert(p);
+            le.alert(p);
             break;
           case "console":
-            _e.console.log(p);
+            le.console.log(p);
         }
       });
     });
   }(i);
-  const o = new Xt(Zt);
+  const o = new na(ra);
   i.i18n = { addLocale: o.addLocale, setLocale: function(r) {
     if (typeof r == "string") {
-      var d = o.getLocale(r);
-      d || (d = o.getLocale("en")), i.locale = d;
+      var l = o.getLocale(r);
+      l || (l = o.getLocale("en")), i.locale = l;
     } else if (r)
       if (i.locale)
-        for (var l in r)
-          r[l] && typeof r[l] == "object" ? (i.locale[l] || (i.locale[l] = {}), i.mixin(i.locale[l], r[l], !0)) : i.locale[l] = r[l];
+        for (var _ in r)
+          r[_] && typeof r[_] == "object" ? (i.locale[_] || (i.locale[_] = {}), i.mixin(i.locale[_], r[_], !0)) : i.locale[_] = r[_];
       else
         i.locale = r;
     var h = i.locale.labels;
     h.dhx_save_btn = h.icon_save, h.dhx_cancel_btn = h.icon_cancel, h.dhx_delete_btn = h.icon_delete, i.$container && i.get_elements();
-  }, getLocale: o.getLocale }, i.i18n.setLocale("en"), i.ext = {}, Lt(i);
-  const _ = {};
+  }, getLocale: o.getLocale }, i.i18n.setLocale("en"), i.ext = {}, Ht(i);
+  const d = {};
   return i.plugins = function(r) {
-    return function(l, h, p) {
-      const m = [];
-      for (const g in l)
-        if (l[g]) {
+    return function(_, h, p) {
+      const v = [];
+      for (const g in _)
+        if (_[g]) {
           const c = g.toLowerCase();
-          h[c] && h[c].forEach(function(u) {
-            const f = u.toLowerCase();
-            l[f] || m.push(f);
-          }), m.push(c);
+          h[c] && h[c].forEach(function(f) {
+            const u = f.toLowerCase();
+            _[u] || v.push(u);
+          }), v.push(c);
         }
-      return m.sort(function(g, c) {
-        const u = p[g] || 0, f = p[c] || 0;
-        return u > f ? 1 : u < f ? -1 : 0;
-      }), m;
-    }(r, { treetimeline: ["timeline"], daytimeline: ["timeline"], outerdrag: ["legacy"] }, { legacy: 1, limit: 1, timeline: 2, daytimeline: 3, treetimeline: 3, outerdrag: 6 }).forEach(function(l) {
-      if (!_[l]) {
-        const h = e.getExtension(l);
+      return v.sort(function(g, c) {
+        const f = p[g] || 0, u = p[c] || 0;
+        return f > u ? 1 : f < u ? -1 : 0;
+      }), v;
+    }(r, { treetimeline: ["timeline"], daytimeline: ["timeline"], outerdrag: ["legacy"] }, { legacy: 1, limit: 1, timeline: 2, daytimeline: 3, treetimeline: 3, outerdrag: 6 }).forEach(function(_) {
+      if (!d[_]) {
+        const h = e.getExtension(_);
         if (!h)
-          throw new Error("unknown plugin " + l);
-        h(i), _[l] = !0;
+          throw new Error("unknown plugin " + _);
+        h(i), d[_] = !0;
       }
-    }), _;
+    }), d;
   }, i.plugins({ all_timed: "short" }), i;
 }
-class ta {
+class sa {
   constructor(i) {
     this._extensions = {};
     for (const t in i)
@@ -4763,58 +4842,58 @@ const ce = (e, i) => {
 		You may need a <a href="https://docs.dhtmlx.com/scheduler/editions_comparison.html" target="_blank">Professional version of the component</a>.<br>
 		Contact us at <a href="https://dhtmlx.com/docs/contact.shtml" target="_blank">https://dhtmlx.com/docs/contact.shtml</a> if you have any questions.`);
 };
-function aa(e) {
+function da(e) {
   (function() {
     var i = [];
     function t() {
       return !!i.length;
     }
-    function n(_) {
+    function n(d) {
       setTimeout(function() {
         if (e.$destroyed)
           return !0;
-        t() || function(r, d) {
-          for (; r && r != d; )
+        t() || function(r, l) {
+          for (; r && r != l; )
             r = r.parentNode;
-          return r == d;
+          return r == l;
         }(document.activeElement, e.$container) || e.focus();
       }, 1);
     }
-    function s(_) {
-      var r = (_ = _ || window.event).currentTarget;
-      r == i[i.length - 1] && e.$keyboardNavigation.trapFocus(r, _);
+    function s(d) {
+      var r = (d = d || window.event).currentTarget;
+      r == i[i.length - 1] && e.$keyboardNavigation.trapFocus(r, d);
     }
     if (e.attachEvent("onLightbox", function() {
-      var _;
-      _ = e.getLightbox(), e.eventRemove(_, "keydown", s), e.event(_, "keydown", s), i.push(_);
+      var d;
+      d = e.getLightbox(), e.eventRemove(d, "keydown", s), e.event(d, "keydown", s), i.push(d);
     }), e.attachEvent("onAfterLightbox", function() {
-      var _ = i.pop();
-      _ && e.eventRemove(_, "keydown", s), n();
+      var d = i.pop();
+      d && e.eventRemove(d, "keydown", s), n();
     }), e.attachEvent("onAfterQuickInfo", function() {
       n();
     }), !e._keyNavMessagePopup) {
       e._keyNavMessagePopup = !0;
       var a = null, o = null;
-      const _ = [];
+      const d = [];
       e.attachEvent("onMessagePopup", function(r) {
         for (a = document.activeElement, o = a; o && e._getClassName(o).indexOf("dhx_cal_data") < 0; )
           o = o.parentNode;
-        o && (o = o.parentNode), e.eventRemove(r, "keydown", s), e.event(r, "keydown", s), _.push(r);
+        o && (o = o.parentNode), e.eventRemove(r, "keydown", s), e.event(r, "keydown", s), d.push(r);
       }), e.attachEvent("onAfterMessagePopup", function() {
-        var r = _.pop();
+        var r = d.pop();
         r && e.eventRemove(r, "keydown", s), setTimeout(function() {
           if (e.$destroyed)
             return !0;
-          for (var d = document.activeElement; d && e._getClassName(d).indexOf("dhx_cal_light") < 0; )
-            d = d.parentNode;
-          d || (a && a.parentNode ? a.focus() : o && o.parentNode && o.focus(), a = null, o = null);
+          for (var l = document.activeElement; l && e._getClassName(l).indexOf("dhx_cal_light") < 0; )
+            l = l.parentNode;
+          l || (a && a.parentNode ? a.focus() : o && o.parentNode && o.focus(), a = null, o = null);
         }, 1);
       });
     }
     e.$keyboardNavigation.isModal = t;
   })();
 }
-function na(e) {
+function _a(e) {
   e._temp_key_scope = function() {
     e.config.key_nav = !0, e.$keyboardNavigation._pasteDate = null, e.$keyboardNavigation._pasteSection = null;
     var i = null, t = {};
@@ -4822,32 +4901,32 @@ function na(e) {
       o = o || window.event, t.x = o.clientX, t.y = o.clientY;
     }
     function s() {
-      for (var o, _, r = document.elementFromPoint(t.x, t.y); r && r != e._obj; )
+      for (var o, d, r = document.elementFromPoint(t.x, t.y); r && r != e._obj; )
         r = r.parentNode;
-      return o = r == e._obj, _ = e.$keyboardNavigation.dispatcher.isEnabled(), o || _;
+      return o = r == e._obj, d = e.$keyboardNavigation.dispatcher.isEnabled(), o || d;
     }
     function a(o) {
       return e._lame_copy({}, o);
     }
     document.body ? e.event(document.body, "mousemove", n) : e.event(window, "load", function() {
       e.event(document.body, "mousemove", n);
-    }), e.attachEvent("onMouseMove", function(o, _) {
+    }), e.attachEvent("onMouseMove", function(o, d) {
       var r = e.getState();
       if (r.mode && r.min_date) {
-        var d = e.getActionData(_);
-        e.$keyboardNavigation._pasteDate = d.date, e.$keyboardNavigation._pasteSection = d.section;
+        var l = e.getActionData(d);
+        e.$keyboardNavigation._pasteDate = l.date, e.$keyboardNavigation._pasteSection = l.section;
       }
     }), e._make_pasted_event = function(o) {
-      var _ = e.$keyboardNavigation._pasteDate, r = e.$keyboardNavigation._pasteSection, d = o.end_date - o.start_date, l = a(o);
+      var d = e.$keyboardNavigation._pasteDate, r = e.$keyboardNavigation._pasteSection, l = o.end_date - o.start_date, _ = a(o);
       if (function(p) {
         delete p.rec_type, delete p.rec_pattern, delete p.event_pid, delete p.event_length;
-      }(l), l.start_date = new Date(_), l.end_date = new Date(l.start_date.valueOf() + d), r) {
+      }(_), _.start_date = new Date(d), _.end_date = new Date(_.start_date.valueOf() + l), r) {
         var h = e._get_section_property();
-        e.config.multisection && o[h] && e.isMultisectionEvent && e.isMultisectionEvent(o) ? l[h] = o[h] : l[h] = r;
+        e.config.multisection && o[h] && e.isMultisectionEvent && e.isMultisectionEvent(o) ? _[h] = o[h] : _[h] = r;
       }
-      return l;
-    }, e._do_paste = function(o, _, r) {
-      e.callEvent("onBeforeEventPasted", [o, _, r]) !== !1 && (e.addEvent(_), e.callEvent("onEventPasted", [o, _, r]));
+      return _;
+    }, e._do_paste = function(o, d, r) {
+      e.callEvent("onBeforeEventPasted", [o, d, r]) !== !1 && (e.addEvent(d), e.callEvent("onEventPasted", [o, d, r]));
     }, e._is_key_nav_active = function() {
       return !(!this._is_initialized() || this._is_lightbox_open() || !this.config.key_nav);
     }, e.event(document, "keydown", function(o) {
@@ -4857,28 +4936,28 @@ function na(e) {
         return !0;
       if (o.keyCode == 37 || o.keyCode == 39) {
         o.cancelBubble = !0;
-        var _ = e.date.add(e._date, o.keyCode == 37 ? -1 : 1, e._mode);
-        return e.setCurrentView(_), !0;
+        var d = e.date.add(e._date, o.keyCode == 37 ? -1 : 1, e._mode);
+        return e.setCurrentView(d), !0;
       }
-      var r, d = (r = e.$keyboardNavigation.dispatcher.getActiveNode()) && r.eventId ? r.eventId : e._select_id;
+      var r, l = (r = e.$keyboardNavigation.dispatcher.getActiveNode()) && r.eventId ? r.eventId : e._select_id;
       if ((o.ctrlKey || o.metaKey) && o.keyCode == 67)
-        return d && (e._buffer_event = a(e.getEvent(d)), i = !0, e.callEvent("onEventCopied", [e.getEvent(d)])), !0;
-      if ((o.ctrlKey || o.metaKey) && o.keyCode == 88 && d) {
+        return l && (e._buffer_event = a(e.getEvent(l)), i = !0, e.callEvent("onEventCopied", [e.getEvent(l)])), !0;
+      if ((o.ctrlKey || o.metaKey) && o.keyCode == 88 && l) {
         i = !1;
-        var l = e._buffer_event = a(e.getEvent(d));
-        e.updateEvent(l.id), e.callEvent("onEventCut", [l]);
+        var _ = e._buffer_event = a(e.getEvent(l));
+        e.updateEvent(_.id), e.callEvent("onEventCut", [_]);
       }
       if ((o.ctrlKey || o.metaKey) && o.keyCode == 86 && s()) {
-        if (l = (l = e._buffer_event ? e.getEvent(e._buffer_event.id) : e._buffer_event) || e._buffer_event) {
-          var h = e._make_pasted_event(l);
-          i ? (h.id = e.uid(), e._do_paste(i, h, l)) : e.callEvent("onBeforeEventChanged", [h, o, !1, l]) && (e._do_paste(i, h, l), i = !0);
+        if (_ = (_ = e._buffer_event ? e.getEvent(e._buffer_event.id) : e._buffer_event) || e._buffer_event) {
+          var h = e._make_pasted_event(_);
+          i ? (h.id = e.uid(), e._do_paste(i, h, _)) : e.callEvent("onBeforeEventChanged", [h, o, !1, _]) && (e._do_paste(i, h, _), i = !0);
         }
         return !0;
       }
     };
   }, e._temp_key_scope();
 }
-function ra(e) {
+function la(e) {
   e.$keyboardNavigation.attachSchedulerHandlers = function() {
     var i, t = e.$keyboardNavigation.dispatcher, n = function(r) {
       if (e.config.key_nav)
@@ -4906,18 +4985,18 @@ function ra(e) {
     function o(r) {
       if (!e.config.key_nav)
         return !0;
-      const d = e.getView();
-      let l = !1;
+      const l = e.getView();
+      let _ = !1;
       if (e.getState().mode === "month")
-        l = e.$keyboardNavigation.isChildOf(r.target || r.srcElement, e.$container.querySelector(".dhx_cal_month_table"));
-      else if (d && d.layout === "timeline")
-        l = e.$keyboardNavigation.isChildOf(r.target || r.srcElement, e.$container.querySelector(".dhx_timeline_data_col"));
+        _ = e.$keyboardNavigation.isChildOf(r.target || r.srcElement, e.$container.querySelector(".dhx_cal_month_table"));
+      else if (l && l.layout === "timeline")
+        _ = e.$keyboardNavigation.isChildOf(r.target || r.srcElement, e.$container.querySelector(".dhx_timeline_data_col"));
       else {
-        const m = e.$container.querySelectorAll(".dhx_scale_holder");
-        l = Array.from(m).some((g) => g === r.target.parentNode);
+        const v = e.$container.querySelectorAll(".dhx_scale_holder");
+        _ = Array.from(v).some((g) => g === r.target.parentNode);
       }
       var h, p = e.getActionData(r);
-      e._locate_event(r.target || r.srcElement) ? h = new e.$keyboardNavigation.Event(e._locate_event(r.target || r.srcElement)) : l && (h = new e.$keyboardNavigation.TimeSlot(), p.date && l && (h = h.nextSlot(new e.$keyboardNavigation.TimeSlot(p.date, null, p.section)))), h && (t.isEnabled() ? p.date && l && t.delay(function() {
+      e._locate_event(r.target || r.srcElement) ? h = new e.$keyboardNavigation.Event(e._locate_event(r.target || r.srcElement)) : _ && (h = new e.$keyboardNavigation.TimeSlot(), p.date && _ && (h = h.nextSlot(new e.$keyboardNavigation.TimeSlot(p.date, null, p.section)))), h && (t.isEnabled() ? p.date && _ && t.delay(function() {
         t.setActiveNode(h);
       }) : t.activeNode = h);
     }
@@ -4925,25 +5004,25 @@ function ra(e) {
       var r = e.$container;
       e.eventRemove(document, "keydown", n), e.eventRemove(r, "mousedown", o), e.eventRemove(r, "focus", s), e.config.key_nav ? (e.event(document, "keydown", n), e.event(r, "mousedown", o), e.event(r, "focus", s), r.setAttribute("tabindex", "0")) : r.removeAttribute("tabindex");
     });
-    var _ = e.updateEvent;
+    var d = e.updateEvent;
     e.updateEvent = function(r) {
-      var d = _.apply(this, arguments);
+      var l = d.apply(this, arguments);
       if (e.config.key_nav && t.isEnabled() && e.getState().select_id == r) {
-        var l = new e.$keyboardNavigation.Event(r);
+        var _ = new e.$keyboardNavigation.Event(r);
         e.getState().lightbox_id || function(h) {
           if (e.config.key_nav && t.isEnabled()) {
-            var p = h, m = new e.$keyboardNavigation.Event(p.eventId);
-            if (!m.isValid()) {
-              var g = m.start || p.start, c = m.end || p.end, u = m.section || p.section;
-              (m = new e.$keyboardNavigation.TimeSlot(g, c, u)).isValid() || (m = new e.$keyboardNavigation.TimeSlot());
+            var p = h, v = new e.$keyboardNavigation.Event(p.eventId);
+            if (!v.isValid()) {
+              var g = v.start || p.start, c = v.end || p.end, f = v.section || p.section;
+              (v = new e.$keyboardNavigation.TimeSlot(g, c, f)).isValid() || (v = new e.$keyboardNavigation.TimeSlot());
             }
-            t.setActiveNode(m);
-            var f = t.getActiveNode();
-            f && f.getNode && document.activeElement != f.getNode() && t.focusNode(t.getActiveNode());
+            t.setActiveNode(v);
+            var u = t.getActiveNode();
+            u && u.getNode && document.activeElement != u.getNode() && t.focusNode(t.getActiveNode());
           }
-        }(l);
+        }(_);
       }
-      return d;
+      return l;
     }, e.attachEvent("onEventDeleted", function(r) {
       return e.config.key_nav && t.isEnabled() && t.getActiveNode().eventId == r && t.setActiveNode(new e.$keyboardNavigation.TimeSlot()), !0;
     }), e.attachEvent("onClearAll", function() {
@@ -4953,7 +5032,7 @@ function ra(e) {
     });
   };
 }
-class ia {
+class ca {
   constructor(i) {
     this.map = null, this._markers = [], this.scheduler = i;
   }
@@ -4980,9 +5059,9 @@ class ia {
     google.maps.event.addListener(this.map, "dblclick", function(a) {
       const o = new google.maps.Geocoder();
       if (!n.config.readonly && n.config.dblclick_create) {
-        let _ = a.latLng;
-        o.geocode({ latLng: _ }, function(r, d) {
-          d == google.maps.GeocoderStatus.OK ? (_ = r[0].geometry.location, n.addEventNow({ lat: _.lat(), lng: _.lng(), event_location: r[0].formatted_address, start_date: n.getState().date, end_date: n.date.add(n.getState().date, n.config.time_step, "minute") })) : console.error("Geocode was not successful for the following reason: " + d);
+        let d = a.latLng;
+        o.geocode({ latLng: d }, function(r, l) {
+          l == google.maps.GeocoderStatus.OK ? (d = r[0].geometry.location, n.addEventNow({ lat: d.lat(), lng: d.lng(), event_location: r[0].formatted_address, start_date: n.getState().date, end_date: n.date.add(n.getState().date, n.config.time_step, "minute") })) : console.error("Geocode was not successful for the following reason: " + l);
         });
       }
     });
@@ -5034,7 +5113,7 @@ class ia {
     });
   }
 }
-class oa {
+class ha {
   constructor(i) {
     this.map = null, this._markers = [], this.scheduler = i;
   }
@@ -5048,12 +5127,12 @@ class oa {
     s.className = "mapWrapper", s.id = "mapWrapper", s.style.width = i.style.width, s.style.height = i.style.height, i.appendChild(s);
     let a = L.map(s, { center: L.latLng(t.initial_position.lat, t.initial_position.lng), zoom: t.initial_zoom, keyboard: !1 });
     L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(a), a.on("dblclick", async function(o) {
-      let _ = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${o.latlng.lat}&lon=${o.latlng.lng}&format=json`, { method: "GET", headers: { "Accept-Language": "en" } }).then((r) => r.json());
-      if (_.address) {
-        let r = _.address.country;
+      let d = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${o.latlng.lat}&lon=${o.latlng.lng}&format=json`, { method: "GET", headers: { "Accept-Language": "en" } }).then((r) => r.json());
+      if (d.address) {
+        let r = d.address.country;
         n.addEventNow({ lat: o.latlng.lat, lng: o.latlng.lng, event_location: r, start_date: n.getState().date, end_date: n.date.add(n.getState().date, n.config.time_step, "minute") });
       } else
-        console.error("unable recieve a position of the event", _.error);
+        console.error("unable recieve a position of the event", d.error);
     }), this.map = a, this.settings = t;
   }
   destroy(i) {
@@ -5067,8 +5146,8 @@ class oa {
     const s = L.popup(n).setContent(this.scheduler.templates.map_info_content(i)), a = L.tooltip().setContent(i.text);
     let o = [i.lat, i.lng];
     i.lat && i.lng || (o = [this.settings.error_position.lat, this.settings.error_position.lng]);
-    const _ = { event: i, marker: L.marker(o, { icon: t }).bindPopup(s).bindTooltip(a).addTo(this.map) };
-    this._markers.push(_);
+    const d = { event: i, marker: L.marker(o, { icon: t }).bindPopup(s).bindTooltip(a).addTo(this.map) };
+    this._markers.push(d);
   }
   removeEventMarker(i) {
     for (let t = 0; t < this._markers.length; t++)
@@ -5093,7 +5172,7 @@ class oa {
     return n && n.length ? (t.lat = +n[0].lat, t.lng = +n[0].lon) : console.error(`Unable recieve a position of the event's location: ${i}`), t;
   }
 }
-class sa {
+class ua {
   constructor(i) {
     this.map = null, this._markers = [], this.scheduler = i;
   }
@@ -5109,10 +5188,10 @@ class sa {
     mapboxgl.accessToken = t.accessToken;
     const s = new mapboxgl.Map({ container: i, center: [t.initial_position.lng, t.initial_position.lat], zoom: t.initial_zoom + 1 });
     s.on("dblclick", async function(a) {
-      let o = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${a.lngLat.lng},${a.lngLat.lat}.json?access_token=${t.accessToken}`).then((_) => _.json());
+      let o = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${a.lngLat.lng},${a.lngLat.lat}.json?access_token=${t.accessToken}`).then((d) => d.json());
       if (o.features) {
-        let _ = o.features[0].place_name;
-        n.addEventNow({ lat: a.lngLat.lat, lng: a.lngLat.lng, event_location: _, start_date: n.getState().date, end_date: n.date.add(n.getState().date, n.config.time_step, "minute") });
+        let d = o.features[0].place_name;
+        n.addEventNow({ lat: a.lngLat.lat, lng: a.lngLat.lng, event_location: d, start_date: n.getState().date, end_date: n.date.add(n.getState().date, n.config.time_step, "minute") });
       } else
         console.error("unable recieve a position of the event");
     }), this.map = s, this.settings = t;
@@ -5187,10 +5266,10 @@ var He = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"], Z = function() {
     for (; t < i; t++)
       n[t] = e;
   return n;
-}, da = function(e) {
+}, fa = function(e) {
   return Q(e) ? e : [e];
 };
-function me(e, i, t) {
+function ye(e, i, t) {
   t === void 0 && (t = " ");
   var n = String(e);
   return i |= 0, n.length > i ? String(n) : ((i -= n.length) > t.length && (t += Y(t, i / t.length)), t.slice(0, i) + String(n));
@@ -5206,28 +5285,28 @@ var te = function(e, i) {
   return !ie(e);
 }, F = function(e, i) {
   return K(e) && e.indexOf(i) !== -1;
-}, ve = function(e, i, t, n, s, a) {
+}, me = function(e, i, t, n, s, a) {
   return n === void 0 && (n = 0), s === void 0 && (s = 0), a === void 0 && (a = 0), new Date(Date.UTC(e, i - 1, t, n, s, a));
-}, _a = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31], mt = 864e5, yt = ve(1970, 1, 1), la = [6, 0, 1, 2, 3, 4, 5], we = function(e) {
+}, pa = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31], bt = 864e5, xt = me(1970, 1, 1), ga = [6, 0, 1, 2, 3, 4, 5], ke = function(e) {
   return e % 4 == 0 && e % 100 != 0 || e % 400 == 0;
-}, bt = function(e) {
+}, wt = function(e) {
   return e instanceof Date;
-}, ke = function(e) {
-  return bt(e) && !isNaN(e.getTime());
+}, Ee = function(e) {
+  return wt(e) && !isNaN(e.getTime());
 }, ze = function(e) {
-  return i = yt, t = e.getTime() - i.getTime(), Math.round(t / mt);
+  return i = xt, t = e.getTime() - i.getTime(), Math.round(t / bt);
   var i, t;
-}, xt = function(e) {
-  return new Date(yt.getTime() + e * mt);
-}, ca = function(e) {
+}, kt = function(e) {
+  return new Date(xt.getTime() + e * bt);
+}, ma = function(e) {
   var i = e.getUTCMonth();
-  return i === 1 && we(e.getUTCFullYear()) ? 29 : _a[i];
-}, xe = function(e) {
-  return la[e.getUTCDay()];
+  return i === 1 && ke(e.getUTCFullYear()) ? 29 : pa[i];
+}, we = function(e) {
+  return ga[e.getUTCDay()];
 }, Ze = function(e, i) {
-  var t = ve(e, i + 1, 1);
-  return [xe(t), ca(t)];
-}, wt = function(e, i) {
+  var t = me(e, i + 1, 1);
+  return [we(t), ma(t)];
+}, Et = function(e, i) {
   return i = i || e, new Date(Date.UTC(e.getUTCFullYear(), e.getUTCMonth(), e.getUTCDate(), i.getHours(), i.getMinutes(), i.getSeconds(), i.getMilliseconds()));
 }, qe = function(e) {
   return new Date(e.getTime());
@@ -5235,14 +5314,14 @@ var te = function(e, i) {
   for (var i = [], t = 0; t < e.length; t++)
     i.push(qe(e[t]));
   return i;
-}, Ee = function(e) {
+}, De = function(e) {
   e.sort(function(i, t) {
     return i.getTime() - t.getTime();
   });
 }, Ve = function(e, i) {
   i === void 0 && (i = !0);
   var t = new Date(e);
-  return [me(t.getUTCFullYear().toString(), 4, "0"), me(t.getUTCMonth() + 1, 2, "0"), me(t.getUTCDate(), 2, "0"), "T", me(t.getUTCHours(), 2, "0"), me(t.getUTCMinutes(), 2, "0"), me(t.getUTCSeconds(), 2, "0"), i ? "Z" : ""].join("");
+  return [ye(t.getUTCFullYear().toString(), 4, "0"), ye(t.getUTCMonth() + 1, 2, "0"), ye(t.getUTCDate(), 2, "0"), "T", ye(t.getUTCHours(), 2, "0"), ye(t.getUTCMinutes(), 2, "0"), ye(t.getUTCSeconds(), 2, "0"), i ? "Z" : ""].join("");
 }, Fe = function(e) {
   var i = /^(\d{4})(\d{2})(\d{2})(T(\d{2})(\d{2})(\d{2})Z?)?$/.exec(e);
   if (!i)
@@ -5250,7 +5329,7 @@ var te = function(e, i) {
   return new Date(Date.UTC(parseInt(i[1], 10), parseInt(i[2], 10) - 1, parseInt(i[3], 10), parseInt(i[5], 10) || 0, parseInt(i[6], 10) || 0, parseInt(i[7], 10) || 0));
 }, et = function(e, i) {
   return e.toLocaleString("sv-SE", { timeZone: i }).replace(" ", "T") + "Z";
-}, be = function() {
+}, xe = function() {
   function e(i, t) {
     this.minDate = null, this.maxDate = null, this._result = [], this.total = 0, this.method = i, this.args = t, i === "between" ? (this.maxDate = t.inc ? t.before : new Date(t.before.getTime() - 1), this.minDate = t.inc ? t.after : new Date(t.after.getTime() + 1)) : i === "before" ? this.maxDate = t.inc ? t.dt : new Date(t.dt.getTime() - 1) : i === "after" && (this.minDate = t.inc ? t.dt : new Date(t.dt.getTime() + 1));
   }
@@ -5320,33 +5399,33 @@ var V, tt = function(e) {
   return Be(i, e), i.prototype.add = function(t) {
     return !!this.iterator(t, this._result.length) && (this._result.push(t), !0);
   }, i;
-}(be), De = { dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], tokens: { SKIP: /^[ \r\n\t]+|^\.$/, number: /^[1-9][0-9]*/, numberAsText: /^(one|two|three)/i, every: /^every/i, "day(s)": /^days?/i, "weekday(s)": /^weekdays?/i, "week(s)": /^weeks?/i, "hour(s)": /^hours?/i, "minute(s)": /^minutes?/i, "month(s)": /^months?/i, "year(s)": /^years?/i, on: /^(on|in)/i, at: /^(at)/i, the: /^the/i, first: /^first/i, second: /^second/i, third: /^third/i, nth: /^([1-9][0-9]*)(\.|th|nd|rd|st)/i, last: /^last/i, for: /^for/i, "time(s)": /^times?/i, until: /^(un)?til/i, monday: /^mo(n(day)?)?/i, tuesday: /^tu(e(s(day)?)?)?/i, wednesday: /^we(d(n(esday)?)?)?/i, thursday: /^th(u(r(sday)?)?)?/i, friday: /^fr(i(day)?)?/i, saturday: /^sa(t(urday)?)?/i, sunday: /^su(n(day)?)?/i, january: /^jan(uary)?/i, february: /^feb(ruary)?/i, march: /^mar(ch)?/i, april: /^apr(il)?/i, may: /^may/i, june: /^june?/i, july: /^july?/i, august: /^aug(ust)?/i, september: /^sep(t(ember)?)?/i, october: /^oct(ober)?/i, november: /^nov(ember)?/i, december: /^dec(ember)?/i, comma: /^(,\s*|(and|or)\s*)+/i } }, at = function(e, i) {
+}(xe), Se = { dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], tokens: { SKIP: /^[ \r\n\t]+|^\.$/, number: /^[1-9][0-9]*/, numberAsText: /^(one|two|three)/i, every: /^every/i, "day(s)": /^days?/i, "weekday(s)": /^weekdays?/i, "week(s)": /^weeks?/i, "hour(s)": /^hours?/i, "minute(s)": /^minutes?/i, "month(s)": /^months?/i, "year(s)": /^years?/i, on: /^(on|in)/i, at: /^(at)/i, the: /^the/i, first: /^first/i, second: /^second/i, third: /^third/i, nth: /^([1-9][0-9]*)(\.|th|nd|rd|st)/i, last: /^last/i, for: /^for/i, "time(s)": /^times?/i, until: /^(un)?til/i, monday: /^mo(n(day)?)?/i, tuesday: /^tu(e(s(day)?)?)?/i, wednesday: /^we(d(n(esday)?)?)?/i, thursday: /^th(u(r(sday)?)?)?/i, friday: /^fr(i(day)?)?/i, saturday: /^sa(t(urday)?)?/i, sunday: /^su(n(day)?)?/i, january: /^jan(uary)?/i, february: /^feb(ruary)?/i, march: /^mar(ch)?/i, april: /^apr(il)?/i, may: /^may/i, june: /^june?/i, july: /^july?/i, august: /^aug(ust)?/i, september: /^sep(t(ember)?)?/i, october: /^oct(ober)?/i, november: /^nov(ember)?/i, december: /^dec(ember)?/i, comma: /^(,\s*|(and|or)\s*)+/i } }, at = function(e, i) {
   return e.indexOf(i) !== -1;
-}, ha = function(e) {
+}, va = function(e) {
   return e.toString();
-}, ua = function(e, i, t) {
+}, ya = function(e, i, t) {
   return "".concat(i, " ").concat(t, ", ").concat(e);
-}, de = function() {
+}, _e = function() {
   function e(i, t, n, s) {
-    if (t === void 0 && (t = ha), n === void 0 && (n = De), s === void 0 && (s = ua), this.text = [], this.language = n || De, this.gettext = t, this.dateFormatter = s, this.rrule = i, this.options = i.options, this.origOptions = i.origOptions, this.origOptions.bymonthday) {
+    if (t === void 0 && (t = va), n === void 0 && (n = Se), s === void 0 && (s = ya), this.text = [], this.language = n || Se, this.gettext = t, this.dateFormatter = s, this.rrule = i, this.options = i.options, this.origOptions = i.origOptions, this.origOptions.bymonthday) {
       var a = [].concat(this.options.bymonthday), o = [].concat(this.options.bynmonthday);
-      a.sort(function(l, h) {
-        return l - h;
-      }), o.sort(function(l, h) {
-        return h - l;
+      a.sort(function(_, h) {
+        return _ - h;
+      }), o.sort(function(_, h) {
+        return h - _;
       }), this.bymonthday = a.concat(o), this.bymonthday.length || (this.bymonthday = null);
     }
     if (J(this.origOptions.byweekday)) {
-      var _ = Q(this.origOptions.byweekday) ? this.origOptions.byweekday : [this.origOptions.byweekday], r = String(_);
-      this.byweekday = { allWeeks: _.filter(function(l) {
-        return !l.n;
-      }), someWeeks: _.filter(function(l) {
-        return !!l.n;
+      var d = Q(this.origOptions.byweekday) ? this.origOptions.byweekday : [this.origOptions.byweekday], r = String(d);
+      this.byweekday = { allWeeks: d.filter(function(_) {
+        return !_.n;
+      }), someWeeks: d.filter(function(_) {
+        return !!_.n;
       }), isWeekdays: r.indexOf("MO") !== -1 && r.indexOf("TU") !== -1 && r.indexOf("WE") !== -1 && r.indexOf("TH") !== -1 && r.indexOf("FR") !== -1 && r.indexOf("SA") === -1 && r.indexOf("SU") === -1, isEveryDay: r.indexOf("MO") !== -1 && r.indexOf("TU") !== -1 && r.indexOf("WE") !== -1 && r.indexOf("TH") !== -1 && r.indexOf("FR") !== -1 && r.indexOf("SA") !== -1 && r.indexOf("SU") !== -1 };
-      var d = function(l, h) {
-        return l.weekday - h.weekday;
+      var l = function(_, h) {
+        return _.weekday - h.weekday;
       };
-      this.byweekday.allWeeks.sort(d), this.byweekday.someWeeks.sort(d), this.byweekday.allWeeks.length || (this.byweekday.allWeeks = null), this.byweekday.someWeeks.length || (this.byweekday.someWeeks = null);
+      this.byweekday.allWeeks.sort(l), this.byweekday.someWeeks.sort(l), this.byweekday.allWeeks.length || (this.byweekday.allWeeks = null), this.byweekday.someWeeks.length || (this.byweekday.someWeeks = null);
     } else
       this.byweekday = null;
   }
@@ -5438,19 +5517,19 @@ var V, tt = function(e) {
     return this.text.push(" "), this.text.push(i), this;
   }, e.prototype.list = function(i, t, n, s) {
     var a = this;
-    s === void 0 && (s = ","), Q(i) || (i = [i]), t = t || function(_) {
-      return _.toString();
+    s === void 0 && (s = ","), Q(i) || (i = [i]), t = t || function(d) {
+      return d.toString();
     };
-    var o = function(_) {
-      return t && t.call(a, _);
+    var o = function(d) {
+      return t && t.call(a, d);
     };
-    return n ? function(_, r, d) {
-      for (var l = "", h = 0; h < _.length; h++)
-        h !== 0 && (h === _.length - 1 ? l += " " + d + " " : l += r + " "), l += _[h];
-      return l;
+    return n ? function(d, r, l) {
+      for (var _ = "", h = 0; h < d.length; h++)
+        h !== 0 && (h === d.length - 1 ? _ += " " + l + " " : _ += r + " "), _ += d[h];
+      return _;
     }(i.map(o), s, n) : i.map(o).join(s + " ");
   }, e;
-}(), fa = function() {
+}(), ba = function() {
   function e(i) {
     this.done = !0, this.rules = i;
   }
@@ -5489,35 +5568,35 @@ var V, tt = function(e) {
     throw new Error("expected " + i + " but found " + this.symbol);
   }, e;
 }();
-function kt(e, i) {
-  i === void 0 && (i = De);
-  var t = {}, n = new fa(i.tokens);
+function Dt(e, i) {
+  i === void 0 && (i = Se);
+  var t = {}, n = new ba(i.tokens);
   return n.start(e) ? (function() {
     n.expect("every");
-    var l = n.acceptNumber();
-    if (l && (t.interval = parseInt(l[0], 10)), n.isDone())
+    var _ = n.acceptNumber();
+    if (_ && (t.interval = parseInt(_[0], 10)), n.isDone())
       throw new Error("Unexpected end");
     switch (n.symbol) {
       case "day(s)":
-        t.freq = z.DAILY, n.nextSymbol() && (a(), d());
+        t.freq = z.DAILY, n.nextSymbol() && (a(), l());
         break;
       case "weekday(s)":
-        t.freq = z.WEEKLY, t.byweekday = [z.MO, z.TU, z.WE, z.TH, z.FR], n.nextSymbol(), a(), d();
+        t.freq = z.WEEKLY, t.byweekday = [z.MO, z.TU, z.WE, z.TH, z.FR], n.nextSymbol(), a(), l();
         break;
       case "week(s)":
-        t.freq = z.WEEKLY, n.nextSymbol() && (s(), a(), d());
+        t.freq = z.WEEKLY, n.nextSymbol() && (s(), a(), l());
         break;
       case "hour(s)":
-        t.freq = z.HOURLY, n.nextSymbol() && (s(), d());
+        t.freq = z.HOURLY, n.nextSymbol() && (s(), l());
         break;
       case "minute(s)":
-        t.freq = z.MINUTELY, n.nextSymbol() && (s(), d());
+        t.freq = z.MINUTELY, n.nextSymbol() && (s(), l());
         break;
       case "month(s)":
-        t.freq = z.MONTHLY, n.nextSymbol() && (s(), d());
+        t.freq = z.MONTHLY, n.nextSymbol() && (s(), l());
         break;
       case "year(s)":
-        t.freq = z.YEARLY, n.nextSymbol() && (s(), d());
+        t.freq = z.YEARLY, n.nextSymbol() && (s(), l());
         break;
       case "monday":
       case "tuesday":
@@ -5533,7 +5612,7 @@ function kt(e, i) {
         for (; n.accept("comma"); ) {
           if (n.isDone())
             throw new Error("Unexpected end");
-          var p = _();
+          var p = d();
           if (!p)
             throw new Error("Unexpected symbol " + n.symbol + ", expected weekday");
           t.byweekday.push(z[p]), n.nextSymbol();
@@ -5547,7 +5626,7 @@ function kt(e, i) {
                 throw new Error("Unexpected symbol " + n.symbol + "; expected monthday");
               t.bymonthday.push(g), n.nextSymbol();
             }
-        }(), d();
+        }(), l();
         break;
       case "january":
       case "february":
@@ -5566,26 +5645,26 @@ function kt(e, i) {
         for (; n.accept("comma"); ) {
           if (n.isDone())
             throw new Error("Unexpected end");
-          var m = o();
-          if (!m)
+          var v = o();
+          if (!v)
             throw new Error("Unexpected symbol " + n.symbol + ", expected month");
-          t.bymonth.push(m), n.nextSymbol();
+          t.bymonth.push(v), n.nextSymbol();
         }
-        s(), d();
+        s(), l();
         break;
       default:
         throw new Error("Unknown symbol");
     }
   }(), t) : null;
   function s() {
-    var l = n.accept("on"), h = n.accept("the");
-    if (l || h)
+    var _ = n.accept("on"), h = n.accept("the");
+    if (_ || h)
       do {
-        var p = r(), m = _(), g = o();
+        var p = r(), v = d(), g = o();
         if (p)
-          m ? (n.nextSymbol(), t.byweekday || (t.byweekday = []), t.byweekday.push(z[m].nth(p))) : (t.bymonthday || (t.bymonthday = []), t.bymonthday.push(p), n.accept("day(s)"));
-        else if (m)
-          n.nextSymbol(), t.byweekday || (t.byweekday = []), t.byweekday.push(z[m]);
+          v ? (n.nextSymbol(), t.byweekday || (t.byweekday = []), t.byweekday.push(z[v].nth(p))) : (t.bymonthday || (t.bymonthday = []), t.bymonthday.push(p), n.accept("day(s)"));
+        else if (v)
+          n.nextSymbol(), t.byweekday || (t.byweekday = []), t.byweekday.push(z[v]);
         else if (n.symbol === "weekday(s)")
           n.nextSymbol(), t.byweekday || (t.byweekday = [z.MO, z.TU, z.WE, z.TH, z.FR]);
         else if (n.symbol === "week(s)") {
@@ -5608,13 +5687,13 @@ function kt(e, i) {
   function a() {
     if (n.accept("at"))
       do {
-        var l = n.acceptNumber();
-        if (!l)
+        var _ = n.acceptNumber();
+        if (!_)
           throw new Error("Unexpected symbol " + n.symbol + ", expected hour");
-        for (t.byhour = [parseInt(l[0], 10)]; n.accept("comma"); ) {
-          if (!(l = n.acceptNumber()))
+        for (t.byhour = [parseInt(_[0], 10)]; n.accept("comma"); ) {
+          if (!(_ = n.acceptNumber()))
             throw new Error("Unexpected symbol " + n.symbol + "; expected hour");
-          t.byhour.push(parseInt(l[0], 10));
+          t.byhour.push(parseInt(_[0], 10));
         }
       } while (n.accept("comma") || n.accept("at"));
   }
@@ -5648,7 +5727,7 @@ function kt(e, i) {
         return !1;
     }
   }
-  function _() {
+  function d() {
     switch (n.symbol) {
       case "monday":
       case "tuesday":
@@ -5673,20 +5752,20 @@ function kt(e, i) {
       case "third":
         return n.nextSymbol(), n.accept("last") ? -3 : 3;
       case "nth":
-        var l = parseInt(n.value[1], 10);
-        if (l < -366 || l > 366)
-          throw new Error("Nth out of range: " + l);
-        return n.nextSymbol(), n.accept("last") ? -l : l;
+        var _ = parseInt(n.value[1], 10);
+        if (_ < -366 || _ > 366)
+          throw new Error("Nth out of range: " + _);
+        return n.nextSymbol(), n.accept("last") ? -_ : _;
       default:
         return !1;
     }
   }
-  function d() {
+  function l() {
     if (n.symbol === "until") {
-      var l = Date.parse(n.text);
-      if (!l)
+      var _ = Date.parse(n.text);
+      if (!_)
         throw new Error("Cannot parse until date:" + n.text);
-      t.until = new Date(l);
+      t.until = new Date(_);
     } else
       n.accept("for") && (t.count = parseInt(n.value[0], 10), n.expect("number"));
   }
@@ -5697,11 +5776,11 @@ function Oe(e) {
 (function(e) {
   e[e.YEARLY = 0] = "YEARLY", e[e.MONTHLY = 1] = "MONTHLY", e[e.WEEKLY = 2] = "WEEKLY", e[e.DAILY = 3] = "DAILY", e[e.HOURLY = 4] = "HOURLY", e[e.MINUTELY = 5] = "MINUTELY", e[e.SECONDLY = 6] = "SECONDLY";
 })(V || (V = {}));
-var pa = function(e, i) {
-  return i === void 0 && (i = De), new z(kt(e, i) || void 0);
-}, ye = ["count", "until", "interval", "byweekday", "bymonthday", "bymonth"];
-de.IMPLEMENTED = [], de.IMPLEMENTED[V.HOURLY] = ye, de.IMPLEMENTED[V.MINUTELY] = ye, de.IMPLEMENTED[V.DAILY] = ["byhour"].concat(ye), de.IMPLEMENTED[V.WEEKLY] = ye, de.IMPLEMENTED[V.MONTHLY] = ye, de.IMPLEMENTED[V.YEARLY] = ["byweekno", "byyearday"].concat(ye);
-var ga = de.isFullyConvertible, Se = function() {
+var xa = function(e, i) {
+  return i === void 0 && (i = Se), new z(Dt(e, i) || void 0);
+}, be = ["count", "until", "interval", "byweekday", "bymonthday", "bymonth"];
+_e.IMPLEMENTED = [], _e.IMPLEMENTED[V.HOURLY] = be, _e.IMPLEMENTED[V.MINUTELY] = be, _e.IMPLEMENTED[V.DAILY] = ["byhour"].concat(be), _e.IMPLEMENTED[V.WEEKLY] = be, _e.IMPLEMENTED[V.MONTHLY] = be, _e.IMPLEMENTED[V.YEARLY] = ["byweekno", "byyearday"].concat(be);
+var wa = _e.isFullyConvertible, Me = function() {
   function e(i, t, n, s) {
     this.hour = i, this.minute = t, this.second = n, this.millisecond = s || 0;
   }
@@ -5716,15 +5795,15 @@ var ga = de.isFullyConvertible, Se = function() {
   }, e.prototype.getTime = function() {
     return 1e3 * (60 * this.hour * 60 + 60 * this.minute + this.second) + this.millisecond;
   }, e;
-}(), va = function(e) {
-  function i(t, n, s, a, o, _, r) {
-    var d = e.call(this, a, o, _, r) || this;
-    return d.year = t, d.month = n, d.day = s, d;
+}(), ka = function(e) {
+  function i(t, n, s, a, o, d, r) {
+    var l = e.call(this, a, o, d, r) || this;
+    return l.year = t, l.month = n, l.day = s, l;
   }
   return Be(i, e), i.fromDate = function(t) {
     return new this(t.getUTCFullYear(), t.getUTCMonth() + 1, t.getUTCDate(), t.getUTCHours(), t.getUTCMinutes(), t.getUTCSeconds(), t.valueOf() % 1e3);
   }, i.prototype.getWeekday = function() {
-    return xe(new Date(this.getTime()));
+    return we(new Date(this.getTime()));
   }, i.prototype.getTime = function() {
     return new Date(Date.UTC(this.year, this.month - 1, this.day, this.hour, this.minute, this.second, this.millisecond)).getTime();
   }, i.prototype.getDay = function() {
@@ -5747,22 +5826,22 @@ var ga = de.isFullyConvertible, Se = function() {
   }, i.prototype.addHours = function(t, n, s) {
     for (n && (this.hour += Math.floor((23 - this.hour) / t) * t); ; ) {
       this.hour += t;
-      var a = Ce(this.hour, 24), o = a.div, _ = a.mod;
-      if (o && (this.hour = _, this.addDaily(o)), ie(s) || F(s, this.hour))
+      var a = Ce(this.hour, 24), o = a.div, d = a.mod;
+      if (o && (this.hour = d, this.addDaily(o)), ie(s) || F(s, this.hour))
         break;
     }
   }, i.prototype.addMinutes = function(t, n, s, a) {
     for (n && (this.minute += Math.floor((1439 - (60 * this.hour + this.minute)) / t) * t); ; ) {
       this.minute += t;
-      var o = Ce(this.minute, 60), _ = o.div, r = o.mod;
-      if (_ && (this.minute = r, this.addHours(_, !1, s)), (ie(s) || F(s, this.hour)) && (ie(a) || F(a, this.minute)))
+      var o = Ce(this.minute, 60), d = o.div, r = o.mod;
+      if (d && (this.minute = r, this.addHours(d, !1, s)), (ie(s) || F(s, this.hour)) && (ie(a) || F(a, this.minute)))
         break;
     }
   }, i.prototype.addSeconds = function(t, n, s, a, o) {
     for (n && (this.second += Math.floor((86399 - (3600 * this.hour + 60 * this.minute + this.second)) / t) * t); ; ) {
       this.second += t;
-      var _ = Ce(this.second, 60), r = _.div, d = _.mod;
-      if (r && (this.second = d, this.addMinutes(r, !1, s, a)), (ie(s) || F(s, this.hour)) && (ie(a) || F(a, this.minute)) && (ie(o) || F(o, this.second)))
+      var d = Ce(this.second, 60), r = d.div, l = d.mod;
+      if (r && (this.second = l, this.addMinutes(r, !1, s, a)), (ie(s) || F(s, this.hour)) && (ie(a) || F(a, this.minute)) && (ie(o) || F(o, this.second)))
         break;
     }
   }, i.prototype.fixDay = function() {
@@ -5776,7 +5855,7 @@ var ga = de.isFullyConvertible, Se = function() {
         }
     }
   }, i.prototype.add = function(t, n) {
-    var s = t.freq, a = t.interval, o = t.wkst, _ = t.byhour, r = t.byminute, d = t.bysecond;
+    var s = t.freq, a = t.interval, o = t.wkst, d = t.byhour, r = t.byminute, l = t.bysecond;
     switch (s) {
       case V.YEARLY:
         return this.addYears(a);
@@ -5787,25 +5866,25 @@ var ga = de.isFullyConvertible, Se = function() {
       case V.DAILY:
         return this.addDaily(a);
       case V.HOURLY:
-        return this.addHours(a, n, _);
+        return this.addHours(a, n, d);
       case V.MINUTELY:
-        return this.addMinutes(a, n, _, r);
+        return this.addMinutes(a, n, d, r);
       case V.SECONDLY:
-        return this.addSeconds(a, n, _, r, d);
+        return this.addSeconds(a, n, d, r, l);
     }
   }, i;
-}(Se);
-function Et(e) {
+}(Me);
+function St(e) {
   for (var i = [], t = 0, n = Object.keys(e); t < n.length; t++) {
     var s = n[t];
-    F(Ra, s) || i.push(s), bt(e[s]) && !ke(e[s]) && i.push(s);
+    F(Ba, s) || i.push(s), wt(e[s]) && !Ee(e[s]) && i.push(s);
   }
   if (i.length)
     throw new Error("Invalid options: " + i.join(", "));
   return ee({}, e);
 }
-function ma(e) {
-  var i = ee(ee({}, Je), Et(e));
+function Ea(e) {
+  var i = ee(ee({}, Je), St(e));
   if (J(i.byeaster) && (i.freq = z.YEARLY), !J(i.freq) || !z.FREQUENCIES[i.freq])
     throw new Error("Invalid frequency: ".concat(i.freq, " ").concat(e.freq));
   if (i.dtstart || (i.dtstart = new Date((/* @__PURE__ */ new Date()).setMilliseconds(0))), J(i.wkst) ? re(i.wkst) || (i.wkst = i.wkst.weekday) : i.wkst = z.MO.weekday, J(i.bysetpos)) {
@@ -5823,7 +5902,7 @@ function ma(e) {
         i.bymonthday = i.dtstart.getUTCDate();
         break;
       case z.WEEKLY:
-        i.byweekday = [xe(i.dtstart)];
+        i.byweekday = [we(i.dtstart)];
     }
   if (J(i.bymonth) && !Q(i.bymonth) && (i.bymonth = [i.bymonth]), J(i.byyearday) && !Q(i.byyearday) && re(i.byyearday) && (i.byyearday = [i.byyearday]), J(i.bymonthday))
     if (Q(i.bymonthday)) {
@@ -5845,12 +5924,12 @@ function ma(e) {
     else if (i.byweekday instanceof Z)
       !i.byweekday.n || i.freq > z.MONTHLY ? (i.byweekday = [i.byweekday.weekday], i.bynweekday = null) : (i.bynweekday = [[i.byweekday.weekday, i.byweekday.n]], i.byweekday = null);
     else {
-      var o = [], _ = [];
+      var o = [], d = [];
       for (t = 0; t < i.byweekday.length; t++) {
         var r = i.byweekday[t];
-        re(r) ? o.push(r) : Xe(r) ? o.push(Z.fromStr(r).weekday) : !r.n || i.freq > z.MONTHLY ? o.push(r.weekday) : _.push([r.weekday, r.n]);
+        re(r) ? o.push(r) : Xe(r) ? o.push(Z.fromStr(r).weekday) : !r.n || i.freq > z.MONTHLY ? o.push(r.weekday) : d.push([r.weekday, r.n]);
       }
-      i.byweekday = K(o) ? o : null, i.bynweekday = K(_) ? _ : null;
+      i.byweekday = K(o) ? o : null, i.bynweekday = K(d) ? d : null;
     }
   else
     i.bynweekday = null;
@@ -5858,19 +5937,19 @@ function ma(e) {
 }
 function Ie(e) {
   var i = e.split(`
-`).map(ya).filter(function(t) {
+`).map(Da).filter(function(t) {
     return t !== null;
   });
   return ee(ee({}, i[0]), i[1]);
 }
-function Me(e) {
+function Ne(e) {
   var i = {}, t = /DTSTART(?:;TZID=([^:=]+?))?(?::|=)([^;\s]+)/i.exec(e);
   if (!t)
     return i;
   var n = t[1], s = t[2];
   return n && (i.tzid = n), i.dtstart = Fe(s), i;
 }
-function ya(e) {
+function Da(e) {
   if (!(e = e.replace(/^\s+|\s+$/, "")).length)
     return null;
   var i = /^([A-Z]+?)[:;]/.exec(e.toUpperCase());
@@ -5882,13 +5961,13 @@ function ya(e) {
     case "EXRULE":
       return nt(e);
     case "DTSTART":
-      return Me(e);
+      return Ne(e);
     default:
       throw new Error("Unsupported RFC prop ".concat(t, " in ").concat(e));
   }
 }
 function nt(e) {
-  var i = Me(e.replace(/^RRULE:/i, ""));
+  var i = Ne(e.replace(/^RRULE:/i, ""));
   return e.replace(/^(?:RRULE|EXRULE):/i, "").split(";").forEach(function(t) {
     var n = t.split("="), s = n[0], a = n[1];
     switch (s.toUpperCase()) {
@@ -5908,29 +5987,29 @@ function nt(e) {
       case "BYHOUR":
       case "BYMINUTE":
       case "BYSECOND":
-        var o = function(d) {
-          return d.indexOf(",") !== -1 ? d.split(",").map(rt) : rt(d);
-        }(a), _ = s.toLowerCase();
-        i[_] = o;
+        var o = function(l) {
+          return l.indexOf(",") !== -1 ? l.split(",").map(rt) : rt(l);
+        }(a), d = s.toLowerCase();
+        i[d] = o;
         break;
       case "BYWEEKDAY":
       case "BYDAY":
-        i.byweekday = function(d) {
-          var l = d.split(",");
-          return l.map(function(h) {
+        i.byweekday = function(l) {
+          var _ = l.split(",");
+          return _.map(function(h) {
             if (h.length === 2)
               return ae[h];
             var p = h.match(/^([+-]?\d{1,2})([A-Z]{2})$/);
             if (!p || p.length < 3)
               throw new SyntaxError("Invalid weekday string: ".concat(h));
-            var m = Number(p[1]), g = p[2], c = ae[g].weekday;
-            return new Z(c, m);
+            var v = Number(p[1]), g = p[2], c = ae[g].weekday;
+            return new Z(c, v);
           });
         }(a);
         break;
       case "DTSTART":
       case "TZID":
-        var r = Me(e);
+        var r = Ne(e);
         i.tzid = r.tzid, i.dtstart = r.dtstart;
         break;
       case "UNTIL":
@@ -5947,7 +6026,7 @@ function nt(e) {
 function rt(e) {
   return /^[+-]?\d+$/.test(e) ? Number(e) : e;
 }
-var Ne = function() {
+var Te = function() {
   function e(i, t) {
     if (isNaN(i.getTime()))
       throw new RangeError("Invalid date passed to DateWithZone");
@@ -5965,68 +6044,68 @@ var Ne = function() {
     var i, t, n, s, a;
   }, e;
 }();
-function Re(e) {
+function Pe(e) {
   for (var i = [], t = "", n = Object.keys(e), s = Object.keys(Je), a = 0; a < n.length; a++)
     if (n[a] !== "tzid" && F(s, n[a])) {
-      var o = n[a].toUpperCase(), _ = e[n[a]], r = "";
-      if (J(_) && (!Q(_) || _.length)) {
+      var o = n[a].toUpperCase(), d = e[n[a]], r = "";
+      if (J(d) && (!Q(d) || d.length)) {
         switch (o) {
           case "FREQ":
             r = z.FREQUENCIES[e.freq];
             break;
           case "WKST":
-            r = re(_) ? new Z(_).toString() : _.toString();
+            r = re(d) ? new Z(d).toString() : d.toString();
             break;
           case "BYWEEKDAY":
-            o = "BYDAY", r = da(_).map(function(m) {
-              return m instanceof Z ? m : Q(m) ? new Z(m[0], m[1]) : new Z(m);
+            o = "BYDAY", r = fa(d).map(function(v) {
+              return v instanceof Z ? v : Q(v) ? new Z(v[0], v[1]) : new Z(v);
             }).toString();
             break;
           case "DTSTART":
-            t = ba(_, e.tzid);
+            t = Sa(d, e.tzid);
             break;
           case "UNTIL":
-            r = Ve(_, !e.tzid);
+            r = Ve(d, !e.tzid);
             break;
           default:
-            if (Q(_)) {
-              for (var d = [], l = 0; l < _.length; l++)
-                d[l] = String(_[l]);
-              r = d.toString();
+            if (Q(d)) {
+              for (var l = [], _ = 0; _ < d.length; _++)
+                l[_] = String(d[_]);
+              r = l.toString();
             } else
-              r = String(_);
+              r = String(d);
         }
         r && i.push([o, r]);
       }
     }
-  var h = i.map(function(m) {
-    var g = m[0], c = m[1];
+  var h = i.map(function(v) {
+    var g = v[0], c = v[1];
     return "".concat(g, "=").concat(c.toString());
   }).join(";"), p = "";
-  return h !== "" && (p = "RRULE:".concat(h)), [t, p].filter(function(m) {
-    return !!m;
+  return h !== "" && (p = "RRULE:".concat(h)), [t, p].filter(function(v) {
+    return !!v;
   }).join(`
 `);
 }
-function ba(e, i) {
-  return e ? "DTSTART" + new Ne(new Date(e), i).toString() : "";
+function Sa(e, i) {
+  return e ? "DTSTART" + new Te(new Date(e), i).toString() : "";
 }
-function xa(e, i) {
+function Ma(e, i) {
   return Array.isArray(e) ? !!Array.isArray(i) && e.length === i.length && e.every(function(t, n) {
     return t.getTime() === i[n].getTime();
   }) : e instanceof Date ? i instanceof Date && e.getTime() === i.getTime() : e === i;
 }
-var wa = function() {
+var Na = function() {
   function e() {
     this.all = !1, this.before = [], this.after = [], this.between = [];
   }
   return e.prototype._cacheAdd = function(i, t, n) {
     t && (t = t instanceof Date ? qe(t) : Qe(t)), i === "all" ? this.all = t : (n._value = t, this[i].push(n));
   }, e.prototype._cacheGet = function(i, t) {
-    var n = !1, s = t ? Object.keys(t) : [], a = function(l) {
+    var n = !1, s = t ? Object.keys(t) : [], a = function(_) {
       for (var h = 0; h < s.length; h++) {
         var p = s[h];
-        if (!xa(t[p], l[p]))
+        if (!Ma(t[p], _[p]))
           return !0;
       }
       return !1;
@@ -6034,94 +6113,94 @@ var wa = function() {
     if (i === "all")
       n = this.all;
     else if (Q(o))
-      for (var _ = 0; _ < o.length; _++) {
-        var r = o[_];
+      for (var d = 0; d < o.length; d++) {
+        var r = o[d];
         if (!s.length || !a(r)) {
           n = r._value;
           break;
         }
       }
     if (!n && this.all) {
-      var d = new be(i, t);
-      for (_ = 0; _ < this.all.length && d.accept(this.all[_]); _++)
+      var l = new xe(i, t);
+      for (d = 0; d < this.all.length && l.accept(this.all[d]); d++)
         ;
-      n = d.getValue(), this._cacheAdd(i, n, t);
+      n = l.getValue(), this._cacheAdd(i, n, t);
     }
     return Q(n) ? Qe(n) : n instanceof Date ? qe(n) : n;
   }, e;
-}(), ka = q(q(q(q(q(q(q(q(q(q(q(q(q([], Y(1, 31), !0), Y(2, 28), !0), Y(3, 31), !0), Y(4, 30), !0), Y(5, 31), !0), Y(6, 30), !0), Y(7, 31), !0), Y(8, 31), !0), Y(9, 30), !0), Y(10, 31), !0), Y(11, 30), !0), Y(12, 31), !0), Y(1, 7), !0), Ea = q(q(q(q(q(q(q(q(q(q(q(q(q([], Y(1, 31), !0), Y(2, 29), !0), Y(3, 31), !0), Y(4, 30), !0), Y(5, 31), !0), Y(6, 30), !0), Y(7, 31), !0), Y(8, 31), !0), Y(9, 30), !0), Y(10, 31), !0), Y(11, 30), !0), Y(12, 31), !0), Y(1, 7), !0), Da = oe(1, 29), Sa = oe(1, 30), ue = oe(1, 31), G = oe(1, 32), Ma = q(q(q(q(q(q(q(q(q(q(q(q(q([], G, !0), Sa, !0), G, !0), ue, !0), G, !0), ue, !0), G, !0), G, !0), ue, !0), G, !0), ue, !0), G, !0), G.slice(0, 7), !0), Na = q(q(q(q(q(q(q(q(q(q(q(q(q([], G, !0), Da, !0), G, !0), ue, !0), G, !0), ue, !0), G, !0), G, !0), ue, !0), G, !0), ue, !0), G, !0), G.slice(0, 7), !0), Ta = oe(-28, 0), Aa = oe(-29, 0), fe = oe(-30, 0), X = oe(-31, 0), Ca = q(q(q(q(q(q(q(q(q(q(q(q(q([], X, !0), Aa, !0), X, !0), fe, !0), X, !0), fe, !0), X, !0), X, !0), fe, !0), X, !0), fe, !0), X, !0), X.slice(0, 7), !0), Oa = q(q(q(q(q(q(q(q(q(q(q(q(q([], X, !0), Ta, !0), X, !0), fe, !0), X, !0), fe, !0), X, !0), X, !0), fe, !0), X, !0), fe, !0), X, !0), X.slice(0, 7), !0), La = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366], $a = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365], it = function() {
+}(), Ta = q(q(q(q(q(q(q(q(q(q(q(q(q([], Y(1, 31), !0), Y(2, 28), !0), Y(3, 31), !0), Y(4, 30), !0), Y(5, 31), !0), Y(6, 30), !0), Y(7, 31), !0), Y(8, 31), !0), Y(9, 30), !0), Y(10, 31), !0), Y(11, 30), !0), Y(12, 31), !0), Y(1, 7), !0), Aa = q(q(q(q(q(q(q(q(q(q(q(q(q([], Y(1, 31), !0), Y(2, 29), !0), Y(3, 31), !0), Y(4, 30), !0), Y(5, 31), !0), Y(6, 30), !0), Y(7, 31), !0), Y(8, 31), !0), Y(9, 30), !0), Y(10, 31), !0), Y(11, 30), !0), Y(12, 31), !0), Y(1, 7), !0), Ca = oe(1, 29), Oa = oe(1, 30), ue = oe(1, 31), G = oe(1, 32), La = q(q(q(q(q(q(q(q(q(q(q(q(q([], G, !0), Oa, !0), G, !0), ue, !0), G, !0), ue, !0), G, !0), G, !0), ue, !0), G, !0), ue, !0), G, !0), G.slice(0, 7), !0), $a = q(q(q(q(q(q(q(q(q(q(q(q(q([], G, !0), Ca, !0), G, !0), ue, !0), G, !0), ue, !0), G, !0), G, !0), ue, !0), G, !0), ue, !0), G, !0), G.slice(0, 7), !0), Ha = oe(-28, 0), za = oe(-29, 0), fe = oe(-30, 0), X = oe(-31, 0), qa = q(q(q(q(q(q(q(q(q(q(q(q(q([], X, !0), za, !0), X, !0), fe, !0), X, !0), fe, !0), X, !0), X, !0), fe, !0), X, !0), fe, !0), X, !0), X.slice(0, 7), !0), ja = q(q(q(q(q(q(q(q(q(q(q(q(q([], X, !0), Ha, !0), X, !0), fe, !0), X, !0), fe, !0), X, !0), X, !0), fe, !0), X, !0), fe, !0), X, !0), X.slice(0, 7), !0), Ia = [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366], Pa = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365], it = function() {
   for (var e = [], i = 0; i < 55; i++)
     e = e.concat(oe(7));
   return e;
 }();
-function Ha(e, i) {
-  var t, n, s = ve(e, 1, 1), a = we(e) ? 366 : 365, o = we(e + 1) ? 366 : 365, _ = ze(s), r = xe(s), d = ee(ee({ yearlen: a, nextyearlen: o, yearordinal: _, yearweekday: r }, function(N) {
-    var v = we(N) ? 366 : 365, x = ve(N, 1, 1), b = xe(x);
-    return v === 365 ? { mmask: ka, mdaymask: Na, nmdaymask: Oa, wdaymask: it.slice(b), mrange: $a } : { mmask: Ea, mdaymask: Ma, nmdaymask: Ca, wdaymask: it.slice(b), mrange: La };
+function Ra(e, i) {
+  var t, n, s = me(e, 1, 1), a = ke(e) ? 366 : 365, o = ke(e + 1) ? 366 : 365, d = ze(s), r = we(s), l = ee(ee({ yearlen: a, nextyearlen: o, yearordinal: d, yearweekday: r }, function(N) {
+    var m = ke(N) ? 366 : 365, x = me(N, 1, 1), b = we(x);
+    return m === 365 ? { mmask: Ta, mdaymask: $a, nmdaymask: ja, wdaymask: it.slice(b), mrange: Pa } : { mmask: Aa, mdaymask: La, nmdaymask: qa, wdaymask: it.slice(b), mrange: Ia };
   }(e)), { wnomask: null });
   if (ie(i.byweekno))
-    return d;
-  d.wnomask = Y(0, a + 7);
-  var l = t = te(7 - r + i.wkst, 7);
-  l >= 4 ? (l = 0, n = d.yearlen + te(r - i.wkst, 7)) : n = a - l;
-  for (var h = Math.floor(n / 7), p = te(n, 7), m = Math.floor(h + p / 4), g = 0; g < i.byweekno.length; g++) {
+    return l;
+  l.wnomask = Y(0, a + 7);
+  var _ = t = te(7 - r + i.wkst, 7);
+  _ >= 4 ? (_ = 0, n = l.yearlen + te(r - i.wkst, 7)) : n = a - _;
+  for (var h = Math.floor(n / 7), p = te(n, 7), v = Math.floor(h + p / 4), g = 0; g < i.byweekno.length; g++) {
     var c = i.byweekno[g];
-    if (c < 0 && (c += m + 1), c > 0 && c <= m) {
-      var u = void 0;
-      c > 1 ? (u = l + 7 * (c - 1), l !== t && (u -= 7 - t)) : u = l;
-      for (var f = 0; f < 7 && (d.wnomask[u] = 1, u++, d.wdaymask[u] !== i.wkst); f++)
+    if (c < 0 && (c += v + 1), c > 0 && c <= v) {
+      var f = void 0;
+      c > 1 ? (f = _ + 7 * (c - 1), _ !== t && (f -= 7 - t)) : f = _;
+      for (var u = 0; u < 7 && (l.wnomask[f] = 1, f++, l.wdaymask[f] !== i.wkst); u++)
         ;
     }
   }
-  if (F(i.byweekno, 1) && (u = l + 7 * m, l !== t && (u -= 7 - t), u < a))
-    for (g = 0; g < 7 && (d.wnomask[u] = 1, u += 1, d.wdaymask[u] !== i.wkst); g++)
+  if (F(i.byweekno, 1) && (f = _ + 7 * v, _ !== t && (f -= 7 - t), f < a))
+    for (g = 0; g < 7 && (l.wnomask[f] = 1, f += 1, l.wdaymask[f] !== i.wkst); g++)
       ;
-  if (l) {
+  if (_) {
     var y = void 0;
     if (F(i.byweekno, -1))
       y = -1;
     else {
-      var w = xe(ve(e - 1, 1, 1)), D = te(7 - w.valueOf() + i.wkst, 7), M = we(e - 1) ? 366 : 365, k = void 0;
-      D >= 4 ? (D = 0, k = M + te(w - i.wkst, 7)) : k = a - l, y = Math.floor(52 + te(k, 7) / 4);
+      var w = we(me(e - 1, 1, 1)), D = te(7 - w.valueOf() + i.wkst, 7), M = ke(e - 1) ? 366 : 365, k = void 0;
+      D >= 4 ? (D = 0, k = M + te(w - i.wkst, 7)) : k = a - _, y = Math.floor(52 + te(k, 7) / 4);
     }
     if (F(i.byweekno, y))
-      for (u = 0; u < l; u++)
-        d.wnomask[u] = 1;
+      for (f = 0; f < _; f++)
+        l.wnomask[f] = 1;
   }
-  return d;
+  return l;
 }
-var za = function() {
+var Ua = function() {
   function e(i) {
     this.options = i;
   }
   return e.prototype.rebuild = function(i, t) {
     var n = this.options;
-    if (i !== this.lastyear && (this.yearinfo = Ha(i, n)), K(n.bynweekday) && (t !== this.lastmonth || i !== this.lastyear)) {
-      var s = this.yearinfo, a = s.yearlen, o = s.mrange, _ = s.wdaymask;
-      this.monthinfo = function(r, d, l, h, p, m) {
-        var g = { lastyear: r, lastmonth: d, nwdaymask: [] }, c = [];
-        if (m.freq === z.YEARLY)
-          if (ie(m.bymonth))
-            c = [[0, l]];
+    if (i !== this.lastyear && (this.yearinfo = Ra(i, n)), K(n.bynweekday) && (t !== this.lastmonth || i !== this.lastyear)) {
+      var s = this.yearinfo, a = s.yearlen, o = s.mrange, d = s.wdaymask;
+      this.monthinfo = function(r, l, _, h, p, v) {
+        var g = { lastyear: r, lastmonth: l, nwdaymask: [] }, c = [];
+        if (v.freq === z.YEARLY)
+          if (ie(v.bymonth))
+            c = [[0, _]];
           else
-            for (var u = 0; u < m.bymonth.length; u++)
-              d = m.bymonth[u], c.push(h.slice(d - 1, d + 1));
+            for (var f = 0; f < v.bymonth.length; f++)
+              l = v.bymonth[f], c.push(h.slice(l - 1, l + 1));
         else
-          m.freq === z.MONTHLY && (c = [h.slice(d - 1, d + 1)]);
+          v.freq === z.MONTHLY && (c = [h.slice(l - 1, l + 1)]);
         if (ie(c))
           return g;
-        for (g.nwdaymask = Y(0, l), u = 0; u < c.length; u++)
-          for (var f = c[u], y = f[0], w = f[1] - 1, D = 0; D < m.bynweekday.length; D++) {
-            var M = void 0, k = m.bynweekday[D], N = k[0], v = k[1];
-            v < 0 ? (M = w + 7 * (v + 1), M -= te(p[M] - N, 7)) : (M = y + 7 * (v - 1), M += te(7 - p[M] + N, 7)), y <= M && M <= w && (g.nwdaymask[M] = 1);
+        for (g.nwdaymask = Y(0, _), f = 0; f < c.length; f++)
+          for (var u = c[f], y = u[0], w = u[1] - 1, D = 0; D < v.bynweekday.length; D++) {
+            var M = void 0, k = v.bynweekday[D], N = k[0], m = k[1];
+            m < 0 ? (M = w + 7 * (m + 1), M -= te(p[M] - N, 7)) : (M = y + 7 * (m - 1), M += te(7 - p[M] + N, 7)), y <= M && M <= w && (g.nwdaymask[M] = 1);
           }
         return g;
-      }(i, t, a, o, _, n);
+      }(i, t, a, o, d, n);
     }
-    J(n.byeaster) && (this.eastermask = function(r, d) {
-      d === void 0 && (d = 0);
-      var l = r % 19, h = Math.floor(r / 100), p = r % 100, m = Math.floor(h / 4), g = h % 4, c = Math.floor((h + 8) / 25), u = Math.floor((h - c + 1) / 3), f = Math.floor(19 * l + h - m - u + 15) % 30, y = Math.floor(p / 4), w = p % 4, D = Math.floor(32 + 2 * g + 2 * y - f - w) % 7, M = Math.floor((l + 11 * f + 22 * D) / 451), k = Math.floor((f + D - 7 * M + 114) / 31), N = (f + D - 7 * M + 114) % 31 + 1, v = Date.UTC(r, k - 1, N + d), x = Date.UTC(r, 0, 1);
-      return [Math.ceil((v - x) / 864e5)];
+    J(n.byeaster) && (this.eastermask = function(r, l) {
+      l === void 0 && (l = 0);
+      var _ = r % 19, h = Math.floor(r / 100), p = r % 100, v = Math.floor(h / 4), g = h % 4, c = Math.floor((h + 8) / 25), f = Math.floor((h - c + 1) / 3), u = Math.floor(19 * _ + h - v - f + 15) % 30, y = Math.floor(p / 4), w = p % 4, D = Math.floor(32 + 2 * g + 2 * y - u - w) % 7, M = Math.floor((_ + 11 * u + 22 * D) / 451), k = Math.floor((u + D - 7 * M + 114) / 31), N = (u + D - 7 * M + 114) % 31 + 1, m = Date.UTC(r, k - 1, N + l), x = Date.UTC(r, 0, 1);
+      return [Math.ceil((m - x) / 864e5)];
     }(i, n.byeaster));
   }, Object.defineProperty(e.prototype, "lastyear", { get: function() {
     return this.monthinfo ? this.monthinfo.lastyear : null;
@@ -6154,24 +6233,24 @@ var za = function() {
       a[o] = o;
     return [a, n, s];
   }, e.prototype.wdayset = function(i, t, n) {
-    for (var s = Y(null, this.yearlen + 7), a = ze(ve(i, t, n)) - this.yearordinal, o = a, _ = 0; _ < 7 && (s[a] = a, ++a, this.wdaymask[a] !== this.options.wkst); _++)
+    for (var s = Y(null, this.yearlen + 7), a = ze(me(i, t, n)) - this.yearordinal, o = a, d = 0; d < 7 && (s[a] = a, ++a, this.wdaymask[a] !== this.options.wkst); d++)
       ;
     return [s, o, a];
   }, e.prototype.ddayset = function(i, t, n) {
-    var s = Y(null, this.yearlen), a = ze(ve(i, t, n)) - this.yearordinal;
+    var s = Y(null, this.yearlen), a = ze(me(i, t, n)) - this.yearordinal;
     return s[a] = a, [s, a, a + 1];
   }, e.prototype.htimeset = function(i, t, n, s) {
     var a = this, o = [];
-    return this.options.byminute.forEach(function(_) {
-      o = o.concat(a.mtimeset(i, _, n, s));
-    }), Ee(o), o;
+    return this.options.byminute.forEach(function(d) {
+      o = o.concat(a.mtimeset(i, d, n, s));
+    }), De(o), o;
   }, e.prototype.mtimeset = function(i, t, n, s) {
     var a = this.options.bysecond.map(function(o) {
-      return new Se(i, t, o, s);
+      return new Me(i, t, o, s);
     });
-    return Ee(a), a;
+    return De(a), a;
   }, e.prototype.stimeset = function(i, t, n, s) {
-    return [new Se(i, t, n, s)];
+    return [new Me(i, t, n, s)];
   }, e.prototype.getdayset = function(i) {
     switch (i) {
       case V.YEARLY:
@@ -6195,101 +6274,101 @@ var za = function() {
     }
   }, e;
 }();
-function qa(e, i, t, n, s, a) {
-  for (var o = [], _ = 0; _ < e.length; _++) {
-    var r = void 0, d = void 0, l = e[_];
-    l < 0 ? (r = Math.floor(l / i.length), d = te(l, i.length)) : (r = Math.floor((l - 1) / i.length), d = te(l - 1, i.length));
+function Ya(e, i, t, n, s, a) {
+  for (var o = [], d = 0; d < e.length; d++) {
+    var r = void 0, l = void 0, _ = e[d];
+    _ < 0 ? (r = Math.floor(_ / i.length), l = te(_, i.length)) : (r = Math.floor((_ - 1) / i.length), l = te(_ - 1, i.length));
     for (var h = [], p = t; p < n; p++) {
-      var m = a[p];
-      J(m) && h.push(m);
+      var v = a[p];
+      J(v) && h.push(v);
     }
     var g = void 0;
     g = r < 0 ? h.slice(r)[0] : h[r];
-    var c = i[d], u = xt(s.yearordinal + g), f = wt(u, c);
-    F(o, f) || o.push(f);
+    var c = i[l], f = kt(s.yearordinal + g), u = Et(f, c);
+    F(o, u) || o.push(u);
   }
-  return Ee(o), o;
+  return De(o), o;
 }
-function Dt(e, i) {
-  var t = i.dtstart, n = i.freq, s = i.interval, a = i.until, o = i.bysetpos, _ = i.count;
-  if (_ === 0 || s === 0)
-    return se(e);
-  var r = va.fromDate(t), d = new za(i);
-  d.rebuild(r.year, r.month);
-  for (var l = function(v, x, b) {
-    var E = b.freq, S = b.byhour, T = b.byminute, A = b.bysecond;
-    return Oe(E) ? function(C) {
-      var $ = C.dtstart.getTime() % 1e3;
-      if (!Oe(C.freq))
+function Mt(e, i) {
+  var t = i.dtstart, n = i.freq, s = i.interval, a = i.until, o = i.bysetpos, d = i.count;
+  if (d === 0 || s === 0)
+    return de(e);
+  var r = ka.fromDate(t), l = new Ua(i);
+  l.rebuild(r.year, r.month);
+  for (var _ = function(m, x, b) {
+    var E = b.freq, S = b.byhour, T = b.byminute, C = b.bysecond;
+    return Oe(E) ? function(A) {
+      var $ = A.dtstart.getTime() % 1e3;
+      if (!Oe(A.freq))
         return [];
       var H = [];
-      return C.byhour.forEach(function(O) {
-        C.byminute.forEach(function(R) {
-          C.bysecond.forEach(function(P) {
-            H.push(new Se(O, R, P, $));
+      return A.byhour.forEach(function(O) {
+        A.byminute.forEach(function(P) {
+          A.bysecond.forEach(function(R) {
+            H.push(new Me(O, P, R, $));
           });
         });
       }), H;
-    }(b) : E >= z.HOURLY && K(S) && !F(S, x.hour) || E >= z.MINUTELY && K(T) && !F(T, x.minute) || E >= z.SECONDLY && K(A) && !F(A, x.second) ? [] : v.gettimeset(E)(x.hour, x.minute, x.second, x.millisecond);
-  }(d, r, i); ; ) {
-    var h = d.getdayset(n)(r.year, r.month, r.day), p = h[0], m = h[1], g = h[2], c = Ia(p, m, g, d, i);
+    }(b) : E >= z.HOURLY && K(S) && !F(S, x.hour) || E >= z.MINUTELY && K(T) && !F(T, x.minute) || E >= z.SECONDLY && K(C) && !F(C, x.second) ? [] : m.gettimeset(E)(x.hour, x.minute, x.second, x.millisecond);
+  }(l, r, i); ; ) {
+    var h = l.getdayset(n)(r.year, r.month, r.day), p = h[0], v = h[1], g = h[2], c = Fa(p, v, g, l, i);
     if (K(o))
-      for (var u = qa(o, l, m, g, d, p), f = 0; f < u.length; f++) {
-        var y = u[f];
+      for (var f = Ya(o, _, v, g, l, p), u = 0; u < f.length; u++) {
+        var y = f[u];
         if (a && y > a)
-          return se(e);
+          return de(e);
         if (y >= t) {
           var w = ot(y, i);
-          if (!e.accept(w) || _ && !--_)
-            return se(e);
+          if (!e.accept(w) || d && !--d)
+            return de(e);
         }
       }
     else
-      for (f = m; f < g; f++) {
-        var D = p[f];
+      for (u = v; u < g; u++) {
+        var D = p[u];
         if (J(D))
-          for (var M = xt(d.yearordinal + D), k = 0; k < l.length; k++) {
-            var N = l[k];
-            if (y = wt(M, N), a && y > a || y >= t && (w = ot(y, i), !e.accept(w) || _ && !--_))
-              return se(e);
+          for (var M = kt(l.yearordinal + D), k = 0; k < _.length; k++) {
+            var N = _[k];
+            if (y = Et(M, N), a && y > a || y >= t && (w = ot(y, i), !e.accept(w) || d && !--d))
+              return de(e);
           }
       }
     if (i.interval === 0 || (r.add(i, c), r.year > 9999))
-      return se(e);
-    Oe(n) || (l = d.gettimeset(n)(r.hour, r.minute, r.second, 0)), d.rebuild(r.year, r.month);
+      return de(e);
+    Oe(n) || (_ = l.gettimeset(n)(r.hour, r.minute, r.second, 0)), l.rebuild(r.year, r.month);
   }
 }
-function ja(e, i, t) {
-  var n = t.bymonth, s = t.byweekno, a = t.byweekday, o = t.byeaster, _ = t.bymonthday, r = t.bynmonthday, d = t.byyearday;
-  return K(n) && !F(n, e.mmask[i]) || K(s) && !e.wnomask[i] || K(a) && !F(a, e.wdaymask[i]) || K(e.nwdaymask) && !e.nwdaymask[i] || o !== null && !F(e.eastermask, i) || (K(_) || K(r)) && !F(_, e.mdaymask[i]) && !F(r, e.nmdaymask[i]) || K(d) && (i < e.yearlen && !F(d, i + 1) && !F(d, -e.yearlen + i) || i >= e.yearlen && !F(d, i + 1 - e.yearlen) && !F(d, -e.nextyearlen + i - e.yearlen));
+function Va(e, i, t) {
+  var n = t.bymonth, s = t.byweekno, a = t.byweekday, o = t.byeaster, d = t.bymonthday, r = t.bynmonthday, l = t.byyearday;
+  return K(n) && !F(n, e.mmask[i]) || K(s) && !e.wnomask[i] || K(a) && !F(a, e.wdaymask[i]) || K(e.nwdaymask) && !e.nwdaymask[i] || o !== null && !F(e.eastermask, i) || (K(d) || K(r)) && !F(d, e.mdaymask[i]) && !F(r, e.nmdaymask[i]) || K(l) && (i < e.yearlen && !F(l, i + 1) && !F(l, -e.yearlen + i) || i >= e.yearlen && !F(l, i + 1 - e.yearlen) && !F(l, -e.nextyearlen + i - e.yearlen));
 }
 function ot(e, i) {
-  return new Ne(e, i.tzid).rezonedDate();
+  return new Te(e, i.tzid).rezonedDate();
 }
-function se(e) {
+function de(e) {
   return e.getValue();
 }
-function Ia(e, i, t, n, s) {
+function Fa(e, i, t, n, s) {
   for (var a = !1, o = i; o < t; o++) {
-    var _ = e[o];
-    (a = ja(n, _, s)) && (e[_] = null);
+    var d = e[o];
+    (a = Va(n, d, s)) && (e[d] = null);
   }
   return a;
 }
-var ae = { MO: new Z(0), TU: new Z(1), WE: new Z(2), TH: new Z(3), FR: new Z(4), SA: new Z(5), SU: new Z(6) }, Je = { freq: V.YEARLY, dtstart: null, interval: 1, wkst: ae.MO, count: null, until: null, tzid: null, bysetpos: null, bymonth: null, bymonthday: null, bynmonthday: null, byyearday: null, byweekno: null, byweekday: null, bynweekday: null, byhour: null, byminute: null, bysecond: null, byeaster: null }, Ra = Object.keys(Je), z = function() {
+var ae = { MO: new Z(0), TU: new Z(1), WE: new Z(2), TH: new Z(3), FR: new Z(4), SA: new Z(5), SU: new Z(6) }, Je = { freq: V.YEARLY, dtstart: null, interval: 1, wkst: ae.MO, count: null, until: null, tzid: null, bysetpos: null, bymonth: null, bymonthday: null, bynmonthday: null, byyearday: null, byweekno: null, byweekday: null, bynweekday: null, byhour: null, byminute: null, bysecond: null, byeaster: null }, Ba = Object.keys(Je), z = function() {
   function e(i, t) {
-    i === void 0 && (i = {}), t === void 0 && (t = !1), this._cache = t ? null : new wa(), this.origOptions = Et(i);
-    var n = ma(i).parsedOptions;
+    i === void 0 && (i = {}), t === void 0 && (t = !1), this._cache = t ? null : new Na(), this.origOptions = St(i);
+    var n = Ea(i).parsedOptions;
     this.options = n;
   }
   return e.parseText = function(i, t) {
-    return kt(i, t);
+    return Dt(i, t);
   }, e.fromText = function(i, t) {
-    return pa(i, t);
+    return xa(i, t);
   }, e.fromString = function(i) {
     return new e(e.parseString(i) || void 0);
   }, e.prototype._iter = function(i) {
-    return Dt(i, this.options);
+    return Mt(i, this.options);
   }, e.prototype._cacheGet = function(i, t) {
     return !!this._cache && this._cache._cacheGet(i, t);
   }, e.prototype._cacheAdd = function(i, t, n) {
@@ -6299,75 +6378,75 @@ var ae = { MO: new Z(0), TU: new Z(1), WE: new Z(2), TH: new Z(3), FR: new Z(4),
     if (i)
       return this._iter(new tt("all", {}, i));
     var t = this._cacheGet("all");
-    return t === !1 && (t = this._iter(new be("all", {})), this._cacheAdd("all", t)), t;
+    return t === !1 && (t = this._iter(new xe("all", {})), this._cacheAdd("all", t)), t;
   }, e.prototype.between = function(i, t, n, s) {
-    if (n === void 0 && (n = !1), !ke(i) || !ke(t))
+    if (n === void 0 && (n = !1), !Ee(i) || !Ee(t))
       throw new Error("Invalid date passed in to RRule.between");
     var a = { before: t, after: i, inc: n };
     if (s)
       return this._iter(new tt("between", a, s));
     var o = this._cacheGet("between", a);
-    return o === !1 && (o = this._iter(new be("between", a)), this._cacheAdd("between", o, a)), o;
+    return o === !1 && (o = this._iter(new xe("between", a)), this._cacheAdd("between", o, a)), o;
   }, e.prototype.before = function(i, t) {
-    if (t === void 0 && (t = !1), !ke(i))
+    if (t === void 0 && (t = !1), !Ee(i))
       throw new Error("Invalid date passed in to RRule.before");
     var n = { dt: i, inc: t }, s = this._cacheGet("before", n);
-    return s === !1 && (s = this._iter(new be("before", n)), this._cacheAdd("before", s, n)), s;
+    return s === !1 && (s = this._iter(new xe("before", n)), this._cacheAdd("before", s, n)), s;
   }, e.prototype.after = function(i, t) {
-    if (t === void 0 && (t = !1), !ke(i))
+    if (t === void 0 && (t = !1), !Ee(i))
       throw new Error("Invalid date passed in to RRule.after");
     var n = { dt: i, inc: t }, s = this._cacheGet("after", n);
-    return s === !1 && (s = this._iter(new be("after", n)), this._cacheAdd("after", s, n)), s;
+    return s === !1 && (s = this._iter(new xe("after", n)), this._cacheAdd("after", s, n)), s;
   }, e.prototype.count = function() {
     return this.all().length;
   }, e.prototype.toString = function() {
-    return Re(this.origOptions);
+    return Pe(this.origOptions);
   }, e.prototype.toText = function(i, t, n) {
-    return function(s, a, o, _) {
-      return new de(s, a, o, _).toString();
+    return function(s, a, o, d) {
+      return new _e(s, a, o, d).toString();
     }(this, i, t, n);
   }, e.prototype.isFullyConvertibleToText = function() {
-    return ga(this);
+    return wa(this);
   }, e.prototype.clone = function() {
     return new e(this.origOptions);
-  }, e.FREQUENCIES = ["YEARLY", "MONTHLY", "WEEKLY", "DAILY", "HOURLY", "MINUTELY", "SECONDLY"], e.YEARLY = V.YEARLY, e.MONTHLY = V.MONTHLY, e.WEEKLY = V.WEEKLY, e.DAILY = V.DAILY, e.HOURLY = V.HOURLY, e.MINUTELY = V.MINUTELY, e.SECONDLY = V.SECONDLY, e.MO = ae.MO, e.TU = ae.TU, e.WE = ae.WE, e.TH = ae.TH, e.FR = ae.FR, e.SA = ae.SA, e.SU = ae.SU, e.parseString = Ie, e.optionsToString = Re, e;
+  }, e.FREQUENCIES = ["YEARLY", "MONTHLY", "WEEKLY", "DAILY", "HOURLY", "MINUTELY", "SECONDLY"], e.YEARLY = V.YEARLY, e.MONTHLY = V.MONTHLY, e.WEEKLY = V.WEEKLY, e.DAILY = V.DAILY, e.HOURLY = V.HOURLY, e.MINUTELY = V.MINUTELY, e.SECONDLY = V.SECONDLY, e.MO = ae.MO, e.TU = ae.TU, e.WE = ae.WE, e.TH = ae.TH, e.FR = ae.FR, e.SA = ae.SA, e.SU = ae.SU, e.parseString = Ie, e.optionsToString = Pe, e;
 }(), st = { dtstart: null, cache: !1, unfold: !1, forceset: !1, compatible: !1, tzid: null };
-function Pa(e, i) {
-  var t = [], n = [], s = [], a = [], o = Me(e), _ = o.dtstart, r = o.tzid, d = function(l, h) {
-    if (h === void 0 && (h = !1), l = l && l.trim(), !l)
+function Ja(e, i) {
+  var t = [], n = [], s = [], a = [], o = Ne(e), d = o.dtstart, r = o.tzid, l = function(_, h) {
+    if (h === void 0 && (h = !1), _ = _ && _.trim(), !_)
       throw new Error("Invalid empty string");
     if (!h)
-      return l.split(/\s/);
-    for (var p = l.split(`
-`), m = 0; m < p.length; ) {
-      var g = p[m] = p[m].replace(/\s+$/g, "");
-      g ? m > 0 && g[0] === " " ? (p[m - 1] += g.slice(1), p.splice(m, 1)) : m += 1 : p.splice(m, 1);
+      return _.split(/\s/);
+    for (var p = _.split(`
+`), v = 0; v < p.length; ) {
+      var g = p[v] = p[v].replace(/\s+$/g, "");
+      g ? v > 0 && g[0] === " " ? (p[v - 1] += g.slice(1), p.splice(v, 1)) : v += 1 : p.splice(v, 1);
     }
     return p;
   }(e, i.unfold);
-  return d.forEach(function(l) {
+  return l.forEach(function(_) {
     var h;
-    if (l) {
-      var p = function(f) {
+    if (_) {
+      var p = function(u) {
         var y = function(k) {
           if (k.indexOf(":") === -1)
             return { name: "RRULE", value: k };
-          var N = (b = k, E = ":", S = 1, T = b.split(E), S ? T.slice(0, S).concat([T.slice(S).join(E)]) : T), v = N[0], x = N[1], b, E, S, T;
-          return { name: v, value: x };
-        }(f), w = y.name, D = y.value, M = w.split(";");
+          var N = (b = k, E = ":", S = 1, T = b.split(E), S ? T.slice(0, S).concat([T.slice(S).join(E)]) : T), m = N[0], x = N[1], b, E, S, T;
+          return { name: m, value: x };
+        }(u), w = y.name, D = y.value, M = w.split(";");
         if (!M)
           throw new Error("empty property name");
         return { name: M[0].toUpperCase(), parms: M.slice(1), value: D };
-      }(l), m = p.name, g = p.parms, c = p.value;
-      switch (m.toUpperCase()) {
+      }(_), v = p.name, g = p.parms, c = p.value;
+      switch (v.toUpperCase()) {
         case "RRULE":
           if (g.length)
             throw new Error("unsupported RRULE parm: ".concat(g.join(",")));
-          t.push(Ie(l));
+          t.push(Ie(_));
           break;
         case "RDATE":
-          var u = ((h = /RDATE(?:;TZID=([^:=]+))?/i.exec(l)) !== null && h !== void 0 ? h : [])[1];
-          u && !r && (r = u), n = n.concat(dt(c, g));
+          var f = ((h = /RDATE(?:;TZID=([^:=]+))?/i.exec(_)) !== null && h !== void 0 ? h : [])[1];
+          f && !r && (r = f), n = n.concat(dt(c, g));
           break;
         case "EXRULE":
           if (g.length)
@@ -6380,28 +6459,28 @@ function Pa(e, i) {
         case "DTSTART":
           break;
         default:
-          throw new Error("unsupported property: " + m);
+          throw new Error("unsupported property: " + v);
       }
     }
-  }), { dtstart: _, tzid: r, rrulevals: t, rdatevals: n, exrulevals: s, exdatevals: a };
+  }), { dtstart: d, tzid: r, rrulevals: t, rdatevals: n, exrulevals: s, exdatevals: a };
 }
 function ge(e, i) {
   return i === void 0 && (i = {}), function(t, n) {
-    var s = Pa(t, n), a = s.rrulevals, o = s.rdatevals, _ = s.exrulevals, r = s.exdatevals, d = s.dtstart, l = s.tzid, h = n.cache === !1;
-    if (n.compatible && (n.forceset = !0, n.unfold = !0), n.forceset || a.length > 1 || o.length || _.length || r.length) {
-      var p = new Ua(h);
-      return p.dtstart(d), p.tzid(l || void 0), a.forEach(function(g) {
-        p.rrule(new z(Le(g, d, l), h));
+    var s = Ja(t, n), a = s.rrulevals, o = s.rdatevals, d = s.exrulevals, r = s.exdatevals, l = s.dtstart, _ = s.tzid, h = n.cache === !1;
+    if (n.compatible && (n.forceset = !0, n.unfold = !0), n.forceset || a.length > 1 || o.length || d.length || r.length) {
+      var p = new Wa(h);
+      return p.dtstart(l), p.tzid(_ || void 0), a.forEach(function(g) {
+        p.rrule(new z(Le(g, l, _), h));
       }), o.forEach(function(g) {
         p.rdate(g);
-      }), _.forEach(function(g) {
-        p.exrule(new z(Le(g, d, l), h));
+      }), d.forEach(function(g) {
+        p.exrule(new z(Le(g, l, _), h));
       }), r.forEach(function(g) {
         p.exdate(g);
-      }), n.compatible && n.dtstart && p.rdate(d), p;
+      }), n.compatible && n.dtstart && p.rdate(l), p;
     }
-    var m = a[0] || {};
-    return new z(Le(m, m.dtstart || n.dtstart || d, m.tzid || n.tzid || l), h);
+    var v = a[0] || {};
+    return new z(Le(v, v.dtstart || n.dtstart || l, v.tzid || n.tzid || _), h);
   }(e, function(t) {
     var n = [], s = Object.keys(t), a = Object.keys(st);
     if (s.forEach(function(o) {
@@ -6436,42 +6515,42 @@ function _t(e) {
     }
   };
 }
-var Ua = function(e) {
+var Wa = function(e) {
   function i(t) {
     t === void 0 && (t = !1);
     var n = e.call(this, {}, t) || this;
     return n.dtstart = _t.apply(n, ["dtstart"]), n.tzid = _t.apply(n, ["tzid"]), n._rrule = [], n._rdate = [], n._exrule = [], n._exdate = [], n;
   }
   return Be(i, e), i.prototype._iter = function(t) {
-    return function(n, s, a, o, _, r) {
-      var d = {}, l = n.accept;
-      function h(c, u) {
-        a.forEach(function(f) {
-          f.between(c, u, !0).forEach(function(y) {
-            d[Number(y)] = !0;
+    return function(n, s, a, o, d, r) {
+      var l = {}, _ = n.accept;
+      function h(c, f) {
+        a.forEach(function(u) {
+          u.between(c, f, !0).forEach(function(y) {
+            l[Number(y)] = !0;
           });
         });
       }
-      _.forEach(function(c) {
-        var u = new Ne(c, r).rezonedDate();
-        d[Number(u)] = !0;
+      d.forEach(function(c) {
+        var f = new Te(c, r).rezonedDate();
+        l[Number(f)] = !0;
       }), n.accept = function(c) {
-        var u = Number(c);
-        return isNaN(u) ? l.call(this, c) : !(!d[u] && (h(new Date(u - 1), new Date(u + 1)), !d[u])) || (d[u] = !0, l.call(this, c));
+        var f = Number(c);
+        return isNaN(f) ? _.call(this, c) : !(!l[f] && (h(new Date(f - 1), new Date(f + 1)), !l[f])) || (l[f] = !0, _.call(this, c));
       }, n.method === "between" && (h(n.args.after, n.args.before), n.accept = function(c) {
-        var u = Number(c);
-        return !!d[u] || (d[u] = !0, l.call(this, c));
+        var f = Number(c);
+        return !!l[f] || (l[f] = !0, _.call(this, c));
       });
       for (var p = 0; p < o.length; p++) {
-        var m = new Ne(o[p], r).rezonedDate();
-        if (!n.accept(new Date(m.getTime())))
+        var v = new Te(o[p], r).rezonedDate();
+        if (!n.accept(new Date(v.getTime())))
           break;
       }
       s.forEach(function(c) {
-        Dt(n, c.options);
+        Mt(n, c.options);
       });
       var g = n._result;
-      switch (Ee(g), n.method) {
+      switch (De(g), n.method) {
         case "all":
         case "between":
           return g;
@@ -6507,7 +6586,7 @@ var Ua = function(e) {
     });
   }, i.prototype.valueOf = function() {
     var t = [];
-    return !this._rrule.length && this._dtstart && (t = t.concat(Re({ dtstart: this._dtstart }))), this._rrule.forEach(function(n) {
+    return !this._rrule.length && this._dtstart && (t = t.concat(Pe({ dtstart: this._dtstart }))), this._rrule.forEach(function(n) {
       t = t.concat(n.toString().split(`
 `));
     }), this._exrule.forEach(function(n) {
@@ -6542,7 +6621,7 @@ function lt(e, i) {
 function ct(e, i) {
   if (!(e instanceof Date))
     throw new TypeError(String(e) + " is not Date instance");
-  F(i.map(Number), Number(e)) || (i.push(e), Ee(i));
+  F(i.map(Number), Number(e)) || (i.push(e), De(i));
 }
 function ht(e, i, t) {
   var n = !t || t.toUpperCase() === "UTC", s = n ? "".concat(e, ":") : "".concat(e, ";TZID=").concat(t, ":"), a = i.map(function(o) {
@@ -6550,7 +6629,7 @@ function ht(e, i, t) {
   }).join(",");
   return "".concat(s).concat(a);
 }
-class Ya {
+class Ka {
   constructor(i) {
     this._scheduler = i;
   }
@@ -6564,8 +6643,8 @@ class Ya {
   show(i, t) {
     const n = this._scheduler, s = n.$domHelpers, a = document.body, o = this.getNode();
     if (s.isChildOf(o, a) || (this.hide(), a.appendChild(o)), this._isLikeMouseEvent(i)) {
-      const _ = this._calculateTooltipPosition(i);
-      t = _.top, i = _.left;
+      const d = this._calculateTooltipPosition(i);
+      t = d.top, i = d.left;
     }
     return o.style.top = t + "px", o.style.left = i + "px", n._waiAria.tooltipVisibleAttr(o), this;
   }
@@ -6583,20 +6662,20 @@ class Ya {
     return this._root || document.body;
   }
   _calculateTooltipPosition(i) {
-    const t = this._scheduler, n = t.$domHelpers, s = this._getViewPortSize(), a = this.getNode(), o = { top: 0, left: 0, width: a.offsetWidth, height: a.offsetHeight, bottom: 0, right: 0 }, _ = t.config.tooltip_offset_x, r = t.config.tooltip_offset_y, d = document.body, l = n.getRelativeEventPosition(i, d), h = n.getNodePosition(d);
-    l.y += h.y, o.top = l.y, o.left = l.x, o.top += r, o.left += _, o.bottom = o.top + o.height, o.right = o.left + o.width;
-    const p = window.scrollY + d.scrollTop;
-    return o.top < s.top - p ? (o.top = s.top, o.bottom = o.top + o.height) : o.bottom > s.bottom && (o.bottom = s.bottom, o.top = o.bottom - o.height), o.left < s.left ? (o.left = s.left, o.right = s.left + o.width) : o.right > s.right && (o.right = s.right, o.left = o.right - o.width), l.x >= o.left && l.x <= o.right && (o.left = l.x - o.width - _, o.right = o.left + o.width), l.y >= o.top && l.y <= o.bottom && (o.top = l.y - o.height - r, o.bottom = o.top + o.height), o.left < 0 && (o.left = 0), o.right < 0 && (o.right = 0), o;
+    const t = this._scheduler, n = t.$domHelpers, s = this._getViewPortSize(), a = this.getNode(), o = { top: 0, left: 0, width: a.offsetWidth, height: a.offsetHeight, bottom: 0, right: 0 }, d = t.config.tooltip_offset_x, r = t.config.tooltip_offset_y, l = document.body, _ = n.getRelativeEventPosition(i, l), h = n.getNodePosition(l);
+    _.y += h.y, o.top = _.y, o.left = _.x, o.top += r, o.left += d, o.bottom = o.top + o.height, o.right = o.left + o.width;
+    const p = window.scrollY + l.scrollTop;
+    return o.top < s.top - p ? (o.top = s.top, o.bottom = o.top + o.height) : o.bottom > s.bottom && (o.bottom = s.bottom, o.top = o.bottom - o.height), o.left < s.left ? (o.left = s.left, o.right = s.left + o.width) : o.right > s.right && (o.right = s.right, o.left = o.right - o.width), _.x >= o.left && _.x <= o.right && (o.left = _.x - o.width - d, o.right = o.left + o.width), _.y >= o.top && _.y <= o.bottom && (o.top = _.y - o.height - r, o.bottom = o.top + o.height), o.left < 0 && (o.left = 0), o.right < 0 && (o.right = 0), o;
   }
   _getViewPortSize() {
     const i = this._scheduler, t = i.$domHelpers, n = this._getViewPort();
-    let s, a = n, o = window.scrollY + document.body.scrollTop, _ = window.scrollX + document.body.scrollLeft;
-    return n === i.$event_data ? (a = i.$event, o = 0, _ = 0, s = t.getNodePosition(i.$event)) : s = t.getNodePosition(a), { left: s.x + _, top: s.y + o, width: s.width, height: s.height, bottom: s.y + s.height + o, right: s.x + s.width + _ };
+    let s, a = n, o = window.scrollY + document.body.scrollTop, d = window.scrollX + document.body.scrollLeft;
+    return n === i.$event_data ? (a = i.$event, o = 0, d = 0, s = t.getNodePosition(i.$event)) : s = t.getNodePosition(a), { left: s.x + d, top: s.y + o, width: s.width, height: s.height, bottom: s.y + s.height + o, right: s.x + s.width + d };
   }
 }
-class Va {
+class Ga {
   constructor(i) {
-    this._listeners = {}, this.tooltip = new Ya(i), this._scheduler = i, this._domEvents = i._createDomEventScope(), this._initDelayedFunctions();
+    this._listeners = {}, this.tooltip = new Ka(i), this._scheduler = i, this._domEvents = i._createDomEventScope(), this._initDelayedFunctions();
   }
   destructor() {
     this.tooltip.hide(), this._domEvents.detachAll();
@@ -6609,14 +6688,14 @@ class Va {
     const n = this._scheduler, s = n.$domHelpers;
     i.global || (t = n.$root);
     let a = null;
-    const o = (_) => {
-      const r = s.getTargetNode(_), d = s.closest(r, i.selector);
+    const o = (d) => {
+      const r = s.getTargetNode(d), l = s.closest(r, i.selector);
       if (s.isChildOf(r, this.tooltip.getNode()))
         return;
-      const l = () => {
-        a = d, i.onmouseenter(_, d);
+      const _ = () => {
+        a = l, i.onmouseenter(d, l);
       };
-      n._mobile && n.config.touch_tooltip && (d ? l() : i.onmouseleave(_, d)), a ? d && d === a ? i.onmousemove(_, d) : (i.onmouseleave(_, a), a = null, d && d !== a && l()) : d && l();
+      n._mobile && n.config.touch_tooltip && (l ? _() : i.onmouseleave(d, l)), a ? l && l === a ? i.onmousemove(d, l) : (i.onmouseleave(d, a), a = null, l && l !== a && _()) : l && _();
     };
     this.detach(i.selector), this._domEvents.attach(t, "mousemove", o), this._listeners[i.selector] = { node: t, handler: o };
   }
@@ -6648,7 +6727,7 @@ class Va {
     }, i.config.tooltip_hide_timeout || 1);
   }
 }
-const Fa = { active_links: function(e) {
+const Xa = { active_links: function(e) {
   e.config.active_link_view = "day", e._active_link_click = function(i) {
     var t = i.target.getAttribute("data-link-date"), n = e.date.str_to_date(e.config.api_date, !1, !0);
     if (t)
@@ -6657,8 +6736,8 @@ const Fa = { active_links: function(e) {
     var i = function(n, s) {
       s = s || n + "_scale_date", e.templates["_active_links_old_" + s] || (e.templates["_active_links_old_" + s] = e.templates[s]);
       var a = e.templates["_active_links_old_" + s], o = e.date.date_to_str(e.config.api_date);
-      e.templates[s] = function(_) {
-        return "<a data-link-date='" + o(_) + "' href='#'>" + a(_) + "</a>";
+      e.templates[s] = function(d) {
+        return "<a data-link-date='" + o(d) + "' href='#'>" + a(d) + "</a>";
       };
     };
     if (i("week"), i("", "month_day"), this.matrix)
@@ -6694,22 +6773,22 @@ const Fa = { active_links: function(e) {
     var n = e.render_view_data;
     function s() {
       var a = e.get_visible_events();
-      a.sort(function(f, y) {
-        return f.start_date > y.start_date ? 1 : -1;
+      a.sort(function(u, y) {
+        return u.start_date > y.start_date ? 1 : -1;
       });
-      for (var o, _ = "<div class='dhx_agenda_area' " + e._waiAria.agendaDataAttrString() + ">", r = 0; r < a.length; r++) {
-        var d = a[r], l = d.color ? "--dhx-scheduler-event-background:" + d.color + ";" : "", h = d.textColor ? "--dhx-scheduler-event-color:" + d.textColor + ";" : "", p = e.templates.event_class(d.start_date, d.end_date, d);
-        o = e._waiAria.agendaEventAttrString(d);
-        var m = e._waiAria.agendaDetailsBtnString();
-        _ += "<div " + o + " class='dhx_agenda_line" + (p ? " " + p : "") + "' event_id='" + d.id + "' " + e.config.event_attribute + "='" + d.id + "' style='" + h + l + (d._text_style || "") + "'><div class='dhx_agenda_event_time'>" + (e.config.rtl ? e.templates.agenda_time(d.end_date, d.start_date, d) : e.templates.agenda_time(d.start_date, d.end_date, d)) + "</div>", _ += `<div ${m} class='dhx_event_icon icon_details'><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      for (var o, d = "<div class='dhx_agenda_area' " + e._waiAria.agendaDataAttrString() + ">", r = 0; r < a.length; r++) {
+        var l = a[r], _ = l.color ? "--dhx-scheduler-event-background:" + l.color + ";" : "", h = l.textColor ? "--dhx-scheduler-event-color:" + l.textColor + ";" : "", p = e.templates.event_class(l.start_date, l.end_date, l);
+        o = e._waiAria.agendaEventAttrString(l);
+        var v = e._waiAria.agendaDetailsBtnString();
+        d += "<div " + o + " class='dhx_agenda_line" + (p ? " " + p : "") + "' event_id='" + l.id + "' " + e.config.event_attribute + "='" + l.id + "' style='" + h + _ + (l._text_style || "") + "'><div class='dhx_agenda_event_time'>" + (e.config.rtl ? e.templates.agenda_time(l.end_date, l.start_date, l) : e.templates.agenda_time(l.start_date, l.end_date, l)) + "</div>", d += `<div ${v} class='dhx_event_icon icon_details'><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path d="M15.4444 16.4H4.55556V7.6H15.4444V16.4ZM13.1111 2V3.6H6.88889V2H5.33333V3.6H4.55556C3.69222 3.6 3 4.312 3 5.2V16.4C3 16.8243 3.16389 17.2313 3.45561 17.5314C3.74733 17.8314 4.143 18 4.55556 18H15.4444C15.857 18 16.2527 17.8314 16.5444 17.5314C16.8361 17.2313 17 16.8243 17 16.4V5.2C17 4.312 16.3 3.6 15.4444 3.6H14.6667V2H13.1111ZM13.8889 10.8H10V14.8H13.8889V10.8Z" fill="#A1A4A6"/>
-			</svg></div>`, _ += "<span>" + e.templates.agenda_text(d.start_date, d.end_date, d) + "</span></div>";
+			</svg></div>`, d += "<span>" + e.templates.agenda_text(l.start_date, l.end_date, l) + "</span></div>";
       }
-      _ += "<div class='dhx_v_border'></div></div>", e._els.dhx_cal_data[0].innerHTML = _, e._els.dhx_cal_data[0].childNodes[0].scrollTop = e._agendaScrollTop || 0;
+      d += "<div class='dhx_v_border'></div></div>", e._els.dhx_cal_data[0].innerHTML = d, e._els.dhx_cal_data[0].childNodes[0].scrollTop = e._agendaScrollTop || 0;
       var g = e._els.dhx_cal_data[0].childNodes[0];
       g.childNodes[g.childNodes.length - 1].style.height = g.offsetHeight < e._els.dhx_cal_data[0].offsetHeight ? "100%" : g.offsetHeight + "px";
-      var c = e._els.dhx_cal_data[0].firstChild.childNodes, u = e._getNavDateElement();
-      for (u && (u.innerHTML = e.templates.agenda_date(e._min_date, e._max_date, e._mode)), e._rendered = [], r = 0; r < c.length - 1; r++)
+      var c = e._els.dhx_cal_data[0].firstChild.childNodes, f = e._getNavDateElement();
+      for (f && (f.innerHTML = e.templates.agenda_date(e._min_date, e._max_date, e._mode)), e._reset_rendered_events(), r = 0; r < c.length - 1; r++)
         e._rendered[r] = c[r];
     }
     e.render_view_data = function() {
@@ -6717,8 +6796,8 @@ const Fa = { active_links: function(e) {
     }, e.agenda_legacy_view = function(a) {
       e._min_date = e.config.agenda_start || e.date.agenda_legacy_start(e._date), e._max_date = e.config.agenda_end || e.date.add_agenda_legacy(e._min_date, 1), function(o) {
         if (o) {
-          var _ = e.locale.labels, r = e._waiAria.agendaHeadAttrString(), d = e._waiAria.agendaHeadDateString(_.date), l = e._waiAria.agendaHeadDescriptionString(_.description);
-          e._els.dhx_cal_header[0].innerHTML = "<div " + r + " class='dhx_agenda_line dhx_agenda_line_header'><div " + d + ">" + _.date + "</div><span class = 'description_header' style='padding-left:25px' " + l + ">" + _.description + "</span></div>", e._table_view = !0, e.set_sizes();
+          var d = e.locale.labels, r = e._waiAria.agendaHeadAttrString(), l = e._waiAria.agendaHeadDateString(d.date), _ = e._waiAria.agendaHeadDescriptionString(d.description);
+          e._els.dhx_cal_header[0].innerHTML = "<div " + r + " class='dhx_agenda_line dhx_agenda_line_header'><div " + l + ">" + d.date + "</div><span class = 'description_header' style='padding-left:25px' " + _ + ">" + d.description + "</span></div>", e._table_view = !0, e.set_sizes();
         }
       }(a), a ? (e._cols = null, e._colsS = null, e._table_view = !0, s()) : e._table_view = !1;
     };
@@ -6750,53 +6829,53 @@ const Fa = { active_links: function(e) {
         return s.apply(this, arguments);
     };
     var a = e.render_data;
-    e.render_data = function(d) {
+    e.render_data = function(l) {
       if (this._mode != "agenda")
         return a.apply(this, arguments);
-      _();
+      d();
     };
     var o = e.render_view_data;
-    function _() {
-      const d = e.get_visible_events();
-      d.sort(function(u, f) {
-        return u.start_date > f.start_date ? 1 : -1;
+    function d() {
+      const l = e.get_visible_events();
+      l.sort(function(f, u) {
+        return f.start_date > u.start_date ? 1 : -1;
       });
-      const l = {};
+      const _ = {};
       let h = e.getState().min_date;
       const p = e.getState().max_date;
       for (; h.valueOf() < p.valueOf(); )
-        l[h.valueOf()] = [], h = e.date.add(h, 1, "day");
-      let m = !1;
-      if (d.forEach((u) => {
-        let f = e.date.day_start(new Date(u.start_date));
-        for (; f.valueOf() < u.end_date.valueOf(); )
-          l[f.valueOf()] && (l[f.valueOf()].push(u), m = !0), f = e.date.day_start(e.date.add(f, 1, "day"));
-      }), m) {
-        let u = "";
-        for (let f in l)
-          e.ignore_agenda && e.ignore_agenda(new Date(1 * f)) || (u += r(new Date(1 * f), l[f]));
-        e._els.dhx_cal_data[0].innerHTML = u;
+        _[h.valueOf()] = [], h = e.date.add(h, 1, "day");
+      let v = !1;
+      if (l.forEach((f) => {
+        let u = e.date.day_start(new Date(f.start_date));
+        for (; u.valueOf() < f.end_date.valueOf(); )
+          _[u.valueOf()] && (_[u.valueOf()].push(f), v = !0), u = e.date.day_start(e.date.add(u, 1, "day"));
+      }), v) {
+        let f = "";
+        for (let u in _)
+          e.ignore_agenda && e.ignore_agenda(new Date(1 * u)) || (f += r(new Date(1 * u), _[u]));
+        e._els.dhx_cal_data[0].innerHTML = f;
       } else
         e._els.dhx_cal_data[0].innerHTML = `<div class="dhx_cal_agenda_no_events">${e.locale.labels.agenda_tab}</div>`;
       e._els.dhx_cal_data[0].scrollTop = n;
       let g = e._els.dhx_cal_data[0].querySelectorAll(".dhx_cal_agenda_event_line");
-      e._rendered = [];
+      e._reset_rendered_events();
       for (var c = 0; c < g.length - 1; c++)
         e._rendered[c] = g[c];
     }
-    function r(d, l) {
-      if (!l.length)
+    function r(l, _) {
+      if (!_.length)
         return "";
       let h = `
-<div class="dhx_cal_agenda_day" data-date="${e.templates.format_date(d)}" data-day="${d.getDay()}">
-	<div class="dhx_cal_agenda_day_header">${e.templates.agenda_day(d)}</div>
+<div class="dhx_cal_agenda_day" data-date="${e.templates.format_date(l)}" data-day="${l.getDay()}">
+	<div class="dhx_cal_agenda_day_header">${e.templates.agenda_day(l)}</div>
 	<div class="dhx_cal_agenda_day_events">
 `;
-      return l.forEach((p) => {
-        h += function(m, g) {
-          const c = e.templates.agenda_time(g.start_date, g.end_date, g), u = e.getState().select_id, f = e.templates.event_class(g.start_date, g.end_date, g), y = e.templates.agenda_text(g.start_date, g.end_date, g);
+      return _.forEach((p) => {
+        h += function(v, g) {
+          const c = e.templates.agenda_time(g.start_date, g.end_date, g), f = e.getState().select_id, u = e.templates.event_class(g.start_date, g.end_date, g), y = e.templates.agenda_text(g.start_date, g.end_date, g);
           let w = "";
-          return (g.color || g.textColor) && (w = ` style="${g.color ? "--dhx-scheduler-event-background:" + g.color + ";" : ""}${g.textColor ? "--dhx-scheduler-event-color:" + g.textColor + ";" : ""}" `), `<div class="dhx_cal_agenda_event_line ${f || ""} ${g.id == u ? "dhx_cal_agenda_event_line_selected" : ""}" ${w} ${e.config.event_attribute}="${g.id}">
+          return (g.color || g.textColor) && (w = ` style="${g.color ? "--dhx-scheduler-event-background:" + g.color + ";" : ""}${g.textColor ? "--dhx-scheduler-event-color:" + g.textColor + ";" : ""}" `), `<div class="dhx_cal_agenda_event_line ${u || ""} ${g.id == f ? "dhx_cal_agenda_event_line_selected" : ""}" ${w} ${e.config.event_attribute}="${g.id}">
 	<div class="dhx_cal_agenda_event_line_marker"></div>
 	<div class="dhx_cal_agenda_event_line_time">${c}</div>
 	<div class="dhx_cal_agenda_event_line_text">${y}</div>
@@ -6806,79 +6885,79 @@ const Fa = { active_links: function(e) {
     }
     e.render_view_data = function() {
       return this._mode == "agenda" && (n = e._els.dhx_cal_data[0].scrollTop, e._els.dhx_cal_data[0].scrollTop = 0), o.apply(this, arguments);
-    }, e.agenda_view = function(d) {
-      if (d) {
+    }, e.agenda_view = function(l) {
+      if (l) {
         e._min_date = e.config.agenda_start || e.date.agenda_start(e._date), e._max_date = e.config.agenda_end || e.date.add_agenda(e._min_date, 1), e._cols = null, e._colsS = null, e._table_view = !0;
-        const l = e._getNavDateElement();
-        l && (l.innerHTML = e.templates.agenda_date(e._date)), e.set_sizes(), _();
+        const _ = e._getNavDateElement();
+        _ && (_.innerHTML = e.templates.agenda_date(e._date)), e.set_sizes(), d();
       } else
         e._table_view = !1;
     };
   });
 }, all_timed: function(e) {
-  e.config.all_timed = "short", e.config.all_timed_month = !1, e.ext.allTimed = { isMainAreaEvent: function(_) {
-    return !!(_._timed || e.config.all_timed === !0 || e.config.all_timed == "short" && i(_));
+  e.config.all_timed = "short", e.config.all_timed_month = !1, e.ext.allTimed = { isMainAreaEvent: function(d) {
+    return !!(d._timed || e.config.all_timed === !0 || e.config.all_timed == "short" && i(d));
   } };
-  var i = function(_) {
-    return !((_.end_date - _.start_date) / 36e5 >= 24) || e._drag_mode == "resize" && e._drag_id == _.id;
+  var i = function(d) {
+    return !((d.end_date - d.start_date) / 36e5 >= 24) || e._drag_mode == "resize" && e._drag_id == d.id;
   };
-  e._safe_copy = function(_) {
-    var r = null, d = e._copy_event(_);
-    return _.event_pid && (r = e.getEvent(_.event_pid)), r && r.isPrototypeOf(_) && (delete d.event_length, delete d.event_pid, delete d.rec_pattern, delete d.rec_type), d;
+  e._safe_copy = function(d) {
+    var r = null, l = e._copy_event(d);
+    return d.event_pid && (r = e.getEvent(d.event_pid)), r && r.isPrototypeOf(d) && (delete l.event_length, delete l.event_pid, delete l.rec_pattern, delete l.rec_type), l;
   };
-  var t = e._pre_render_events_line, n = e._pre_render_events_table, s = function(_, r) {
-    return this._table_view ? n.call(this, _, r) : t.call(this, _, r);
+  var t = e._pre_render_events_line, n = e._pre_render_events_table, s = function(d, r) {
+    return this._table_view ? n.call(this, d, r) : t.call(this, d, r);
   };
-  e._pre_render_events_line = e._pre_render_events_table = function(_, r) {
+  e._pre_render_events_line = e._pre_render_events_table = function(d, r) {
     if (!this.config.all_timed || this._table_view && this._mode != "month" || this._mode == "month" && !this.config.all_timed_month)
-      return s.call(this, _, r);
-    for (var d = 0; d < _.length; d++) {
-      var l = _[d];
-      if (!l._timed)
-        if (this.config.all_timed != "short" || i(l)) {
-          var h = this._safe_copy(l);
-          l._virtual ? h._first_chunk = !1 : h._first_chunk = !0, h._drag_resize = !1, h._virtual = !0, h.start_date = new Date(h.start_date), c(l) ? (h.end_date = u(h.start_date), this.config.last_hour != 24 && (h.end_date = f(h.start_date, this.config.last_hour))) : h.end_date = new Date(l.end_date);
+      return s.call(this, d, r);
+    for (var l = 0; l < d.length; l++) {
+      var _ = d[l];
+      if (!_._timed)
+        if (this.config.all_timed != "short" || i(_)) {
+          var h = this._safe_copy(_);
+          _._virtual ? h._first_chunk = !1 : h._first_chunk = !0, h._drag_resize = !1, h._virtual = !0, h.start_date = new Date(h.start_date), c(_) ? (h.end_date = f(h.start_date), this.config.last_hour != 24 && (h.end_date = u(h.start_date, this.config.last_hour))) : h.end_date = new Date(_.end_date);
           var p = !1;
-          h.start_date < this._max_date && h.end_date > this._min_date && h.start_date < h.end_date && (_[d] = h, p = !0);
-          var m = this._safe_copy(l);
-          if (m._virtual = !0, m.end_date = new Date(m.end_date), m.start_date < this._min_date ? m.start_date = f(this._min_date, this.config.first_hour) : m.start_date = f(u(l.start_date), this.config.first_hour), m.start_date < this._max_date && m.start_date < m.end_date) {
+          h.start_date < this._max_date && h.end_date > this._min_date && h.start_date < h.end_date && (d[l] = h, p = !0);
+          var v = this._safe_copy(_);
+          if (v._virtual = !0, v.end_date = new Date(v.end_date), v.start_date < this._min_date ? v.start_date = u(this._min_date, this.config.first_hour) : v.start_date = u(f(_.start_date), this.config.first_hour), v.start_date < this._max_date && v.start_date < v.end_date) {
             if (!p) {
-              _[d--] = m;
+              d[l--] = v;
               continue;
             }
-            _.splice(d + 1, 0, m), m._last_chunk = !1;
+            d.splice(l + 1, 0, v), v._last_chunk = !1;
           } else
             h._last_chunk = !0, h._drag_resize = !0;
         } else
-          this._mode != "month" && _.splice(d--, 1);
+          this._mode != "month" && d.splice(l--, 1);
     }
     var g = this._drag_mode != "move" && r;
-    return s.call(this, _, g);
+    return s.call(this, d, g);
     function c(y) {
-      var w = u(y.start_date);
+      var w = f(y.start_date);
       return +y.end_date > +w;
     }
-    function u(y) {
+    function f(y) {
       var w = e.date.add(y, 1, "day");
       return w = e.date.date_part(w);
     }
-    function f(y, w) {
+    function u(y, w) {
       var D = e.date.date_part(new Date(y));
       return D.setHours(w), D;
     }
   };
   var a = e.get_visible_events;
-  e.get_visible_events = function(_) {
-    return this.config.all_timed && this.config.multi_day ? a.call(this, !1) : a.call(this, _);
-  }, e.attachEvent("onBeforeViewChange", function(_, r, d, l) {
-    return e._allow_dnd = d == "day" || d == "week" || e.getView(d), !0;
-  }), e._is_main_area_event = function(_) {
-    return e.ext.allTimed.isMainAreaEvent(_);
+  e.get_visible_events = function(d) {
+    return this.config.all_timed && this.config.multi_day ? a.call(this, !1) : a.call(this, d);
+  }, e.attachEvent("onBeforeViewChange", function(d, r, l, _) {
+    return e._allow_dnd = l == "day" || l == "week" || e.getView(l), !0;
+  }), e._is_main_area_event = function(d) {
+    return e.ext.allTimed.isMainAreaEvent(d);
   };
   var o = e.updateEvent;
-  e.updateEvent = function(_) {
-    var r, d, l = e.getEvent(_);
-    l && (r = e.config.all_timed && !(e.isOneDayEvent(e._events[_]) || e.getState().drag_id)) && (d = e.config.update_render, e.config.update_render = !0), o.apply(e, arguments), l && r && (e.config.update_render = d);
+  e.updateEvent = function(d) {
+    var r, l, _ = e.getEvent(d);
+    _ && (r = e.config.all_timed && !(e.isOneDayEvent(e._events[d]) || e.getState().drag_id)) && (l = e.config.update_render, e.config.update_render = !0), o.apply(e, arguments), _ && r && (e.config.update_render = l);
   };
 }, collision: function(e) {
   let i, t;
@@ -6906,8 +6985,8 @@ const Fa = { active_links: function(e) {
     e.checkCollision(a) || e.deleteEvent(s);
   }), e.attachEvent("onEventSave", function(s, a, o) {
     if ((a = e._lame_clone(a)).id = s, !a.start_date || !a.end_date) {
-      const _ = e.getEvent(s);
-      a.start_date = new Date(_.start_date), a.end_date = new Date(_.end_date);
+      const d = e.getEvent(s);
+      a.start_date = new Date(d.start_date), a.end_date = new Date(d.end_date);
     }
     return (a.rrule && !a.recurring_event_id || a.rec_type) && e._roll_back_dates(a), e.checkCollision(a);
   }), e._check_sections_collision = function(s, a) {
@@ -6917,47 +6996,51 @@ const Fa = { active_links: function(e) {
     let a = [];
     const o = e.config.collision_limit;
     if (s.rec_type) {
-      let l = e.getRecDates(s);
-      for (let h = 0; h < l.length; h++) {
-        let p = e.getEvents(l[h].start_date, l[h].end_date);
-        for (let m = 0; m < p.length; m++)
-          (p[m].event_pid || p[m].id) != s.id && a.push(p[m]);
+      let _ = e.getRecDates(s);
+      for (let h = 0; h < _.length; h++) {
+        let p = e.getEvents(_[h].start_date, _[h].end_date);
+        for (let v = 0; v < p.length; v++)
+          (p[v].event_pid || p[v].id) != s.id && a.push(p[v]);
       }
     } else if (s.rrule) {
-      let l = e.getRecDates(s);
-      for (let h = 0; h < l.length; h++) {
-        let p = e.getEvents(l[h].start_date, l[h].end_date);
-        for (let m = 0; m < p.length; m++)
-          (String(p[m].id).split("#")[0] || p[m].id) != s.id && a.push(p[m]);
+      let _ = e.getRecDates(s);
+      for (let h = 0; h < _.length; h++) {
+        let p = e.getEvents(_[h].start_date, _[h].end_date);
+        for (let v = 0; v < p.length; v++)
+          (String(p[v].id).split("#")[0] || p[v].id) != s.id && a.push(p[v]);
       }
     } else {
       a = e.getEvents(s.start_date, s.end_date);
-      for (let l = 0; l < a.length; l++) {
-        let h = a[l];
+      for (let _ = 0; _ < a.length; _++) {
+        let h = a[_];
         if (h.id == s.id || h.event_length && [h.event_pid, h.event_length].join("#") == s.id) {
-          a.splice(l, 1);
+          a.splice(_, 1);
           break;
         }
         if (h.recurring_event_id && [h.recurring_event_id, h._pid_time].join("#") == s.id) {
-          a.splice(l, 1);
+          a.splice(_, 1);
+          break;
+        }
+        if (h.id && String(h.id).split("#")[0] == s.id) {
+          a.splice(_, 1);
           break;
         }
       }
     }
-    const _ = e._get_section_view(), r = e._get_section_property();
-    let d = !0;
-    if (_) {
-      let l = 0;
+    const d = e._get_section_view(), r = e._get_section_property();
+    let l = !0;
+    if (d) {
+      let _ = 0;
       for (let h = 0; h < a.length; h++)
-        a[h].id != s.id && this._check_sections_collision(a[h], s) && l++;
-      l >= o && (d = !1);
+        a[h].id != s.id && this._check_sections_collision(a[h], s) && _++;
+      _ >= o && (l = !1);
     } else
-      a.length >= o && (d = !1);
-    if (!d) {
-      let l = !e.callEvent("onEventCollision", [s, a]);
-      return l || (s[r] = i || s[r]), l;
+      a.length >= o && (l = !1);
+    if (!l) {
+      let _ = !e.callEvent("onEventCollision", [s, a]);
+      return _ || (s[r] = i || s[r]), _;
     }
-    return d;
+    return l;
   };
 }, container_autoresize: function(e) {
   e.config.container_autoresize = !0, e.config.month_day_min_height = 90, e.config.min_grid_size = 25, e.config.min_map_size = 400;
@@ -6965,32 +7048,32 @@ const Fa = { active_links: function(e) {
   e._pre_render_events = function(h, p) {
     if (!e.config.container_autoresize || !t)
       return i.apply(this, arguments);
-    var m = this.xy.bar_height, g = this._colsS.heights, c = this._colsS.heights = [0, 0, 0, 0, 0, 0, 0], u = this._els.dhx_cal_data[0];
+    var v = this.xy.bar_height, g = this._colsS.heights, c = this._colsS.heights = [0, 0, 0, 0, 0, 0, 0], f = this._els.dhx_cal_data[0];
     if (h = this._table_view ? this._pre_render_events_table(h, p) : this._pre_render_events_line(h, p), this._table_view)
       if (p)
         this._colsS.heights = g;
       else {
-        var f = u.firstChild;
-        const v = f.querySelectorAll(".dhx_cal_month_row");
-        if (v && v.length) {
-          for (var y = 0; y < v.length; y++) {
-            if (c[y]++, c[y] * m > this._colsS.height - this.xy.month_head_height) {
-              var w = v[y].querySelectorAll(".dhx_cal_month_cell"), D = this._colsS.height - this.xy.month_head_height;
-              1 * this.config.max_month_events !== this.config.max_month_events || c[y] <= this.config.max_month_events ? D = c[y] * m : (this.config.max_month_events + 1) * m > this._colsS.height - this.xy.month_head_height && (D = (this.config.max_month_events + 1) * m), v[y].style.height = D + this.xy.month_head_height + "px";
+        var u = f.firstChild;
+        const m = u.querySelectorAll(".dhx_cal_month_row");
+        if (m && m.length) {
+          for (var y = 0; y < m.length; y++) {
+            if (c[y]++, c[y] * v > this._colsS.height - this.xy.month_head_height) {
+              var w = m[y].querySelectorAll(".dhx_cal_month_cell"), D = this._colsS.height - this.xy.month_head_height;
+              1 * this.config.max_month_events !== this.config.max_month_events || c[y] <= this.config.max_month_events ? D = c[y] * v : (this.config.max_month_events + 1) * v > this._colsS.height - this.xy.month_head_height && (D = (this.config.max_month_events + 1) * v), m[y].style.height = D + this.xy.month_head_height + "px";
               for (var M = 0; M < w.length; M++)
                 w[M].childNodes[1].style.height = D + "px";
               c[y] = (c[y - 1] || 0) + w[0].offsetHeight;
             }
-            c[y] = (c[y - 1] || 0) + v[y].querySelectorAll(".dhx_cal_month_cell")[0].offsetHeight;
+            c[y] = (c[y - 1] || 0) + m[y].querySelectorAll(".dhx_cal_month_cell")[0].offsetHeight;
           }
-          c.unshift(0), f.parentNode.offsetHeight < f.parentNode.scrollHeight && f._h_fix;
+          c.unshift(0), u.parentNode.offsetHeight < u.parentNode.scrollHeight && u._h_fix;
         } else if (h.length || this._els.dhx_multi_day[0].style.visibility != "visible" || (c[0] = -1), h.length || c[0] == -1) {
-          var k = (c[0] + 1) * m + 1;
+          var k = (c[0] + 1) * v + 1;
           s != k + 1 && (this._obj.style.height = n - s + k - 1 + "px"), k += "px";
           const x = this._els.dhx_cal_navline[0].offsetHeight, b = this._els.dhx_cal_header[0].offsetHeight;
-          u.style.height = this._obj.offsetHeight - x - b - (this.xy.margin_top || 0) + "px";
+          f.style.height = this._obj.offsetHeight - x - b - (this.xy.margin_top || 0) + "px";
           var N = this._els.dhx_multi_day[0];
-          N.style.height = k, N.style.visibility = c[0] == -1 ? "hidden" : "visible", N.style.display = c[0] == -1 ? "none" : "", (N = this._els.dhx_multi_day[1]).style.height = k, N.style.visibility = c[0] == -1 ? "hidden" : "visible", N.style.display = c[0] == -1 ? "none" : "", N.className = c[0] ? "dhx_multi_day_icon" : "dhx_multi_day_icon_small", this._dy_shift = (c[0] + 1) * m, c[0] = 0;
+          N.style.height = k, N.style.visibility = c[0] == -1 ? "hidden" : "visible", N.style.display = c[0] == -1 ? "none" : "", (N = this._els.dhx_multi_day[1]).style.height = k, N.style.visibility = c[0] == -1 ? "hidden" : "visible", N.style.display = c[0] == -1 ? "none" : "", N.className = c[0] ? "dhx_multi_day_icon" : "dhx_multi_day_icon_small", this._dy_shift = (c[0] + 1) * v, c[0] = 0;
         }
       }
     return h;
@@ -6998,8 +7081,8 @@ const Fa = { active_links: function(e) {
   var a = ["dhx_cal_navline", "dhx_cal_header", "dhx_multi_day", "dhx_cal_data"], o = function(h) {
     n = 0;
     for (var p = 0; p < a.length; p++) {
-      var m = a[p], g = e._els[m] ? e._els[m][0] : null, c = 0;
-      switch (m) {
+      var v = a[p], g = e._els[v] ? e._els[v][0] : null, c = 0;
+      switch (v) {
         case "dhx_cal_navline":
         case "dhx_cal_header":
           c = g.offsetHeight;
@@ -7008,60 +7091,60 @@ const Fa = { active_links: function(e) {
           c = g ? g.offsetHeight - 1 : 0, s = c;
           break;
         case "dhx_cal_data":
-          var u = e.getState().mode;
-          if (g.childNodes[1] && u != "month") {
+          var f = e.getState().mode;
+          if (g.childNodes[1] && f != "month") {
             let k = 0;
             for (let N = 0; N < g.childNodes.length; N++)
               g.childNodes[N].offsetHeight > k && (k = g.childNodes[N].offsetHeight);
             c = k;
           } else
             c = Math.max(g.offsetHeight - 1, g.scrollHeight);
-          if (u == "month")
+          if (f == "month")
             e.config.month_day_min_height && !h && (c = g.querySelectorAll(".dhx_cal_month_row").length * e.config.month_day_min_height), h && (g.style.height = c + "px");
-          else if (u == "year")
+          else if (f == "year")
             c = 190 * e.config.year_y;
-          else if (u == "agenda") {
+          else if (f == "agenda") {
             if (c = 0, g.children && g.children.length)
               if (g.children.length === 1 && g.children[0].classList.contains("dhx_cal_agenda_no_events"))
                 c = 300;
               else
-                for (var f = 0; f < g.children.length; f++)
-                  c += g.children[f].offsetHeight;
+                for (var u = 0; u < g.children.length; u++)
+                  c += g.children[u].offsetHeight;
             c + 2 < e.config.min_grid_size ? c = e.config.min_grid_size : c += 2;
-          } else if (u == "week_agenda") {
-            let k = l(), N = g.querySelector(".dhx_wa_ev_body") || 0, v = window.getComputedStyle(g.querySelector(".dhx_wa_scale_bar")).getPropertyValue("--dhx-scheduler-week-agenda-scale-height") || 35;
-            c = k * (1.1 * N.offsetHeight) + 4 * (parseInt(v) + 10);
-          } else if (u == "map") {
+          } else if (f == "week_agenda") {
+            let k = _(), N = g.querySelector(".dhx_wa_ev_body") || 0, m = window.getComputedStyle(g.querySelector(".dhx_wa_scale_bar")).getPropertyValue("--dhx-scheduler-week-agenda-scale-height") || 35;
+            c = k * (1.1 * N.offsetHeight) + 4 * (parseInt(m) + 10);
+          } else if (f == "map") {
             c = 0;
             var y = g.querySelectorAll(".dhx_map_line");
-            for (f = 0; f < y.length; f++)
-              c += y[f].offsetHeight;
+            for (u = 0; u < y.length; u++)
+              c += y[u].offsetHeight;
             c + 2 < e.config.min_map_size ? c = e.config.min_map_size : c += 2;
           } else if (e._gridView)
             if (c = 0, g.childNodes[1].childNodes[0].childNodes && g.childNodes[1].childNodes[0].childNodes.length) {
-              for (y = g.childNodes[1].childNodes[0].childNodes[0].childNodes, f = 0; f < y.length; f++)
-                c += y[f].offsetHeight;
+              for (y = g.childNodes[1].childNodes[0].childNodes[0].childNodes, u = 0; u < y.length; u++)
+                c += y[u].offsetHeight;
               (c += 2) < e.config.min_grid_size && (c = e.config.min_grid_size);
             } else
               c = e.config.min_grid_size;
-          if (e.matrix && e.matrix[u]) {
+          if (e.matrix && e.matrix[f]) {
             if (h)
               c += 0, g.style.height = c + "px";
             else {
               c = 0;
-              for (var w = e.matrix[u], D = w.y_unit, M = 0; M < D.length; M++)
+              for (var w = e.matrix[f], D = w.y_unit, M = 0; M < D.length; M++)
                 c += w.getSectionHeight(D[M].key);
-              e.$container.clientWidth != e.$container.scrollWidth && (c += d());
+              e.$container.clientWidth != e.$container.scrollWidth && (c += l());
             }
             c -= 1;
           }
-          (u == "day" || u == "week" || e._props && e._props[u]) && (c += 2);
+          (f == "day" || f == "week" || e._props && e._props[f]) && (c += 2);
       }
       n += c += 1;
     }
     e._obj.style.height = n + "px", h || e.updateView();
   };
-  function _() {
+  function d() {
     t = !1, e.callEvent("onAfterSchedulerResize", []), t = !0;
   }
   var r = function() {
@@ -7070,35 +7153,35 @@ const Fa = { active_links: function(e) {
     var h = e.getState().mode;
     if (!h)
       return !0;
-    var p = window.requestAnimationFrame || window.setTimeout, m = document.documentElement.scrollTop;
+    var p = window.requestAnimationFrame || window.setTimeout, v = document.documentElement.scrollTop;
     p(function() {
       !e.$destroyed && e.$initialized && o();
     }), e.matrix && e.matrix[h] || h == "month" ? p(function() {
-      !e.$destroyed && e.$initialized && (o(!0), document.documentElement.scrollTop = m, _());
-    }, 1) : _();
+      !e.$destroyed && e.$initialized && (o(!0), document.documentElement.scrollTop = v, d());
+    }, 1) : d();
   };
-  function d() {
+  function l() {
     var h = document.createElement("div");
     h.style.cssText = "visibility:hidden;position:absolute;left:-1000px;width:100px;padding:0px;margin:0px;height:110px;min-height:100px;overflow-y:scroll;", document.body.appendChild(h);
     var p = h.offsetWidth - h.clientWidth;
     return document.body.removeChild(h), p;
   }
-  function l() {
+  function _() {
     const h = document.querySelectorAll(".dhx_wa_row_autoresize"), p = [];
-    return h.forEach((m) => {
+    return h.forEach((v) => {
       let g = 0;
-      m.querySelectorAll(".dhx_wa_day_cont").forEach((c) => {
-        const u = c.querySelectorAll(".dhx_wa_ev_body").length;
-        u > g && (g = u);
+      v.querySelectorAll(".dhx_wa_day_cont").forEach((c) => {
+        const f = c.querySelectorAll(".dhx_wa_ev_body").length;
+        f > g && (g = f);
       }), p.push(g);
-    }), p.reduce((m, g) => m + g, 0);
+    }), p.reduce((v, g) => v + g, 0);
   }
   e.attachEvent("onBeforeViewChange", function() {
     var h = e.config.container_autoresize;
     if (e.xy.$original_scroll_width || (e.xy.$original_scroll_width = e.xy.scroll_width), e.xy.scroll_width = h ? 0 : e.xy.$original_scroll_width, e.matrix)
       for (var p in e.matrix) {
-        var m = e.matrix[p];
-        m.$original_section_autoheight || (m.$original_section_autoheight = m.section_autoheight), m.section_autoheight = !h && m.$original_section_autoheight;
+        var v = e.matrix[p];
+        v.$original_section_autoheight || (v.$original_section_autoheight = v.section_autoheight), v.section_autoheight = !h && v.$original_section_autoheight;
       }
     return !0;
   }), e.attachEvent("onViewChange", r), e.attachEvent("onXLE", r), e.attachEvent("onEventChanged", r), e.attachEvent("onEventCreated", r), e.attachEvent("onEventAdded", r), e.attachEvent("onEventDeleted", r), e.attachEvent("onAfterSchedulerResize", r), e.attachEvent("onClearAll", r), e.attachEvent("onBeforeExpand", function() {
@@ -7112,58 +7195,58 @@ const Fa = { active_links: function(e) {
   }
   const t = e.date.date_to_str("%Y-%m-%d %H:%i"), n = e.date.str_to_date("%Y-%m-%d %H:%i");
   function s() {
-    const o = function(d) {
+    const o = function(l) {
       try {
-        return window.localStorage.getItem(d);
+        return window.localStorage.getItem(l);
       } catch {
         return null;
       }
     }(i());
     if (!o)
       return { date: null, mode: null };
-    let _;
+    let d;
     try {
-      _ = JSON.parse(o);
+      d = JSON.parse(o);
     } catch {
       return { date: null, mode: null };
     }
-    if (!_ || typeof _ != "object")
+    if (!d || typeof d != "object")
       return { date: null, mode: null };
     let r = null;
-    if (typeof _.date == "string" && _.date.length > 0)
+    if (typeof d.date == "string" && d.date.length > 0)
       try {
-        r = n(_.date), isNaN(+r) && (r = null);
+        r = n(d.date), isNaN(+r) && (r = null);
       } catch {
         r = null;
       }
-    return { date: r, mode: typeof _.mode == "string" ? _.mode : null };
+    return { date: r, mode: typeof d.mode == "string" ? d.mode : null };
   }
   const a = e._getInitialState;
   e._getInitialState = function(o) {
-    const _ = a.call(this, o);
+    const d = a.call(this, o);
     if (function() {
       if (!e._get_url_nav)
         return !1;
-      const l = e._get_url_nav();
-      return !!l && !!(l.date || l.mode || l.event);
+      const _ = e._get_url_nav();
+      return !!_ && !!(_.date || _.mode || _.event);
     }())
-      return _;
-    const r = s(), d = { date: _.date, mode: _.mode };
-    if (r.date && (d.date = r.date), r.mode)
+      return d;
+    const r = s(), l = { date: d.date, mode: d.mode };
+    if (r.date && (l.date = r.date), r.mode)
       try {
-        this.isViewExists(r.mode) && (d.mode = r.mode);
+        this.isViewExists(r.mode) && (l.mode = r.mode);
       } catch {
       }
-    return d;
-  }, e.attachEvent("onViewChange", function(o, _) {
-    const r = i(), d = { date: t(_), mode: o };
-    return function(l, h) {
+    return l;
+  }, e.attachEvent("onViewChange", function(o, d) {
+    const r = i(), l = { date: t(d), mode: o };
+    return function(_, h) {
       try {
-        return window.localStorage.setItem(l, h), !0;
+        return window.localStorage.setItem(_, h), !0;
       } catch {
         return !1;
       }
-    }(r, JSON.stringify(d)), !0;
+    }(r, JSON.stringify(l)), !0;
   });
 }, daytimeline: function(e) {
   ce("Day Timeline", e.assert);
@@ -7177,11 +7260,11 @@ const Fa = { active_links: function(e) {
     return n += `<div class='${i.type}' ${t}></div>`;
   }, set_value: function(i, t, n, s) {
     (function() {
-      m();
+      v();
       var p = e.attachEvent("onAfterLightbox", function() {
-        m(), e.detachEvent(p);
+        v(), e.detachEvent(p);
       });
-      function m() {
+      function v() {
         if (i._combo && i._combo.DOMParent) {
           var g = i._combo;
           g.unload ? g.unload() : g.destructor && g.destructor(), g.DOMParent = g.DOMelem = null;
@@ -7192,20 +7275,20 @@ const Fa = { active_links: function(e) {
     if (a.enableFilteringMode(s.filtering, s.script_path || null, !!s.cache), s.script_path) {
       var o = n[s.map_to];
       o ? s.cached_options[o] ? (a.addOption(o, s.cached_options[o]), a.disable(1), a.selectOption(0), a.disable(0)) : e.ajax.get(s.script_path + "?id=" + o + "&uid=" + e.uid(), function(p) {
-        var m, g = p.xmlDoc.responseText;
+        var v, g = p.xmlDoc.responseText;
         try {
-          m = JSON.parse(g).options[0].text;
+          v = JSON.parse(g).options[0].text;
         } catch {
-          m = e.ajax.xpath("//option", p.xmlDoc)[0].childNodes[0].nodeValue;
+          v = e.ajax.xpath("//option", p.xmlDoc)[0].childNodes[0].nodeValue;
         }
-        s.cached_options[o] = m, a.addOption(o, m), a.disable(1), a.selectOption(0), a.disable(0);
+        s.cached_options[o] = v, a.addOption(o, v), a.disable(1), a.selectOption(0), a.disable(0);
       }) : a.setComboValue("");
     } else {
-      for (var _ = [], r = 0; r < s.options.length; r++) {
-        var d = s.options[r], l = [d.key, d.label, d.css];
-        _.push(l);
+      for (var d = [], r = 0; r < s.options.length; r++) {
+        var l = s.options[r], _ = [l.key, l.label, l.css];
+        d.push(_);
       }
-      if (a.addOption(_), n[s.map_to]) {
+      if (a.addOption(d), n[s.map_to]) {
         var h = a.getIndexByValue(n[s.map_to]);
         a.selectOption(h);
       }
@@ -7225,8 +7308,8 @@ const Fa = { active_links: function(e) {
   }, set_value: function(i, t, n, s) {
     for (var a = i.getElementsByTagName("input"), o = 0; o < a.length; o++) {
       a[o].checked = !1;
-      var _ = n[s.map_to] || t;
-      a[o].value == _ && (a[o].checked = !0);
+      var d = n[s.map_to] || t;
+      a[o].value == d && (a[o].checked = !0);
     }
   }, get_value: function(i, t, n) {
     for (var s = i.getElementsByTagName("input"), a = 0; a < s.length; a++)
@@ -7239,12 +7322,12 @@ const Fa = { active_links: function(e) {
     i = e._lightbox.querySelector(`#${s.id}`), s.height && (i.style.height = `${s.height}px`);
     var a = e.uid(), o = s.checked_value !== void 0 ? t == s.checked_value : !!t;
     i.className += " dhx_cal_checkbox";
-    var _ = "<input id='" + a + "' type='checkbox' value='true' name='" + s.name + "'" + (o ? "checked='true'" : "") + "'>", r = "<label for='" + a + "'>" + (e.locale.labels["section_" + s.name] || s.name) + "</label>";
-    if (e.config.wide_form ? (i.innerHTML = r, i.nextSibling.innerHTML = _) : i.innerHTML = _ + r, s.handler) {
-      var d = i.getElementsByTagName("input")[0];
-      if (d.$_eventAttached)
+    var d = "<input id='" + a + "' type='checkbox' value='true' name='" + s.name + "'" + (o ? "checked='true'" : "") + "'>", r = "<label for='" + a + "'>" + (e.locale.labels["section_" + s.name] || s.name) + "</label>";
+    if (e.config.wide_form ? (i.innerHTML = r, i.nextSibling.innerHTML = d) : i.innerHTML = d + r, s.handler) {
+      var l = i.getElementsByTagName("input")[0];
+      if (l.$_eventAttached)
         return;
-      d.$_eventAttached = !0, e.event(d, "click", s.handler);
+      l.$_eventAttached = !0, e.event(l, "click", s.handler);
     }
   }, get_value: function(i, t, n) {
     var s = (i = e._lightbox.querySelector(`#${n.id}`)).getElementsByTagName("input")[0];
@@ -7323,62 +7406,62 @@ const Fa = { active_links: function(e) {
         a = i(a || {}, { name: "calendar.ical", data: this._serialize_plain(null, a) }), this._send_to_export(a, "ical");
       }, n.exportToExcel = function(a) {
         a = i(a || {}, { name: "calendar.xlsx", title: "Events", data: this._serialize_plain(this.templates.xml_format, a), columns: this._serialize_columns() }), this._send_to_export(a, "excel");
-      }, n._ajax_to_export = function(a, o, _) {
+      }, n._ajax_to_export = function(a, o, d) {
         delete a.callback;
         var r = a.server || "https://export.dhtmlx.com/scheduler";
-        window.dhtmlxAjax.post(r, "type=" + o + "&store=1&data=" + encodeURIComponent(JSON.stringify(a)), function(d) {
-          var l = null;
-          if (!(d.xmlDoc.status > 400))
+        window.dhtmlxAjax.post(r, "type=" + o + "&store=1&data=" + encodeURIComponent(JSON.stringify(a)), function(l) {
+          var _ = null;
+          if (!(l.xmlDoc.status > 400))
             try {
-              l = JSON.parse(d.xmlDoc.responseText);
+              _ = JSON.parse(l.xmlDoc.responseText);
             } catch {
             }
-          _(l);
+          d(_);
         });
       }, n._plain_export_copy = function(a, o) {
-        var _ = {};
+        var d = {};
         for (var r in a)
-          _[r] = a[r];
-        return _.start_date = o(_.start_date), _.end_date = o(_.end_date), _.$text = this.templates.event_text(a.start_date, a.end_date, a), _;
+          d[r] = a[r];
+        return d.start_date = o(d.start_date), d.end_date = o(d.end_date), d.$text = this.templates.event_text(a.start_date, a.end_date, a), d;
       }, n._serialize_plain = function(a, o) {
-        var _;
-        a = a || n.date.date_to_str("%Y%m%dT%H%i%s", !0), _ = o && o.start && o.end ? n.getEvents(o.start, o.end) : n.getEvents();
-        for (var r = [], d = 0; d < _.length; d++)
-          r[d] = this._plain_export_copy(_[d], a);
+        var d;
+        a = a || n.date.date_to_str("%Y%m%dT%H%i%s", !0), d = o && o.start && o.end ? n.getEvents(o.start, o.end) : n.getEvents();
+        for (var r = [], l = 0; l < d.length; l++)
+          r[l] = this._plain_export_copy(d[l], a);
         return r;
       }, n._serialize_columns = function() {
         return [{ id: "start_date", header: "Start Date", width: 30 }, { id: "end_date", header: "End Date", width: 30 }, { id: "$text", header: "Text", width: 100 }];
       }, n._send_to_export = function(a, o) {
         if (a.version || (a.version = n.version), a.skin || (a.skin = n.skin), a.callback)
           return n._ajax_to_export(a, o, a.callback);
-        var _ = this._create_hidden_form();
-        _.firstChild.action = a.server || "https://export.dhtmlx.com/scheduler", _.firstChild.childNodes[0].value = JSON.stringify(a), _.firstChild.childNodes[1].value = o, _.firstChild.submit();
+        var d = this._create_hidden_form();
+        d.firstChild.action = a.server || "https://export.dhtmlx.com/scheduler", d.firstChild.childNodes[0].value = JSON.stringify(a), d.firstChild.childNodes[1].value = o, d.firstChild.submit();
       }, n._create_hidden_form = function() {
         if (!this._hidden_export_form) {
           var a = this._hidden_export_form = document.createElement("div");
           a.style.display = "none", a.innerHTML = "<form method='POST' target='_blank'><input type='text' name='data'><input type='hidden' name='type' value=''></form>", document.body.appendChild(a);
         }
         return this._hidden_export_form;
-      }, n._get_export_size = function(a, o, _, r, d, l, h) {
+      }, n._get_export_size = function(a, o, d, r, l, _, h) {
         r = parseInt(r) / 25.4 || 4;
-        var p = { A5: { x: 148, y: 210 }, A4: { x: 210, y: 297 }, A3: { x: 297, y: 420 }, A2: { x: 420, y: 594 }, A1: { x: 594, y: 841 }, A0: { x: 841, y: 1189 } }, m = t("dhx_cal_data", this).x, g = { y: t("dhx_cal_data", this).y + t("dhx_cal_header", this).y + t("dhx_multi_day", this).y };
-        return g.x = a === "full" ? m : Math.floor((o === "landscape" ? p[a].y : p[a].x) * r), h && (g.x *= parseFloat(h.x) || 1, g.y *= parseFloat(h.y) || 1), g;
+        var p = { A5: { x: 148, y: 210 }, A4: { x: 210, y: 297 }, A3: { x: 297, y: 420 }, A2: { x: 420, y: 594 }, A1: { x: 594, y: 841 }, A0: { x: 841, y: 1189 } }, v = t("dhx_cal_data", this).x, g = { y: t("dhx_cal_data", this).y + t("dhx_cal_header", this).y + t("dhx_multi_day", this).y };
+        return g.x = a === "full" ? v : Math.floor((o === "landscape" ? p[a].y : p[a].x) * r), h && (g.x *= parseFloat(h.x) || 1, g.y *= parseFloat(h.y) || 1), g;
       }, n._export_html = function(a) {
-        var o, _, r, d = (o = void 0, _ = void 0, (r = s()) && (_ = r.scrollable, o = r.smart_rendering), { nav_height: n.xy.nav_height, scroll_width: n.xy.scroll_width, style_width: n._obj.style.width, style_height: n._obj.style.height, timeline_scrollable: _, timeline_smart_rendering: o }), l = n._get_export_size(a.format, a.orientation, a.zoom, a.dpi, a.header, a.footer, a.scales), h = "";
+        var o, d, r, l = (o = void 0, d = void 0, (r = s()) && (d = r.scrollable, o = r.smart_rendering), { nav_height: n.xy.nav_height, scroll_width: n.xy.scroll_width, style_width: n._obj.style.width, style_height: n._obj.style.height, timeline_scrollable: d, timeline_smart_rendering: o }), _ = n._get_export_size(a.format, a.orientation, a.zoom, a.dpi, a.header, a.footer, a.scales), h = "";
         try {
-          (function(p, m) {
+          (function(p, v) {
             n._obj.style.width = p.x + "px", n._obj.style.height = p.y + "px", n.xy.nav_height = 0, n.xy.scroll_width = 0;
             var g = s();
-            (m.timeline_scrollable || m.timeline_smart_rendering) && (g.scrollable = !1, g.smart_rendering = !1);
-          })(l, d), n.setCurrentView(), h = n._obj.innerHTML;
+            (v.timeline_scrollable || v.timeline_smart_rendering) && (g.scrollable = !1, g.smart_rendering = !1);
+          })(_, l), n.setCurrentView(), h = n._obj.innerHTML;
         } catch (p) {
           console.error(p);
         } finally {
           (function(p) {
             n.xy.scroll_width = p.scroll_width, n.xy.nav_height = p.nav_height, n._obj.style.width = p.style_width, n._obj.style.height = p.style_height;
-            var m = s();
-            (p.timeline_scrollable || p.timeline_smart_rendering) && (m.scrollable = p.timeline_scrollable, m.smart_rendering = p.timeline_smart_rendering);
-          })(d), n.setCurrentView();
+            var v = s();
+            (p.timeline_scrollable || p.timeline_smart_rendering) && (v.scrollable = p.timeline_scrollable, v.smart_rendering = p.timeline_smart_rendering);
+          })(l), n.setCurrentView();
         }
         return h;
       };
@@ -7437,8 +7520,8 @@ const Fa = { active_links: function(e) {
       return { modifiers: { shift: !1, alt: !1, ctrl: !1, meta: !1 }, keyCode: null };
     }, parse: function(n) {
       for (var s = [], a = this.getExpressions(this.trim(n)), o = 0; o < a.length; o++) {
-        for (var _ = this.getWords(a[o]), r = this.createCommand(), d = 0; d < _.length; d++)
-          this.commandKeys[_[d]] ? r.modifiers[_[d]] = !0 : this.specialKeys[_[d]] ? r.keyCode = this.specialKeys[_[d]] : r.keyCode = _[d].charCodeAt(0);
+        for (var d = this.getWords(a[o]), r = this.createCommand(), l = 0; l < d.length; l++)
+          this.commandKeys[d[l]] ? r.modifiers[d[l]] = !0 : this.specialKeys[d[l]] ? r.keyCode = this.specialKeys[d[l]] : r.keyCode = d[l].charCodeAt(0);
         s.push(r);
       }
       return s;
@@ -7471,8 +7554,8 @@ const Fa = { active_links: function(e) {
       a && (a.call(this, s), s.preventDefault ? s.preventDefault() : s.returnValue = !1);
     }, bind: function(n, s) {
       this._handlers || (this._handlers = {});
-      for (var a = t.$keyboardNavigation.shortcuts, o = a.parse(n), _ = 0; _ < o.length; _++)
-        this._handlers[a.getHash(o[_])] = s;
+      for (var a = t.$keyboardNavigation.shortcuts, o = a.parse(n), d = 0; d < o.length; d++)
+        this._handlers[a.getHash(o[d])] = s;
     }, unbind: function(n) {
       for (var s = t.$keyboardNavigation.shortcuts, a = s.parse(n), o = 0; o < a.length; o++)
         this._handlers[s.getHash(a[o])] && delete this._handlers[s.getHash(a[o])];
@@ -7486,9 +7569,9 @@ const Fa = { active_links: function(e) {
     t.$keyboardNavigation.getFocusableNodes = t._getFocusableNodes, t.$keyboardNavigation.trapFocus = function(n, s) {
       if (s.keyCode != 9)
         return !1;
-      for (var a, o = t.$keyboardNavigation.getFocusableNodes(n), _ = document.activeElement, r = -1, d = 0; d < o.length; d++)
-        if (o[d] == _) {
-          r = d;
+      for (var a, o = t.$keyboardNavigation.getFocusableNodes(n), d = document.activeElement, r = -1, l = 0; l < o.length; l++)
+        if (o[l] == d) {
+          r = l;
           break;
         }
       if (s.shiftKey) {
@@ -7506,32 +7589,32 @@ const Fa = { active_links: function(e) {
       var n = document.createElement("div");
       return n.setAttribute("tabindex", -1), n.className = "dhx_focus_slot", n;
     }, renderMultiple: function(n, s, a) {
-      for (var o = [], _ = new Date(n), r = new Date(Math.min(s.valueOf(), t.date.add(t.date.day_start(new Date(n)), 1, "day").valueOf())); _.valueOf() < s.valueOf(); )
-        o = o.concat(a.call(this, _, new Date(Math.min(r.valueOf(), s.valueOf())))), _ = t.date.day_start(t.date.add(_, 1, "day")), r = t.date.day_start(t.date.add(_, 1, "day")), r = new Date(Math.min(r.valueOf(), s.valueOf()));
+      for (var o = [], d = new Date(n), r = new Date(Math.min(s.valueOf(), t.date.add(t.date.day_start(new Date(n)), 1, "day").valueOf())); d.valueOf() < s.valueOf(); )
+        o = o.concat(a.call(this, d, new Date(Math.min(r.valueOf(), s.valueOf())))), d = t.date.day_start(t.date.add(d, 1, "day")), r = t.date.day_start(t.date.add(d, 1, "day")), r = new Date(Math.min(r.valueOf(), s.valueOf()));
       return o;
     }, render: function(n, s, a) {
       this.clear();
-      var o = [], _ = t.$keyboardNavigation.TimeSlot.prototype._modes;
+      var o = [], d = t.$keyboardNavigation.TimeSlot.prototype._modes;
       switch (t.$keyboardNavigation.TimeSlot.prototype._getMode()) {
-        case _.units:
+        case d.units:
           o = this.renderVerticalMarker(n, s, a);
           break;
-        case _.timeline:
+        case d.timeline:
           o = this.renderTimelineMarker(n, s, a);
           break;
-        case _.year:
+        case d.year:
           o = o.concat(this.renderMultiple(n, s, this.renderYearMarker));
           break;
-        case _.month:
+        case d.month:
           o = this.renderMonthMarker(n, s);
           break;
-        case _.weekAgenda:
+        case d.weekAgenda:
           o = o.concat(this.renderMultiple(n, s, this.renderWeekAgendaMarker));
           break;
-        case _.list:
+        case d.list:
           o = this.renderAgendaMarker(n, s);
           break;
-        case _.dayColumns:
+        case d.dayColumns:
           o = o.concat(this.renderMultiple(n, s, this.renderVerticalMarker));
       }
       this.addWaiAriaLabel(o, n, s, a), this.addDataAttributes(o, n, s, a);
@@ -7540,25 +7623,25 @@ const Fa = { active_links: function(e) {
           return o[r];
       return null;
     }, addDataAttributes: function(n, s, a, o) {
-      for (var _ = t.date.date_to_str(t.config.api_date), r = _(s), d = _(a), l = 0; l < n.length; l++)
-        n[l].setAttribute("data-start-date", r), n[l].setAttribute("data-end-date", d), o && n[l].setAttribute("data-section", o);
+      for (var d = t.date.date_to_str(t.config.api_date), r = d(s), l = d(a), _ = 0; _ < n.length; _++)
+        n[_].setAttribute("data-start-date", r), n[_].setAttribute("data-end-date", l), o && n[_].setAttribute("data-section", o);
     }, addWaiAriaLabel: function(n, s, a, o) {
-      var _ = "", r = t.getState().mode, d = !1;
-      if (_ += t.templates.day_date(s), t.date.day_start(new Date(s)).valueOf() != s.valueOf() && (_ += " " + t.templates.hour_scale(s), d = !0), t.date.day_start(new Date(s)).valueOf() != t.date.day_start(new Date(a)).valueOf() && (_ += " - " + t.templates.day_date(a), (d || t.date.day_start(new Date(a)).valueOf() != a.valueOf()) && (_ += " " + t.templates.hour_scale(a))), o) {
+      var d = "", r = t.getState().mode, l = !1;
+      if (d += t.templates.day_date(s), t.date.day_start(new Date(s)).valueOf() != s.valueOf() && (d += " " + t.templates.hour_scale(s), l = !0), t.date.day_start(new Date(s)).valueOf() != t.date.day_start(new Date(a)).valueOf() && (d += " - " + t.templates.day_date(a), (l || t.date.day_start(new Date(a)).valueOf() != a.valueOf()) && (d += " " + t.templates.hour_scale(a))), o) {
         if (t.matrix && t.matrix[r]) {
           const h = t.matrix[r], p = h.y_unit[h.order[o]];
-          _ += ", " + t.templates[r + "_scale_label"](p.key, p.label, p);
+          d += ", " + t.templates[r + "_scale_label"](p.key, p.label, p);
         } else if (t._props && t._props[r]) {
           const h = t._props[r], p = h.options[h.order[o]];
-          _ += ", " + t.templates[r + "_scale_text"](p.key, p.label, p);
+          d += ", " + t.templates[r + "_scale_text"](p.key, p.label, p);
         }
       }
-      for (var l = 0; l < n.length; l++)
-        t._waiAria.setAttributes(n[l], { "aria-label": _, "aria-live": "polite" });
+      for (var _ = 0; _ < n.length; _++)
+        t._waiAria.setAttributes(n[_], { "aria-label": d, "aria-live": "polite" });
     }, renderWeekAgendaMarker: function(n, s) {
-      for (var a = t.$container.querySelectorAll(".dhx_wa_day_cont .dhx_wa_scale_bar"), o = t.date.week_start(new Date(t.getState().min_date)), _ = -1, r = t.date.day_start(new Date(n)), d = 0; d < a.length && (_++, t.date.day_start(new Date(o)).valueOf() != r.valueOf()); d++)
+      for (var a = t.$container.querySelectorAll(".dhx_wa_day_cont .dhx_wa_scale_bar"), o = t.date.week_start(new Date(t.getState().min_date)), d = -1, r = t.date.day_start(new Date(n)), l = 0; l < a.length && (d++, t.date.day_start(new Date(o)).valueOf() != r.valueOf()); l++)
         o = t.date.add(o, 1, "day");
-      return _ != -1 ? this._wrapDiv(a[_]) : [];
+      return d != -1 ? this._wrapDiv(a[d]) : [];
     }, _wrapDiv: function(n) {
       var s = this.createElement();
       return s.style.top = n.offsetTop + "px", s.style.left = n.offsetLeft + "px", s.style.width = n.offsetWidth + "px", s.style.height = n.offsetHeight + "px", n.appendChild(s), [s];
@@ -7571,68 +7654,68 @@ const Fa = { active_links: function(e) {
       var a = this.createElement();
       return a.style.height = "1px", a.style.width = "100%", a.style.opacity = 1, a.style.top = "0px", a.style.left = "0px", t.$container.querySelector(".dhx_cal_data").appendChild(a), [a];
     }, renderTimelineMarker: function(n, s, a) {
-      var o = t._lame_copy({}, t.matrix[t._mode]), _ = o._scales;
+      var o = t._lame_copy({}, t.matrix[t._mode]), d = o._scales;
       o.round_position = !1;
-      var r = [], d = n ? new Date(n) : t._min_date, l = s ? new Date(s) : t._max_date;
-      if (d.valueOf() < t._min_date.valueOf() && (d = new Date(t._min_date)), l.valueOf() > t._max_date.valueOf() && (l = new Date(t._max_date)), !o._trace_x)
+      var r = [], l = n ? new Date(n) : t._min_date, _ = s ? new Date(s) : t._max_date;
+      if (l.valueOf() < t._min_date.valueOf() && (l = new Date(t._min_date)), _.valueOf() > t._max_date.valueOf() && (_ = new Date(t._max_date)), !o._trace_x)
         return r;
       for (var h = 0; h < o._trace_x.length && !t._is_column_visible(o._trace_x[h]); h++)
         ;
       if (h == o._trace_x.length)
         return r;
-      var p = _[a];
-      if (!(d < s && l > n))
+      var p = d[a];
+      if (!(l < s && _ > n))
         return r;
-      var m = this.createElement();
+      var v = this.createElement();
       let g, c;
-      function u(M, k) {
+      function f(M, k) {
         k.setDate(1), k.setFullYear(M.getFullYear()), k.setMonth(M.getMonth()), k.setDate(M.getDate());
       }
       if (t.getView().days) {
         const M = new Date(n);
-        u(t._min_date, M);
+        f(t._min_date, M);
         const k = new Date(s);
-        u(t._min_date, k), g = t._timeline_getX({ start_date: M }, !1, o), c = t._timeline_getX({ start_date: k }, !1, o);
+        f(t._min_date, k), g = t._timeline_getX({ start_date: M }, !1, o), c = t._timeline_getX({ start_date: k }, !1, o);
       } else
         g = t._timeline_getX({ start_date: n }, !1, o), c = t._timeline_getX({ start_date: s }, !1, o);
-      var f = o._section_height[a] - 1 || o.dy - 1, y = 0;
+      var u = o._section_height[a] - 1 || o.dy - 1, y = 0;
       t._isRender("cell") && (y = p.offsetTop, g += o.dx, c += o.dx, p = t.$container.querySelector(".dhx_cal_data"));
       var w = Math.max(1, c - g - 1);
       let D = "left";
-      return t.config.rtl && (D = "right"), m.style.cssText = `height:${f}px; ${D}:${g}px; width:${w}px; top:${y}px;`, p && (p.appendChild(m), r.push(m)), r;
+      return t.config.rtl && (D = "right"), v.style.cssText = `height:${u}px; ${D}:${g}px; width:${w}px; top:${y}px;`, p && (p.appendChild(v), r.push(v)), r;
     }, renderMonthCell: function(n) {
       for (var s = t.$container.querySelectorAll(".dhx_month_head"), a = [], o = 0; o < s.length; o++)
         a.push(s[o].parentNode);
-      var _ = -1, r = 0, d = -1, l = t.date.week_start(new Date(t.getState().min_date)), h = t.date.day_start(new Date(n));
-      for (o = 0; o < a.length && (_++, d == 6 ? (r++, d = 0) : d++, t.date.day_start(new Date(l)).valueOf() != h.valueOf()); o++)
-        l = t.date.add(l, 1, "day");
-      if (_ == -1)
+      var d = -1, r = 0, l = -1, _ = t.date.week_start(new Date(t.getState().min_date)), h = t.date.day_start(new Date(n));
+      for (o = 0; o < a.length && (d++, l == 6 ? (r++, l = 0) : l++, t.date.day_start(new Date(_)).valueOf() != h.valueOf()); o++)
+        _ = t.date.add(_, 1, "day");
+      if (d == -1)
         return [];
-      var p = t._colsS[d], m = t._colsS.heights[r], g = this.createElement();
-      g.style.top = m + "px", g.style.left = p + "px", g.style.width = t._cols[d] + "px", g.style.height = (t._colsS.heights[r + 1] - m || t._colsS.height) + "px";
-      var c = t.$container.querySelector(".dhx_cal_data"), u = c.querySelector(".dhx_cal_month_table");
-      return u.nextSibling ? c.insertBefore(g, u.nextSibling) : c.appendChild(g), g;
+      var p = t._colsS[l], v = t._colsS.heights[r], g = this.createElement();
+      g.style.top = v + "px", g.style.left = p + "px", g.style.width = t._cols[l] + "px", g.style.height = (t._colsS.heights[r + 1] - v || t._colsS.height) + "px";
+      var c = t.$container.querySelector(".dhx_cal_data"), f = c.querySelector(".dhx_cal_month_table");
+      return f.nextSibling ? c.insertBefore(g, f.nextSibling) : c.appendChild(g), g;
     }, renderMonthMarker: function(n, s) {
       for (var a = [], o = n; o.valueOf() < s.valueOf(); )
         a.push(this.renderMonthCell(o)), o = t.date.add(o, 1, "day");
       return a;
     }, renderVerticalMarker: function(n, s, a) {
-      var o = t.locate_holder_day(n), _ = [], r = null, d = t.config;
+      var o = t.locate_holder_day(n), d = [], r = null, l = t.config;
       if (t._ignores[o])
-        return _;
+        return d;
       if (t._props && t._props[t._mode] && a) {
-        var l = t._props[t._mode];
-        o = l.order[a];
-        var h = l.order[a];
-        l.days > 1 ? o = t.locate_holder_day(n) + h : (o = h, l.size && o > l.position + l.size && (o = 0));
+        var _ = t._props[t._mode];
+        o = _.order[a];
+        var h = _.order[a];
+        _.days > 1 ? o = t.locate_holder_day(n) + h : (o = h, _.size && o > _.position + _.size && (o = 0));
       }
       if (!(r = t.locate_holder(o)) || r.querySelector(".dhx_scale_hour"))
         return document.createElement("div");
-      var p = Math.max(60 * n.getHours() + n.getMinutes(), 60 * d.first_hour), m = Math.min(60 * s.getHours() + s.getMinutes(), 60 * d.last_hour);
-      if (!m && t.date.day_start(new Date(s)).valueOf() > t.date.day_start(new Date(n)).valueOf() && (m = 60 * d.last_hour), m <= p)
+      var p = Math.max(60 * n.getHours() + n.getMinutes(), 60 * l.first_hour), v = Math.min(60 * s.getHours() + s.getMinutes(), 60 * l.last_hour);
+      if (!v && t.date.day_start(new Date(s)).valueOf() > t.date.day_start(new Date(n)).valueOf() && (v = 60 * l.last_hour), v <= p)
         return [];
-      var g = this.createElement(), c = t.config.hour_size_px * d.last_hour + 1, u = 36e5;
-      return g.style.top = Math.round((60 * p * 1e3 - t.config.first_hour * u) * t.config.hour_size_px / u) % c + "px", g.style.lineHeight = g.style.height = Math.max(Math.round(60 * (m - p) * 1e3 * t.config.hour_size_px / u) % c, 1) + "px", g.style.width = "100%", r.appendChild(g), _.push(g), _[0];
+      var g = this.createElement(), c = t.config.hour_size_px * l.last_hour + 1, f = 36e5;
+      return g.style.top = Math.round((60 * p * 1e3 - t.config.first_hour * f) * t.config.hour_size_px / f) % c + "px", g.style.lineHeight = g.style.height = Math.max(Math.round(60 * (v - p) * 1e3 * t.config.hour_size_px / f) % c, 1) + "px", g.style.width = "100%", r.appendChild(g), d.push(g), d[0];
     } };
   }(e), function(t) {
     t.$keyboardNavigation.SchedulerNode = function() {
@@ -7654,47 +7737,48 @@ const Fa = { active_links: function(e) {
     }, _compareEvents: function(n, s) {
       return n.start_date.valueOf() == s.start_date.valueOf() ? n.id > s.id ? 1 : -1 : n.start_date.valueOf() > s.start_date.valueOf() ? 1 : -1;
     }, _pickEvent: function(n, s, a, o) {
-      var _ = t.getState();
-      n = new Date(Math.max(_.min_date.valueOf(), n.valueOf())), s = new Date(Math.min(_.max_date.valueOf(), s.valueOf()));
+      var d = t.getState();
+      n = new Date(Math.max(d.min_date.valueOf(), n.valueOf())), s = new Date(Math.min(d.max_date.valueOf(), s.valueOf()));
       var r = t.getEvents(n, s);
       r.sort(this._compareEvents), o && (r = r.reverse());
-      for (var d = !!a, l = 0; l < r.length && d; l++)
-        r[l].id == a && (d = !1), r.splice(l, 1), l--;
-      for (l = 0; l < r.length; l++)
-        if (new t.$keyboardNavigation.Event(r[l].id).getNode())
-          return r[l];
+      for (var l = !!a, _ = 0; _ < r.length && l; _++)
+        r[_].id == a && (l = !1), r.splice(_, 1), _--;
+      for (_ = 0; _ < r.length; _++)
+        if (new t.$keyboardNavigation.Event(r[_].id).getNode())
+          return r[_];
       return null;
     }, nextEventHandler: function(n) {
       var s = t.$keyboardNavigation.dispatcher.activeNode, a = n || s && s.eventId, o = null;
       if (a && t.getEvent(a)) {
-        var _ = t.getEvent(a);
-        o = t.$keyboardNavigation.SchedulerNode.prototype._pickEvent(_.start_date, t.date.add(_.start_date, 1, "year"), _.id, !1);
+        var d = t.getEvent(a);
+        o = t.$keyboardNavigation.SchedulerNode.prototype._pickEvent(d.start_date, t.date.add(d.start_date, 1, "year"), d.id, !1);
       }
       if (!o && !n) {
         var r = t.getState();
         o = t.$keyboardNavigation.SchedulerNode.prototype._pickEvent(r.min_date, t.date.add(r.min_date, 1, "year"), null, !1);
       }
       if (o) {
-        var d = new t.$keyboardNavigation.Event(o.id);
-        d.isValid() ? (s && s.blur(), t.$keyboardNavigation.dispatcher.setActiveNode(d)) : this.nextEventHandler(o.id);
+        var l = new t.$keyboardNavigation.Event(o.id);
+        l.isValid() ? (s && s.blur(), t.$keyboardNavigation.dispatcher.setActiveNode(l)) : this.nextEventHandler(o.id);
       }
     }, prevEventHandler: function(n) {
       var s = t.$keyboardNavigation.dispatcher.activeNode, a = n || s && s.eventId, o = null;
       if (a && t.getEvent(a)) {
-        var _ = t.getEvent(a);
-        o = t.$keyboardNavigation.SchedulerNode.prototype._pickEvent(t.date.add(_.end_date, -1, "year"), _.end_date, _.id, !0);
+        var d = t.getEvent(a);
+        o = t.$keyboardNavigation.SchedulerNode.prototype._pickEvent(t.date.add(d.end_date, -1, "year"), d.end_date, d.id, !0);
       }
       if (!o && !n) {
         var r = t.getState();
         o = t.$keyboardNavigation.SchedulerNode.prototype._pickEvent(t.date.add(r.max_date, -1, "year"), r.max_date, null, !0);
       }
       if (o) {
-        var d = new t.$keyboardNavigation.Event(o.id);
-        d.isValid() ? (s && s.blur(), t.$keyboardNavigation.dispatcher.setActiveNode(d)) : this.prevEventHandler(o.id);
+        var l = new t.$keyboardNavigation.Event(o.id);
+        l.isValid() ? (s && s.blur(), t.$keyboardNavigation.dispatcher.setActiveNode(l)) : this.prevEventHandler(o.id);
       }
     }, keys: { "alt+1, alt+2, alt+3, alt+4, alt+5, alt+6, alt+7, alt+8, alt+9": function(n) {
-      var s = t.$keyboardNavigation.HeaderCell.prototype.getNodes(".dhx_cal_navline .dhx_cal_tab"), a = n.key;
-      a === void 0 && (a = n.keyCode - 48), s[1 * a - 1] && s[1 * a - 1].click();
+      const s = t.$keyboardNavigation.HeaderCell.prototype.getNodes(".dhx_cal_navline .dhx_cal_tab"), a = n.code;
+      let o = parseInt(a.replace("Digit", ""));
+      s[o - 1] && s[o - 1].click();
     }, "ctrl+left,meta+left": function(n) {
       t._click.dhx_cal_prev_button();
     }, "ctrl+right,meta+right": function(n) {
@@ -7850,19 +7934,19 @@ const Fa = { active_links: function(e) {
     } } }), t.$keyboardNavigation.Event.prototype.bindAll(t.$keyboardNavigation.Event.prototype.keys);
   }(e), function(t) {
     t.$keyboardNavigation.TimeSlot = function(n, s, a, o) {
-      var _ = t.getState(), r = t.matrix && t.matrix[_.mode];
+      var d = t.getState(), r = t.matrix && t.matrix[d.mode];
       n || (n = this.getDefaultDate()), s || (s = r ? t.date.add(n, r.x_step, r.x_unit) : t.date.add(n, t.config.key_nav_step, "minute")), this.section = a || this._getDefaultSection(), this.start_date = new Date(n), this.end_date = new Date(s), this.movingDate = o || null;
     }, t.$keyboardNavigation.TimeSlot.prototype = t._compose(t.$keyboardNavigation.KeyNavNode, { _handlers: null, getDefaultDate: function() {
       var n, s = t.getState(), a = new Date(s.date);
       a.setSeconds(0), a.setMilliseconds(0);
       var o = /* @__PURE__ */ new Date();
       o.setSeconds(0), o.setMilliseconds(0);
-      var _ = t.matrix && t.matrix[s.mode], r = !1;
-      if (a.valueOf() === o.valueOf() && (r = !0), _)
-        r ? (_.x_unit === "day" ? (o.setHours(0), o.setMinutes(0)) : _.x_unit === "hour" && o.setMinutes(0), n = o) : n = t.date[_.name + "_start"](new Date(s.date)), n = this.findVisibleColumn(n);
+      var d = t.matrix && t.matrix[s.mode], r = !1;
+      if (a.valueOf() === o.valueOf() && (r = !0), d)
+        r ? (d.x_unit === "day" ? (o.setHours(0), o.setMinutes(0)) : d.x_unit === "hour" && o.setMinutes(0), n = o) : n = t.date[d.name + "_start"](new Date(s.date)), n = this.findVisibleColumn(n);
       else if (n = new Date(t.getState().min_date), r && (n = o), n = this.findVisibleColumn(n), r || n.setHours(t.config.first_hour), !t._table_view) {
-        var d = t.$container.querySelector(".dhx_cal_data");
-        d.scrollTop && n.setHours(t.config.first_hour + Math.ceil(d.scrollTop / t.config.hour_size_px));
+        var l = t.$container.querySelector(".dhx_cal_data");
+        l.scrollTop && n.setHours(t.config.first_hour + Math.ceil(l.scrollTop / t.config.hour_size_px));
       }
       return n;
     }, clone: function(n) {
@@ -7874,10 +7958,10 @@ const Fa = { active_links: function(e) {
       var n = null;
       return this._getMultisectionView() && !n && (n = this._getNextSection()), n;
     }, _getNextSection: function(n, s) {
-      var a = this._getMultisectionView(), o = a.order[n], _ = o;
-      (_ = o !== void 0 ? o + s : a.size && a.position ? a.position : 0) < 0 && (_ = 0);
+      var a = this._getMultisectionView(), o = a.order[n], d = o;
+      (d = o !== void 0 ? o + s : a.size && a.position ? a.position : 0) < 0 && (d = 0);
       var r = a.options || a.y_unit;
-      return _ >= r.length && (_ = r.length - 1), r[_] ? r[_].key : null;
+      return d >= r.length && (d = r.length - 1), r[d] ? r[d].key : null;
     }, isValid: function() {
       var n = t.getState();
       if (this.start_date.valueOf() < n.min_date.valueOf() || this.start_date.valueOf() >= n.max_date.valueOf() || !this.isVisible(this.start_date, this.end_date))
@@ -7913,88 +7997,88 @@ const Fa = { active_links: function(e) {
         default:
           o = t.date.day_start(new Date(n));
       }
-      var _ = t.getState();
-      return (n.valueOf() < _.min_date.valueOf() || !a && n.valueOf() >= _.max_date.valueOf()) && (o = new Date(_.min_date)), o;
+      var d = t.getState();
+      return (n.valueOf() < d.min_date.valueOf() || !a && n.valueOf() >= d.max_date.valueOf()) && (o = new Date(d.min_date)), o;
     }, nextMonthSlot: function(n, s, a) {
-      var o, _;
-      return (o = this.addMonthDate(n.start_date, s, a)).setHours(t.config.first_hour), (_ = new Date(o)).setHours(t.config.last_hour), { start_date: o, end_date: _ };
+      var o, d;
+      return (o = this.addMonthDate(n.start_date, s, a)).setHours(t.config.first_hour), (d = new Date(o)).setHours(t.config.last_hour), { start_date: o, end_date: d };
     }, _alignTimeSlot: function(n, s, a, o) {
-      for (var _ = new Date(s); _.valueOf() < n.valueOf(); )
-        _ = t.date.add(_, o, a);
-      return _.valueOf() > n.valueOf() && (_ = t.date.add(_, -o, a)), _;
+      for (var d = new Date(s); d.valueOf() < n.valueOf(); )
+        d = t.date.add(d, o, a);
+      return d.valueOf() > n.valueOf() && (d = t.date.add(d, -o, a)), d;
     }, nextTimelineSlot: function(n, s, a) {
-      var o = t.getState(), _ = t.matrix[o.mode], r = this._alignTimeSlot(n.start_date, t.date[_.name + "_start"](new Date(n.start_date)), _.x_unit, _.x_step), d = this._alignTimeSlot(n.end_date, t.date[_.name + "_start"](new Date(n.end_date)), _.x_unit, _.x_step);
-      d.valueOf() <= r.valueOf() && (d = t.date.add(r, _.x_step, _.x_unit));
-      var l = this.clone(n);
-      switch (l.start_date = r, l.end_date = d, l.section = n.section || this._getNextSection(), s) {
+      var o = t.getState(), d = t.matrix[o.mode], r = this._alignTimeSlot(n.start_date, t.date[d.name + "_start"](new Date(n.start_date)), d.x_unit, d.x_step), l = this._alignTimeSlot(n.end_date, t.date[d.name + "_start"](new Date(n.end_date)), d.x_unit, d.x_step);
+      l.valueOf() <= r.valueOf() && (l = t.date.add(r, d.x_step, d.x_unit));
+      var _ = this.clone(n);
+      switch (_.start_date = r, _.end_date = l, _.section = n.section || this._getNextSection(), s) {
         case "up":
-          l.section = this._getNextSection(n.section, -1);
+          _.section = this._getNextSection(n.section, -1);
           break;
         case "down":
-          l.section = this._getNextSection(n.section, 1);
+          _.section = this._getNextSection(n.section, 1);
           break;
         case "left":
-          l.start_date = this.findVisibleColumn(t.date.add(l.start_date, -_.x_step, _.x_unit), -1), l.end_date = t.date.add(l.start_date, _.x_step, _.x_unit);
+          _.start_date = this.findVisibleColumn(t.date.add(_.start_date, -d.x_step, d.x_unit), -1), _.end_date = t.date.add(_.start_date, d.x_step, d.x_unit);
           break;
         case "right":
-          l.start_date = this.findVisibleColumn(t.date.add(l.start_date, _.x_step, _.x_unit), 1), l.end_date = t.date.add(l.start_date, _.x_step, _.x_unit);
+          _.start_date = this.findVisibleColumn(t.date.add(_.start_date, d.x_step, d.x_unit), 1), _.end_date = t.date.add(_.start_date, d.x_step, d.x_unit);
       }
-      return (l.start_date.valueOf() < o.min_date.valueOf() || l.start_date.valueOf() >= o.max_date.valueOf()) && (a && l.start_date.valueOf() >= o.max_date.valueOf() ? l.start_date = new Date(o.max_date) : (l.start_date = t.date[o.mode + "_start"](t.date.add(o.date, s == "left" ? -1 : 1, o.mode)), l.end_date = t.date.add(l.start_date, _.x_step, _.x_unit))), l;
+      return (_.start_date.valueOf() < o.min_date.valueOf() || _.start_date.valueOf() >= o.max_date.valueOf()) && (a && _.start_date.valueOf() >= o.max_date.valueOf() ? _.start_date = new Date(o.max_date) : (_.start_date = t.date[o.mode + "_start"](t.date.add(o.date, s == "left" ? -1 : 1, o.mode)), _.end_date = t.date.add(_.start_date, d.x_step, d.x_unit))), _;
     }, nextUnitsSlot: function(n, s, a) {
       var o = this.clone(n);
       o.section = n.section || this._getNextSection();
-      var _ = n.section || this._getNextSection(), r = t.getState(), d = t._props[r.mode];
+      var d = n.section || this._getNextSection(), r = t.getState(), l = t._props[r.mode];
       switch (s) {
         case "left":
-          _ = this._getNextSection(n.section, -1);
-          var l = d.size ? d.size - 1 : d.options.length;
-          d.days > 1 && d.order[_] == l - 1 && t.date.add(n.start_date, -1, "day").valueOf() >= r.min_date.valueOf() && (o = this.nextDaySlot(n, s, a));
+          d = this._getNextSection(n.section, -1);
+          var _ = l.size ? l.size - 1 : l.options.length;
+          l.days > 1 && l.order[d] == _ - 1 && t.date.add(n.start_date, -1, "day").valueOf() >= r.min_date.valueOf() && (o = this.nextDaySlot(n, s, a));
           break;
         case "right":
-          _ = this._getNextSection(n.section, 1), d.days > 1 && !d.order[_] && t.date.add(n.start_date, 1, "day").valueOf() < r.max_date.valueOf() && (o = this.nextDaySlot(n, s, a));
+          d = this._getNextSection(n.section, 1), l.days > 1 && !l.order[d] && t.date.add(n.start_date, 1, "day").valueOf() < r.max_date.valueOf() && (o = this.nextDaySlot(n, s, a));
           break;
         default:
-          o = this.nextDaySlot(n, s, a), _ = n.section;
+          o = this.nextDaySlot(n, s, a), d = n.section;
       }
-      return o.section = _, o;
+      return o.section = d, o;
     }, _moveDate: function(n, s) {
       var a = this.findVisibleColumn(t.date.add(n, s, "day"), s);
       return a.setHours(n.getHours()), a.setMinutes(n.getMinutes()), a;
     }, isBeforeLastHour: function(n, s) {
-      var a = n.getMinutes(), o = n.getHours(), _ = t.config.last_hour;
-      return o < _ || !s && (_ == 24 || o == _) && !a;
+      var a = n.getMinutes(), o = n.getHours(), d = t.config.last_hour;
+      return o < d || !s && (d == 24 || o == d) && !a;
     }, isAfterFirstHour: function(n, s) {
-      var a = n.getMinutes(), o = n.getHours(), _ = t.config.first_hour, r = t.config.last_hour;
-      return o >= _ || !s && !a && (!o && r == 24 || o == r);
+      var a = n.getMinutes(), o = n.getHours(), d = t.config.first_hour, r = t.config.last_hour;
+      return o >= d || !s && !a && (!o && r == 24 || o == r);
     }, isInVisibleDayTime: function(n, s) {
       return this.isBeforeLastHour(n, s) && this.isAfterFirstHour(n, s);
     }, nextDaySlot: function(n, s, a) {
-      var o, _, r = t.config.key_nav_step, d = this._alignTimeSlot(n.start_date, t.date.day_start(new Date(n.start_date)), "minute", r), l = n.start_date;
+      var o, d, r = t.config.key_nav_step, l = this._alignTimeSlot(n.start_date, t.date.day_start(new Date(n.start_date)), "minute", r), _ = n.start_date;
       switch (s) {
         case "up":
-          if (o = t.date.add(d, -r, "minute"), !this.isInVisibleDayTime(o, !0) && (!a || this.isInVisibleDayTime(l, !0))) {
+          if (o = t.date.add(l, -r, "minute"), !this.isInVisibleDayTime(o, !0) && (!a || this.isInVisibleDayTime(_, !0))) {
             var h = !0;
-            a && t.date.date_part(new Date(o)).valueOf() != t.date.date_part(new Date(l)).valueOf() && (h = !1), h && (o = this.findVisibleColumn(t.date.add(n.start_date, -1, "day"), -1)), o.setHours(t.config.last_hour), o.setMinutes(0), o = t.date.add(o, -r, "minute");
+            a && t.date.date_part(new Date(o)).valueOf() != t.date.date_part(new Date(_)).valueOf() && (h = !1), h && (o = this.findVisibleColumn(t.date.add(n.start_date, -1, "day"), -1)), o.setHours(t.config.last_hour), o.setMinutes(0), o = t.date.add(o, -r, "minute");
           }
-          _ = t.date.add(o, r, "minute");
+          d = t.date.add(o, r, "minute");
           break;
         case "down":
-          o = t.date.add(d, r, "minute");
+          o = t.date.add(l, r, "minute");
           var p = a ? o : t.date.add(o, r, "minute");
-          this.isInVisibleDayTime(p, !1) || a && !this.isInVisibleDayTime(l, !1) || (a ? (h = !0, t.date.date_part(new Date(l)).valueOf() == l.valueOf() && (h = !1), h && (o = this.findVisibleColumn(t.date.add(n.start_date, 1, "day"), 1)), o.setHours(t.config.first_hour), o.setMinutes(0), o = t.date.add(o, r, "minute")) : ((o = this.findVisibleColumn(t.date.add(n.start_date, 1, "day"), 1)).setHours(t.config.first_hour), o.setMinutes(0))), _ = t.date.add(o, r, "minute");
+          this.isInVisibleDayTime(p, !1) || a && !this.isInVisibleDayTime(_, !1) || (a ? (h = !0, t.date.date_part(new Date(_)).valueOf() == _.valueOf() && (h = !1), h && (o = this.findVisibleColumn(t.date.add(n.start_date, 1, "day"), 1)), o.setHours(t.config.first_hour), o.setMinutes(0), o = t.date.add(o, r, "minute")) : ((o = this.findVisibleColumn(t.date.add(n.start_date, 1, "day"), 1)).setHours(t.config.first_hour), o.setMinutes(0))), d = t.date.add(o, r, "minute");
           break;
         case "left":
-          o = this._moveDate(n.start_date, -1), _ = this._moveDate(n.end_date, -1);
+          o = this._moveDate(n.start_date, -1), d = this._moveDate(n.end_date, -1);
           break;
         case "right":
-          o = this._moveDate(n.start_date, 1), _ = this._moveDate(n.end_date, 1);
+          o = this._moveDate(n.start_date, 1), d = this._moveDate(n.end_date, 1);
           break;
         default:
-          o = d, _ = t.date.add(o, r, "minute");
+          o = l, d = t.date.add(o, r, "minute");
       }
-      return { start_date: o, end_date: _ };
+      return { start_date: o, end_date: d };
     }, nextWeekAgendaSlot: function(n, s) {
-      var a, o, _ = t.getState();
+      var a, o, d = t.getState();
       switch (s) {
         case "down":
         case "left":
@@ -8007,7 +8091,7 @@ const Fa = { active_links: function(e) {
         default:
           a = t.date.day_start(n.start_date);
       }
-      return (n.start_date.valueOf() < _.min_date.valueOf() || n.start_date.valueOf() >= _.max_date.valueOf()) && (a = new Date(_.min_date)), (o = new Date(a)).setHours(t.config.last_hour), { start_date: a, end_date: o };
+      return (n.start_date.valueOf() < d.min_date.valueOf() || n.start_date.valueOf() >= d.max_date.valueOf()) && (a = new Date(d.min_date)), (o = new Date(a)).setHours(t.config.last_hour), { start_date: a, end_date: o };
     }, nextAgendaSlot: function(n, s) {
       return { start_date: n.start_date, end_date: n.end_date };
     }, isDateVisible: function(n) {
@@ -8035,30 +8119,30 @@ const Fa = { active_links: function(e) {
       }
       return !1;
     }, nextSlot: function(n, s, a, o) {
-      var _;
+      var d;
       a = a || this._getMode();
       var r = t.$keyboardNavigation.TimeSlot.prototype.clone(n);
       switch (a) {
         case this._modes.units:
-          _ = this.nextUnitsSlot(r, s, o);
+          d = this.nextUnitsSlot(r, s, o);
           break;
         case this._modes.timeline:
-          _ = this.nextTimelineSlot(r, s, o);
+          d = this.nextTimelineSlot(r, s, o);
           break;
         case this._modes.year:
         case this._modes.month:
-          _ = this.nextMonthSlot(r, s, o);
+          d = this.nextMonthSlot(r, s, o);
           break;
         case this._modes.weekAgenda:
-          _ = this.nextWeekAgendaSlot(r, s, o);
+          d = this.nextWeekAgendaSlot(r, s, o);
           break;
         case this._modes.list:
-          _ = this.nextAgendaSlot(r, s, o);
+          d = this.nextAgendaSlot(r, s, o);
           break;
         case this._modes.dayColumns:
-          _ = this.nextDaySlot(r, s, o);
+          d = this.nextDaySlot(r, s, o);
       }
-      return _.start_date.valueOf() >= _.end_date.valueOf() && (_ = this.nextSlot(_, s, a)), t.$keyboardNavigation.TimeSlot.prototype.clone(_);
+      return d.start_date.valueOf() >= d.end_date.valueOf() && (d = this.nextSlot(d, s, a)), t.$keyboardNavigation.TimeSlot.prototype.clone(d);
     }, extendSlot: function(n, s) {
       var a;
       switch (this._getMode()) {
@@ -8088,14 +8172,14 @@ const Fa = { active_links: function(e) {
     }, extendWeekAgendaSlot: function(n, s) {
       return this.extendGenericSlot({ left: "start_date", right: "end_date" }, n, s, "weekAgenda");
     }, extendGenericSlot: function(n, s, a, o) {
-      var _, r = s.movingDate;
+      var d, r = s.movingDate;
       if (r || (r = n[a]), !r || !n[a])
         return s;
       if (!a)
         return t.$keyboardNavigation.TimeSlot.prototype.clone(s);
-      (_ = this.nextSlot({ start_date: s[r], section: s.section }, a, o, !0)).start_date.valueOf() == s.start_date.valueOf() && (_ = this.nextSlot({ start_date: _.start_date, section: _.section }, a, o, !0)), _.movingDate = r;
-      var d = this.extendSlotDates(s, _, _.movingDate);
-      return d.end_date.valueOf() <= d.start_date.valueOf() && (_.movingDate = _.movingDate == "end_date" ? "start_date" : "end_date"), d = this.extendSlotDates(s, _, _.movingDate), _.start_date = d.start_date, _.end_date = d.end_date, _;
+      (d = this.nextSlot({ start_date: s[r], section: s.section }, a, o, !0)).start_date.valueOf() == s.start_date.valueOf() && (d = this.nextSlot({ start_date: d.start_date, section: d.section }, a, o, !0)), d.movingDate = r;
+      var l = this.extendSlotDates(s, d, d.movingDate);
+      return l.end_date.valueOf() <= l.start_date.valueOf() && (d.movingDate = d.movingDate == "end_date" ? "start_date" : "end_date"), l = this.extendSlotDates(s, d, d.movingDate), d.start_date = l.start_date, d.end_date = l.end_date, d;
     }, extendSlotDates: function(n, s, a) {
       var o = { start_date: null, end_date: null };
       return a == "start_date" ? (o.start_date = s.start_date, o.end_date = n.end_date) : (o.start_date = n.start_date, o.end_date = s.start_date), o;
@@ -8172,8 +8256,8 @@ const Fa = { active_links: function(e) {
       a[n] || (n = 0);
       var o = !0;
       if (n > a.length / 2 && (o = !1), !a[n]) {
-        var _ = new t.$keyboardNavigation.TimeSlot();
-        return _.isValid() ? _ : new t.$keyboardNavigation.DataArea();
+        var d = new t.$keyboardNavigation.TimeSlot();
+        return d.isValid() ? d : new t.$keyboardNavigation.DataArea();
       }
       if (o) {
         for (var r = s; a[n] && r < a[n].length; r++)
@@ -8195,22 +8279,22 @@ const Fa = { active_links: function(e) {
     }, _getGrid: function() {
       for (var n = this.container.querySelectorAll(".dhx_year_body tr"), s = [], a = 0; a < n.length; a++) {
         s[a] = [];
-        for (var o = n[a].querySelectorAll("td"), _ = 0; _ < o.length; _++) {
-          var r = o[_], d = !0, l = t._getClassName(r);
-          (l.indexOf("dhx_after") > -1 || l.indexOf("dhx_before") > -1 || l.indexOf("dhx_scale_ignore") > -1) && (d = !1), s[a][_] = d;
+        for (var o = n[a].querySelectorAll("td"), d = 0; d < o.length; d++) {
+          var r = o[d], l = !0, _ = t._getClassName(r);
+          (_.indexOf("dhx_after") > -1 || _.indexOf("dhx_before") > -1 || _.indexOf("dhx_scale_ignore") > -1) && (l = !1), s[a][d] = l;
         }
       }
       return s;
     }, keys: { right: function(n) {
       var s = this._getGrid(), a = this.row, o = this.col + 1;
       s[a] && s[a][o] || (s[a + 1] ? (a += 1, o = 0) : o = this.col);
-      var _ = new t.$keyboardNavigation.MinicalCell(this.container, a, o);
-      _.isValid() || (_ = _.fallback()), this.moveTo(_);
+      var d = new t.$keyboardNavigation.MinicalCell(this.container, a, o);
+      d.isValid() || (d = d.fallback()), this.moveTo(d);
     }, left: function(n) {
       var s = this._getGrid(), a = this.row, o = this.col - 1;
       s[a] && s[a][o] || (o = s[a - 1] ? s[a -= 1].length - 1 : this.col);
-      var _ = new t.$keyboardNavigation.MinicalCell(this.container, a, o);
-      _.isValid() || (_ = _.fallback()), this.moveTo(_);
+      var d = new t.$keyboardNavigation.MinicalCell(this.container, a, o);
+      d.isValid() || (d = d.fallback()), this.moveTo(d);
     }, down: function() {
       var n = this._getGrid(), s = this.row + 1, a = this.col;
       n[s] && n[s][a] || (s = this.row);
@@ -8222,8 +8306,8 @@ const Fa = { active_links: function(e) {
         var o = new t.$keyboardNavigation.MinicalCell(this.container, s, a);
         o.isValid() || (o = o.fallback()), this.moveTo(o);
       } else {
-        var _ = 0;
-        this.col > n[this.row].length / 2 && (_ = 1), this.moveTo(new t.$keyboardNavigation.MinicalButton(this.container, _));
+        var d = 0;
+        this.col > n[this.row].length / 2 && (d = 1), this.moveTo(new t.$keyboardNavigation.MinicalButton(this.container, d));
       }
     }, enter: function(n) {
       this.getNode().querySelector(".dhx_month_head").click();
@@ -8240,7 +8324,7 @@ const Fa = { active_links: function(e) {
     }, keys: { "up,down,right,left": function() {
       this.moveTo(new t.$keyboardNavigation.TimeSlot());
     } } }), t.$keyboardNavigation.DataArea.prototype.bindAll(t.$keyboardNavigation.DataArea.prototype.keys);
-  }(e), aa(e), function(t) {
+  }(e), da(e), function(t) {
     t.$keyboardNavigation.dispatcher = { isActive: !1, activeNode: null, globalNode: new t.$keyboardNavigation.SchedulerNode(), keepScrollPosition: function(n) {
       var s, a, o = t.$container.querySelector(".dhx_timeline_scrollable_data");
       o || (o = t.$container.querySelector(".dhx_cal_data")), o && (s = o.scrollTop, a = o.scrollLeft), n(), o && (o.scrollTop = s, o.scrollLeft = a);
@@ -8286,74 +8370,74 @@ const Fa = { active_links: function(e) {
     }, _timeout: null, delay: function(n, s) {
       clearTimeout(this._timeout), this._timeout = setTimeout(n, s || 1);
     } };
-  }(e), na(e), function() {
-    ra(e), function(_) {
-      _.$keyboardNavigation._minicalendars = [], _.$keyboardNavigation.isMinical = function(r) {
-        for (var d = _.$keyboardNavigation._minicalendars, l = 0; l < d.length; l++)
-          if (this.isChildOf(r, d[l]))
+  }(e), _a(e), function() {
+    la(e), function(d) {
+      d.$keyboardNavigation._minicalendars = [], d.$keyboardNavigation.isMinical = function(r) {
+        for (var l = d.$keyboardNavigation._minicalendars, _ = 0; _ < l.length; _++)
+          if (this.isChildOf(r, l[_]))
             return !0;
         return !1;
-      }, _.$keyboardNavigation.isChildOf = function(r, d) {
-        for (; r && r !== d; )
+      }, d.$keyboardNavigation.isChildOf = function(r, l) {
+        for (; r && r !== l; )
           r = r.parentNode;
-        return r === d;
-      }, _.$keyboardNavigation.patchMinicalendar = function() {
-        var r = _.$keyboardNavigation.dispatcher;
-        function d(m) {
-          var g = m.target;
-          r.enable(), r.setActiveNode(new _.$keyboardNavigation.MinicalButton(g, 0));
+        return r === l;
+      }, d.$keyboardNavigation.patchMinicalendar = function() {
+        var r = d.$keyboardNavigation.dispatcher;
+        function l(v) {
+          var g = v.target;
+          r.enable(), r.setActiveNode(new d.$keyboardNavigation.MinicalButton(g, 0));
         }
-        function l(m) {
-          var g = m.target || m.srcElement, c = _.utils.dom.locateCss(m, "dhx_cal_prev_button", !1), u = _.utils.dom.locateCss(m, "dhx_cal_next_button", !1), f = _.utils.dom.locateCss(m, "dhx_year_body", !1), y = 0, w = 0;
-          if (f) {
+        function _(v) {
+          var g = v.target || v.srcElement, c = d.utils.dom.locateCss(v, "dhx_cal_prev_button", !1), f = d.utils.dom.locateCss(v, "dhx_cal_next_button", !1), u = d.utils.dom.locateCss(v, "dhx_year_body", !1), y = 0, w = 0;
+          if (u) {
             for (var D, M, k = g; k && k.tagName.toLowerCase() != "td"; )
               k = k.parentNode;
             if (k && (D = (M = k).parentNode), D && M) {
-              for (var N = D.parentNode.querySelectorAll("tr"), v = 0; v < N.length; v++)
-                if (N[v] == D) {
-                  y = v;
+              for (var N = D.parentNode.querySelectorAll("tr"), m = 0; m < N.length; m++)
+                if (N[m] == D) {
+                  y = m;
                   break;
                 }
               var x = D.querySelectorAll("td");
-              for (v = 0; v < x.length; v++)
-                if (x[v] == M) {
-                  w = v;
+              for (m = 0; m < x.length; m++)
+                if (x[m] == M) {
+                  w = m;
                   break;
                 }
             }
           }
-          var b = m.currentTarget;
+          var b = v.currentTarget;
           r.delay(function() {
             var E;
-            (c || u || f) && (c ? (E = new _.$keyboardNavigation.MinicalButton(b, 0), r.setActiveNode(new _.$keyboardNavigation.MinicalButton(b, 0))) : u ? E = new _.$keyboardNavigation.MinicalButton(b, 1) : f && (E = new _.$keyboardNavigation.MinicalCell(b, y, w)), E && (r.enable(), E.isValid() && (r.activeNode = null, r.setActiveNode(E))));
+            (c || f || u) && (c ? (E = new d.$keyboardNavigation.MinicalButton(b, 0), r.setActiveNode(new d.$keyboardNavigation.MinicalButton(b, 0))) : f ? E = new d.$keyboardNavigation.MinicalButton(b, 1) : u && (E = new d.$keyboardNavigation.MinicalCell(b, y, w)), E && (r.enable(), E.isValid() && (r.activeNode = null, r.setActiveNode(E))));
           });
         }
-        if (_.renderCalendar) {
-          var h = _.renderCalendar;
-          _.renderCalendar = function() {
-            var m = h.apply(this, arguments), g = _.$keyboardNavigation._minicalendars;
-            _.eventRemove(m, "click", l), _.event(m, "click", l), _.eventRemove(m, "focus", d), _.event(m, "focus", d);
-            for (var c = !1, u = 0; u < g.length; u++)
-              if (g[u] == m) {
+        if (d.renderCalendar) {
+          var h = d.renderCalendar;
+          d.renderCalendar = function() {
+            var v = h.apply(this, arguments), g = d.$keyboardNavigation._minicalendars;
+            d.eventRemove(v, "click", _), d.event(v, "click", _), d.eventRemove(v, "focus", l), d.event(v, "focus", l);
+            for (var c = !1, f = 0; f < g.length; f++)
+              if (g[f] == v) {
                 c = !0;
                 break;
               }
-            if (c || g.push(m), r.isEnabled()) {
-              var f = r.getActiveNode();
-              f && f.container == m ? r.focusNode(f) : m.setAttribute("tabindex", "0");
+            if (c || g.push(v), r.isEnabled()) {
+              var u = r.getActiveNode();
+              u && u.container == v ? r.focusNode(u) : v.setAttribute("tabindex", "0");
             } else
-              m.setAttribute("tabindex", "0");
-            return m;
+              v.setAttribute("tabindex", "0");
+            return v;
           };
         }
-        if (_.destroyCalendar) {
-          var p = _.destroyCalendar;
-          _.destroyCalendar = function(m, g) {
-            m = m || (_._def_count ? _._def_count.firstChild : null);
+        if (d.destroyCalendar) {
+          var p = d.destroyCalendar;
+          d.destroyCalendar = function(v, g) {
+            v = v || (d._def_count ? d._def_count.firstChild : null);
             var c = p.apply(this, arguments);
-            if (!m || !m.parentNode)
-              for (var u = _.$keyboardNavigation._minicalendars, f = 0; f < u.length; f++)
-                u[f] == m && (_.eventRemove(u[f], "focus", d), u.splice(f, 1), f--);
+            if (!v || !v.parentNode)
+              for (var f = d.$keyboardNavigation._minicalendars, u = 0; u < f.length; u++)
+                f[u] == v && (d.eventRemove(f[u], "focus", l), f.splice(u, 1), u--);
             return c;
           };
         }
@@ -8368,17 +8452,17 @@ const Fa = { active_links: function(e) {
       });
     function s() {
       if (e.config.key_nav) {
-        var _ = document.activeElement;
-        return !(!_ || e.utils.dom.locateCss(_, "dhx_cal_quick_info", !1)) && (e.$keyboardNavigation.isChildOf(_, e.$container) || e.$keyboardNavigation.isMinical(_));
+        var d = document.activeElement;
+        return !(!d || e.utils.dom.locateCss(d, "dhx_cal_quick_info", !1)) && (e.$keyboardNavigation.isChildOf(d, e.$container) || e.$keyboardNavigation.isMinical(d));
       }
     }
-    function a(_) {
-      _ && !t.isEnabled() ? t.enable() : !_ && t.isEnabled() && t.disable();
+    function a(d) {
+      d && !t.isEnabled() ? t.enable() : !d && t.isEnabled() && t.disable();
     }
     const o = setInterval(function() {
       if (e.$container && e.$keyboardNavigation.isChildOf(e.$container, document.body)) {
-        var _ = s();
-        _ ? a(_) : !_ && t.isEnabled() && setTimeout(function() {
+        var d = s();
+        d ? a(d) : !d && t.isEnabled() && setTimeout(function() {
           e.$destroyed || (e.config.key_nav ? a(s()) : e.$container.removeAttribute("tabindex"));
         }, 100);
       }
@@ -8406,8 +8490,8 @@ const Fa = { active_links: function(e) {
         !this._loading && this.validId(n) && this.getEvent(n) && this.getEvent(n).layer == t.layer && t.setUpdated(n, !0, "updated");
       }), t._getRowData = function(n, s) {
         var a = this.obj.getEvent(n), o = {};
-        for (var _ in a)
-          _.indexOf("_") !== 0 && (a[_] && a[_].getUTCFullYear ? o[_] = this.obj._helpers.formatDate(a[_]) : o[_] = a[_]);
+        for (var d in a)
+          d.indexOf("_") !== 0 && (a[d] && a[d].getUTCFullYear ? o[d] = this.obj._helpers.formatDate(a[d]) : o[d] = a[d]);
         return o;
       }, t._clearUpdateFlag = function() {
       }, t.attachEvent("insertCallback", e._update_callback), t.attachEvent("updateCallback", e._update_callback), t.attachEvent("deleteCallback", function(n, s) {
@@ -8418,8 +8502,8 @@ const Fa = { active_links: function(e) {
         if (a === null || typeof a != "object")
           return a;
         var o = new a.constructor();
-        for (var _ in a)
-          o[_] = t(a[_]);
+        for (var d in a)
+          o[d] = t(a[d]);
         return o;
       };
       e._dataprocessors = [], e._layers_zindex = {};
@@ -8457,10 +8541,10 @@ const Fa = { active_links: function(e) {
         n[o].layer == s.name && n[o].id != t.id && a++;
       return a >= e.config.collision_limit;
     }), e.addEvent = function(t, n, s, a, o) {
-      var _ = t;
-      arguments.length != 1 && ((_ = o || {}).start_date = t, _.end_date = n, _.text = s, _.id = a, _.layer = this.defaultLayer), _.id = _.id || e.uid(), _.text = _.text || "", typeof _.start_date == "string" && (_.start_date = this.templates.api_date(_.start_date)), typeof _.end_date == "string" && (_.end_date = this.templates.api_date(_.end_date)), _._timed = this.isOneDayEvent(_);
-      var r = !this._events[_.id];
-      this._events[_.id] = _, this.event_updated(_), this._loading || this.callEvent(r ? "onEventAdded" : "onEventChanged", [_.id, _]);
+      var d = t;
+      arguments.length != 1 && ((d = o || {}).start_date = t, d.end_date = n, d.text = s, d.id = a, d.layer = this.defaultLayer), d.id = d.id || e.uid(), d.text = d.text || "", typeof d.start_date == "string" && (d.start_date = this.templates.api_date(d.start_date)), typeof d.end_date == "string" && (d.end_date = this.templates.api_date(d.end_date)), d._timed = this.isOneDayEvent(d);
+      var r = !this._events[d.id];
+      this._events[d.id] = d, this.event_updated(d), this._loading || this.callEvent(r ? "onEventAdded" : "onEventChanged", [d.id, d]);
     }, this._evs_layer = {};
     for (var i = 0; i < this.layers.length; i++)
       this._evs_layer[this.layers[i].name] = [];
@@ -8469,12 +8553,12 @@ const Fa = { active_links: function(e) {
       typeof t == "object" && (a = t, t = null);
       var o = 6e4 * (this.config.event_duration || this.config.time_step);
       t || (t = Math.round(e._currentDate().valueOf() / o) * o);
-      var _ = new Date(t);
+      var d = new Date(t);
       if (!n) {
         var r = this.config.first_hour;
-        r > _.getHours() && (_.setHours(r), t = _.valueOf()), n = t + o;
+        r > d.getHours() && (d.setHours(r), t = d.valueOf()), n = t + o;
       }
-      a.start_date = a.start_date || _, a.end_date = a.end_date || new Date(n), a.text = a.text || this.locale.labels.new_event, a.id = this._drag_id = this.uid(), a.layer = this.defaultLayer, this._drag_mode = "new-size", this._loading = !0, this.addEvent(a), this.callEvent("onEventCreated", [this._drag_id, s]), this._loading = !1, this._drag_event = {}, this._on_mouse_up(s);
+      a.start_date = a.start_date || d, a.end_date = a.end_date || new Date(n), a.text = a.text || this.locale.labels.new_event, a.id = this._drag_id = this.uid(), a.layer = this.defaultLayer, this._drag_mode = "new-size", this._loading = !0, this.addEvent(a), this.callEvent("onEventCreated", [this._drag_id, s]), this._loading = !1, this._drag_event = {}, this._on_mouse_up(s);
     }, e._t_render_view_data = function(t) {
       if (this.config.multi_day && !this._table_view) {
         for (var n = [], s = [], a = 0; a < t.length; a++)
@@ -8504,48 +8588,48 @@ const Fa = { active_links: function(e) {
               this._t_render_view_data(a);
             }
       }
-    }, e._render_v_bar = function(t, n, s, a, o, _, r, d, l) {
+    }, e._render_v_bar = function(t, n, s, a, o, d, r, l, _) {
       var h = t.id;
-      r.indexOf("<div class=") == -1 && (r = e.templates["event_header_" + t.layer] ? e.templates["event_header_" + t.layer](t.start_date, t.end_date, t) : r), d.indexOf("<div class=") == -1 && (d = e.templates["event_text_" + t.layer] ? e.templates["event_text_" + t.layer](t.start_date, t.end_date, t) : d);
-      var p = document.createElement("div"), m = "dhx_cal_event", g = e.templates["event_class_" + t.layer] ? e.templates["event_class_" + t.layer](t.start_date, t.end_date, t) : e.templates.event_class(t.start_date, t.end_date, t);
-      g && (m = m + " " + g);
-      var c = e._border_box_events(), u = a - 2, f = c ? u : a - 4, y = c ? u : a - 6, w = c ? u : a - 14, D = c ? u - 2 : a - 8, M = c ? o - this.xy.event_header_height : o - 30 + 1, k = '<div event_id="' + h + '" ' + e.config.event_attribute + '="' + h + '" class="' + m + '" style="position:absolute; top:' + s + "px; left:" + n + "px; width:" + f + "px; height:" + o + "px;" + (_ || "") + '">';
-      return k += '<div class="dhx_header" style=" width:' + y + 'px;" >&nbsp;</div>', k += '<div class="dhx_title">' + r + "</div>", k += '<div class="dhx_body" style=" width:' + w + "px; height:" + M + 'px;">' + d + "</div>", k += '<div class="dhx_footer" style=" width:' + D + "px;" + (l ? " margin-top:-1px;" : "") + '" ></div></div>', p.innerHTML = k, p.style.zIndex = 100, p.firstChild;
+      r.indexOf("<div class=") == -1 && (r = e.templates["event_header_" + t.layer] ? e.templates["event_header_" + t.layer](t.start_date, t.end_date, t) : r), l.indexOf("<div class=") == -1 && (l = e.templates["event_text_" + t.layer] ? e.templates["event_text_" + t.layer](t.start_date, t.end_date, t) : l);
+      var p = document.createElement("div"), v = "dhx_cal_event", g = e.templates["event_class_" + t.layer] ? e.templates["event_class_" + t.layer](t.start_date, t.end_date, t) : e.templates.event_class(t.start_date, t.end_date, t);
+      g && (v = v + " " + g);
+      var c = e._border_box_events(), f = a - 2, u = c ? f : a - 4, y = c ? f : a - 6, w = c ? f : a - 14, D = c ? f - 2 : a - 8, M = c ? o - this.xy.event_header_height : o - 30 + 1, k = '<div event_id="' + h + '" ' + e.config.event_attribute + '="' + h + '" class="' + v + '" style="position:absolute; top:' + s + "px; left:" + n + "px; width:" + u + "px; height:" + o + "px;" + (d || "") + '">';
+      return k += '<div class="dhx_header" style=" width:' + y + 'px;" >&nbsp;</div>', k += '<div class="dhx_title">' + r + "</div>", k += '<div class="dhx_body" style=" width:' + w + "px; height:" + M + 'px;">' + l + "</div>", k += '<div class="dhx_footer" style=" width:' + D + "px;" + (_ ? " margin-top:-1px;" : "") + '" ></div></div>', p.innerHTML = k, p.style.zIndex = 100, p.firstChild;
     }, e.render_event_bar = function(t) {
       var n = this._els.dhx_cal_data[0], s = this._colsS[t._sday], a = this._colsS[t._eday];
       a == s && (a = this._colsS[t._eday + 1]);
-      var o = this.xy.bar_height, _ = this._colsS.heights[t._sweek] + (this._colsS.height ? this.xy.month_scale_height + 2 : 2) + t._sorder * o, r = document.createElement("div"), d = t._timed ? "dhx_cal_event_clear" : "dhx_cal_event_line", l = e.templates["event_class_" + t.layer] ? e.templates["event_class_" + t.layer](t.start_date, t.end_date, t) : e.templates.event_class(t.start_date, t.end_date, t);
-      l && (d = d + " " + l);
-      var h = '<div event_id="' + t.id + '" ' + this.config.event_attribute + '="' + t.id + '" class="' + d + '" style="position:absolute; top:' + _ + "px; left:" + s + "px; width:" + (a - s - 15) + "px;" + (t._text_style || "") + '">';
+      var o = this.xy.bar_height, d = this._colsS.heights[t._sweek] + (this._colsS.height ? this.xy.month_scale_height + 2 : 2) + t._sorder * o, r = document.createElement("div"), l = t._timed ? "dhx_cal_event_clear" : "dhx_cal_event_line", _ = e.templates["event_class_" + t.layer] ? e.templates["event_class_" + t.layer](t.start_date, t.end_date, t) : e.templates.event_class(t.start_date, t.end_date, t);
+      _ && (l = l + " " + _);
+      var h = '<div event_id="' + t.id + '" ' + this.config.event_attribute + '="' + t.id + '" class="' + l + '" style="position:absolute; top:' + d + "px; left:" + s + "px; width:" + (a - s - 15) + "px;" + (t._text_style || "") + '">';
       t._timed && (h += e.templates["event_bar_date_" + t.layer] ? e.templates["event_bar_date_" + t.layer](t.start_date, t.end_date, t) : e.templates.event_bar_date(t.start_date, t.end_date, t)), h += e.templates["event_bar_text_" + t.layer] ? e.templates["event_bar_text_" + t.layer](t.start_date, t.end_date, t) : e.templates.event_bar_text(t.start_date, t.end_date, t) + "</div>)", h += "</div>", r.innerHTML = h, this._rendered.push(r.firstChild), n.appendChild(r.firstChild);
     }, e.render_event = function(t) {
       var n = e.xy.menu_width;
       if (e.getLayer(t.layer).noMenu && (n = 0), !(t._sday < 0)) {
         var s = e.locate_holder(t._sday);
         if (s) {
-          var a = 60 * t.start_date.getHours() + t.start_date.getMinutes(), o = 60 * t.end_date.getHours() + t.end_date.getMinutes() || 60 * e.config.last_hour, _ = Math.round((60 * a * 1e3 - 60 * this.config.first_hour * 60 * 1e3) * this.config.hour_size_px / 36e5) % (24 * this.config.hour_size_px) + 1, r = Math.max(e.xy.min_event_height, (o - a) * this.config.hour_size_px / 60) + 1, d = Math.floor((s.clientWidth - n) / t._count), l = t._sorder * d + 1;
-          t._inner || (d *= t._count - t._sorder);
-          var h = this._render_v_bar(t.id, n + l, _, d, r, t._text_style, e.templates.event_header(t.start_date, t.end_date, t), e.templates.event_text(t.start_date, t.end_date, t));
-          if (this._rendered.push(h), s.appendChild(h), l = l + parseInt(s.style.left, 10) + n, _ += this._dy_shift, h.style.zIndex = this._layers_zindex[t.layer], this._edit_id == t.id) {
+          var a = 60 * t.start_date.getHours() + t.start_date.getMinutes(), o = 60 * t.end_date.getHours() + t.end_date.getMinutes() || 60 * e.config.last_hour, d = Math.round((60 * a * 1e3 - 60 * this.config.first_hour * 60 * 1e3) * this.config.hour_size_px / 36e5) % (24 * this.config.hour_size_px) + 1, r = Math.max(e.xy.min_event_height, (o - a) * this.config.hour_size_px / 60) + 1, l = Math.floor((s.clientWidth - n) / t._count), _ = t._sorder * l + 1;
+          t._inner || (l *= t._count - t._sorder);
+          var h = this._render_v_bar(t.id, n + _, d, l, r, t._text_style, e.templates.event_header(t.start_date, t.end_date, t), e.templates.event_text(t.start_date, t.end_date, t));
+          if (this._rendered.push(h), s.appendChild(h), _ = _ + parseInt(s.style.left, 10) + n, d += this._dy_shift, h.style.zIndex = this._layers_zindex[t.layer], this._edit_id == t.id) {
             h.style.zIndex = parseInt(h.style.zIndex) + 1;
             var p = h.style.zIndex;
-            d = Math.max(d - 4, e.xy.editor_width), (h = document.createElement("div")).setAttribute("event_id", t.id), h.setAttribute(this.config.event_attribute, t.id), this.set_xy(h, d, r - 20, l, _ + 14), h.className = "dhx_cal_editor", h.style.zIndex = p;
-            var m = document.createElement("div");
-            this.set_xy(m, d - 6, r - 26), m.style.cssText += ";margin:2px 2px 2px 2px;overflow:hidden;", m.style.zIndex = p, h.appendChild(m), this._els.dhx_cal_data[0].appendChild(h), this._rendered.push(h), m.innerHTML = "<textarea class='dhx_cal_editor'>" + t.text + "</textarea>", this._editor = m.firstChild, this._editor.addEventListener("keypress", function(y) {
+            l = Math.max(l - 4, e.xy.editor_width), (h = document.createElement("div")).setAttribute("event_id", t.id), h.setAttribute(this.config.event_attribute, t.id), this.set_xy(h, l, r - 20, _, d + 14), h.className = "dhx_cal_editor", h.style.zIndex = p;
+            var v = document.createElement("div");
+            this.set_xy(v, l - 6, r - 26), v.style.cssText += ";margin:2px 2px 2px 2px;overflow:hidden;", v.style.zIndex = p, h.appendChild(v), this._els.dhx_cal_data[0].appendChild(h), this._rendered.push(h), v.innerHTML = "<textarea class='dhx_cal_editor'>" + t.text + "</textarea>", this._editor = v.firstChild, this._editor.addEventListener("keypress", function(y) {
               if (y.shiftKey)
                 return !0;
               var w = y.keyCode;
               w == e.keys.edit_save && e.editStop(!0), w == e.keys.edit_cancel && e.editStop(!1);
             }), this._editor.addEventListener("selectstart", function(y) {
               return y.cancelBubble = !0, !0;
-            }), m.firstChild.focus(), this._els.dhx_cal_data[0].scrollLeft = 0, m.firstChild.select();
+            }), v.firstChild.focus(), this._els.dhx_cal_data[0].scrollLeft = 0, v.firstChild.select();
           }
           if (this._select_id == t.id) {
             h.style.zIndex = parseInt(h.style.zIndex) + 1;
-            for (var g = this.config["icons_" + (this._edit_id == t.id ? "edit" : "select")], c = "", u = 0; u < g.length; u++)
-              c += "<div class='dhx_menu_icon " + g[u] + "' title='" + this.locale.labels[g[u]] + "'></div>";
-            var f = this._render_v_bar(t.id, l - n + 1, _, n, 20 * g.length + 26, "", "<div class='dhx_menu_head'></div>", c, !0);
-            f.style.left = l - n + 1, f.style.zIndex = h.style.zIndex, this._els.dhx_cal_data[0].appendChild(f), this._rendered.push(f);
+            for (var g = this.config["icons_" + (this._edit_id == t.id ? "edit" : "select")], c = "", f = 0; f < g.length; f++)
+              c += "<div class='dhx_menu_icon " + g[f] + "' title='" + this.locale.labels[g[f]] + "'></div>";
+            var u = this._render_v_bar(t.id, _ - n + 1, d, n, 20 * g.length + 26, "", "<div class='dhx_menu_head'></div>", c, !0);
+            u.style.left = _ - n + 1, u.style.zIndex = h.style.zIndex, this._els.dhx_cal_data[0].appendChild(u), this._rendered.push(u);
           }
         }
       }
@@ -8558,15 +8642,15 @@ const Fa = { active_links: function(e) {
   e.config.limit_start = null, e.config.limit_end = null, e.config.limit_view = !1, e.config.check_limits = !0, e._temp_limit_scope = function() {
     var i = null;
     e.attachEvent("onBeforeViewChange", function(t, n, s, a) {
-      function o(_, r) {
-        var d = e.config.limit_start, l = e.config.limit_end, h = e.date.add(_, 1, r);
-        return _.valueOf() > l.valueOf() || h <= d.valueOf();
+      function o(d, r) {
+        var l = e.config.limit_start, _ = e.config.limit_end, h = e.date.add(d, 1, r);
+        return d.valueOf() > _.valueOf() || h <= l.valueOf();
       }
       return !e.config.limit_view || !o(a = a || n, s = s || t) || n.valueOf() == a.valueOf() || (setTimeout(function() {
         if (e.$destroyed)
           return !0;
-        var _ = o(n, s) ? e.config.limit_start : n;
-        e.setCurrentView(o(_, s) ? null : _, s);
+        var d = o(n, s) ? e.config.limit_start : n;
+        e.setCurrentView(o(d, s) ? null : d, s);
       }, 1), !1);
     }), e.attachEvent("onMouseDown", function(t) {
       return t != "dhx_time_block";
@@ -8625,40 +8709,40 @@ const Fa = { active_links: function(e) {
   }, e._temp_limit_scope();
 }, map_view: function(e) {
   let i = null, t = [];
-  const n = { googleMap: new ia(e), openStreetMaps: new oa(e), mapbox: new sa(e) };
+  const n = { googleMap: new ca(e), openStreetMaps: new ha(e), mapbox: new ua(e) };
   function s(o) {
-    i = o.ext.mapView.createAdapter(), t.push(e.attachEvent("onEventSave", function(_, r, d) {
-      let l = e.getEvent(_);
-      return l && l.event_location != r.event_location && (e._eventLocationChanged = !0), !0;
-    }), e.attachEvent("onEventChanged", (_, r) => {
-      const { start_date: d, end_date: l } = r, { min_date: h, max_date: p } = e.getState();
-      return d.valueOf() < p.valueOf() && l.valueOf() > h.valueOf() && i && (e.config.map_settings.resolve_event_location && r.event_location && !e._latLngUpdate ? a(r, i) : i.updateEventMarker(r)), e._latLngUpdate = !1, !0;
-    }), e.attachEvent("onEventIdChange", function(_, r) {
-      let d = e.getEvent(r);
-      i == null || i.removeEventMarker(_), i == null || i.addEventMarker(d);
-    }), e.attachEvent("onEventAdded", (_, r) => {
-      const { start_date: d, end_date: l } = r, { min_date: h, max_date: p } = e.getState();
-      d.valueOf() < p.valueOf() && l.valueOf() > h.valueOf() && i && (e.config.map_settings.resolve_event_location && r.event_location && e._eventLocationChanged ? (a(r, i), e._eventLocationChanged = !1) : (i.addEventMarker(r), i.onEventClick(r)));
-    }), e.attachEvent("onClick", function(_, r) {
-      const d = e.getEvent(_);
-      return i && d && i.onEventClick(d), !1;
-    }), e.attachEvent("onBeforeEventDelete", (_, r) => (i && i.removeEventMarker(_), !0)));
+    i = o.ext.mapView.createAdapter(), t.push(e.attachEvent("onEventSave", function(d, r, l) {
+      let _ = e.getEvent(d);
+      return _ && _.event_location != r.event_location && (e._eventLocationChanged = !0), !0;
+    }), e.attachEvent("onEventChanged", (d, r) => {
+      const { start_date: l, end_date: _ } = r, { min_date: h, max_date: p } = e.getState();
+      return l.valueOf() < p.valueOf() && _.valueOf() > h.valueOf() && i && (e.config.map_settings.resolve_event_location && r.event_location && !e._latLngUpdate ? a(r, i) : i.updateEventMarker(r)), e._latLngUpdate = !1, !0;
+    }), e.attachEvent("onEventIdChange", function(d, r) {
+      let l = e.getEvent(r);
+      i == null || i.removeEventMarker(d), i == null || i.addEventMarker(l);
+    }), e.attachEvent("onEventAdded", (d, r) => {
+      const { start_date: l, end_date: _ } = r, { min_date: h, max_date: p } = e.getState();
+      l.valueOf() < p.valueOf() && _.valueOf() > h.valueOf() && i && (e.config.map_settings.resolve_event_location && r.event_location && e._eventLocationChanged ? (a(r, i), e._eventLocationChanged = !1) : (i.addEventMarker(r), i.onEventClick(r)));
+    }), e.attachEvent("onClick", function(d, r) {
+      const l = e.getEvent(d);
+      return i && l && i.onEventClick(l), !1;
+    }), e.attachEvent("onBeforeEventDelete", (d, r) => (i && i.removeEventMarker(d), !0)));
   }
-  async function a(o, _) {
-    let r = await _.resolveAddress(o.event_location);
-    return o.lat = r.lat, o.lng = r.lng, _.removeEventMarker(String(o.id)), _.addEventMarker(o), o;
+  async function a(o, d) {
+    let r = await d.resolveAddress(o.event_location);
+    return o.lat = r.lat, o.lng = r.lng, d.removeEventMarker(String(o.id)), d.addEventMarker(o), o;
   }
   e.ext || (e.ext = {}), e.ext.mapView = { createAdapter: function() {
     return n[e.config.map_view_provider];
   }, createMarker: function(o) {
     return new google.maps.Marker(o);
-  }, currentAdapter: null, adapters: n }, e._latLngUpdate = !1, e._eventLocationChanged = !1, e.config.map_view_provider = "googleMap", e.config.map_settings = { initial_position: { lat: 48.724, lng: 8.215 }, error_position: { lat: 15, lng: 15 }, initial_zoom: 1, zoom_after_resolve: 15, info_window_max_width: 300, resolve_user_location: !0, resolve_event_location: !0, view_provider: "googleMap" }, e.config.map_initial_position && (e.config.map_settings.initial_position = { lat: e.config.map_initial_position.lat(), lng: e.config.map_initial_position.lng() }), e.config.map_error_position && (e.config.map_settings.error_position = { lat: e.config.map_error_position.lat(), lng: e.config.map_error_position.lng() }), e.xy.map_date_width = 188, e.xy.map_icon_width = 25, e.xy.map_description_width = 400, e.date.add_map = function(o, _, r) {
+  }, currentAdapter: null, adapters: n }, e._latLngUpdate = !1, e._eventLocationChanged = !1, e.config.map_view_provider = "googleMap", e.config.map_settings = { initial_position: { lat: 48.724, lng: 8.215 }, error_position: { lat: 15, lng: 15 }, initial_zoom: 1, zoom_after_resolve: 15, info_window_max_width: 300, resolve_user_location: !0, resolve_event_location: !0, view_provider: "googleMap" }, e.config.map_initial_position && (e.config.map_settings.initial_position = { lat: e.config.map_initial_position.lat(), lng: e.config.map_initial_position.lng() }), e.config.map_error_position && (e.config.map_settings.error_position = { lat: e.config.map_error_position.lat(), lng: e.config.map_error_position.lng() }), e.xy.map_date_width = 188, e.xy.map_icon_width = 25, e.xy.map_description_width = 400, e.date.add_map = function(o, d, r) {
     return new Date(o.valueOf());
-  }, e.templates.map_date = function(o, _, r) {
+  }, e.templates.map_date = function(o, d, r) {
     return "";
-  }, e.templates.map_time = function(o, _, r) {
-    return e.config.rtl && !r._timed ? e.templates.day_date(_) + " &ndash; " + e.templates.day_date(o) : r._timed ? this.day_date(r.start_date, r.end_date, r) + " " + this.event_date(o) : e.templates.day_date(o) + " &ndash; " + e.templates.day_date(_);
-  }, e.templates.map_text = function(o, _, r) {
+  }, e.templates.map_time = function(o, d, r) {
+    return e.config.rtl && !r._timed ? e.templates.day_date(d) + " &ndash; " + e.templates.day_date(o) : r._timed ? this.day_date(r.start_date, r.end_date, r) + " " + this.event_date(o) : e.templates.day_date(o) + " &ndash; " + e.templates.day_date(d);
+  }, e.templates.map_text = function(o, d, r) {
     return r.text;
   }, e.templates.map_info_content = function(o) {
     return `<div><b>Event's text:</b> ${o.text}
@@ -8669,82 +8753,82 @@ const Fa = { active_links: function(e) {
   }, e.date.map_start = function(o) {
     return o;
   }, e.dblclick_dhx_map_area = function(o) {
-    let _ = o.target.closest(`[${e.config.event_attribute}]`);
-    if (_) {
-      let r = _.getAttribute(`${e.config.event_attribute}`);
+    let d = o.target.closest(`[${e.config.event_attribute}]`);
+    if (d) {
+      let r = d.getAttribute(`${e.config.event_attribute}`);
       e.showLightbox(r);
     }
-    this.config.readonly || !this.config.dblclick_create || _ || this.addEventNow({ start_date: e.config.map_start, end_date: e.date.add(e.config.map_start, e.config.time_step, "minute") });
+    this.config.readonly || !this.config.dblclick_create || d || this.addEventNow({ start_date: e.config.map_start, end_date: e.date.add(e.config.map_start, e.config.time_step, "minute") });
   }, e.attachEvent("onSchedulerReady", function() {
     e.config.map_initial_zoom !== void 0 && (e.config.map_settings.initial_zoom = e.config.map_initial_zoom), e.config.map_zoom_after_resolve !== void 0 && (e.config.map_settings.zoom_after_resolve = e.config.map_zoom_after_resolve), e.config.map_infowindow_max_width !== void 0 && (e.config.map_settings.info_window_max_width = e.config.map_infowindow_max_width), e.config.map_resolve_user_location !== void 0 && (e.config.map_settings.resolve_user_location = e.config.map_resolve_user_location), e.config.map_view_provider !== void 0 && (e.config.map_settings.view_provider = e.config.map_view_provider), e.config.map_type !== void 0 && (e.config.map_settings.type = e.config.map_type), e.config.map_resolve_event_location !== void 0 && (e.config.map_settings.resolve_event_location = e.config.map_resolve_event_location), e.ext.mapView.currentAdapter = e.config.map_view_provider;
     let o = document.createElement("div");
     o.className = "mapContainer", o.id = "mapContainer", o.style.display = "none", o.style.zIndex = "1", e._obj.appendChild(o);
-    const _ = e.render_data;
+    const d = e.render_data;
     function r() {
-      let l = e.get_visible_events();
-      l.sort(function(g, c) {
+      let _ = e.get_visible_events();
+      _.sort(function(g, c) {
         return g.start_date.valueOf() == c.start_date.valueOf() ? g.id > c.id ? 1 : -1 : g.start_date > c.start_date ? 1 : -1;
       });
       let h = "<div " + e._waiAria.mapAttrString() + " class='dhx_map_area'>";
-      for (let g = 0; g < l.length; g++) {
-        let c = l[g], u = c.id == e._selected_event_id ? "dhx_map_line highlight" : "dhx_map_line", f = c.color ? "--dhx-scheduler-event-background:" + c.color + ";" : "", y = c.textColor ? "--dhx-scheduler-event-color:" + c.textColor + ";" : "", w = e._waiAria.mapRowAttrString(c), D = e._waiAria.mapDetailsBtnString();
-        h += "<div " + w + " class='" + u + "' event_id='" + c.id + "' " + e.config.event_attribute + "='" + c.id + "' style='" + f + y + (c._text_style || "") + " width: " + (e.xy.map_date_width + e.xy.map_description_width + 2) + "px;'><div class='dhx_map_event_time' style='width: " + e.xy.map_date_width + "px;' >" + e.templates.map_time(c.start_date, c.end_date, c) + "</div>", h += `<div ${D} class='dhx_event_icon icon_details'><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      for (let g = 0; g < _.length; g++) {
+        let c = _[g], f = c.id == e._selected_event_id ? "dhx_map_line highlight" : "dhx_map_line", u = c.color ? "--dhx-scheduler-event-background:" + c.color + ";" : "", y = c.textColor ? "--dhx-scheduler-event-color:" + c.textColor + ";" : "", w = e._waiAria.mapRowAttrString(c), D = e._waiAria.mapDetailsBtnString();
+        h += "<div " + w + " class='" + f + "' event_id='" + c.id + "' " + e.config.event_attribute + "='" + c.id + "' style='" + u + y + (c._text_style || "") + " width: " + (e.xy.map_date_width + e.xy.map_description_width + 2) + "px;'><div class='dhx_map_event_time' style='width: " + e.xy.map_date_width + "px;' >" + e.templates.map_time(c.start_date, c.end_date, c) + "</div>", h += `<div ${D} class='dhx_event_icon icon_details'><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path d="M15.4444 16.4H4.55556V7.6H15.4444V16.4ZM13.1111 2V3.6H6.88889V2H5.33333V3.6H4.55556C3.69222 3.6 3 4.312 3 5.2V16.4C3 16.8243 3.16389 17.2313 3.45561 17.5314C3.74733 17.8314 4.143 18 4.55556 18H15.4444C15.857 18 16.2527 17.8314 16.5444 17.5314C16.8361 17.2313 17 16.8243 17 16.4V5.2C17 4.312 16.3 3.6 15.4444 3.6H14.6667V2H13.1111ZM13.8889 10.8H10V14.8H13.8889V10.8Z" fill="#A1A4A6"/>
 			</svg></div>`, h += "<div class='line_description' style='width:" + (e.xy.map_description_width - e.xy.map_icon_width) + "px;'>" + e.templates.map_text(c.start_date, c.end_date, c) + "</div></div>";
       }
       h += "<div class='dhx_v_border' style=" + (e.config.rtl ? "'right: " : "'left: ") + (e.xy.map_date_width - 1) + "px;'></div><div class='dhx_v_border_description'></div></div>", e._els.dhx_cal_data[0].scrollTop = 0, e._els.dhx_cal_data[0].innerHTML = h;
-      let p = e._els.dhx_cal_data[0].firstChild.childNodes, m = e._getNavDateElement();
-      m && (m.innerHTML = e.templates[e._mode + "_date"](e._min_date, e._max_date, e._mode)), e._rendered = [];
+      let p = e._els.dhx_cal_data[0].firstChild.childNodes, v = e._getNavDateElement();
+      v && (v.innerHTML = e.templates[e._mode + "_date"](e._min_date, e._max_date, e._mode)), e._reset_rendered_events();
       for (let g = 0; g < p.length - 2; g++)
         e._rendered[g] = p[g];
     }
-    e.render_data = function(l, h) {
+    e.render_data = function(_, h) {
       if (this._mode != "map")
-        return _.apply(this, arguments);
+        return d.apply(this, arguments);
       {
         r();
         let p = e.get_visible_events();
-        i && (i.clearEventMarkers(), p.forEach((m) => i == null ? void 0 : i.addEventMarker(m)));
+        i && (i.clearEventMarkers(), p.forEach((v) => i == null ? void 0 : i.addEventMarker(v)));
       }
-    }, e.map_view = function(l) {
+    }, e.map_view = function(_) {
       e._els.dhx_cal_data[0].style.width = e.xy.map_date_width + e.xy.map_description_width + 1 + "px", e._min_date = e.config.map_start || e._currentDate(), e._max_date = e.config.map_end || e.date.add(e._currentDate(), 1, "year"), e._table_view = !0, function(g) {
         if (g) {
           const c = e.locale.labels;
           e._els.dhx_cal_header[0].innerHTML = "<div class='dhx_map_head' style='width: " + (e.xy.map_date_width + e.xy.map_description_width + 2) + "px;' ><div class='headline_date' style='width: " + e.xy.map_date_width + "px;'>" + c.date + "</div><div class='headline_description' style='width: " + e.xy.map_description_width + "px;'>" + c.description + "</div></div>", e._table_view = !0, e.set_sizes();
         }
-      }(l);
+      }(_);
       let h = document.getElementById("mapContainer");
-      var p, m;
+      var p, v;
       (function(g) {
         let c = document.getElementById(g);
         if (c) {
-          const u = e.$container.querySelector(".dhx_cal_navline").offsetHeight;
-          let f = e.$container.querySelector(".dhx_cal_data").offsetHeight + e.$container.querySelector(".dhx_cal_header").offsetHeight;
-          f < 0 && (f = 0);
+          const f = e.$container.querySelector(".dhx_cal_navline").offsetHeight;
+          let u = e.$container.querySelector(".dhx_cal_data").offsetHeight + e.$container.querySelector(".dhx_cal_header").offsetHeight;
+          u < 0 && (u = 0);
           let y = e._x - e.xy.map_date_width - e.xy.map_description_width - 1;
-          y < 0 && (y = 0), c.style.height = f + "px", c.style.width = y + "px", c.style.position = "absolute", c.style.top = u + "px", e.config.rtl ? c.style.marginRight = e.xy.map_date_width + e.xy.map_description_width + 1 + "px" : c.style.marginLeft = e.xy.map_date_width + e.xy.map_description_width + 1 + "px", c.style.marginTop = e.xy.nav_height + 2 + "px";
+          y < 0 && (y = 0), c.style.height = u + "px", c.style.width = y + "px", c.style.position = "absolute", c.style.top = f + "px", e.config.rtl ? c.style.marginRight = e.xy.map_date_width + e.xy.map_description_width + 1 + "px" : c.style.marginLeft = e.xy.map_date_width + e.xy.map_description_width + 1 + "px", c.style.marginTop = e.xy.nav_height + 2 + "px";
         }
-      })("mapContainer"), l && h ? (o.style.display = "block", r(), e.config.map_view_provider == e.ext.mapView.currentAdapter ? (i == null || i.destroy(h), s(e), i == null || i.initialize(h, e.config.map_settings)) : (i == null || i.destroy(h), s(e), i == null || i.initialize(h, e.config.map_settings), e.ext.mapView.currentAdapter = e.config.map_view_provider), i && (p = e.config.map_settings, m = i, p.resolve_user_location ? navigator.geolocation && navigator.geolocation.getCurrentPosition(function(g) {
-        m.setView(g.coords.latitude, g.coords.longitude, p.zoom_after_resolve || p.initial_zoom);
-      }) : m.setView(p.initial_position.lat, p.initial_position.lng, p.initial_zoom))) : (o.style.display = "none", e._els.dhx_cal_data[0].style.width = "100%", i && h && (i.destroy(h), i = null, e.ext.mapView.currentAdapter = e.config.map_view_provider), t.forEach((g) => e.detachEvent(g)), t = []);
-    }, e.attachEvent("onLocationError", function(l) {
+      })("mapContainer"), _ && h ? (o.style.display = "block", r(), e.config.map_view_provider == e.ext.mapView.currentAdapter ? (i == null || i.destroy(h), s(e), i == null || i.initialize(h, e.config.map_settings)) : (i == null || i.destroy(h), s(e), i == null || i.initialize(h, e.config.map_settings), e.ext.mapView.currentAdapter = e.config.map_view_provider), i && (p = e.config.map_settings, v = i, p.resolve_user_location ? navigator.geolocation && navigator.geolocation.getCurrentPosition(function(g) {
+        v.setView(g.coords.latitude, g.coords.longitude, p.zoom_after_resolve || p.initial_zoom);
+      }) : v.setView(p.initial_position.lat, p.initial_position.lng, p.initial_zoom))) : (o.style.display = "none", e._els.dhx_cal_data[0].style.width = "100%", i && h && (i.destroy(h), i = null, e.ext.mapView.currentAdapter = e.config.map_view_provider), t.forEach((g) => e.detachEvent(g)), t = []);
+    }, e.attachEvent("onLocationError", function(_) {
       return alert("Location can't be found"), google.maps.LatLng(51.47784, -1492e-6);
     });
-    let d = async function(l) {
+    let l = async function(_) {
       if (i) {
-        const h = await i.resolveAddress(l.event_location);
-        h.lat && h.lng ? (l.lat = +h.lat, l.lng = +h.lng) : (e.callEvent("onLocationError", [l.id]), l.lng = e.config.map_settings.error_position.lng, l.lat = e.config.map_settings.error_position.lat), e._latLngUpdate = !0, e.callEvent("onEventChanged", [l.id, l]);
+        const h = await i.resolveAddress(_.event_location);
+        h.lat && h.lng ? (_.lat = +h.lat, _.lng = +h.lng) : (e.callEvent("onLocationError", [_.id]), _.lng = e.config.map_settings.error_position.lng, _.lat = e.config.map_settings.error_position.lat), e._latLngUpdate = !0, e.callEvent("onEventChanged", [_.id, _]);
       }
     };
-    e._event_resolve_delay = 1500, e.attachEvent("onEventLoading", function(l) {
-      return l.lat && l.lng && (l.lat = +l.lat, l.lng = +l.lng), e.config.map_settings.resolve_event_location && l.event_location && !l.lat && !l.lng && (e._event_resolve_delay += 1500, function(h, p, m, g) {
+    e._event_resolve_delay = 1500, e.attachEvent("onEventLoading", function(_) {
+      return _.lat && _.lng && (_.lat = +_.lat, _.lng = +_.lng), e.config.map_settings.resolve_event_location && _.event_location && !_.lat && !_.lng && (e._event_resolve_delay += 1500, function(h, p, v, g) {
         setTimeout(function() {
           if (e.$destroyed)
             return !0;
-          let c = h.apply(p, m);
-          return h = p = m = null, c;
+          let c = h.apply(p, v);
+          return h = p = v = null, c;
         }, g || 1);
-      }(d, this, [l], e._event_resolve_delay)), !0;
+      }(l, this, [_], e._event_resolve_delay)), !0;
     });
   });
 }, minical: function(e) {
@@ -8754,12 +8838,12 @@ const Fa = { active_links: function(e) {
     if (typeof o == "string" && (o = this.templates.api_date(o)), n)
       a = this._render_calendar(n.parentNode, o, t, n), e.unmarkCalendar(a);
     else {
-      var _ = t.container, r = t.position;
-      if (typeof _ == "string" && (_ = document.getElementById(_)), typeof r == "string" && (r = document.getElementById(r)), r && r.left === void 0 && r.right === void 0) {
-        var d = e.$domHelpers.getOffset(r);
-        r = { top: d.top + r.offsetHeight, left: d.left };
+      var d = t.container, r = t.position;
+      if (typeof d == "string" && (d = document.getElementById(d)), typeof r == "string" && (r = document.getElementById(r)), r && r.left === void 0 && r.right === void 0) {
+        var l = e.$domHelpers.getOffset(r);
+        r = { top: l.top + r.offsetHeight, left: l.left };
       }
-      _ || (_ = e._get_def_cont(r)), (a = this._render_calendar(_, o, t)).$_eventAttached || (a.$_eventAttached = !0, i.attach(a, "click", (function(y) {
+      d || (d = e._get_def_cont(r)), (a = this._render_calendar(d, o, t)).$_eventAttached || (a.$_eventAttached = !0, i.attach(a, "click", (function(y) {
         var w = y.target || y.srcElement, D = e.$domHelpers;
         if (D.closest(w, ".dhx_month_head") && !D.closest(w, ".dhx_after") && !D.closest(w, ".dhx_before")) {
           var M = D.closest(w, "[data-cell-date]").getAttribute("data-cell-date"), k = e.templates.parse_date(M);
@@ -8774,11 +8858,11 @@ const Fa = { active_links: function(e) {
       }).bind(a)));
     }
     if (e.config.minicalendar.mark_events)
-      for (var l = e.date.month_start(o), h = e.date.add(l, 1, "month"), p = this.getEvents(l, h), m = this["filter_" + this._mode], g = {}, c = 0; c < p.length; c++) {
-        var u = p[c];
-        if (!m || m(u.id, u)) {
-          var f = u.start_date;
-          for (f.valueOf() < l.valueOf() && (f = l), f = e.date.date_part(new Date(f.valueOf())); f < u.end_date && (g[+f] || (g[+f] = !0, this.markCalendar(a, f, "dhx_year_event")), !((f = this.date.add(f, 1, "day")).valueOf() >= h.valueOf())); )
+      for (var _ = e.date.month_start(o), h = e.date.add(_, 1, "month"), p = this.getEvents(_, h), v = this["filter_" + this._mode], g = {}, c = 0; c < p.length; c++) {
+        var f = p[c];
+        if (!v || v(f.id, f)) {
+          var u = f.start_date;
+          for (u.valueOf() < _.valueOf() && (u = _), u = e.date.date_part(new Date(u.valueOf())); u < f.end_date && (g[+u] || (g[+u] = !0, this.markCalendar(a, u, "dhx_year_event")), !((u = this.date.add(u, 1, "day")).valueOf() >= h.valueOf())); )
             ;
         }
       }
@@ -8794,9 +8878,9 @@ const Fa = { active_links: function(e) {
       return null;
     for (var s = t.querySelector(".dhx_year_body").childNodes[0], a = 0, o = new Date(t._min_date); +this.date.add(o, 1, "week") <= +n; )
       o = this.date.add(o, 1, "week"), a++;
-    var _ = e.config.start_on_monday, r = (n.getDay() || (_ ? 7 : 0)) - (_ ? 1 : 0);
-    const d = s.querySelector(`.dhx_cal_month_row:nth-child(${a + 1}) .dhx_cal_month_cell:nth-child(${r + 1})`);
-    return d ? d.firstChild : null;
+    var d = e.config.start_on_monday, r = (n.getDay() || (d ? 7 : 0)) - (d ? 1 : 0);
+    const l = s.querySelector(`.dhx_cal_month_row:nth-child(${a + 1}) .dhx_cal_month_cell:nth-child(${r + 1})`);
+    return l ? l.firstChild : null;
   }, e.markCalendar = function(t, n, s) {
     var a = this._locateCalendar(t, n);
     a && (a.className += " " + s);
@@ -8806,8 +8890,8 @@ const Fa = { active_links: function(e) {
       a && (a.className = (a.className || "").replace(RegExp(s, "g")));
     }
   }, e._week_template = function(t) {
-    for (var n = t || 250, s = 0, a = document.createElement("div"), o = this.date.week_start(e._currentDate()), _ = 0; _ < 7; _++)
-      this._cols[_] = Math.floor(n / (7 - _)), this._render_x_header(_, s, o, a), o = this.date.add(o, 1, "day"), n -= this._cols[_], s += this._cols[_];
+    for (var n = t || 250, s = 0, a = document.createElement("div"), o = this.date.week_start(e._currentDate()), d = 0; d < 7; d++)
+      this._cols[d] = Math.floor(n / (7 - d)), this._render_x_header(d, s, o, a), o = this.date.add(o, 1, "day"), n -= this._cols[d], s += this._cols[d];
     return a.lastChild.className += " dhx_scale_bar_last", a;
   }, e.updateCalendar = function(t, n) {
     if (t.conf.date && t.conf.events && t.conf.events.onBeforeMonthChange && t.conf.events.onBeforeMonthChange.call(t, t.conf.date, n, t) === !1)
@@ -8815,44 +8899,44 @@ const Fa = { active_links: function(e) {
     const s = t.conf.date;
     t.conf.date = n, this.renderCalendar(t.conf, t, !0), t.conf.events && t.conf.events.onMonthChange && t.conf.events.onMonthChange.call(t, s, n);
   }, e._mini_cal_arrows = ["&nbsp;", "&nbsp;"], e._render_calendar = function(t, n, s, a) {
-    var o = e.templates, _ = this._cols;
+    var o = e.templates, d = this._cols;
     this._cols = [];
     var r = this._mode;
     this._mode = "calendar";
-    var d = this._colsS;
+    var l = this._colsS;
     this._colsS = { height: 0 };
-    var l = new Date(this._min_date), h = new Date(this._max_date), p = new Date(e._date), m = o.month_day, g = this._ignores_detected;
+    var _ = new Date(this._min_date), h = new Date(this._max_date), p = new Date(e._date), v = o.month_day, g = this._ignores_detected;
     this._ignores_detected = 0, o.month_day = o.calendar_date, n = this.date.month_start(n);
-    var c, u = this._week_template(t.offsetWidth - 1 - this.config.minicalendar.padding);
-    a ? c = a : ((c = document.createElement("div")).className = "dhx_cal_container dhx_mini_calendar", this.config.rtl && (c.className += " dhx_cal_container_rtl")), c.setAttribute("date", this._helpers.formatDate(n)), c.innerHTML = "<div class='dhx_year_month'></div><div class='dhx_year_grid" + (e.config.rtl ? " dhx_grid_rtl'>" : "'>") + "<div class='dhx_year_week'>" + (u ? u.innerHTML : "") + "</div><div class='dhx_year_body'></div></div>";
-    var f = c.querySelector(".dhx_year_month"), y = c.querySelector(".dhx_year_week"), w = c.querySelector(".dhx_year_body");
-    if (f.innerHTML = this.templates.calendar_month(n), s.navigation)
-      for (var D = function(O, R) {
-        var P = e.date.add(O._date, R, "month");
-        e.updateCalendar(O, P), e._date.getMonth() == O._date.getMonth() && e._date.getFullYear() == O._date.getFullYear() && e._markCalendarCurrentDate(O);
-      }, M = ["dhx_cal_prev_button", "dhx_cal_next_button"], k = ["left:1px;top:4px;position:absolute;", "left:auto; right:1px;top:4px;position:absolute;"], N = [-1, 1], v = function(O) {
+    var c, f = this._week_template(t.offsetWidth - 1 - this.config.minicalendar.padding);
+    a ? c = a : ((c = document.createElement("div")).className = "dhx_cal_container dhx_mini_calendar", this.config.rtl && (c.className += " dhx_cal_container_rtl")), c.setAttribute("date", this._helpers.formatDate(n)), c.innerHTML = "<div class='dhx_year_month'></div><div class='dhx_year_grid" + (e.config.rtl ? " dhx_grid_rtl'>" : "'>") + "<div class='dhx_year_week'>" + (f ? f.innerHTML : "") + "</div><div class='dhx_year_body'></div></div>";
+    var u = c.querySelector(".dhx_year_month"), y = c.querySelector(".dhx_year_week"), w = c.querySelector(".dhx_year_body");
+    if (u.innerHTML = this.templates.calendar_month(n), s.navigation)
+      for (var D = function(O, P) {
+        var R = e.date.add(O._date, P, "month");
+        e.updateCalendar(O, R), e._date.getMonth() == O._date.getMonth() && e._date.getFullYear() == O._date.getFullYear() && e._markCalendarCurrentDate(O);
+      }, M = ["dhx_cal_prev_button", "dhx_cal_next_button"], k = ["left:1px;top:4px;position:absolute;", "left:auto; right:1px;top:4px;position:absolute;"], N = [-1, 1], m = function(O) {
         return function() {
           if (s.sync)
-            for (var R = e._synced_minicalendars, P = 0; P < R.length; P++)
-              D(R[P], O);
+            for (var P = e._synced_minicalendars, R = 0; R < P.length; R++)
+              D(P[R], O);
           else
             e.config.rtl && (O = -O), D(c, O);
         };
       }, x = [e.locale.labels.prev, e.locale.labels.next], b = 0; b < 2; b++) {
         var E = document.createElement("div");
-        E.className = M[b], e._waiAria.headerButtonsAttributes(E, x[b]), E.style.cssText = k[b], E.innerHTML = this._mini_cal_arrows[b], f.appendChild(E), i.attach(E, "click", v(N[b]));
+        E.className = M[b], e._waiAria.headerButtonsAttributes(E, x[b]), E.style.cssText = k[b], E.innerHTML = this._mini_cal_arrows[b], u.appendChild(E), i.attach(E, "click", m(N[b]));
       }
     c._date = new Date(n), c.week_start = (n.getDay() - (this.config.start_on_monday ? 1 : 0) + 7) % 7;
     var S = c._min_date = this.date.week_start(n);
     c._max_date = this.date.add(c._min_date, 6, "week"), this._reset_month_scale(w, n, S, 6), a || t.appendChild(c), y.style.height = y.childNodes[0].offsetHeight - 1 + "px";
     var T = e.uid();
-    e._waiAria.minicalHeader(f, T), e._waiAria.minicalGrid(c.querySelector(".dhx_year_grid"), T), e._waiAria.minicalRow(y);
-    for (var A = y.querySelectorAll(".dhx_scale_bar"), C = 0; C < A.length; C++)
-      e._waiAria.minicalHeadCell(A[C]);
+    e._waiAria.minicalHeader(u, T), e._waiAria.minicalGrid(c.querySelector(".dhx_year_grid"), T), e._waiAria.minicalRow(y);
+    for (var C = y.querySelectorAll(".dhx_scale_bar"), A = 0; A < C.length; A++)
+      e._waiAria.minicalHeadCell(C[A]);
     var $ = w.querySelectorAll(".dhx_cal_month_cell"), H = new Date(S);
-    for (C = 0; C < $.length; C++)
-      e._waiAria.minicalDayCell($[C], new Date(H)), H = e.date.add(H, 1, "day");
-    return e._waiAria.minicalHeader(f, T), this._cols = _, this._mode = r, this._colsS = d, this._min_date = l, this._max_date = h, e._date = p, o.month_day = m, this._ignores_detected = g, c;
+    for (A = 0; A < $.length; A++)
+      e._waiAria.minicalDayCell($[A], new Date(H)), H = e.date.add(H, 1, "day");
+    return e._waiAria.minicalHeader(u, T), this._cols = d, this._mode = r, this._colsS = l, this._min_date = _, this._max_date = h, e._date = p, o.month_day = v, this._ignores_detected = g, c;
   }, e.destroyCalendar = function(t, n) {
     !t && this._def_count && this._def_count.firstChild && (n || (/* @__PURE__ */ new Date()).valueOf() - this._def_count._created.valueOf() > 500) && (t = this._def_count.firstChild), t && (i.detachAll(), t.innerHTML = "", t.parentNode && t.parentNode.removeChild(t), this._def_count && (this._def_count.style.top = "-1000px"), t.conf && t.conf._on_xle_handler && e.detachEvent(t.conf._on_xle_handler));
   }, e.isCalendarVisible = function() {
@@ -8862,16 +8946,16 @@ const Fa = { active_links: function(e) {
       e.destroyCalendar();
     });
   }, { once: !0 }), e.form_blocks.calendar_time = { render: function(t) {
-    var n = "<span class='dhx_minical_input_wrapper'><input class='dhx_readonly dhx_minical_input' type='text' readonly='true'></span>", s = e.config, a = this.date.date_part(e._currentDate()), o = 1440, _ = 0;
-    s.limit_time_select && (_ = 60 * s.first_hour, o = 60 * s.last_hour + 1), a.setHours(_ / 60), t._time_values = [], n += " <select class='dhx_lightbox_time_select'>";
-    for (var r = _; r < o; r += 1 * this.config.time_step)
+    var n = "<span class='dhx_minical_input_wrapper'><input class='dhx_readonly dhx_minical_input' type='text' readonly='true'></span>", s = e.config, a = this.date.date_part(e._currentDate()), o = 1440, d = 0;
+    s.limit_time_select && (d = 60 * s.first_hour, o = 60 * s.last_hour + 1), a.setHours(d / 60), t._time_values = [], n += " <select class='dhx_lightbox_time_select'>";
+    for (var r = d; r < o; r += 1 * this.config.time_step)
       n += "<option value='" + r + "'>" + this.templates.time_picker(a) + "</option>", t._time_values.push(r), a = this.date.add(a, this.config.time_step, "minute");
     return "<div class='dhx_section_time dhx_lightbox_minical'>" + (n += "</select>") + "<span class='dhx_lightbox_minical_spacer'> &nbsp;&ndash;&nbsp; </span>" + n + "</div>";
   }, set_value: function(t, n, s, a) {
-    var o, _, r = t.getElementsByTagName("input"), d = t.getElementsByTagName("select"), l = function(f, y, w) {
-      e.event(f, "click", function() {
-        e.destroyCalendar(null, !0), e.renderCalendar({ position: f, date: new Date(this._date), navigation: !0, handler: function(D) {
-          f.value = e.templates.calendar_time(D), f._date = new Date(D), e.destroyCalendar(), e.config.event_duration && e.config.auto_end_date && w === 0 && g();
+    var o, d, r = t.getElementsByTagName("input"), l = t.getElementsByTagName("select"), _ = function(u, y, w) {
+      e.event(u, "click", function() {
+        e.destroyCalendar(null, !0), e.renderCalendar({ position: u, date: new Date(this._date), navigation: !0, handler: function(D) {
+          u.value = e.templates.calendar_time(D), u._date = new Date(D), e.destroyCalendar(), e.config.event_duration && e.config.auto_end_date && w === 0 && g();
         } });
       });
     };
@@ -8880,28 +8964,28 @@ const Fa = { active_links: function(e) {
         var h = "<label class='dhx_fullday'><input type='checkbox' name='full_day' value='true'> " + e.locale.labels.full_day + "&nbsp;</label></input>";
         e.config.wide_form || (h = t.previousSibling.innerHTML + h), t.previousSibling.innerHTML = h, t._full_day = !0;
       }
-      var p = t.previousSibling.getElementsByTagName("input")[0], m = e.date.time_part(s.start_date) === 0 && e.date.time_part(s.end_date) === 0;
-      p.checked = m, d[0].disabled = p.checked, d[1].disabled = p.checked, p.$_eventAttached || (p.$_eventAttached = !0, e.event(p, "click", function() {
+      var p = t.previousSibling.getElementsByTagName("input")[0], v = e.date.time_part(s.start_date) === 0 && e.date.time_part(s.end_date) === 0;
+      p.checked = v, l[0].disabled = p.checked, l[1].disabled = p.checked, p.$_eventAttached || (p.$_eventAttached = !0, e.event(p, "click", function() {
         if (p.checked === !0) {
-          var f = {};
-          e.form_blocks.calendar_time.get_value(t, f), o = e.date.date_part(f.start_date), (+(_ = e.date.date_part(f.end_date)) == +o || +_ >= +o && (s.end_date.getHours() !== 0 || s.end_date.getMinutes() !== 0)) && (_ = e.date.add(_, 1, "day"));
+          var u = {};
+          e.form_blocks.calendar_time.get_value(t, u), o = e.date.date_part(u.start_date), (+(d = e.date.date_part(u.end_date)) == +o || +d >= +o && (s.end_date.getHours() !== 0 || s.end_date.getMinutes() !== 0)) && (d = e.date.add(d, 1, "day"));
         } else
-          o = null, _ = null;
-        var y = o || s.start_date, w = _ || s.end_date;
-        c(r[0], y), c(r[1], w), d[0].value = 60 * y.getHours() + y.getMinutes(), d[1].value = 60 * w.getHours() + w.getMinutes(), d[0].disabled = p.checked, d[1].disabled = p.checked;
+          o = null, d = null;
+        var y = o || s.start_date, w = d || s.end_date;
+        c(r[0], y), c(r[1], w), l[0].value = 60 * y.getHours() + y.getMinutes(), l[1].value = 60 * w.getHours() + w.getMinutes(), l[0].disabled = p.checked, l[1].disabled = p.checked;
       }));
     }
     if (e.config.event_duration && e.config.auto_end_date) {
       var g = function() {
-        e.config.auto_end_date && e.config.event_duration && (o = e.date.add(r[0]._date, d[0].value, "minute"), _ = new Date(o.getTime() + 60 * e.config.event_duration * 1e3), r[1].value = e.templates.calendar_time(_), r[1]._date = e.date.date_part(new Date(_)), d[1].value = 60 * _.getHours() + _.getMinutes());
+        e.config.auto_end_date && e.config.event_duration && (o = e.date.add(r[0]._date, l[0].value, "minute"), d = new Date(o.getTime() + 60 * e.config.event_duration * 1e3), r[1].value = e.templates.calendar_time(d), r[1]._date = e.date.date_part(new Date(d)), l[1].value = 60 * d.getHours() + d.getMinutes());
       };
-      d[0].$_eventAttached || d[0].addEventListener("change", g);
+      l[0].$_eventAttached || l[0].addEventListener("change", g);
     }
-    function c(f, y, w) {
-      l(f, y, w), f.value = e.templates.calendar_time(y), f._date = e.date.date_part(new Date(y));
+    function c(u, y, w) {
+      _(u, y, w), u.value = e.templates.calendar_time(y), u._date = e.date.date_part(new Date(y));
     }
-    function u(f) {
-      for (var y = a._time_values, w = 60 * f.getHours() + f.getMinutes(), D = w, M = !1, k = 0; k < y.length; k++) {
+    function f(u) {
+      for (var y = a._time_values, w = 60 * u.getHours() + u.getMinutes(), D = w, M = !1, k = 0; k < y.length; k++) {
         var N = y[k];
         if (N === w) {
           M = !0;
@@ -8911,8 +8995,8 @@ const Fa = { active_links: function(e) {
       }
       return M || D ? M ? w : D : -1;
     }
-    c(r[0], s.start_date, 0), c(r[1], s.end_date, 1), l = function() {
-    }, d[0].value = u(s.start_date), d[1].value = u(s.end_date);
+    c(r[0], s.start_date, 0), c(r[1], s.end_date, 1), _ = function() {
+    }, l[0].value = f(s.start_date), l[1].value = f(s.end_date);
   }, get_value: function(t, n) {
     var s = t.getElementsByTagName("input"), a = t.getElementsByTagName("select");
     return n.start_date = e.date.add(s[0]._date, a[0].value, "minute"), n.end_date = e.date.add(s[1]._date, a[1].value, "minute"), n.end_date <= n.start_date && (n.end_date = e.date.add(n.start_date, e.config.time_step, "minute")), { start_date: new Date(n.start_date), end_date: new Date(n.end_date) };
@@ -8924,10 +9008,10 @@ const Fa = { active_links: function(e) {
     };
     e.attachEvent("onViewChange", s), e.attachEvent("onXLE", s), e.attachEvent("onEventAdded", s), e.attachEvent("onEventChanged", s), e.attachEvent("onEventDeleted", s), s();
   }, e._markCalendarCurrentDate = function(t) {
-    var n = e.getState(), s = n.min_date, a = n.max_date, o = n.mode, _ = e.date.month_start(new Date(t._date)), r = e.date.add(_, 1, "month");
-    if (!({ month: !0, year: !0, agenda: !0, grid: !0 }[o] || s.valueOf() <= _.valueOf() && a.valueOf() >= r.valueOf()))
-      for (var d = s; d.valueOf() < a.valueOf(); )
-        _.valueOf() <= d.valueOf() && r > d && e.markCalendar(t, d, "dhx_calendar_click"), d = e.date.add(d, 1, "day");
+    var n = e.getState(), s = n.min_date, a = n.max_date, o = n.mode, d = e.date.month_start(new Date(t._date)), r = e.date.add(d, 1, "month");
+    if (!({ month: !0, year: !0, agenda: !0, grid: !0 }[o] || s.valueOf() <= d.valueOf() && a.valueOf() >= r.valueOf()))
+      for (var l = s; l.valueOf() < a.valueOf(); )
+        d.valueOf() <= l.valueOf() && r > l && e.markCalendar(t, l, "dhx_calendar_click"), l = e.date.add(l, 1, "day");
   }, e.attachEvent("onEventCancel", function() {
     e.destroyCalendar(null, !0);
   }), e.attachEvent("onDestroy", function() {
@@ -8945,8 +9029,8 @@ const Fa = { active_links: function(e) {
     };
     var t = e._reset_month_scale;
     e._reset_month_scale = function(n, s, a, o) {
-      var _ = { clientHeight: 100 };
-      t.apply(e, [_, s, a, o]), n.innerHTML = _.innerHTML;
+      var d = { clientHeight: 100 };
+      t.apply(e, [d, s, a, o]), n.innerHTML = d.innerHTML;
     };
   });
 }, multisection: function(e) {
@@ -8961,39 +9045,39 @@ const Fa = { active_links: function(e) {
   }, set_value: function(i, t, n, s) {
     for (var a = i.getElementsByTagName("input"), o = 0; o < a.length; o++)
       a[o].checked = !1;
-    function _(p) {
-      for (var m = i.getElementsByTagName("input"), g = 0; g < m.length; g++)
-        m[g].checked = !!p[m[g].value];
+    function d(p) {
+      for (var v = i.getElementsByTagName("input"), g = 0; g < v.length; g++)
+        v[g].checked = !!p[v[g].value];
     }
     var r = {};
     if (n[s.map_to]) {
-      var d = (n[s.map_to] + "").split(s.delimiter || e.config.section_delimiter || ",");
-      for (o = 0; o < d.length; o++)
-        r[d[o]] = !0;
-      _(r);
+      var l = (n[s.map_to] + "").split(s.delimiter || e.config.section_delimiter || ",");
+      for (o = 0; o < l.length; o++)
+        r[l[o]] = !0;
+      d(r);
     } else {
       if (e._new_event || !s.script_url)
         return;
-      var l = document.createElement("div");
-      l.className = "dhx_loading", l.style.cssText = "position: absolute; top: 40%; left: 40%;", i.appendChild(l);
+      var _ = document.createElement("div");
+      _.className = "dhx_loading", _.style.cssText = "position: absolute; top: 40%; left: 40%;", i.appendChild(_);
       var h = [s.script_url, s.script_url.indexOf("?") == -1 ? "?" : "&", "dhx_crosslink_" + s.map_to + "=" + n.id + "&uid=" + e.uid()].join("");
       e.ajax.get(h, function(p) {
-        var m = function(g) {
+        var v = function(g) {
           try {
-            for (var c = JSON.parse(g.xmlDoc.responseText), u = {}, f = 0; f < c.length; f++) {
-              var y = c[f];
-              u[y.value || y.key || y.id] = !0;
+            for (var c = JSON.parse(g.xmlDoc.responseText), f = {}, u = 0; u < c.length; u++) {
+              var y = c[u];
+              f[y.value || y.key || y.id] = !0;
             }
-            return u;
+            return f;
           } catch {
             return null;
           }
         }(p);
-        m || (m = function(g, c) {
-          for (var u = e.ajax.xpath("//data/item", g.xmlDoc), f = {}, y = 0; y < u.length; y++)
-            f[u[y].getAttribute(c.map_to)] = !0;
-          return f;
-        }(p, s)), _(m), i.removeChild(l);
+        v || (v = function(g, c) {
+          for (var f = e.ajax.xpath("//data/item", g.xmlDoc), u = {}, y = 0; y < f.length; y++)
+            u[f[y].getAttribute(c.map_to)] = !0;
+          return u;
+        }(p, s)), d(v), i.removeChild(_);
       });
     }
   }, get_value: function(i, t, n) {
@@ -9007,9 +9091,9 @@ const Fa = { active_links: function(e) {
   e._load = function(t, n) {
     if (typeof (t = t || this._load_url) == "object")
       for (var s = function(o) {
-        var _ = function() {
+        var d = function() {
         };
-        return _.prototype = o, _;
+        return d.prototype = o, d;
       }(this._loaded), a = 0; a < t.length; a++)
         this._loaded = new s(), i.call(this, t[a], n);
     else
@@ -9018,10 +9102,10 @@ const Fa = { active_links: function(e) {
 }, mvc: function(e) {
   var i, t = { use_id: !1 };
   function n(o) {
-    var _ = {};
+    var d = {};
     for (var r in o)
-      r.indexOf("_") !== 0 && (_[r] = o[r]);
-    return t.use_id || delete _.id, _;
+      r.indexOf("_") !== 0 && (d[r] = o[r]);
+    return t.use_id || delete d.id, d;
   }
   function s(o) {
     o._not_render = !1, o._render_wait && o.render_view_data(), o._loading = !1, o.callEvent("onXLE", []);
@@ -9029,83 +9113,83 @@ const Fa = { active_links: function(e) {
   function a(o) {
     return t.use_id ? o.id : o.cid;
   }
-  e.backbone = function(o, _) {
-    _ && (t = _), o.bind("change", function(l, h) {
-      var p = a(l), m = e._events[p] = l.toJSON();
-      m.id = p, e._init_event(m), clearTimeout(i), i = setTimeout(function() {
+  e.backbone = function(o, d) {
+    d && (t = d), o.bind("change", function(_, h) {
+      var p = a(_), v = e._events[p] = _.toJSON();
+      v.id = p, e._init_event(v), clearTimeout(i), i = setTimeout(function() {
         if (e.$destroyed)
           return !0;
         e.updateView();
       }, 1);
-    }), o.bind("remove", function(l, h) {
-      var p = a(l);
+    }), o.bind("remove", function(_, h) {
+      var p = a(_);
       e._events[p] && e.deleteEvent(p);
     });
     var r = [];
-    function d() {
+    function l() {
       if (e.$destroyed)
         return !0;
       r.length && (e.parse(r, "json"), r = []);
     }
-    o.bind("add", function(l, h) {
-      var p = a(l);
+    o.bind("add", function(_, h) {
+      var p = a(_);
       if (!e._events[p]) {
-        var m = l.toJSON();
-        m.id = p, e._init_event(m), r.push(m), r.length == 1 && setTimeout(d, 1);
+        var v = _.toJSON();
+        v.id = p, e._init_event(v), r.push(v), r.length == 1 && setTimeout(l, 1);
       }
-    }), o.bind("request", function(l) {
+    }), o.bind("request", function(_) {
       var h;
-      l instanceof Backbone.Collection && ((h = e)._loading = !0, h._not_render = !0, h.callEvent("onXLS", []));
-    }), o.bind("sync", function(l) {
-      l instanceof Backbone.Collection && s(e);
-    }), o.bind("error", function(l) {
-      l instanceof Backbone.Collection && s(e);
-    }), e.attachEvent("onEventCreated", function(l) {
-      var h = new o.model(e.getEvent(l));
-      return e._events[l] = h.toJSON(), e._events[l].id = l, !0;
-    }), e.attachEvent("onEventAdded", function(l) {
-      if (!o.get(l)) {
-        var h = n(e.getEvent(l)), p = new o.model(h), m = a(p);
-        m != l && this.changeEventId(l, m), o.add(p), o.trigger("scheduler:add", p);
+      _ instanceof Backbone.Collection && ((h = e)._loading = !0, h._not_render = !0, h.callEvent("onXLS", []));
+    }), o.bind("sync", function(_) {
+      _ instanceof Backbone.Collection && s(e);
+    }), o.bind("error", function(_) {
+      _ instanceof Backbone.Collection && s(e);
+    }), e.attachEvent("onEventCreated", function(_) {
+      var h = new o.model(e.getEvent(_));
+      return e._events[_] = h.toJSON(), e._events[_].id = _, !0;
+    }), e.attachEvent("onEventAdded", function(_) {
+      if (!o.get(_)) {
+        var h = n(e.getEvent(_)), p = new o.model(h), v = a(p);
+        v != _ && this.changeEventId(_, v), o.add(p), o.trigger("scheduler:add", p);
       }
       return !0;
-    }), e.attachEvent("onEventChanged", function(l) {
-      var h = o.get(l), p = n(e.getEvent(l));
+    }), e.attachEvent("onEventChanged", function(_) {
+      var h = o.get(_), p = n(e.getEvent(_));
       return h.set(p), o.trigger("scheduler:change", h), !0;
-    }), e.attachEvent("onEventDeleted", function(l) {
-      var h = o.get(l);
-      return h && (o.trigger("scheduler:remove", h), o.remove(l)), !0;
+    }), e.attachEvent("onEventDeleted", function(_) {
+      var h = o.get(_);
+      return h && (o.trigger("scheduler:remove", h), o.remove(_)), !0;
     });
   };
 }, outerdrag: function(e) {
   e.attachEvent("onTemplatesReady", function() {
     var i, t = new dhtmlDragAndDropObject(), n = t.stopDrag;
-    function s(a, o, _, r) {
-      if (!e.checkEvent("onBeforeExternalDragIn") || e.callEvent("onBeforeExternalDragIn", [a, o, _, r, i])) {
-        var d = e.attachEvent("onEventCreated", function(g) {
+    function s(a, o, d, r) {
+      if (!e.checkEvent("onBeforeExternalDragIn") || e.callEvent("onBeforeExternalDragIn", [a, o, d, r, i])) {
+        var l = e.attachEvent("onEventCreated", function(g) {
           e.callEvent("onExternalDragIn", [g, a, i]) || (this._drag_mode = this._drag_id = null, this.deleteEvent(g));
-        }), l = e.getActionData(i), h = { start_date: new Date(l.date) };
+        }), _ = e.getActionData(i), h = { start_date: new Date(_.date) };
         if (e.matrix && e.matrix[e._mode]) {
           var p = e.matrix[e._mode];
-          h[p.y_property] = l.section;
-          var m = e._locate_cell_timeline(i);
-          h.start_date = p._trace_x[m.x], h.end_date = e.date.add(h.start_date, p.x_step, p.x_unit);
+          h[p.y_property] = _.section;
+          var v = e._locate_cell_timeline(i);
+          h.start_date = p._trace_x[v.x], h.end_date = e.date.add(h.start_date, p.x_step, p.x_unit);
         }
-        e._props && e._props[e._mode] && (h[e._props[e._mode].map_to] = l.section), e.addEventNow(h), e.detachEvent(d);
+        e._props && e._props[e._mode] && (h[e._props[e._mode].map_to] = _.section), e.addEventNow(h), e.detachEvent(l);
       }
     }
     t.stopDrag = function(a) {
       return i = a, n.apply(this, arguments);
-    }, t.addDragLanding(e._els.dhx_cal_data[0], { _drag: function(a, o, _, r) {
-      s(a, o, _, r);
+    }, t.addDragLanding(e._els.dhx_cal_data[0], { _drag: function(a, o, d, r) {
+      s(a, o, d, r);
     }, _dragIn: function(a, o) {
       return a;
     }, _dragOut: function(a) {
       return this;
-    } }), dhtmlx.DragControl && dhtmlx.DragControl.addDrop(e._els.dhx_cal_data[0], { onDrop: function(a, o, _, r) {
-      var d = dhtmlx.DragControl.getMaster(a);
-      i = r, s(a, d, o, r.target || r.srcElement);
-    }, onDragIn: function(a, o, _) {
+    } }), dhtmlx.DragControl && dhtmlx.DragControl.addDrop(e._els.dhx_cal_data[0], { onDrop: function(a, o, d, r) {
+      var l = dhtmlx.DragControl.getMaster(a);
+      i = r, s(a, l, o, r.target || r.srcElement);
+    }, onDragIn: function(a, o, d) {
       return o;
     } }, !0);
   });
@@ -9117,16 +9201,16 @@ const Fa = { active_links: function(e) {
   }
   function o(k, N) {
     k = parseFloat(k), N = parseFloat(N), isNaN(N) || (k -= N);
-    var v = r(k);
-    return k = k - v.width + v.cols * i, isNaN(k) ? "auto" : 100 * k / i;
+    var m = r(k);
+    return k = k - m.width + m.cols * i, isNaN(k) ? "auto" : 100 * k / i;
   }
-  function _(k, N, v) {
-    k = parseFloat(k), N = parseFloat(N), !isNaN(N) && v && (k -= N);
+  function d(k, N, m) {
+    k = parseFloat(k), N = parseFloat(N), !isNaN(N) && m && (k -= N);
     var x = r(k);
     return k = k - x.width + x.cols * i, isNaN(k) ? "auto" : 100 * k / (i - (isNaN(N) ? 0 : N));
   }
   function r(k) {
-    for (var N = 0, v = e._els.dhx_cal_header[0].childNodes, x = v[1] ? v[1].childNodes : v[0].childNodes, b = 0; b < x.length; b++) {
+    for (var N = 0, m = e._els.dhx_cal_header[0].childNodes, x = m[1] ? m[1].childNodes : m[0].childNodes, b = 0; b < x.length; b++) {
       var E = x[b].style ? x[b] : x[b].parentNode, S = parseFloat(E.style.width);
       if (!(k > S))
         break;
@@ -9134,53 +9218,53 @@ const Fa = { active_links: function(e) {
     }
     return { width: N, cols: b };
   }
-  function d(k) {
+  function l(k) {
     return k = parseFloat(k), isNaN(k) ? "auto" : 100 * k / t;
   }
-  function l(k, N) {
+  function _(k, N) {
     return (window.getComputedStyle ? window.getComputedStyle(k, null)[N] : k.currentStyle ? k.currentStyle[N] : null) || "";
   }
   function h(k, N) {
-    for (var v = parseInt(k.style.left, 10), x = 0; x < e._cols.length; x++)
-      if ((v -= e._cols[x]) < 0)
+    for (var m = parseInt(k.style.left, 10), x = 0; x < e._cols.length; x++)
+      if ((m -= e._cols[x]) < 0)
         return x;
     return N;
   }
   function p(k, N) {
-    for (var v = parseInt(k.style.top, 10), x = 0; x < e._colsS.heights.length; x++)
-      if (e._colsS.heights[x] > v)
+    for (var m = parseInt(k.style.top, 10), x = 0; x < e._colsS.heights.length; x++)
+      if (e._colsS.heights[x] > m)
         return x;
     return N;
   }
-  function m(k) {
+  function v(k) {
     return k ? "<" + k + ">" : "";
   }
   function g(k) {
     return k ? "</" + k + ">" : "";
   }
-  function c(k, N, v, x) {
+  function c(k, N, m, x) {
     var b = "<" + k + " profile='" + N + "'";
-    return v && (b += " header='" + v + "'"), x && (b += " footer='" + x + "'"), b += ">";
+    return m && (b += " header='" + m + "'"), x && (b += " footer='" + x + "'"), b += ">";
   }
-  function u() {
+  function f() {
     var k = "", N = e._mode;
     if (e.matrix && e.matrix[e._mode] && (N = e.matrix[e._mode].render == "cell" ? "matrix" : "timeline"), k += "<scale mode='" + N + "' today='" + e._els.dhx_cal_date[0].innerHTML + "'>", e._mode == "week_agenda")
-      for (var v = e._els.dhx_cal_data[0].getElementsByTagName("DIV"), x = 0; x < v.length; x++)
-        v[x].className == "dhx_wa_scale_bar" && (k += "<column>" + a(v[x].innerHTML) + "</column>");
+      for (var m = e._els.dhx_cal_data[0].getElementsByTagName("DIV"), x = 0; x < m.length; x++)
+        m[x].className == "dhx_wa_scale_bar" && (k += "<column>" + a(m[x].innerHTML) + "</column>");
     else if (e._mode == "agenda" || e._mode == "map")
-      k += "<column>" + a((v = e._els.dhx_cal_header[0].childNodes[0].childNodes)[0].innerHTML) + "</column><column>" + a(v[1].innerHTML) + "</column>";
+      k += "<column>" + a((m = e._els.dhx_cal_header[0].childNodes[0].childNodes)[0].innerHTML) + "</column><column>" + a(m[1].innerHTML) + "</column>";
     else if (e._mode == "year")
-      for (v = e._els.dhx_cal_data[0].childNodes, x = 0; x < v.length; x++)
-        k += "<month label='" + a(v[x].querySelector(".dhx_year_month").innerHTML) + "'>", k += y(v[x].querySelector(".dhx_year_week").childNodes), k += f(v[x].querySelector(".dhx_year_body")), k += "</month>";
+      for (m = e._els.dhx_cal_data[0].childNodes, x = 0; x < m.length; x++)
+        k += "<month label='" + a(m[x].querySelector(".dhx_year_month").innerHTML) + "'>", k += y(m[x].querySelector(".dhx_year_week").childNodes), k += u(m[x].querySelector(".dhx_year_body")), k += "</month>";
     else {
-      k += "<x>", k += y(v = e._els.dhx_cal_header[0].childNodes), k += "</x>";
+      k += "<x>", k += y(m = e._els.dhx_cal_header[0].childNodes), k += "</x>";
       var b = e._els.dhx_cal_data[0];
       if (e.matrix && e.matrix[e._mode]) {
         for (k += "<y>", x = 0; x < b.firstChild.rows.length; x++)
           k += "<row><![CDATA[" + a(b.firstChild.rows[x].cells[0].innerHTML) + "]]></row>";
         k += "</y>", t = b.firstChild.rows[0].cells[0].offsetHeight;
       } else if (b.firstChild.tagName == "TABLE")
-        k += f(b);
+        k += u(b);
       else {
         for (b = b.childNodes[b.childNodes.length - 1]; b.className.indexOf("dhx_scale_holder") == -1; )
           b = b.previousSibling;
@@ -9192,9 +9276,9 @@ const Fa = { active_links: function(e) {
     }
     return k += "</scale>";
   }
-  function f(k) {
-    for (var N = "", v = k.querySelectorAll("tr"), x = 0; x < v.length; x++) {
-      for (var b = [], E = v[x].querySelectorAll("td"), S = 0; S < E.length; S++)
+  function u(k) {
+    for (var N = "", m = k.querySelectorAll("tr"), x = 0; x < m.length; x++) {
+      for (var b = [], E = m[x].querySelectorAll("td"), S = 0; S < E.length; S++)
         b.push(E[S].querySelector(".dhx_month_head").innerHTML);
       N += `
 <row height='` + E[0].offsetHeight + "'><![CDATA[" + a(b.join("|")) + "]]></row>", t = E[0].offsetHeight;
@@ -9202,103 +9286,103 @@ const Fa = { active_links: function(e) {
     return N;
   }
   function y(k) {
-    var N, v = "";
+    var N, m = "";
     e.matrix && e.matrix[e._mode] && (e.matrix[e._mode].second_scale && (N = k[1].childNodes), k = k[0].childNodes);
     for (var x = 0; x < k.length; x++)
-      v += `
+      m += `
 <column><![CDATA[` + a(k[x].innerHTML) + "]]></column>";
     if (i = k[0].offsetWidth, N) {
       var b = 0, E = k[0].offsetWidth, S = 1;
       for (x = 0; x < N.length; x++)
-        v += `
+        m += `
 <column second_scale='` + S + "'><![CDATA[" + a(N[x].innerHTML) + "]]></column>", (b += N[x].offsetWidth) >= E && (E += k[S] ? k[S].offsetWidth : 0, S++), i = N[0].offsetWidth;
     }
-    return v;
+    return m;
   }
   function w(k) {
-    var N = "", v = e._rendered, x = e.matrix && e.matrix[e._mode];
+    var N = "", m = e._rendered, x = e.matrix && e.matrix[e._mode];
     if (e._mode == "agenda" || e._mode == "map")
-      for (var b = 0; b < v.length; b++)
-        N += "<event><head><![CDATA[" + a(v[b].childNodes[0].innerHTML) + "]]></head><body><![CDATA[" + a(v[b].childNodes[2].innerHTML) + "]]></body></event>";
+      for (var b = 0; b < m.length; b++)
+        N += "<event><head><![CDATA[" + a(m[b].childNodes[0].innerHTML) + "]]></head><body><![CDATA[" + a(m[b].childNodes[2].innerHTML) + "]]></body></event>";
     else if (e._mode == "week_agenda")
-      for (b = 0; b < v.length; b++)
-        N += "<event day='" + v[b].parentNode.getAttribute("day") + "'><body>" + a(v[b].innerHTML) + "</body></event>";
+      for (b = 0; b < m.length; b++)
+        N += "<event day='" + m[b].parentNode.getAttribute("day") + "'><body>" + a(m[b].innerHTML) + "</body></event>";
     else if (e._mode == "year")
-      for (v = e.get_visible_events(), b = 0; b < v.length; b++) {
-        var E = v[b].start_date;
-        for (E.valueOf() < e._min_date.valueOf() && (E = e._min_date); E < v[b].end_date; ) {
-          var S = E.getMonth() + 12 * (E.getFullYear() - e._min_date.getFullYear()) - e.week_starts._month, T = e.week_starts[S] + E.getDate() - 1, A = k ? l(e._get_year_cell(E), "color") : "", C = k ? l(e._get_year_cell(E), "backgroundColor") : "";
-          if (N += "<event day='" + T % 7 + "' week='" + Math.floor(T / 7) + "' month='" + S + "' backgroundColor='" + C + "' color='" + A + "'></event>", (E = e.date.add(E, 1, "day")).valueOf() >= e._max_date.valueOf())
+      for (m = e.get_visible_events(), b = 0; b < m.length; b++) {
+        var E = m[b].start_date;
+        for (E.valueOf() < e._min_date.valueOf() && (E = e._min_date); E < m[b].end_date; ) {
+          var S = E.getMonth() + 12 * (E.getFullYear() - e._min_date.getFullYear()) - e.week_starts._month, T = e.week_starts[S] + E.getDate() - 1, C = k ? _(e._get_year_cell(E), "color") : "", A = k ? _(e._get_year_cell(E), "backgroundColor") : "";
+          if (N += "<event day='" + T % 7 + "' week='" + Math.floor(T / 7) + "' month='" + S + "' backgroundColor='" + A + "' color='" + C + "'></event>", (E = e.date.add(E, 1, "day")).valueOf() >= e._max_date.valueOf())
             break;
         }
       }
     else if (x && x.render == "cell")
-      for (v = e._els.dhx_cal_data[0].getElementsByTagName("TD"), b = 0; b < v.length; b++)
-        A = k ? l(v[b], "color") : "", N += `
-<event><body backgroundColor='` + (C = k ? l(v[b], "backgroundColor") : "") + "' color='" + A + "'><![CDATA[" + a(v[b].innerHTML) + "]]></body></event>";
+      for (m = e._els.dhx_cal_data[0].getElementsByTagName("TD"), b = 0; b < m.length; b++)
+        C = k ? _(m[b], "color") : "", N += `
+<event><body backgroundColor='` + (A = k ? _(m[b], "backgroundColor") : "") + "' color='" + C + "'><![CDATA[" + a(m[b].innerHTML) + "]]></body></event>";
     else
-      for (b = 0; b < v.length; b++) {
+      for (b = 0; b < m.length; b++) {
         var $, H;
         if (e.matrix && e.matrix[e._mode])
-          $ = o(v[b].style.left), H = o(v[b].offsetWidth) - 1;
+          $ = o(m[b].style.left), H = o(m[b].offsetWidth) - 1;
         else {
           var O = e.config.use_select_menu_space ? 0 : 26;
-          $ = _(v[b].style.left, O, !0), H = _(v[b].style.width, O) - 1;
+          $ = d(m[b].style.left, O, !0), H = d(m[b].style.width, O) - 1;
         }
         if (!isNaN(1 * H)) {
-          var R = d(v[b].style.top), P = d(v[b].style.height), j = v[b].className.split(" ")[0].replace("dhx_cal_", "");
+          var P = l(m[b].style.top), R = l(m[b].style.height), j = m[b].className.split(" ")[0].replace("dhx_cal_", "");
           if (j !== "dhx_tooltip_line") {
-            var I = e.getEvent(v[b].getAttribute(e.config.event_attribute));
+            var I = e.getEvent(m[b].getAttribute(e.config.event_attribute));
             if (I) {
               T = I._sday;
               var U = I._sweek, B = I._length || 0;
               if (e._mode == "month")
-                P = parseInt(v[b].offsetHeight, 10), R = parseInt(v[b].style.top, 10) - e.xy.month_head_height, T = h(v[b], T), U = p(v[b], U);
+                R = parseInt(m[b].offsetHeight, 10), P = parseInt(m[b].style.top, 10) - e.xy.month_head_height, T = h(m[b], T), U = p(m[b], U);
               else if (e.matrix && e.matrix[e._mode]) {
-                T = 0, U = v[b].parentNode.parentNode.parentNode.rowIndex;
+                T = 0, U = m[b].parentNode.parentNode.parentNode.rowIndex;
                 var W = t;
-                t = v[b].parentNode.offsetHeight, R = d(v[b].style.top), R -= 0.2 * R, t = W;
+                t = m[b].parentNode.offsetHeight, P = l(m[b].style.top), P -= 0.2 * P, t = W;
               } else {
-                if (v[b].parentNode == e._els.dhx_cal_data[0])
+                if (m[b].parentNode == e._els.dhx_cal_data[0])
                   continue;
-                var pe = e._els.dhx_cal_data[0].childNodes[0], St = parseFloat(pe.className.indexOf("dhx_scale_holder") != -1 ? pe.style.left : 0);
-                $ += o(v[b].parentNode.style.left, St);
+                var pe = e._els.dhx_cal_data[0].childNodes[0], Nt = parseFloat(pe.className.indexOf("dhx_scale_holder") != -1 ? pe.style.left : 0);
+                $ += o(m[b].parentNode.style.left, Nt);
               }
               N += `
-<event week='` + U + "' day='" + T + "' type='" + j + "' x='" + $ + "' y='" + R + "' width='" + H + "' height='" + P + "' len='" + B + "'>", j == "event" ? (N += "<header><![CDATA[" + a(v[b].childNodes[1].innerHTML) + "]]></header>", A = k ? l(v[b].childNodes[2], "color") : "", N += "<body backgroundColor='" + (C = k ? l(v[b].childNodes[2], "backgroundColor") : "") + "' color='" + A + "'><![CDATA[" + a(v[b].childNodes[2].innerHTML) + "]]></body>") : (A = k ? l(v[b], "color") : "", N += "<body backgroundColor='" + (C = k ? l(v[b], "backgroundColor") : "") + "' color='" + A + "'><![CDATA[" + a(v[b].innerHTML) + "]]></body>"), N += "</event>";
+<event week='` + U + "' day='" + T + "' type='" + j + "' x='" + $ + "' y='" + P + "' width='" + H + "' height='" + R + "' len='" + B + "'>", j == "event" ? (N += "<header><![CDATA[" + a(m[b].childNodes[1].innerHTML) + "]]></header>", C = k ? _(m[b].childNodes[2], "color") : "", N += "<body backgroundColor='" + (A = k ? _(m[b].childNodes[2], "backgroundColor") : "") + "' color='" + C + "'><![CDATA[" + a(m[b].childNodes[2].innerHTML) + "]]></body>") : (C = k ? _(m[b], "color") : "", N += "<body backgroundColor='" + (A = k ? _(m[b], "backgroundColor") : "") + "' color='" + C + "'><![CDATA[" + a(m[b].innerHTML) + "]]></body>"), N += "</event>";
             }
           }
         }
       }
     return N;
   }
-  function D(k, N, v, x, b, E) {
+  function D(k, N, m, x, b, E) {
     var S = !1;
     x == "fullcolor" && (S = !0, x = "color"), x = x || "color";
     var T = "";
     if (k) {
-      var A = e._date, C = e._mode;
-      N = e.date[v + "_start"](N), N = e.date["get_" + v + "_end"] ? e.date["get_" + v + "_end"](N) : e.date.add(N, 1, v), T = c("pages", x, b, E);
-      for (var $ = new Date(k); +$ < +N; $ = this.date.add($, 1, v))
-        this.setCurrentView($, v), T += m("page") + u().replace("–", "-") + w(S) + g("page");
-      T += g("pages"), this.setCurrentView(A, C);
+      var C = e._date, A = e._mode;
+      N = e.date[m + "_start"](N), N = e.date["get_" + m + "_end"] ? e.date["get_" + m + "_end"](N) : e.date.add(N, 1, m), T = c("pages", x, b, E);
+      for (var $ = new Date(k); +$ < +N; $ = this.date.add($, 1, m))
+        this.setCurrentView($, m), T += v("page") + f().replace("–", "-") + w(S) + g("page");
+      T += g("pages"), this.setCurrentView(C, A);
     } else
-      T = c("data", x, b, E) + u().replace("–", "-") + w(S) + g("data");
+      T = c("data", x, b, E) + f().replace("–", "-") + w(S) + g("data");
     return T;
   }
-  function M(k, N, v, x, b, E, S) {
-    (function(T, A) {
-      var C = e.uid(), $ = document.createElement("div");
-      $.style.display = "none", document.body.appendChild($), $.innerHTML = '<form id="' + C + '" method="post" target="_blank" action="' + A + '" accept-charset="utf-8" enctype="application/x-www-form-urlencoded"><input type="hidden" name="mycoolxmlbody"/> </form>', document.getElementById(C).firstChild.value = encodeURIComponent(T), document.getElementById(C).submit(), $.parentNode.removeChild($);
+  function M(k, N, m, x, b, E, S) {
+    (function(T, C) {
+      var A = e.uid(), $ = document.createElement("div");
+      $.style.display = "none", document.body.appendChild($), $.innerHTML = '<form id="' + A + '" method="post" target="_blank" action="' + C + '" accept-charset="utf-8" enctype="application/x-www-form-urlencoded"><input type="hidden" name="mycoolxmlbody"/> </form>', document.getElementById(A).firstChild.value = encodeURIComponent(T), document.getElementById(A).submit(), $.parentNode.removeChild($);
     })(typeof b == "object" ? function(T) {
-      for (var A = "<data>", C = 0; C < T.length; C++)
-        A += T[C].source.getPDFData(T[C].start, T[C].end, T[C].view, T[C].mode, T[C].header, T[C].footer);
-      return A += "</data>", A;
-    }(b) : D.apply(this, [k, N, v, b, E, S]), x);
+      for (var C = "<data>", A = 0; A < T.length; A++)
+        C += T[A].source.getPDFData(T[A].start, T[A].end, T[A].view, T[A].mode, T[A].header, T[A].footer);
+      return C += "</data>", C;
+    }(b) : D.apply(this, [k, N, m, b, E, S]), x);
   }
-  e.getPDFData = D, e.toPDF = function(k, N, v, x) {
-    return M.apply(this, [null, null, null, k, N, v, x]);
-  }, e.toPDFRange = function(k, N, v, x, b, E, S) {
+  e.getPDFData = D, e.toPDF = function(k, N, m, x) {
+    return M.apply(this, [null, null, null, k, N, m, x]);
+  }, e.toPDFRange = function(k, N, m, x, b, E, S) {
     return typeof k == "string" && (k = e.templates.api_date(k), N = e.templates.api_date(N)), M.apply(this, arguments);
   };
 }, quick_info: function(e) {
@@ -9309,10 +9393,10 @@ const Fa = { active_links: function(e) {
     o < 0 && (s.style.top = `${parseFloat(s.style.top) + o}px`);
   }
   function n(s) {
-    let a = 0, o = 0, _ = s;
-    for (; _ && _ != e._obj; )
-      a += _.offsetLeft, o += _.offsetTop - _.scrollTop, _ = _.offsetParent;
-    return _ ? { left: a, top: o, dx: a + s.offsetWidth / 2 > e._x / 2 ? 1 : 0, dy: o + s.offsetHeight / 2 > e._y / 2 ? 1 : 0, width: s.offsetWidth, height: s.offsetHeight } : 0;
+    let a = 0, o = 0, d = s;
+    for (; d && d != e._obj; )
+      a += d.offsetLeft, o += d.offsetTop - d.scrollTop, d = d.offsetParent;
+    return d ? { left: a, top: o, dx: a + s.offsetWidth / 2 > e._x / 2 ? 1 : 0, dy: o + s.offsetHeight / 2 > e._y / 2 ? 1 : 0, width: s.offsetWidth, height: s.offsetHeight } : 0;
   }
   e.attachEvent("onSchedulerReady", function() {
     const s = e.$container;
@@ -9344,13 +9428,13 @@ const Fa = { active_links: function(e) {
   }, function() {
     function s(a) {
       a = a || "";
-      var o, _ = parseFloat(a), r = a.match(/m?s/);
+      var o, d = parseFloat(a), r = a.match(/m?s/);
       switch (r && (r = r[0]), r) {
         case "s":
-          o = 1e3 * _;
+          o = 1e3 * d;
           break;
         case "ms":
-          o = _;
+          o = d;
           break;
         default:
           o = 0;
@@ -9358,22 +9442,22 @@ const Fa = { active_links: function(e) {
       return o;
     }
     e.hideQuickInfo = function(a) {
-      var o = this._quick_info_box, _ = this._quick_info_box_id;
+      var o = this._quick_info_box, d = this._quick_info_box_id;
       if (this._quick_info_box_id = 0, o && o.parentNode) {
         var r = o.offsetWidth;
         if (e.config.quick_info_detached)
-          return this.callEvent("onAfterQuickInfo", [_]), o.parentNode.removeChild(o);
+          return this.callEvent("onAfterQuickInfo", [d]), o.parentNode.removeChild(o);
         if (o.style.right == "auto" ? o.style.left = -r + "px" : o.style.right = -r + "px", a)
           o.parentNode.removeChild(o);
         else {
-          var d;
-          window.getComputedStyle ? d = window.getComputedStyle(o, null) : o.currentStyle && (d = o.currentStyle);
-          var l = s(d["transition-delay"]) + s(d["transition-duration"]);
+          var l;
+          window.getComputedStyle ? l = window.getComputedStyle(o, null) : o.currentStyle && (l = o.currentStyle);
+          var _ = s(l["transition-delay"]) + s(l["transition-duration"]);
           setTimeout(function() {
             o.parentNode && o.parentNode.removeChild(o);
-          }, l);
+          }, _);
         }
-        this.callEvent("onAfterQuickInfo", [_]);
+        this.callEvent("onAfterQuickInfo", [d]);
       }
     };
   }(), e.event(window, "keydown", function(s) {
@@ -9381,13 +9465,13 @@ const Fa = { active_links: function(e) {
   }), e._show_quick_info = function(s) {
     var a = e._quick_info_box;
     e._obj.appendChild(a);
-    var o = a.offsetWidth, _ = a.offsetHeight;
+    var o = a.offsetWidth, d = a.offsetHeight;
     if (e.config.quick_info_detached) {
       var r = s.left - s.dx * (o - s.width);
-      e.getView() && e.getView()._x_scroll && (e.config.rtl ? r += e.getView()._x_scroll : r -= e.getView()._x_scroll), r + o > window.innerWidth && (r = window.innerWidth - o), r = Math.max(0, r), a.style.left = r + "px", a.style.top = s.top - (s.dy ? _ : -s.height) + "px";
+      e.getView() && e.getView()._x_scroll && (e.config.rtl ? r += e.getView()._x_scroll : r -= e.getView()._x_scroll), r + o > window.innerWidth && (r = window.innerWidth - o), r = Math.max(0, r), a.style.left = r + "px", a.style.top = s.top - (s.dy ? d : -s.height) + "px";
     } else {
-      const d = e.$container.querySelector(".dhx_cal_data").offsetTop;
-      a.style.top = d + 20 + "px", s.dx == 1 ? (a.style.right = "auto", a.style.left = -o + "px", setTimeout(function() {
+      const l = e.$container.querySelector(".dhx_cal_data").offsetTop;
+      a.style.top = l + 20 + "px", s.dx == 1 ? (a.style.right = "auto", a.style.left = -o + "px", setTimeout(function() {
         a.style.left = "-10px";
       }, 1)) : (a.style.left = "auto", a.style.right = -o + "px", setTimeout(function() {
         a.style.right = "-10px";
@@ -9420,11 +9504,11 @@ const Fa = { active_links: function(e) {
 		<div class="dhx_cal_qi_content"></div>`;
     a += '<div class="dhx_cal_qi_controls">';
     let o = e.config.icons_select;
-    for (let _ = 0; _ < o.length; _++)
-      a += `<div ${this._waiAria.quickInfoButtonAttrString(this.locale.labels[o[_]])} class="dhx_qi_big_icon ${o[_]}" title="${e.locale.labels[o[_]]}">
-			<div class='dhx_menu_icon ${o[_]}'></div><div>${e.locale.labels[o[_]]}</div></div>`;
-    return a += "</div>", s.innerHTML = a, e.event(s, "click", function(_) {
-      e._qi_button_click(_.target || _.srcElement);
+    for (let d = 0; d < o.length; d++)
+      a += `<div ${this._waiAria.quickInfoButtonAttrString(this.locale.labels[o[d]])} class="dhx_qi_big_icon ${o[d]}" title="${e.locale.labels[o[d]]}">
+			<div class='dhx_menu_icon ${o[d]}'></div><div>${e.locale.labels[o[d]]}</div></div>`;
+    return a += "</div>", s.innerHTML = a, e.event(s, "click", function(d) {
+      e._qi_button_click(d.target || d.srcElement);
     }), e.config.quick_info_detached && (e._detachDomEvent(e._els.dhx_cal_data[0], "scroll", e._quick_info_onscroll_handler), e.event(e._els.dhx_cal_data[0], "scroll", e._quick_info_onscroll_handler)), this._quick_info_box;
   }, e._qi_button_click = function(s) {
     var a = e._quick_info_box;
@@ -9434,8 +9518,8 @@ const Fa = { active_links: function(e) {
       else {
         var o = e._getClassName(s);
         if (o.indexOf("_icon") != -1) {
-          var _ = e._quick_info_box_id;
-          e._click.buttons[o.split(" ")[1].replace("icon_", "")](_);
+          var d = e._quick_info_box_id;
+          e._click.buttons[o.split(" ")[1].replace("icon_", "")](d);
         } else
           e._qi_button_click(s.parentNode);
       }
@@ -9444,50 +9528,50 @@ const Fa = { active_links: function(e) {
   }, e._fill_quick_data = function(s) {
     var a = e.getEvent(s), o = e._quick_info_box;
     e._quick_info_box_id = s;
-    var _ = { content: e.templates.quick_info_title(a.start_date, a.end_date, a), date: e.templates.quick_info_date(a.start_date, a.end_date, a) };
-    o.querySelector(".dhx_cal_qi_tcontent").innerHTML = `<span>${_.content}</span>`, o.querySelector(".dhx_cal_qi_tdate").innerHTML = _.date, e._waiAria.quickInfoHeader(o, [_.content, _.date].join(" "));
+    var d = { content: e.templates.quick_info_title(a.start_date, a.end_date, a), date: e.templates.quick_info_date(a.start_date, a.end_date, a) };
+    o.querySelector(".dhx_cal_qi_tcontent").innerHTML = `<span>${d.content}</span>`, o.querySelector(".dhx_cal_qi_tdate").innerHTML = d.date, e._waiAria.quickInfoHeader(o, [d.content, d.date].join(" "));
     var r = o.querySelector(".dhx_cal_qi_content");
-    const d = e.templates.quick_info_content(a.start_date, a.end_date, a);
-    d ? (r.classList.remove("dhx_hidden"), r.innerHTML = d) : r.classList.add("dhx_hidden");
+    const l = e.templates.quick_info_content(a.start_date, a.end_date, a);
+    l ? (r.classList.remove("dhx_hidden"), r.innerHTML = l) : r.classList.add("dhx_hidden");
   };
 }, readonly: function(e) {
   e.attachEvent("onTemplatesReady", function() {
     var i;
     e.form_blocks.recurring && (i = e.form_blocks.recurring.set_value);
     var t = e.config.buttons_left.slice(), n = e.config.buttons_right.slice();
-    function s(_, r, d, l) {
-      for (var h = r.getElementsByTagName(_), p = d.getElementsByTagName(_), m = p.length - 1; m >= 0; m--)
-        if (d = p[m], l) {
+    function s(d, r, l, _) {
+      for (var h = r.getElementsByTagName(d), p = l.getElementsByTagName(d), v = p.length - 1; v >= 0; v--)
+        if (l = p[v], _) {
           var g = document.createElement("span");
-          g.className = "dhx_text_disabled", g.innerHTML = l(h[m]), d.parentNode.insertBefore(g, d), d.parentNode.removeChild(d);
+          g.className = "dhx_text_disabled", g.innerHTML = _(h[v]), l.parentNode.insertBefore(g, l), l.parentNode.removeChild(l);
         } else
-          d.disabled = !0, r.checked && (d.checked = !0);
+          l.disabled = !0, r.checked && (l.checked = !0);
     }
-    e.attachEvent("onBeforeLightbox", function(_) {
-      if (this.config.readonly_form || this.getEvent(_).readonly ? this.config.readonly_active = !0 : (this.config.readonly_active = !1, e.config.buttons_left = t.slice(), e.config.buttons_right = n.slice(), e.form_blocks.recurring && (e.form_blocks.recurring.set_value = i)), this.config.readonly_active)
-        for (var r = ["dhx_delete_btn", "dhx_save_btn"], d = [e.config.buttons_left, e.config.buttons_right], l = 0; l < r.length; l++)
-          for (var h = r[l], p = 0; p < d.length; p++) {
-            for (var m = d[p], g = -1, c = 0; c < m.length; c++)
-              if (m[c] == h) {
+    e.attachEvent("onBeforeLightbox", function(d) {
+      if (this.config.readonly_form || this.getEvent(d).readonly ? this.config.readonly_active = !0 : (this.config.readonly_active = !1, e.config.buttons_left = t.slice(), e.config.buttons_right = n.slice(), e.form_blocks.recurring && (e.form_blocks.recurring.set_value = i)), this.config.readonly_active)
+        for (var r = ["dhx_delete_btn", "dhx_save_btn"], l = [e.config.buttons_left, e.config.buttons_right], _ = 0; _ < r.length; _++)
+          for (var h = r[_], p = 0; p < l.length; p++) {
+            for (var v = l[p], g = -1, c = 0; c < v.length; c++)
+              if (v[c] == h) {
                 g = c;
                 break;
               }
-            g != -1 && m.splice(g, 1);
+            g != -1 && v.splice(g, 1);
           }
       return this.resetLightbox(), !0;
     });
     var a = e._fill_lightbox;
     e._fill_lightbox = function() {
-      var _ = this.getLightbox();
-      this.config.readonly_active && (_.style.visibility = "hidden", _.style.display = "block");
+      var d = this.getLightbox();
+      this.config.readonly_active && (d.style.visibility = "hidden", d.style.display = "block");
       var r = a.apply(this, arguments);
-      if (this.config.readonly_active && (_.style.visibility = "", _.style.display = "none"), this.config.readonly_active) {
-        var d = this.getLightbox(), l = this._lightbox_r = d.cloneNode(!0);
-        l.id = e.uid(), l.className += " dhx_cal_light_readonly", s("textarea", d, l, function(h) {
+      if (this.config.readonly_active && (d.style.visibility = "", d.style.display = "none"), this.config.readonly_active) {
+        var l = this.getLightbox(), _ = this._lightbox_r = l.cloneNode(!0);
+        _.id = e.uid(), _.className += " dhx_cal_light_readonly", s("textarea", l, _, function(h) {
           return h.value;
-        }), s("input", d, l, !1), s("select", d, l, function(h) {
+        }), s("input", l, _, !1), s("select", l, _, function(h) {
           return h.options.length ? h.options[Math.max(h.selectedIndex || 0, 0)].text : "";
-        }), d.parentNode.insertBefore(l, d), this.showCover(l), e._lightbox && e._lightbox.parentNode.removeChild(e._lightbox), this._lightbox = l, e.config.drag_lightbox && e.event(l.firstChild, "mousedown", e._ready_to_dnd), e._init_lightbox_events(), this.setLightboxSize();
+        }), l.parentNode.insertBefore(_, l), this.showCover(_), e._lightbox && e._lightbox.parentNode.removeChild(e._lightbox), this._lightbox = _, e.config.drag_lightbox && e.event(_.firstChild, "mousedown", e._ready_to_dnd), e._init_lightbox_events(), this.setLightboxSize();
       }
       return r;
     };
@@ -9497,80 +9581,80 @@ const Fa = { active_links: function(e) {
     };
   });
 }, recurring: function(e) {
-  function i(v, x) {
-    return v === "occurrence" ? x.occurrence || e.locale.labels.button_edit_occurrence : v === "following" ? x.following || e.locale.labels.button_edit_occurrence_and_following : v === "series" ? x.series || e.locale.labels.button_edit_series : v;
+  function i(m, x) {
+    return m === "occurrence" ? x.occurrence || e.locale.labels.button_edit_occurrence : m === "following" ? x.following || e.locale.labels.button_edit_occurrence_and_following : m === "series" ? x.series || e.locale.labels.button_edit_series : m;
   }
-  function t(v) {
-    return new Date(v.getFullYear(), v.getMonth(), v.getDate(), v.getHours(), v.getMinutes(), v.getSeconds(), 0);
+  function t(m) {
+    return new Date(m.getFullYear(), m.getMonth(), m.getDate(), m.getHours(), m.getMinutes(), m.getSeconds(), 0);
   }
-  function n(v) {
-    return !!v.rrule && !v.recurring_event_id;
+  function n(m) {
+    return !!m.rrule && !m.recurring_event_id;
   }
-  function s(v) {
-    return new Date(Date.UTC(v.getFullYear(), v.getMonth(), v.getDate(), v.getHours(), v.getMinutes(), v.getSeconds()));
+  function s(m) {
+    return new Date(Date.UTC(m.getFullYear(), m.getMonth(), m.getDate(), m.getHours(), m.getMinutes(), m.getSeconds()));
   }
-  function a(v) {
-    return new Date(v.getUTCFullYear(), v.getUTCMonth(), v.getUTCDate(), v.getUTCHours(), v.getUTCMinutes(), v.getUTCSeconds());
+  function a(m) {
+    return new Date(m.getUTCFullYear(), m.getUTCMonth(), m.getUTCDate(), m.getUTCHours(), m.getUTCMinutes(), m.getUTCSeconds());
   }
-  function o(v) {
+  function o(m) {
     let x;
-    v.rrule.includes(";UNTIL=") && (v.rrule = v.rrule.split(";UNTIL=")[0]), v.rrule.includes(";COUNT=") ? (x = ge(`RRULE:${v.rrule};UNTIL=${c(a(v._shorten_end_date))}`, { dtstart: v.start_date }), delete x.origOptions.count) : x = ge(`RRULE:${v.rrule};UNTIL=${c(a(v._end_date || v.end_date))}`, { dtstart: v.start_date }), v.rrule = new z(x.origOptions).toString().replace("RRULE:", "").split(`
+    m.rrule.includes(";UNTIL=") && (m.rrule = m.rrule.split(";UNTIL=")[0]), m.rrule.includes(";COUNT=") ? (x = ge(`RRULE:${m.rrule};UNTIL=${c(a(m._shorten_end_date))}`, { dtstart: m.start_date }), delete x.origOptions.count) : x = ge(`RRULE:${m.rrule};UNTIL=${c(a(m._end_date || m.end_date))}`, { dtstart: m.start_date }), m.rrule = new z(x.origOptions).toString().replace("RRULE:", "").split(`
 `)[1];
   }
-  function _(v, x) {
-    x || (x = e.getEvent(v));
+  function d(m, x) {
+    x || (x = e.getEvent(m));
     let b, E = x.rrule.split(";"), S = [];
     for (let T = 0; T < E.length; T++) {
-      let A = E[T].split("="), C = A[0], $ = A[1];
-      if (C !== "BYDAY" || x.rrule.includes("WEEKLY") && $.length > 3) {
-        if (C === "UNTIL" && ge(x.rrule).options.until.valueOf() < x.start_date.valueOf() && (x._end_date = x.end_date), C === "INTERVAL" && (b = Number($)), C === "COUNT" && x._shorten_end_date) {
+      let C = E[T].split("="), A = C[0], $ = C[1];
+      if (A !== "BYDAY" || x.rrule.includes("WEEKLY") && $.length > 3) {
+        if (A === "UNTIL" && ge(x.rrule).options.until.valueOf() < x.start_date.valueOf() && (x._end_date = x.end_date), A === "INTERVAL" && (b = Number($)), A === "COUNT" && x._shorten_end_date) {
           const H = e.date.date_part(new Date(x._start_date)), O = e.date.date_part(new Date(x._shorten_end_date));
           $ -= Math.floor((O - H) / (864e5 * b)) + 1;
         }
-        S.push(C), S.push("="), S.push($), S.push(";");
+        S.push(A), S.push("="), S.push($), S.push(";");
       }
     }
     S.pop(), x.rrule = S.join("");
   }
-  function r(v, x) {
-    v._end_date = v.end_date, e._isExceptionFirstOccurrence(x) ? (v.start_date = x.start_date, v.end_date = new Date(x.start_date.valueOf() + 1e3 * v.duration), v._start_date = x.original_start, v._modified = !0) : (v.end_date = new Date(x.start_date.valueOf() + 1e3 * v.duration), v.start_date = x.start_date, v._firstOccurrence = !0), v._thisAndFollowing = x.id;
+  function r(m, x) {
+    m._end_date = m.end_date, e._isExceptionFirstOccurrence(x) ? (m.start_date = x.start_date, m.end_date = new Date(x.start_date.valueOf() + 1e3 * m.duration), m._start_date = x.original_start, m._modified = !0) : (m.end_date = new Date(x.start_date.valueOf() + 1e3 * m.duration), m.start_date = x.start_date, m._firstOccurrence = !0), m._thisAndFollowing = x.id;
   }
-  function d(v, x, b, E) {
-    const S = b._modified ? E.id : v;
-    e._events[S] = { ...E, ...x, end_date: E._end_date, _start_date: E.start_date, _thisAndFollowing: null, _end_date: null }, b._modified && delete e._events[v], e.callEvent("onEventChanged", [e._events[S].id, e._events[S]]);
+  function l(m, x, b, E) {
+    const S = b._modified ? E.id : m;
+    e._events[S] = { ...E, ...x, end_date: E._end_date, _start_date: E.start_date, _thisAndFollowing: null, _end_date: null }, b._modified && delete e._events[m], e.callEvent("onEventChanged", [e._events[S].id, e._events[S]]);
   }
-  function l(v) {
+  function _(m) {
     for (const x in e._events)
-      e._events[x].id == v.id && delete e._events[x];
+      e._events[x].id == m.id && delete e._events[x];
   }
-  function h(v, x) {
+  function h(m, x) {
     for (let b in e._events) {
       let E = e._events[b];
-      (E.recurring_event_id == v || e._is_virtual_event(E.id) && E.id.split("#")[0] == v) && E.start_date.valueOf() >= x.start_date.valueOf() && (E.text = x.text, e.updateEvent(E.id));
+      (E.recurring_event_id == m || e._is_virtual_event(E.id) && E.id.split("#")[0] == m) && E.start_date.valueOf() >= x.start_date.valueOf() && (E.text = x.text, e.updateEvent(E.id));
     }
   }
-  function p(v, x) {
-    let b = v, E = new Date(x.original_start).valueOf();
-    v = String(b).split("#") || x._pid_time || E;
-    let S = e.uid(), T = v[1] ? v[1] : x._pid_time || E, A = e._copy_event(x);
-    A.id = S, A.recurring_event_id = x.recurring_event_id || v[0], A.original_start = new Date(Number(T)), A.deleted = !0, e.addEvent(A);
+  function p(m, x) {
+    let b = m, E = new Date(x.original_start).valueOf();
+    m = String(b).split("#") || x._pid_time || E;
+    let S = e.uid(), T = m[1] ? m[1] : x._pid_time || E, C = e._copy_event(x);
+    C.id = S, C.recurring_event_id = x.recurring_event_id || m[0], C.original_start = new Date(Number(T)), C.deleted = !0, e.addEvent(C);
   }
-  function m() {
-    for (const v in e._events)
-      v === "$dnd_recurring_placeholder" && delete e._events[v];
+  function v() {
+    for (const m in e._events)
+      m === "$dnd_recurring_placeholder" && delete e._events[m];
     e.render();
   }
   function g() {
-    const v = {};
+    const m = {};
     for (const x in e._events) {
       const b = e._events[x];
-      b.recurring_event_id && b.original_start && (v[b.recurring_event_id] || (v[b.recurring_event_id] = {}), v[b.recurring_event_id][b.original_start.valueOf()] = b);
+      b.recurring_event_id && b.original_start && (m[b.recurring_event_id] || (m[b.recurring_event_id] = {}), m[b.recurring_event_id][b.original_start.valueOf()] = b);
     }
-    return v;
+    return m;
   }
-  e.ext.recurring = { confirm: function(v) {
-  }, confirmDefault: function(v) {
-    const x = v.labels || {}, b = Array.isArray(v.options) ? v.options : [];
+  e.ext.recurring = { confirm: function(m) {
+  }, confirmDefault: function(m) {
+    const x = m.labels || {}, b = Array.isArray(m.options) ? m.options : [];
     if (b.length === 0)
       return Promise.resolve(null);
     if (b.length === 1)
@@ -9582,60 +9666,60 @@ const Fa = { active_links: function(e) {
 				<input type="radio" value="${T.value}" name="option" ${T.checked ? "checked" : ""}>
 				${T.label}
 				</label>`).join("")}
-			</div>`, type: "recurring_mode", title: x.title || e.locale.labels.confirm_recurring, width: "auto", position: "middle", buttons: [{ label: x.ok || e.locale.labels.message_ok, value: "ok", css: "rec_ok" }, { label: x.cancel || e.locale.labels.message_cancel, value: "cancel" }], callback: function(T, A) {
+			</div>`, type: "recurring_mode", title: x.title || e.locale.labels.confirm_recurring, width: "auto", position: "middle", buttons: [{ label: x.ok || e.locale.labels.message_ok, value: "ok", css: "rec_ok" }, { label: x.cancel || e.locale.labels.message_cancel, value: "cancel" }], callback: function(T, C) {
         if (T === "cancel")
           return void S(null);
-        const C = A.target.closest(".scheduler_modal_box"), $ = C && C.querySelector("input[type='radio']:checked"), H = $ ? $.value : null;
+        const A = C.target.closest(".scheduler_modal_box"), $ = A && A.querySelector("input[type='radio']:checked"), H = $ ? $.value : null;
         S(H || null);
       } });
     });
-  }, _getDecision: async function(v) {
+  }, _getDecision: async function(m) {
     const x = e.ext.recurring.confirm;
     let b;
-    return b = typeof x == "function" ? await x(v) : void 0, b === void 0 && (b = await e.ext.recurring.confirmDefault(v)), b === null ? null : v.options && v.options.length > 0 && v.options.indexOf(b) === -1 ? (console.warning(`[recurring extension] - the custom confirm handler returned a value ("${b}") which is not in the allowed options list. The allowed options are: [${v.options.join(", ")}]. The operation will be cancelled.`), null) : b;
-  } }, e.ext.recurring.confirm = e.ext.recurring.confirmDefault, e._isFollowing = function(v) {
-    let x = e.getEvent(v);
+    return b = typeof x == "function" ? await x(m) : void 0, b === void 0 && (b = await e.ext.recurring.confirmDefault(m)), b === null ? null : m.options && m.options.length > 0 && m.options.indexOf(b) === -1 ? (console.warning(`[recurring extension] - the custom confirm handler returned a value ("${b}") which is not in the allowed options list. The allowed options are: [${m.options.join(", ")}]. The operation will be cancelled.`), null) : b;
+  } }, e.ext.recurring.confirm = e.ext.recurring.confirmDefault, e._isFollowing = function(m) {
+    let x = e.getEvent(m);
     return !(!x || !x._thisAndFollowing);
-  }, e._isFirstOccurrence = function(v) {
-    if (e._is_virtual_event(v.id)) {
-      let x = v.id.split("#")[0];
-      return e.getEvent(x).start_date.valueOf() === v.start_date.valueOf();
+  }, e._isFirstOccurrence = function(m) {
+    if (e._is_virtual_event(m.id)) {
+      let x = m.id.split("#")[0];
+      return e.getEvent(x).start_date.valueOf() === m.start_date.valueOf();
     }
-  }, e._isExceptionFirstOccurrence = function(v) {
-    if (e._is_modified_occurrence(v)) {
-      let x = v.recurring_event_id, b = e.getEvent(x);
-      return !(!v.original_start || !v.original_start.valueOf() || v.original_start.valueOf() !== b.start_date.valueOf());
+  }, e._isExceptionFirstOccurrence = function(m) {
+    if (e._is_modified_occurrence(m)) {
+      let x = m.recurring_event_id, b = e.getEvent(x);
+      return !(!m.original_start || !m.original_start.valueOf() || m.original_start.valueOf() !== b.start_date.valueOf());
     }
-  }, e._rec_temp = [], e._rec_markers_pull = {}, e._rec_markers = {}, e._add_rec_marker = function(v, x) {
-    v._pid_time = x, this._rec_markers[v.id] = v, this._rec_markers_pull[v.event_pid] || (this._rec_markers_pull[v.event_pid] = {}), this._rec_markers_pull[v.event_pid][x] = v;
-  }, e._get_rec_marker = function(v, x) {
+  }, e._rec_temp = [], e._rec_markers_pull = {}, e._rec_markers = {}, e._add_rec_marker = function(m, x) {
+    m._pid_time = x, this._rec_markers[m.id] = m, this._rec_markers_pull[m.event_pid] || (this._rec_markers_pull[m.event_pid] = {}), this._rec_markers_pull[m.event_pid][x] = m;
+  }, e._get_rec_marker = function(m, x) {
     let b = this._rec_markers_pull[x];
-    return b ? b[v] : null;
-  }, e._get_rec_markers = function(v) {
-    return this._rec_markers_pull[v] || [];
+    return b ? b[m] : null;
+  }, e._get_rec_markers = function(m) {
+    return this._rec_markers_pull[m] || [];
   }, function() {
-    let v = e.addEvent;
+    let m = e.addEvent;
     e.addEvent = function(x, b, E, S, T) {
-      const A = v.apply(this, arguments);
-      if (A && e.getEvent(A)) {
-        const C = e.getEvent(A);
-        C.start_date && (C.start_date = t(C.start_date)), C.end_date && (C.end_date = t(C.end_date));
+      const C = m.apply(this, arguments);
+      if (C && e.getEvent(C)) {
+        const A = e.getEvent(C);
+        A.start_date && (A.start_date = t(A.start_date)), A.end_date && (A.end_date = t(A.end_date));
       }
-      return A;
+      return C;
     };
-  }(), e.attachEvent("onEventLoading", function(v) {
-    return v.original_start && !v.original_start.getFullYear && (v.original_start = e.templates.parse_date(v.original_start)), !0;
-  }), e.attachEvent("onEventIdChange", function(v, x) {
+  }(), e.attachEvent("onEventLoading", function(m) {
+    return m.original_start && !m.original_start.getFullYear && (m.original_start = e.templates.parse_date(m.original_start)), !0;
+  }), e.attachEvent("onEventIdChange", function(m, x) {
     if (this._ignore_call)
       return;
-    this._ignore_call = !0, e._rec_markers[v] && (e._rec_markers[x] = e._rec_markers[v], delete e._rec_markers[v]), e._rec_markers_pull[v] && (e._rec_markers_pull[x] = e._rec_markers_pull[v], delete e._rec_markers_pull[v]);
+    this._ignore_call = !0, e._rec_markers[m] && (e._rec_markers[x] = e._rec_markers[m], delete e._rec_markers[m]), e._rec_markers_pull[m] && (e._rec_markers_pull[x] = e._rec_markers_pull[m], delete e._rec_markers_pull[m]);
     for (let E = 0; E < this._rec_temp.length; E++) {
       let S = this._rec_temp[E];
-      this._is_virtual_event(S.id) && S.id.split("#")[0] == v && (S.recurring_event_id = x, this.changeEventId(S.id, x + "#" + S.id.split("#")[1]));
+      this._is_virtual_event(S.id) && S.id.split("#")[0] == m && (S.recurring_event_id = x, this.changeEventId(S.id, x + "#" + S.id.split("#")[1]));
     }
     for (let E in this._rec_markers) {
       let S = this._rec_markers[E];
-      S.recurring_event_id == v && (S.recurring_event_id = x, S._pid_changed = !0);
+      S.recurring_event_id == m && (S.recurring_event_id = x, S._pid_changed = !0);
     }
     let b = e._rec_markers[x];
     b && b._pid_changed && (delete b._pid_changed, setTimeout(function() {
@@ -9643,96 +9727,99 @@ const Fa = { active_links: function(e) {
         return !0;
       e.callEvent("onEventChanged", [x, e.getEvent(x)]);
     }, 1)), delete this._ignore_call;
-  }), e.attachEvent("onConfirmedBeforeEventDelete", function(v) {
-    const x = this.getEvent(v);
-    if (this._is_virtual_event(v) || this._is_modified_occurrence(x) && !function(b) {
+  }), e.attachEvent("onConfirmedBeforeEventDelete", function(m) {
+    const x = this.getEvent(m);
+    if (this._is_virtual_event(m) || this._is_modified_occurrence(x) && !function(b) {
       return !!b.deleted;
     }(x))
-      p(v, x);
+      p(m, x);
     else {
       n(x) && this._lightbox_id && this._roll_back_dates(x);
-      const b = this._get_rec_markers(v);
+      const b = this._get_rec_markers(m);
       for (let E in b)
-        b.hasOwnProperty(E) && (v = b[E].id, this.getEvent(v) && this.deleteEvent(v, !0));
+        b.hasOwnProperty(E) && (m = b[E].id, this.getEvent(m) && this.deleteEvent(m, !0));
     }
     return !0;
-  }), e.attachEvent("onEventDeleted", function(v, x) {
-    !this._is_virtual_event(v) && this._is_modified_occurrence(x) && (e._events[v] || (x.deleted = !0, this.setEvent(v, x), e.render()));
-  }), e.attachEvent("onBeforeEventChanged", function(v, x, b, E) {
-    return !(!b && v && (e._is_virtual_event(v.id) || e._is_modified_occurrence(v)) && (E.start_date.getDate() !== v.start_date.getDate() ? v._beforeEventChangedFlag = "edit" : v._beforeEventChangedFlag = "ask", !e.config.collision_limit || e.checkCollision(v))) || (e._events.$dnd_recurring_placeholder = e._lame_clone(v), e._showRequiredModalBox(v.id, v._beforeEventChangedFlag), !1);
-  }), e.attachEvent("onEventChanged", function(v, x) {
+  }), e.attachEvent("onEventDeleted", function(m, x) {
+    !this._is_virtual_event(m) && this._is_modified_occurrence(x) && (e._events[m] || (x.deleted = !0, this.setEvent(m, x), e.render()));
+  }), e.attachEvent("onBeforeEventChanged", function(m, x, b, E) {
+    return !(!b && m && (e._is_virtual_event(m.id) || e._is_modified_occurrence(m)) && (E.start_date.getDate() !== m.start_date.getDate() ? m._beforeEventChangedFlag = "edit" : m._beforeEventChangedFlag = "ask", !e.config.collision_limit || e.checkCollision(m))) || (e._events.$dnd_recurring_placeholder = e._lame_clone(m), e._showRequiredModalBox(m.id, m._beforeEventChangedFlag), !1);
+  }), e.attachEvent("onEventChanged", function(m, x) {
     if (this._loading)
       return !0;
-    let b = this.getEvent(v);
-    if (this._is_virtual_event(v))
+    let b = this.getEvent(m);
+    if (this._is_virtual_event(m))
       (function(E) {
         let S = E.id.split("#"), T = e.uid();
         e._not_render = !0;
-        let A = e._copy_event(E);
-        A.id = T, A.recurring_event_id = S[0];
-        let C = S[1];
-        A.original_start = new Date(Number(C)), e._add_rec_marker(A, C), e.addEvent(A), e._not_render = !1;
+        let C = e._copy_event(E);
+        C.id = T, C.recurring_event_id = S[0];
+        let A = S[1];
+        C.original_start = new Date(Number(A)), e._add_rec_marker(C, A), e.addEvent(C), e._not_render = !1;
       })(b);
     else {
-      b.start_date && (b.start_date = t(b.start_date)), b.end_date && (b.end_date = t(b.end_date)), n(b) && this._lightbox_id && (b._removeFollowing || this._isFollowing(v) ? b._removeFollowing = null : this._roll_back_dates(b));
-      const E = this._get_rec_markers(v);
+      b.start_date && (b.start_date = t(b.start_date)), b.end_date && (b.end_date = t(b.end_date)), n(b) && this._lightbox_id && (b._removeFollowing || this._isFollowing(m) ? b._removeFollowing = null : this._roll_back_dates(b));
+      const E = this._get_rec_markers(m);
       for (let T in E)
         E.hasOwnProperty(T) && (delete this._rec_markers[E[T].id], this.deleteEvent(E[T].id, !0));
-      delete this._rec_markers_pull[v];
+      delete this._rec_markers_pull[m];
       let S = !1;
       for (let T = 0; T < this._rendered.length; T++)
-        this._rendered[T].getAttribute(this.config.event_attribute) == v && (S = !0);
+        this._rendered[T].getAttribute(this.config.event_attribute) == m && (S = !0);
       S || (this._select_id = null);
     }
-    return m(), !0;
-  }), e.attachEvent("onEventAdded", function(v) {
+    return v(), !0;
+  }), e.attachEvent("onEventAdded", function(m) {
     if (!this._loading) {
-      const x = this.getEvent(v);
+      const x = this.getEvent(m);
       n(x) && this._roll_back_dates(x);
     }
     return !0;
-  }), e.attachEvent("onRecurringEventSave", function(v, x, b) {
-    let E = this.getEvent(v), S = e._lame_clone(E), T = e._lame_clone(x);
-    if (E && n(E) && !b && this._isFollowing(v)) {
-      if (E._removeFollowing) {
-        if (e.getEvent(E._thisAndFollowing) && (E._firstOccurrence || E._modified))
-          return e.hideLightbox(), e.deleteEvent(E.id), !1;
-        if (E.end_date = new Date(E.start_date.valueOf() - 1e3), E._end_date = E._shorten_end_date, E.start_date = E._start_date, E._shorten = !0, o(E), e.callEvent("onEventChanged", [E.id, E]), e.getEvent(E._thisAndFollowing))
-          for (const A in e._events) {
-            let C = e._events[A];
-            C.recurring_event_id === v && C.start_date.valueOf() > S.start_date.valueOf() && p(C.id, C);
-          }
-        return e.hideLightbox(), !1;
-      }
-      {
-        let A = e.getEvent(E._thisAndFollowing);
-        if (A && E._firstOccurrence)
-          for (const C in e._events)
-            e._events[C].id == E.id && d(C, x, E, S);
-        else if (A && E._modified)
-          for (const C in e._events) {
-            let $ = e._events[C];
-            $.recurring_event_id == v && $.id == S._thisAndFollowing && d(C, x, E, S);
-          }
-        else {
-          e._is_modified_occurrence(A) && l(A), E.end_date = E._shorten_end_date, E._end_date = E._shorten_end_date, E.start_date = E._start_date, E._shorten = !0, o(E), e.callEvent("onEventChanged", [E.id, E]);
-          let C = { ...T };
-          C._end_date = S._end_date, C._start_date = null, C.id = e.uid(), e.addEvent(C.start_date, C.end_date, C.text, C.id, C);
+  }), e.attachEvent("onRecurringEventSave", function(m, x, b) {
+    let E = this.getEvent(m), S = e._lame_clone(E), T = e._lame_clone(x);
+    if (E && n(E) && n(T)) {
+      if (!b && this._isFollowing(m)) {
+        if (E._removeFollowing) {
+          if (e.getEvent(E._thisAndFollowing) && (E._firstOccurrence || E._modified))
+            return e.hideLightbox(), e.deleteEvent(E.id), !1;
+          if (E.end_date = new Date(E.start_date.valueOf() - 1e3), E._end_date = E._shorten_end_date, E.start_date = E._start_date, E._shorten = !0, o(E), e.callEvent("onEventChanged", [E.id, E]), e.getEvent(E._thisAndFollowing))
+            for (const C in e._events) {
+              let A = e._events[C];
+              A.recurring_event_id === m && A.start_date.valueOf() > S.start_date.valueOf() && p(A.id, A);
+            }
+          return e.hideLightbox(), !1;
         }
-        return b || h(v, x), e.hideLightbox(), !1;
+        {
+          let C = e.getEvent(E._thisAndFollowing);
+          if (C && E._firstOccurrence)
+            for (const A in e._events)
+              e._events[A].id == E.id && l(A, x, E, S);
+          else if (C && E._modified)
+            for (const A in e._events) {
+              let $ = e._events[A];
+              $.recurring_event_id == m && $.id == S._thisAndFollowing && l(A, x, E, S);
+            }
+          else {
+            e._is_modified_occurrence(C) && _(C), E.end_date = E._shorten_end_date, E._end_date = E._shorten_end_date, E.start_date = E._start_date, E._shorten = !0, o(E), e.callEvent("onEventChanged", [E.id, E]);
+            let A = { ...T };
+            A._end_date = S._end_date, A._start_date = null, A.id = e.uid(), e.addEvent(A.start_date, A.end_date, A.text, A.id, A);
+          }
+          return b || h(m, x), e.hideLightbox(), !1;
+        }
       }
-    }
-    return b || h(v, x), S._ocr && S._beforeEventChangedFlag ? (E.start_date = S.start_date, E.end_date = S.end_date, E._start_date = S._start_date, E._end_date = S._end_date, e.updateEvent(E.id), !0) : (this._select_id = null, m(), !0);
-  }), e.attachEvent("onEventCreated", function(v) {
-    const x = this.getEvent(v);
+    } else
+      e._roll_back_dates(E);
+    return b || h(m, x), S._ocr && S._beforeEventChangedFlag ? (E.start_date = S.start_date, E.end_date = S.end_date, E._start_date = S._start_date, E._end_date = S._end_date, e.updateEvent(E.id), !0) : (this._select_id = null, v(), !0);
+  }), e.attachEvent("onEventCreated", function(m) {
+    const x = this.getEvent(m);
     return n(x) || function(b) {
       b.rrule = "", b.original_start = null, b.recurring_event_id = null, b.duration = null, b.deleted = null;
     }(x), !0;
-  }), e.attachEvent("onEventCancel", function(v) {
-    const x = this.getEvent(v);
-    n(x) && (this._roll_back_dates(x), this.render_view_data()), m();
-  }), e.attachEvent("onLightbox", function(v) {
-    const x = e.getEvent(v);
+  }), e.attachEvent("onEventCancel", function(m) {
+    const x = this.getEvent(m);
+    n(x) && (this._roll_back_dates(x), this.render_view_data()), v();
+  }), e.attachEvent("onLightbox", function(m) {
+    const x = e.getEvent(m);
     if (e._is_virtual_event(x.id)) {
       const b = e.formSection("recurring");
       if (b && b.node) {
@@ -9740,66 +9827,66 @@ const Fa = { active_links: function(e) {
         E && (E.disabled = !0);
       }
     }
-  }), e._roll_back_dates = function(v) {
-    v.start_date && (v.start_date = t(v.start_date)), v.end_date && (v.end_date = t(v.end_date)), v._end_date && (v._shorten || (v.duration = Math.round((v.end_date.valueOf() - v.start_date.valueOf()) / 1e3)), v.end_date = v._end_date), v._start_date && (v.start_date.setMonth(0), v.start_date.setDate(v._start_date.getDate()), v.start_date.setMonth(v._start_date.getMonth()), v.start_date.setFullYear(v._start_date.getFullYear()), this._isFollowing(v.id) && (v.start_date.setHours(v._start_date.getHours()), v.start_date.setMinutes(v._start_date.getMinutes()), v.start_date.setSeconds(v._start_date.getSeconds()))), v._thisAndFollowing = null, v._shorten_end_date && (v._shorten_end_date = null), v._removeFollowing && (v._removeFollowing = null), v._firstOccurrence && (v._firstOccurrence = null), v._modified && (v._modified = null);
-  }, e._is_virtual_event = function(v) {
-    return v.toString().indexOf("#") != -1;
-  }, e._is_modified_occurrence = function(v) {
-    return v.recurring_event_id && v.recurring_event_id != "0";
-  }, e.showLightbox_rec = e.showLightbox, e.showLightbox = function(v) {
+  }), e._roll_back_dates = function(m) {
+    m.start_date && (m.start_date = t(m.start_date)), m.end_date && (m.end_date = t(m.end_date)), m._end_date && (m._shorten || (m.duration = Math.round((m.end_date.valueOf() - m.start_date.valueOf()) / 1e3)), m.end_date = m._end_date), m._start_date && (m.start_date.setMonth(0), m.start_date.setDate(m._start_date.getDate()), m.start_date.setMonth(m._start_date.getMonth()), m.start_date.setFullYear(m._start_date.getFullYear()), this._isFollowing(m.id) && (m.start_date.setHours(m._start_date.getHours()), m.start_date.setMinutes(m._start_date.getMinutes()), m.start_date.setSeconds(m._start_date.getSeconds()))), m._thisAndFollowing = null, m._shorten_end_date && (m._shorten_end_date = null), m._removeFollowing && (m._removeFollowing = null), m._firstOccurrence && (m._firstOccurrence = null), m._modified && (m._modified = null);
+  }, e._is_virtual_event = function(m) {
+    return m.toString().indexOf("#") != -1;
+  }, e._is_modified_occurrence = function(m) {
+    return m.recurring_event_id && m.recurring_event_id != "0";
+  }, e.showLightbox_rec = e.showLightbox, e.showLightbox = function(m) {
     const x = this.locale;
-    let b = e.config.lightbox_recurring, E = this.getEvent(v), S = E.recurring_event_id, T = this._is_virtual_event(v);
-    T && (S = v.split("#")[0]);
-    const A = function(C, $) {
-      const H = e.getEvent(C), O = e.getEvent(S), R = e.getView();
-      if (R && H[R.y_property] && (O[R.y_property] = H[R.y_property]), R && H[R.property] && (O[R.property] = H[R.property]), $ === "Occurrence")
-        return e.showLightbox_rec(C);
+    let b = e.config.lightbox_recurring, E = this.getEvent(m), S = E.recurring_event_id, T = this._is_virtual_event(m);
+    T && (S = m.split("#")[0]);
+    const C = function(A, $) {
+      const H = e.getEvent(A), O = e.getEvent(S), P = e.getView();
+      if (P && H[P.y_property] && (O[P.y_property] = H[P.y_property]), P && H[P.property] && (O[P.property] = H[P.property]), $ === "Occurrence")
+        return e.showLightbox_rec(A);
       if ($ === "Following") {
         if (e._isExceptionFirstOccurrence(H) || e._isFirstOccurrence(H))
           return r(O, H), e.showLightbox_rec(S);
         {
           O._end_date = O.end_date;
-          const P = H.original_start || H.start_date;
-          return O._shorten_end_date = new Date(P.valueOf() - 1e3), O.end_date = new Date(H.start_date.valueOf() + 1e3 * O.duration), O._start_date = O.start_date, O.start_date = H.start_date, O._thisAndFollowing = H.id, E._beforeEventChangedFlag && (O._beforeEventChangedFlag = E._beforeEventChangedFlag, O._shorten_end_date = new Date(P.valueOf() - 1e3)), e.showLightbox_rec(S);
+          const R = H.original_start || H.start_date;
+          return O._shorten_end_date = new Date(R.valueOf() - 1e3), O.end_date = new Date(H.start_date.valueOf() + 1e3 * O.duration), O._start_date = O.start_date, O.start_date = H.start_date, O._thisAndFollowing = H.id, E._beforeEventChangedFlag && (O._beforeEventChangedFlag = E._beforeEventChangedFlag, O._shorten_end_date = new Date(R.valueOf() - 1e3)), e.showLightbox_rec(S);
         }
       }
       if ($ === "AllEvents") {
         if (e._isExceptionFirstOccurrence(H) || e._isFirstOccurrence(H))
           return r(O, H), e.showLightbox_rec(S);
-        const P = new Date(O.start_date);
-        return O._end_date = O.end_date, O._start_date = P, O.start_date.setHours(H.start_date.getHours()), O.start_date.setMinutes(H.start_date.getMinutes()), O.start_date.setSeconds(H.start_date.getSeconds()), O.end_date = new Date(O.start_date.valueOf() + 1e3 * O.duration), O._thisAndFollowing = null, e.showLightbox_rec(S);
+        const R = new Date(O.start_date);
+        return O._end_date = O.end_date, O._start_date = R, O.start_date.setHours(H.start_date.getHours()), O.start_date.setMinutes(H.start_date.getMinutes()), O.start_date.setSeconds(H.start_date.getSeconds()), O.end_date = new Date(O.start_date.valueOf() + 1e3 * O.duration), O._thisAndFollowing = null, e.showLightbox_rec(S);
       }
     };
     if ((S || 1 * S == 0) && n(E))
-      return A(v, "AllEvents");
+      return C(m, "AllEvents");
     if (!S || S === "0" || !x.labels.confirm_recurring || b == "instance" || b == "series" && !T)
-      return this.showLightbox_rec(v);
-    b === "ask" && async function(C, $) {
-      const H = e.locale, O = e.getEvent(C), R = e.getEvent($), P = { origin: "lightbox", occurrence: O, series: R, labels: { title: H.labels.confirm_recurring, ok: H.labels.message_ok, cancel: H.labels.message_cancel, occurrence: H.labels.button_edit_occurrence, following: H.labels.button_edit_occurrence_and_following, series: H.labels.button_edit_series }, options: ["occurrence", "following", "series"] }, j = await e.ext.recurring._getDecision(P);
+      return this.showLightbox_rec(m);
+    b === "ask" && async function(A, $) {
+      const H = e.locale, O = e.getEvent(A), P = e.getEvent($), R = { origin: "lightbox", occurrence: O, series: P, labels: { title: H.labels.confirm_recurring, ok: H.labels.message_ok, cancel: H.labels.message_cancel, occurrence: H.labels.button_edit_occurrence, following: H.labels.button_edit_occurrence_and_following, series: H.labels.button_edit_series }, options: ["occurrence", "following", "series"] }, j = await e.ext.recurring._getDecision(R);
       if (j !== null) {
         if (j === "occurrence")
-          return A(C, "Occurrence");
+          return C(A, "Occurrence");
         if (j === "following")
-          return A(C, "Following");
-        j === "series" && A(C, "AllEvents");
+          return C(A, "Following");
+        j === "series" && C(A, "AllEvents");
       }
-    }(v, S);
-  }, e._showRequiredModalBox = function(v, x) {
+    }(m, S);
+  }, e._showRequiredModalBox = function(m, x) {
     let b;
     const E = e.locale;
-    let S = e.getEvent(v), T = S.recurring_event_id;
+    let S = e.getEvent(m), T = S.recurring_event_id;
     e._is_virtual_event(S.id) && (T = S.id.split("#")[0]);
-    let A = e.getEvent(T);
-    const C = e.getView();
-    let $, H, O = e._lame_clone(A);
-    C && S[C.y_property] && (O[C.y_property] = S[C.y_property]), C && S[C.property] && (O[C.property] = S[C.property]), S && S._beforeEventChangedFlag && ($ = S.start_date, H = S.end_date), b = x === "ask" ? ["occurrence", "following", "series"] : ["occurrence", "following"];
-    const R = { origin: "dnd", occurrence: S, series: A, labels: { title: E.labels.confirm_recurring, ok: E.labels.message_ok, cancel: E.labels.message_cancel, occurrence: E.labels.button_edit_occurrence, following: E.labels.button_edit_occurrence_and_following, series: E.labels.button_edit_series }, options: b };
-    Promise.resolve(e.ext.recurring._getDecision(R)).then((P) => {
-      if (P)
-        switch (P) {
+    let C = e.getEvent(T);
+    const A = e.getView();
+    let $, H, O = e._lame_clone(C);
+    A && S[A.y_property] && (O[A.y_property] = S[A.y_property]), A && S[A.property] && (O[A.property] = S[A.property]), S && S._beforeEventChangedFlag && ($ = S.start_date, H = S.end_date), b = x === "ask" ? ["occurrence", "following", "series"] : ["occurrence", "following"];
+    const P = { origin: "dnd", occurrence: S, series: C, labels: { title: E.labels.confirm_recurring, ok: E.labels.message_ok, cancel: E.labels.message_cancel, occurrence: E.labels.button_edit_occurrence, following: E.labels.button_edit_occurrence_and_following, series: E.labels.button_edit_series }, options: b };
+    Promise.resolve(e.ext.recurring._getDecision(P)).then((R) => {
+      if (R)
+        switch (R) {
           case "occurrence":
             (function(j) {
-              let I = { ...A, ...e.getEvent("$dnd_recurring_placeholder") };
+              let I = { ...C, ...e.getEvent("$dnd_recurring_placeholder") };
               if (H && $ && (I.start_date = $, I.end_date = H, I._beforeEventChangedFlag = j._beforeEventChangedFlag, I._ocr = !0), !e.config.collision_limit || e.checkCollision(I))
                 for (const U in e._events) {
                   let B = e._events[U];
@@ -9811,13 +9898,13 @@ const Fa = { active_links: function(e) {
             (function(j) {
               let I = e._lame_clone(j);
               if (H && $ && (j._start_date = j.start_date, j.start_date = $, j.end_date = H), e._isFirstOccurrence(I) || e._isExceptionFirstOccurrence(I)) {
-                if (e._isExceptionFirstOccurrence(I) && l(I), O._start_date = A.start_date, O.start_date = j.start_date, O.duration = (+j.end_date - +j.start_date) / 1e3, O._beforeEventChangedFlag = j._beforeEventChangedFlag, O.rrule && _(O.id, O), !e.config.collision_limit || e.checkCollision(O))
+                if (e._isExceptionFirstOccurrence(I) && _(I), O._start_date = C.start_date, O.start_date = j.start_date, O.duration = (+j.end_date - +j.start_date) / 1e3, O._beforeEventChangedFlag = j._beforeEventChangedFlag, O.rrule && d(O.id, O), !e.config.collision_limit || e.checkCollision(O))
                   for (const U in e._events)
                     e._events[U].id == O.id && (e._events[U] = { ...O }, e.callEvent("onEventChanged", [e._events[U].id, e._events[U]]));
               } else {
-                O._end_date = A.end_date;
+                O._end_date = C.end_date;
                 const U = j.original_start || e.date.date_part(new Date(j._start_date));
-                O._shorten_end_date = new Date(U.valueOf() - 1e3), O.end_date = j.end_date, O._start_date = A.start_date, O.start_date = j.start_date, O._thisAndFollowing = j.id, O.rrule && _(O.id, O);
+                O._shorten_end_date = new Date(U.valueOf() - 1e3), O.end_date = j.end_date, O._start_date = C.start_date, O.start_date = j.start_date, O._thisAndFollowing = j.id, O.rrule && d(O.id, O);
                 let B = O.end_date;
                 if (O.end_date = O._end_date, !e.config.collision_limit || e.checkCollision(O)) {
                   O.end_date = B;
@@ -9830,36 +9917,36 @@ const Fa = { active_links: function(e) {
           case "series":
             (function(j) {
               let I = e._lame_clone(j);
-              if (e._isExceptionFirstOccurrence(I) && l(I), H && $ && (O.start_date.setHours($.getHours()), O.start_date.setMinutes($.getMinutes()), O.start_date.setSeconds($.getSeconds()), O.duration = (+H - +$) / 1e3), O._beforeEventChangedFlag = j._beforeEventChangedFlag, O._thisAndFollowing = null, !e.config.collision_limit || e.checkCollision(O))
+              if (e._isExceptionFirstOccurrence(I) && _(I), H && $ && (O.start_date.setHours($.getHours()), O.start_date.setMinutes($.getMinutes()), O.start_date.setSeconds($.getSeconds()), O.duration = (+H - +$) / 1e3), O._beforeEventChangedFlag = j._beforeEventChangedFlag, O._thisAndFollowing = null, !e.config.collision_limit || e.checkCollision(O))
                 for (const U in e._events)
                   e._events[U].id == O.id && (e._events[U] = { ...O }, e.callEvent("onEventChanged", [e._events[U].id, e._events[U]]));
             })(S);
             break;
           default:
-            return void m();
+            return void v();
         }
       else
-        m();
+        v();
     });
-  }, e.get_visible_events_rec = e.get_visible_events, e.get_visible_events = function(v) {
+  }, e.get_visible_events_rec = e.get_visible_events, e.get_visible_events = function(m) {
     for (let S = 0; S < this._rec_temp.length; S++)
       delete this._events[this._rec_temp[S].id];
     this._rec_temp = [];
     const x = g();
-    let b = this.get_visible_events_rec(v), E = [];
+    let b = this.get_visible_events_rec(m), E = [];
     for (let S = 0; S < b.length; S++)
       b[S].deleted || b[S].recurring_event_id || (n(b[S]) ? this.repeat_date(b[S], E, void 0, void 0, void 0, void 0, x) : E.push(b[S]));
     return function(S) {
       const T = {};
-      return S.forEach((A) => {
-        const C = T[A.id];
-        (!C || C._beforeEventChangedFlag || A._beforeEventChangedFlag) && (T[A.id] = A);
+      return S.forEach((C) => {
+        const A = T[C.id];
+        (!A || A._beforeEventChangedFlag || C._beforeEventChangedFlag) && (T[C.id] = C);
       }), Object.values(T);
     }(E);
   }, function() {
-    let v = e.isOneDayEvent;
+    let m = e.isOneDayEvent;
     e.isOneDayEvent = function(b) {
-      return !!n(b) || v.call(this, b);
+      return !!n(b) || m.call(this, b);
     };
     const x = e.updateEvent;
     e.updateEvent = function(b) {
@@ -9868,52 +9955,52 @@ const Fa = { active_links: function(e) {
     };
   }();
   const c = e.date.date_to_str("%Y%m%dT%H%i%s");
-  function u(v) {
-    const x = v.getDay(), b = v.getDate();
+  function f(m) {
+    const x = m.getDay(), b = m.getDate();
     return { dayOfWeek: x, dayNumber: Math.ceil(b / 7) };
   }
-  e.repeat_date = function(v, x, b, E, S, T, A) {
-    if (!v.rrule)
+  e.repeat_date = function(m, x, b, E, S, T, C) {
+    if (!m.rrule)
       return;
-    let C = A ? A[v.id] : g()[v.id];
-    C || (C = {}), E = s(E || new Date(e._min_date.valueOf() - 6048e5)), S = s(S || new Date(e._max_date.valueOf() - 1e3));
-    const $ = s(v.start_date);
+    let A = C ? C[m.id] : g()[m.id];
+    A || (A = {}), E = s(E || new Date(e._min_date.valueOf() - 6048e5)), S = s(S || new Date(e._max_date.valueOf() - 1e3));
+    const $ = s(m.start_date);
     let H;
-    H = ge(T ? `RRULE:${v.rrule};UNTIL=${c(v.end_date)};COUNT=${T}` : `RRULE:${v.rrule};UNTIL=${c(v.end_date)}`, { dtstart: $ });
+    H = ge(T ? `RRULE:${m.rrule};UNTIL=${c(m.end_date)};COUNT=${T}` : `RRULE:${m.rrule};UNTIL=${c(m.end_date)}`, { dtstart: $ });
     const O = H.between(E, S, !0).map((j) => {
       const I = a(j);
-      return I.setHours(v.start_date.getHours()), I.setMinutes(v.start_date.getMinutes()), I.setSeconds(v.start_date.getSeconds()), I;
+      return I.setHours(m.start_date.getHours()), I.setMinutes(m.start_date.getMinutes()), I.setSeconds(m.start_date.getSeconds()), I;
     });
-    let R = 0;
-    const P = v.duration;
-    for (let j = 0; j < O.length && !(T && R >= T); j++) {
+    let P = 0;
+    const R = m.duration;
+    for (let j = 0; j < O.length && !(T && P >= T); j++) {
       const I = O[j];
-      let U = C[I.valueOf()];
+      let U = A[I.valueOf()];
       if (U) {
         if (U.deleted || U.end_date.valueOf() < e._min_date.valueOf() || !e.filter_event(U.id, U))
           continue;
-        R++, x.push(U);
+        P++, x.push(U);
       } else {
-        const B = e._copy_event(v);
-        if (B.text = v.text, B.start_date = I, B.id = v.id + "#" + Math.ceil(I.valueOf()), B.end_date = new Date(I.valueOf() + 1e3 * P), B.end_date.valueOf() <= e._min_date.valueOf() || (B.end_date = e._fix_daylight_saving_date(B.start_date, B.end_date, v, I, B.end_date), B._timed = e.isOneDayEvent(B), !B._timed && !e._table_view && !e.config.multi_day))
+        const B = e._copy_event(m);
+        if (B.text = m.text, B.start_date = I, B.id = m.id + "#" + Math.ceil(I.valueOf()), B.end_date = new Date(I.valueOf() + 1e3 * R), B.end_date.valueOf() <= e._min_date.valueOf() || (B.end_date = e._fix_daylight_saving_date(B.start_date, B.end_date, m, I, B.end_date), B._timed = e.isOneDayEvent(B), !B._timed && !e._table_view && !e.config.multi_day))
           continue;
-        x.push(B), b || (e._events[B.id] = B, e._rec_temp.push(B)), R++;
+        x.push(B), b || (e._events[B.id] = B, e._rec_temp.push(B)), P++;
       }
     }
-    if (C && O.length == 0)
-      for (let j in C) {
-        let I = C[j];
+    if (A && O.length == 0)
+      for (let j in A) {
+        let I = A[j];
         if (I) {
           if (I.deleted || I.end_date.valueOf() < e._min_date.valueOf() || !e.filter_event(I.id, I))
             continue;
           E && S && I.start_date < S && I.end_date > E && x.push(I);
         }
       }
-  }, e._fix_daylight_saving_date = function(v, x, b, E, S) {
-    let T = v.getTimezoneOffset() - x.getTimezoneOffset();
+  }, e._fix_daylight_saving_date = function(m, x, b, E, S) {
+    let T = m.getTimezoneOffset() - x.getTimezoneOffset();
     return T ? T > 0 ? new Date(E.valueOf() + 1e3 * b.duration - 60 * T * 1e3) : new Date(x.valueOf() - 60 * T * 1e3) : new Date(S.valueOf());
-  }, e.getRecDates = function(v, x) {
-    let b = typeof v == "object" ? v : e.getEvent(v), E = [];
+  }, e.getRecDates = function(m, x) {
+    let b = typeof m == "object" ? m : e.getEvent(m), E = [];
     if (x = x || 100, !n(b))
       return [{ start_date: b.start_date, end_date: b.end_date }];
     if (b.deleted)
@@ -9923,83 +10010,83 @@ const Fa = { active_links: function(e) {
     for (let T = 0; T < E.length; T++)
       E[T].deleted || S.push({ start_date: E[T].start_date, end_date: E[T].end_date });
     return S;
-  }, e.getEvents = function(v, x) {
+  }, e.getEvents = function(m, x) {
     let b = [];
     const E = g();
     for (let S in this._events) {
       let T = this._events[S];
       if (!T.recurring_event_id)
-        if (v && x && T.start_date < x && T.end_date > v)
+        if (m && x && T.start_date < x && T.end_date > m)
           if (n(T)) {
-            let A = [];
-            this.repeat_date(T, A, !0, v, x, void 0, E), A.forEach(function(C) {
-              C.start_date < x && C.end_date > v && b.push(C);
+            let C = [];
+            this.repeat_date(T, C, !0, m, x, void 0, E), C.forEach(function(A) {
+              A.start_date < x && A.end_date > m && b.push(A);
             });
           } else
             this._is_virtual_event(T.id) || b.push(T);
         else
-          v || x || this._is_virtual_event(T.id) || b.push(T);
+          m || x || this._is_virtual_event(T.id) || b.push(T);
     }
     return b;
-  }, e._copy_dummy = function(v) {
+  }, e._copy_dummy = function(m) {
     const x = new Date(this.start_date), b = new Date(this.end_date);
     this.start_date = x, this.end_date = b, this.duration = this.rrule = null;
   }, e.config.include_end_by = !1, e.config.lightbox_recurring = "ask", e.config.recurring_workdays = [z.MO.weekday, z.TU.weekday, z.WE.weekday, z.TH.weekday, z.FR.weekday], e.config.repeat_date = "%m.%d.%Y", e.config.lightbox.sections = [{ name: "description", map_to: "text", type: "textarea", focus: !0 }, { name: "recurring", type: "recurring", map_to: "rrule" }, { name: "time", height: 72, type: "time", map_to: "auto" }], e.attachEvent("onClearAll", function() {
     e._rec_markers = {}, e._rec_markers_pull = {}, e._rec_temp = [];
   });
-  const f = { 0: "SU", 1: "MO", 2: "TU", 3: "WE", 4: "TH", 5: "FR", 6: "SA" }, y = { 0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 0 };
-  function w(v, x) {
-    const b = v.querySelector("[name='repeat_interval_value']");
+  const u = { 0: "SU", 1: "MO", 2: "TU", 3: "WE", 4: "TH", 5: "FR", 6: "SA" }, y = { 0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 0 };
+  function w(m, x) {
+    const b = m.querySelector("[name='repeat_interval_value']");
     b && (b.value = (x ? x.interval : 1) || 1);
   }
-  function D(v) {
-    switch (v) {
+  function D(m) {
+    switch (m) {
       case 1:
       case 31:
-        return `${v}st`;
+        return `${m}st`;
       case 2:
-        return `${v}nd`;
+        return `${m}nd`;
       case 3:
-        return `${v}rd`;
+        return `${m}rd`;
       default:
-        return `${v}th`;
+        return `${m}th`;
     }
   }
-  e.templates.repeat_monthly_date = function(v, x) {
-    return `Every ${D(v.getDate())}`;
-  }, e.templates.repeat_monthly_weekday = function(v, x) {
-    const b = u(v);
+  e.templates.repeat_monthly_date = function(m, x) {
+    return `Every ${D(m.getDate())}`;
+  }, e.templates.repeat_monthly_weekday = function(m, x) {
+    const b = f(m);
     return `Every ${D(b.dayNumber)} ${e.locale.date.day_full[b.dayOfWeek]}`;
-  }, e.templates.repeat_yearly_month_date = function(v, x) {
-    const b = v.getDate(), E = e.locale.date.month_full[v.getMonth()];
+  }, e.templates.repeat_yearly_month_date = function(m, x) {
+    const b = m.getDate(), E = e.locale.date.month_full[m.getMonth()];
     return `Every ${D(b)} day of ${E}`;
-  }, e.templates.repeat_yearly_month_weekday = function(v, x) {
-    const b = u(v), E = e.locale.date.month_full[v.getMonth()];
+  }, e.templates.repeat_yearly_month_weekday = function(m, x) {
+    const b = f(m), E = e.locale.date.month_full[m.getMonth()];
     return `Every ${D(b.dayNumber)} ${e.locale.date.day_full[b.dayOfWeek]} of ${E}`;
   };
-  const M = { MONTHLY: function(v) {
-    return { rrule: { freq: z.MONTHLY, interval: 1, bymonthday: v.start.getDate() }, until: new Date(9999, 1, 1) };
-  }, WEEKLY: function(v) {
-    let x = v.start.getDay() - 1;
+  const M = { MONTHLY: function(m) {
+    return { rrule: { freq: z.MONTHLY, interval: 1, bymonthday: m.start.getDate() }, until: new Date(9999, 1, 1) };
+  }, WEEKLY: function(m) {
+    let x = m.start.getDay() - 1;
     return x == -1 && (x = 6), { rrule: { freq: z.WEEKLY, interval: 1, byweekday: [x] }, until: new Date(9999, 1, 1) };
-  }, DAILY: function(v) {
+  }, DAILY: function(m) {
     return { rrule: { freq: z.DAILY, interval: 1 }, until: new Date(9999, 1, 1) };
-  }, YEARLY: function(v) {
-    return { rrule: { freq: z.YEARLY, bymonth: v.start.getMonth() + 1, interval: 1, bymonthday: v.start.getDate() }, until: new Date(9999, 1, 1) };
-  }, WORKDAYS: function(v) {
+  }, YEARLY: function(m) {
+    return { rrule: { freq: z.YEARLY, bymonth: m.start.getMonth() + 1, interval: 1, bymonthday: m.start.getDate() }, until: new Date(9999, 1, 1) };
+  }, WORKDAYS: function(m) {
     return { rrule: { freq: z.WEEKLY, interval: 1, byweekday: e.config.recurring_workdays }, until: new Date(9999, 1, 1) };
-  }, CUSTOM: function(v, x) {
-    const b = {}, E = x.querySelector('[name="repeat_interval_unit"]').value, S = Math.max(1, x.querySelector('[name="repeat_interval_value"]').value), T = x.querySelector('[name="dhx_custom_month_option"]') ? x.querySelector('[name="dhx_custom_month_option"]').value : null, A = x.querySelector('[name="dhx_custom_year_option"]') ? x.querySelector('[name="dhx_custom_year_option"]').value : null;
-    let C, $;
+  }, CUSTOM: function(m, x) {
+    const b = {}, E = x.querySelector('[name="repeat_interval_unit"]').value, S = Math.max(1, x.querySelector('[name="repeat_interval_value"]').value), T = x.querySelector('[name="dhx_custom_month_option"]') ? x.querySelector('[name="dhx_custom_month_option"]').value : null, C = x.querySelector('[name="dhx_custom_year_option"]') ? x.querySelector('[name="dhx_custom_year_option"]').value : null;
+    let A, $;
     switch (b.interval = S, E) {
       case "DAILY":
         b.freq = z.DAILY;
         break;
       case "WEEKLY":
-        b.freq = z.WEEKLY, C = [], x.querySelectorAll('.dhx_form_repeat_custom_week [name="week_day"]').forEach((P) => {
-          P.checked && C.push(P.value);
-        }), b.byweekday = C.map((P) => {
-          switch (P) {
+        b.freq = z.WEEKLY, A = [], x.querySelectorAll('.dhx_form_repeat_custom_week [name="week_day"]').forEach((R) => {
+          R.checked && A.push(R.value);
+        }), b.byweekday = A.map((R) => {
+          switch (R) {
             case "MO":
               return z.MO.weekday;
             case "TU":
@@ -10018,72 +10105,72 @@ const Fa = { active_links: function(e) {
         });
         break;
       case "MONTHLY":
-        b.freq = z.MONTHLY, T === "month_date" ? b.bymonthday = v.start.getDate() : ($ = v.start.getDay() - 1, $ == -1 && ($ = 6), b.byweekday = [$], b.bysetpos = u(v.start).dayNumber);
+        b.freq = z.MONTHLY, T === "month_date" ? b.bymonthday = m.start.getDate() : ($ = m.start.getDay() - 1, $ == -1 && ($ = 6), b.byweekday = [$], b.bysetpos = f(m.start).dayNumber);
         break;
       case "YEARLY":
-        b.freq = z.YEARLY, b.bymonth = v.start.getMonth() + 1, A == "month_date" ? b.bymonthday = v.start.getDate() : ($ = v.start.getDay() - 1, $ == -1 && ($ = 6), b.byweekday = [$], b.bysetpos = u(v.start).dayNumber);
+        b.freq = z.YEARLY, b.bymonth = m.start.getMonth() + 1, C == "month_date" ? b.bymonthday = m.start.getDate() : ($ = m.start.getDay() - 1, $ == -1 && ($ = 6), b.byweekday = [$], b.bysetpos = f(m.start).dayNumber);
     }
     const H = e.date.str_to_date("%Y-%m-%d");
     let O = new Date(9999, 1, 1);
-    const R = x.querySelector('[name="dhx_custom_repeat_ends"]');
-    return R && R.value === "ON" ? (O = H(x.querySelector('[name="dhx_form_repeat_ends_ondate"]').value), b.until = new Date(O)) : R && R.value === "AFTER" && (b.count = Math.max(1, x.querySelector('[name="dhx_form_repeat_ends_after"]').value)), { rrule: b, until: O };
+    const P = x.querySelector('[name="dhx_custom_repeat_ends"]');
+    return P && P.value === "ON" ? (O = H(x.querySelector('[name="dhx_form_repeat_ends_ondate"]').value), b.until = new Date(O)) : P && P.value === "AFTER" && (b.count = Math.max(1, x.querySelector('[name="dhx_form_repeat_ends_after"]').value)), { rrule: b, until: O };
   }, NEVER: function() {
   } };
-  function k(v, x, b) {
+  function k(m, x, b) {
     (function(E, S) {
       w(E, S);
-    })(v, x), function(E, S, T) {
-      if (w(E, S), E.querySelectorAll(".dhx_form_repeat_custom_week input").forEach((A) => A.checked = !1), S && S.byweekday)
-        S.byweekday.forEach((A) => {
-          const C = y[A.weekday], $ = f[C], H = E.querySelector(`.dhx_form_repeat_custom_week input[value="${$}"]`);
+    })(m, x), function(E, S, T) {
+      if (w(E, S), E.querySelectorAll(".dhx_form_repeat_custom_week input").forEach((C) => C.checked = !1), S && S.byweekday)
+        S.byweekday.forEach((C) => {
+          const A = y[C.weekday], $ = u[A], H = E.querySelector(`.dhx_form_repeat_custom_week input[value="${$}"]`);
           H && (H.checked = !0);
         });
       else {
-        const A = f[T.start_date.getDay()], C = E.querySelector(`.dhx_form_repeat_custom_week input[value="${A}"]`);
-        C && (C.checked = !0);
+        const C = u[T.start_date.getDay()], A = E.querySelector(`.dhx_form_repeat_custom_week input[value="${C}"]`);
+        A && (A.checked = !0);
       }
-    }(v, x, b), function(E, S, T) {
+    }(m, x, b), function(E, S, T) {
       w(E, S);
-      const A = E.querySelector('.dhx_form_repeat_custom_month [value="month_date"]'), C = E.querySelector('.dhx_form_repeat_custom_month [value="month_nth_weekday"]');
-      if (A && C) {
-        A.innerText = e.templates.repeat_monthly_date(T.start_date, T), C.innerText = e.templates.repeat_monthly_weekday(T.start_date, T);
+      const C = E.querySelector('.dhx_form_repeat_custom_month [value="month_date"]'), A = E.querySelector('.dhx_form_repeat_custom_month [value="month_nth_weekday"]');
+      if (C && A) {
+        C.innerText = e.templates.repeat_monthly_date(T.start_date, T), A.innerText = e.templates.repeat_monthly_weekday(T.start_date, T);
         const $ = E.querySelector('[name="dhx_custom_month_option"]');
         $ && ($.value = !S || !S.bysetpos || S.byweekday && S.byweekday.length ? "month_nth_weekday" : "month_date");
       }
-    }(v, x, b), function(E, S, T) {
-      const A = E.querySelector('.dhx_form_repeat_custom_year [value="month_date"]'), C = E.querySelector('.dhx_form_repeat_custom_year [value="month_nth_weekday"]');
-      A && C && (A.innerText = e.templates.repeat_yearly_month_date(T.start_date, T), C.innerText = e.templates.repeat_yearly_month_weekday(T.start_date, T), S && (!S.bysetpos || S.byweekday && S.byweekday.length) ? E.querySelector('[name="dhx_custom_year_option"]').value = "month_nth_weekday" : E.querySelector('[name="dhx_custom_year_option"]').value = "month_date");
-    }(v, x, b), function(E, S, T) {
-      const A = E.querySelector('.dhx_form_repeat_ends_extra [name="dhx_form_repeat_ends_after"]'), C = E.querySelector('.dhx_form_repeat_ends_extra [name="dhx_form_repeat_ends_ondate"]'), $ = E.querySelector("[name='dhx_custom_repeat_ends']");
-      if (A && C && $) {
-        A.value = 1;
+    }(m, x, b), function(E, S, T) {
+      const C = E.querySelector('.dhx_form_repeat_custom_year [value="month_date"]'), A = E.querySelector('.dhx_form_repeat_custom_year [value="month_nth_weekday"]');
+      C && A && (C.innerText = e.templates.repeat_yearly_month_date(T.start_date, T), A.innerText = e.templates.repeat_yearly_month_weekday(T.start_date, T), S && (!S.bysetpos || S.byweekday && S.byweekday.length) ? E.querySelector('[name="dhx_custom_year_option"]').value = "month_nth_weekday" : E.querySelector('[name="dhx_custom_year_option"]').value = "month_date");
+    }(m, x, b), function(E, S, T) {
+      const C = E.querySelector('.dhx_form_repeat_ends_extra [name="dhx_form_repeat_ends_after"]'), A = E.querySelector('.dhx_form_repeat_ends_extra [name="dhx_form_repeat_ends_ondate"]'), $ = E.querySelector("[name='dhx_custom_repeat_ends']");
+      if (C && A && $) {
+        C.value = 1;
         let H = e.date.date_to_str("%Y-%m-%d");
-        e.config.repeat_date_of_end || (e.config.repeat_date_of_end = H(e.date.add(e._currentDate(), 30, "day"))), C.value = e.config.repeat_date_of_end, S && S.count ? ($.value = "AFTER", A.value = S.count) : T._end_date && T._end_date.getFullYear() !== 9999 ? ($.value = "ON", C.value = H(T._end_date)) : $.value = "NEVER", $.dispatchEvent(new Event("change"));
+        e.config.repeat_date_of_end || (e.config.repeat_date_of_end = H(e.date.add(e._currentDate(), 30, "day"))), A.value = e.config.repeat_date_of_end, S && S.count ? ($.value = "AFTER", C.value = S.count) : T._end_date && T._end_date.getFullYear() !== 9999 ? ($.value = "ON", A.value = H(T._end_date)) : $.value = "NEVER", $.dispatchEvent(new Event("change"));
       }
-    }(v, x, b);
+    }(m, x, b);
   }
-  function N(v) {
+  function N(m) {
     for (let x = 0; x < e.config.lightbox.sections.length; x++) {
       let b = e.config.lightbox.sections[x];
-      if (b.type === v)
+      if (b.type === m)
         return e.formSection(b.name);
     }
     return null;
   }
-  e.form_blocks.recurring = { _get_node: function(v) {
-    if (typeof v == "string") {
-      let x = e._lightbox.querySelector(`#${v}`);
-      x || (x = document.getElementById(v)), v = x;
+  e.form_blocks.recurring = { _get_node: function(m) {
+    if (typeof m == "string") {
+      let x = e._lightbox.querySelector(`#${m}`);
+      x || (x = document.getElementById(m)), m = x;
     }
-    return v.style.display == "none" && (v.style.display = ""), v;
-  }, _outer_html: function(v) {
-    return v.outerHTML || function(x) {
+    return m.style.display == "none" && (m.style.display = ""), m;
+  }, _outer_html: function(m) {
+    return m.outerHTML || function(x) {
       let b, E = document.createElement("div");
       return E.appendChild(x.cloneNode(!0)), b = E.innerHTML, E = null, b;
-    }(v);
-  }, render: function(v) {
-    if (v.form) {
-      let b = e.form_blocks.recurring, E = b._get_node(v.form), S = b._outer_html(E);
+    }(m);
+  }, render: function(m) {
+    if (m.form) {
+      let b = e.form_blocks.recurring, E = b._get_node(m.form), S = b._outer_html(E);
       return E.style.display = "none", S;
     }
     let x = e.locale.labels;
@@ -10157,7 +10244,7 @@ const Fa = { active_links: function(e) {
 
 		</div>
 	</div>`;
-  }, _init_set_value: function(v, x, b) {
+  }, _init_set_value: function(m, x, b) {
     function E($) {
       $ && $.classList.add("dhx_hidden");
     }
@@ -10165,17 +10252,17 @@ const Fa = { active_links: function(e) {
       $ && $.classList.remove("dhx_hidden");
     }
     e.form_blocks.recurring._ds = { start: b.start_date, end: b.end_date };
-    const T = v.querySelector(".dhx_form_repeat_pattern select");
+    const T = m.querySelector(".dhx_form_repeat_pattern select");
     T && T.addEventListener("change", function() {
       (function($) {
-        const H = v.querySelector(".dhx_form_repeat_custom");
+        const H = m.querySelector(".dhx_form_repeat_custom");
         $ === "CUSTOM" ? S(H) : E(H);
       })(this.value);
     });
-    const A = v.querySelector(".dhx_form_repeat_custom_interval [name='repeat_interval_unit']");
-    A && A.addEventListener("change", function() {
+    const C = m.querySelector(".dhx_form_repeat_custom_interval [name='repeat_interval_unit']");
+    C && C.addEventListener("change", function() {
       (function($) {
-        const H = { weekly: v.querySelector(".dhx_form_repeat_custom_week"), monthly: v.querySelector(".dhx_form_repeat_custom_month"), yearly: v.querySelector(".dhx_form_repeat_custom_year") };
+        const H = { weekly: m.querySelector(".dhx_form_repeat_custom_week"), monthly: m.querySelector(".dhx_form_repeat_custom_month"), yearly: m.querySelector(".dhx_form_repeat_custom_year") };
         switch ($) {
           case "DAILY":
             E(H.weekly), E(H.monthly), E(H.yearly);
@@ -10191,10 +10278,10 @@ const Fa = { active_links: function(e) {
         }
       })(this.value);
     });
-    const C = v.querySelector(".dhx_form_repeat_ends [name='dhx_custom_repeat_ends']");
-    C && C.addEventListener("change", function() {
+    const A = m.querySelector(".dhx_form_repeat_ends [name='dhx_custom_repeat_ends']");
+    A && A.addEventListener("change", function() {
       (function($) {
-        const H = { after: v.querySelector(".dhx_form_repeat_ends_extra .dhx_form_repeat_ends_after"), on: v.querySelector(".dhx_form_repeat_ends_extra .dhx_form_repeat_ends_on") };
+        const H = { after: m.querySelector(".dhx_form_repeat_ends_extra .dhx_form_repeat_ends_after"), on: m.querySelector(".dhx_form_repeat_ends_extra .dhx_form_repeat_ends_on") };
         switch ($) {
           case "NEVER":
             E(H.after), E(H.on);
@@ -10208,20 +10295,20 @@ const Fa = { active_links: function(e) {
       })(this.value);
     }), e._lightbox._rec_init_done = !0;
   }, button_click: function() {
-  }, set_value: function(v, x, b) {
+  }, set_value: function(m, x, b) {
     let E = e.form_blocks.recurring;
-    e._lightbox._rec_init_done || E._init_set_value(v, x, b), v.open = !b.rrule, v.blocked = this._is_modified_occurrence(b);
+    e._lightbox._rec_init_done || E._init_set_value(m, x, b), m.open = !b.rrule, m.blocked = this._is_modified_occurrence(b);
     let S = E._ds;
     if (S.start = b.start_date, S.end = b._end_date, b.rrule) {
-      const A = ge(b.rrule);
-      k(v, A.origOptions, b);
-      const C = function($, H) {
-        const O = $.options, R = O.until || H;
-        return O.count || R && R.getFullYear() !== 9999 ? "CUSTOM" : O.freq !== z.DAILY || O.interval !== 1 || O.byweekday ? O.freq !== z.WEEKLY || O.interval !== 1 || O.byweekday ? O.freq !== z.MONTHLY || O.interval !== 1 || O.bysetpos ? O.freq !== z.YEARLY || O.interval !== 1 || O.bysetpos ? O.freq === z.DAILY && O.byweekday && O.byweekday.length === e.config.recurring_workdays.length && O.byweekday.includes(z.MO) && O.byweekday.includes(z.TU) && O.byweekday.includes(z.WE) && O.byweekday.includes(z.TH) && O.byweekday.includes(z.FR) ? "WORKDAYS" : "CUSTOM" : "YEARLY" : "MONTHLY" : "WEEKLY" : "DAILY";
-      }(A, b._end_date);
-      if (v.querySelector(".dhx_form_repeat_pattern select").value = C, C === "CUSTOM") {
+      const C = ge(b.rrule);
+      k(m, C.origOptions, b);
+      const A = function($, H) {
+        const O = $.options, P = O.until || H;
+        return O.count || P && P.getFullYear() !== 9999 ? "CUSTOM" : O.freq !== z.DAILY || O.interval !== 1 || O.byweekday ? O.freq !== z.WEEKLY || O.interval !== 1 || O.byweekday ? O.freq !== z.MONTHLY || O.interval !== 1 || O.bysetpos ? O.freq !== z.YEARLY || O.interval !== 1 || O.bysetpos ? O.freq === z.DAILY && O.byweekday && O.byweekday.length === e.config.recurring_workdays.length && O.byweekday.includes(z.MO) && O.byweekday.includes(z.TU) && O.byweekday.includes(z.WE) && O.byweekday.includes(z.TH) && O.byweekday.includes(z.FR) ? "WORKDAYS" : "CUSTOM" : "YEARLY" : "MONTHLY" : "WEEKLY" : "DAILY";
+      }(C, b._end_date);
+      if (m.querySelector(".dhx_form_repeat_pattern select").value = A, A === "CUSTOM") {
         let $;
-        switch (A.origOptions.freq) {
+        switch (C.origOptions.freq) {
           case z.DAILY:
             $ = "DAILY";
             break;
@@ -10234,33 +10321,33 @@ const Fa = { active_links: function(e) {
           case z.YEARLY:
             $ = "YEARLY";
         }
-        $ && (v.querySelector('[name="repeat_interval_unit"]').value = $, v.querySelector('[name="repeat_interval_unit"]').dispatchEvent(new Event("change")));
+        $ && (m.querySelector('[name="repeat_interval_unit"]').value = $, m.querySelector('[name="repeat_interval_unit"]').dispatchEvent(new Event("change")));
       }
     } else {
-      k(v, null, b);
-      const A = v.querySelector(".dhx_form_repeat_pattern select");
-      A && (A.value = "NEVER");
+      k(m, null, b);
+      const C = m.querySelector(".dhx_form_repeat_pattern select");
+      C && (C.value = "NEVER");
     }
-    const T = v.querySelector(".dhx_form_repeat_pattern select");
+    const T = m.querySelector(".dhx_form_repeat_pattern select");
     T && T.dispatchEvent(new Event("change"));
-  }, get_value: function(v, x) {
-    const b = v.querySelector(".dhx_form_repeat_pattern select");
-    if (v.blocked || b && b.value === "NEVER")
+  }, get_value: function(m, x) {
+    const b = m.querySelector(".dhx_form_repeat_pattern select");
+    if (m.blocked || b && b.value === "NEVER")
       x.rrule = x.rrule = "", x._end_date = x.end_date;
     else {
       let E = e.form_blocks.recurring._ds, S = {};
       (function() {
-        let C = e.formSection("time");
-        if (C || (C = N("time")), C || (C = N("calendar_time")), !C)
+        let A = e.formSection("time");
+        if (A || (A = N("time")), A || (A = N("calendar_time")), !A)
           throw new Error(["Can't calculate the recurring rule, the Recurring form block can't find the Time control. Make sure you have the time control in 'scheduler.config.lightbox.sections' config.", "You can use either the default time control https://docs.dhtmlx.com/scheduler/time.html, or the datepicker https://docs.dhtmlx.com/scheduler/minicalendar.html, or a custom control. ", 'In the latter case, make sure the control is named "time":', "", "scheduler.config.lightbox.sections = [", '{name:"time", height:72, type:"YOU CONTROL", map_to:"auto" }];'].join(`
 `));
-        return C;
+        return A;
       })().getValue(S), E.start = S.start_date;
-      const T = b ? b.value : "CUSTOM", A = M[T](E, v);
-      x.rrule = new z(A.rrule).toString().replace("RRULE:", ""), E.end = A.until, x.duration = Math.floor((S.end_date - S.start_date) / 1e3), E._start ? (x.start_date = new Date(E.start), x._start_date = new Date(E.start), E._start = !1) : x._start_date = null, x._end_date = E.end;
+      const T = b ? b.value : "CUSTOM", C = M[T](E, m);
+      x.rrule = new z(C.rrule).toString().replace("RRULE:", ""), E.end = C.until, x.duration = Math.floor((S.end_date - S.start_date) / 1e3), E._start ? (x.start_date = new Date(E.start), x._start_date = new Date(E.start), E._start = !1) : x._start_date = null, x._end_date = E.end;
     }
     return x.rrule;
-  }, focus: function(v) {
+  }, focus: function(m) {
   } };
 }, recurring_legacy: function(e) {
   function i() {
@@ -10272,9 +10359,9 @@ const Fa = { active_links: function(e) {
   }
   function t(a) {
     for (var o = 0; o < e.config.lightbox.sections.length; o++) {
-      var _ = e.config.lightbox.sections[o];
-      if (_.type === a)
-        return e.formSection(_.name);
+      var d = e.config.lightbox.sections[o];
+      if (d.type === a)
+        return e.formSection(d.name);
     }
     return null;
   }
@@ -10289,59 +10376,59 @@ const Fa = { active_links: function(e) {
     }
     return a.style.display == "none" && (a.style.display = ""), a;
   }, _outer_html: function(a) {
-    return a.outerHTML || (o = a, (r = document.createElement("div")).appendChild(o.cloneNode(!0)), _ = r.innerHTML, r = null, _);
-    var o, _, r;
+    return a.outerHTML || (o = a, (r = document.createElement("div")).appendChild(o.cloneNode(!0)), d = r.innerHTML, r = null, d);
+    var o, d, r;
   }, render: function(a) {
     if (a.form) {
-      var o = e.form_blocks.recurring, _ = o._get_node(a.form), r = o._outer_html(_);
-      return _.style.display = "none", r;
+      var o = e.form_blocks.recurring, d = o._get_node(a.form), r = o._outer_html(d);
+      return d.style.display = "none", r;
     }
-    var d = e.locale.labels;
-    return '<div class="dhx_form_repeat"> <form> <div class="dhx_repeat_left"> <div><label><input class="dhx_repeat_radio" type="radio" name="repeat" value="day" />' + d.repeat_radio_day + '</label></div> <div><label><input class="dhx_repeat_radio" type="radio" name="repeat" value="week"/>' + d.repeat_radio_week + '</label></div> <div><label><input class="dhx_repeat_radio" type="radio" name="repeat" value="month" checked />' + d.repeat_radio_month + '</label></div> <div><label><input class="dhx_repeat_radio" type="radio" name="repeat" value="year" />' + d.repeat_radio_year + '</label></div> </div> <div class="dhx_repeat_divider"></div> <div class="dhx_repeat_center"> <div style="display:none;" id="dhx_repeat_day"> <div><label><input class="dhx_repeat_radio" type="radio" name="day_type" value="d"/>' + d.repeat_radio_day_type + '</label><label><input class="dhx_repeat_text" type="text" name="day_count" value="1" />' + d.repeat_text_day_count + '</label></div> <div><label><input class="dhx_repeat_radio" type="radio" name="day_type" checked value="w"/>' + d.repeat_radio_day_type2 + '</label></div> </div> <div style="display:none;" id="dhx_repeat_week"><div><label>' + d.repeat_week + '<input class="dhx_repeat_text" type="text" name="week_count" value="1" /></label><span>' + d.repeat_text_week_count + '</span></div>  <table class="dhx_repeat_days"> <tr> <td><div><label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="1" />' + d.day_for_recurring[1] + '</label></div> <div><label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="4" />' + d.day_for_recurring[4] + '</label></div></td> <td><div><label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="2" />' + d.day_for_recurring[2] + '</label></div> <div><label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="5" />' + d.day_for_recurring[5] + '</label></div></td> <td><div><label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="3" />' + d.day_for_recurring[3] + '</label></div> <div><label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="6" />' + d.day_for_recurring[6] + '</label></div></td> <td><div><label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="0" />' + d.day_for_recurring[0] + '</label></div> </td> </tr> </table> </div> <div id="dhx_repeat_month"> <div><label class = "dhx_repeat_month_label"><input class="dhx_repeat_radio" type="radio" name="month_type" value="d"/>' + d.repeat_radio_month_type + '</label><label><input class="dhx_repeat_text" type="text" name="month_day" value="1" />' + d.repeat_text_month_day + '</label><label><input class="dhx_repeat_text" type="text" name="month_count" value="1" />' + d.repeat_text_month_count + '</label></div> <div><label class = "dhx_repeat_month_label"><input class="dhx_repeat_radio" type="radio" name="month_type" checked value="w"/>' + d.repeat_radio_month_start + '</label><input class="dhx_repeat_text" type="text" name="month_week2" value="1" /><label><select name="month_day2">	<option value="1" selected >' + e.locale.date.day_full[1] + '<option value="2">' + e.locale.date.day_full[2] + '<option value="3">' + e.locale.date.day_full[3] + '<option value="4">' + e.locale.date.day_full[4] + '<option value="5">' + e.locale.date.day_full[5] + '<option value="6">' + e.locale.date.day_full[6] + '<option value="0">' + e.locale.date.day_full[0] + "</select>" + d.repeat_text_month_count2_before + '</label><label><input class="dhx_repeat_text" type="text" name="month_count2" value="1" />' + d.repeat_text_month_count2_after + '</label></div> </div> <div style="display:none;" id="dhx_repeat_year"> <div><label class = "dhx_repeat_year_label"><input class="dhx_repeat_radio" type="radio" name="year_type" value="d"/>' + d.repeat_radio_day_type + '</label><label><input class="dhx_repeat_text" type="text" name="year_day" value="1" />' + d.repeat_text_year_day + '</label><label><select name="year_month"><option value="0" selected >' + d.month_for_recurring[0] + '<option value="1">' + d.month_for_recurring[1] + '<option value="2">' + d.month_for_recurring[2] + '<option value="3">' + d.month_for_recurring[3] + '<option value="4">' + d.month_for_recurring[4] + '<option value="5">' + d.month_for_recurring[5] + '<option value="6">' + d.month_for_recurring[6] + '<option value="7">' + d.month_for_recurring[7] + '<option value="8">' + d.month_for_recurring[8] + '<option value="9">' + d.month_for_recurring[9] + '<option value="10">' + d.month_for_recurring[10] + '<option value="11">' + d.month_for_recurring[11] + "</select>" + d.select_year_month + '</label></div> <div><label class = "dhx_repeat_year_label"><input class="dhx_repeat_radio" type="radio" name="year_type" checked value="w"/>' + d.repeat_year_label + '</label><input class="dhx_repeat_text" type="text" name="year_week2" value="1" /><select name="year_day2"><option value="1" selected >' + e.locale.date.day_full[1] + '<option value="2">' + e.locale.date.day_full[2] + '<option value="3">' + e.locale.date.day_full[3] + '<option value="4">' + e.locale.date.day_full[4] + '<option value="5">' + e.locale.date.day_full[5] + '<option value="6">' + e.locale.date.day_full[6] + '<option value="7">' + e.locale.date.day_full[0] + "</select>" + d.select_year_day2 + '<select name="year_month2"><option value="0" selected >' + d.month_for_recurring[0] + '<option value="1">' + d.month_for_recurring[1] + '<option value="2">' + d.month_for_recurring[2] + '<option value="3">' + d.month_for_recurring[3] + '<option value="4">' + d.month_for_recurring[4] + '<option value="5">' + d.month_for_recurring[5] + '<option value="6">' + d.month_for_recurring[6] + '<option value="7">' + d.month_for_recurring[7] + '<option value="8">' + d.month_for_recurring[8] + '<option value="9">' + d.month_for_recurring[9] + '<option value="10">' + d.month_for_recurring[10] + '<option value="11">' + d.month_for_recurring[11] + '</select></div> </div> </div> <div class="dhx_repeat_divider"></div> <div class="dhx_repeat_right"> <div><label><input class="dhx_repeat_radio" type="radio" name="end" checked/>' + d.repeat_radio_end + '</label></div> <div><label><input class="dhx_repeat_radio" type="radio" name="end" />' + d.repeat_radio_end2 + '</label><input class="dhx_repeat_text" type="text" name="occurences_count" value="1" />' + d.repeat_text_occurrences_count + '</div> <div><label><input class="dhx_repeat_radio" type="radio" name="end" />' + d.repeat_radio_end3 + '</label><input class="dhx_repeat_date" type="text" name="date_of_end" value="' + e.config.repeat_date_of_end + '" /></div> </div> </form> </div> </div>';
-  }, _ds: {}, _get_form_node: function(a, o, _) {
+    var l = e.locale.labels;
+    return '<div class="dhx_form_repeat"> <form> <div class="dhx_repeat_left"> <div><label><input class="dhx_repeat_radio" type="radio" name="repeat" value="day" />' + l.repeat_radio_day + '</label></div> <div><label><input class="dhx_repeat_radio" type="radio" name="repeat" value="week"/>' + l.repeat_radio_week + '</label></div> <div><label><input class="dhx_repeat_radio" type="radio" name="repeat" value="month" checked />' + l.repeat_radio_month + '</label></div> <div><label><input class="dhx_repeat_radio" type="radio" name="repeat" value="year" />' + l.repeat_radio_year + '</label></div> </div> <div class="dhx_repeat_divider"></div> <div class="dhx_repeat_center"> <div style="display:none;" id="dhx_repeat_day"> <div><label><input class="dhx_repeat_radio" type="radio" name="day_type" value="d"/>' + l.repeat_radio_day_type + '</label><label><input class="dhx_repeat_text" type="text" name="day_count" value="1" />' + l.repeat_text_day_count + '</label></div> <div><label><input class="dhx_repeat_radio" type="radio" name="day_type" checked value="w"/>' + l.repeat_radio_day_type2 + '</label></div> </div> <div style="display:none;" id="dhx_repeat_week"><div><label>' + l.repeat_week + '<input class="dhx_repeat_text" type="text" name="week_count" value="1" /></label><span>' + l.repeat_text_week_count + '</span></div>  <table class="dhx_repeat_days"> <tr> <td><div><label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="1" />' + l.day_for_recurring[1] + '</label></div> <div><label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="4" />' + l.day_for_recurring[4] + '</label></div></td> <td><div><label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="2" />' + l.day_for_recurring[2] + '</label></div> <div><label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="5" />' + l.day_for_recurring[5] + '</label></div></td> <td><div><label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="3" />' + l.day_for_recurring[3] + '</label></div> <div><label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="6" />' + l.day_for_recurring[6] + '</label></div></td> <td><div><label><input class="dhx_repeat_checkbox" type="checkbox" name="week_day" value="0" />' + l.day_for_recurring[0] + '</label></div> </td> </tr> </table> </div> <div id="dhx_repeat_month"> <div><label class = "dhx_repeat_month_label"><input class="dhx_repeat_radio" type="radio" name="month_type" value="d"/>' + l.repeat_radio_month_type + '</label><label><input class="dhx_repeat_text" type="text" name="month_day" value="1" />' + l.repeat_text_month_day + '</label><label><input class="dhx_repeat_text" type="text" name="month_count" value="1" />' + l.repeat_text_month_count + '</label></div> <div><label class = "dhx_repeat_month_label"><input class="dhx_repeat_radio" type="radio" name="month_type" checked value="w"/>' + l.repeat_radio_month_start + '</label><input class="dhx_repeat_text" type="text" name="month_week2" value="1" /><label><select name="month_day2">	<option value="1" selected >' + e.locale.date.day_full[1] + '<option value="2">' + e.locale.date.day_full[2] + '<option value="3">' + e.locale.date.day_full[3] + '<option value="4">' + e.locale.date.day_full[4] + '<option value="5">' + e.locale.date.day_full[5] + '<option value="6">' + e.locale.date.day_full[6] + '<option value="0">' + e.locale.date.day_full[0] + "</select>" + l.repeat_text_month_count2_before + '</label><label><input class="dhx_repeat_text" type="text" name="month_count2" value="1" />' + l.repeat_text_month_count2_after + '</label></div> </div> <div style="display:none;" id="dhx_repeat_year"> <div><label class = "dhx_repeat_year_label"><input class="dhx_repeat_radio" type="radio" name="year_type" value="d"/>' + l.repeat_radio_day_type + '</label><label><input class="dhx_repeat_text" type="text" name="year_day" value="1" />' + l.repeat_text_year_day + '</label><label><select name="year_month"><option value="0" selected >' + l.month_for_recurring[0] + '<option value="1">' + l.month_for_recurring[1] + '<option value="2">' + l.month_for_recurring[2] + '<option value="3">' + l.month_for_recurring[3] + '<option value="4">' + l.month_for_recurring[4] + '<option value="5">' + l.month_for_recurring[5] + '<option value="6">' + l.month_for_recurring[6] + '<option value="7">' + l.month_for_recurring[7] + '<option value="8">' + l.month_for_recurring[8] + '<option value="9">' + l.month_for_recurring[9] + '<option value="10">' + l.month_for_recurring[10] + '<option value="11">' + l.month_for_recurring[11] + "</select>" + l.select_year_month + '</label></div> <div><label class = "dhx_repeat_year_label"><input class="dhx_repeat_radio" type="radio" name="year_type" checked value="w"/>' + l.repeat_year_label + '</label><input class="dhx_repeat_text" type="text" name="year_week2" value="1" /><select name="year_day2"><option value="1" selected >' + e.locale.date.day_full[1] + '<option value="2">' + e.locale.date.day_full[2] + '<option value="3">' + e.locale.date.day_full[3] + '<option value="4">' + e.locale.date.day_full[4] + '<option value="5">' + e.locale.date.day_full[5] + '<option value="6">' + e.locale.date.day_full[6] + '<option value="7">' + e.locale.date.day_full[0] + "</select>" + l.select_year_day2 + '<select name="year_month2"><option value="0" selected >' + l.month_for_recurring[0] + '<option value="1">' + l.month_for_recurring[1] + '<option value="2">' + l.month_for_recurring[2] + '<option value="3">' + l.month_for_recurring[3] + '<option value="4">' + l.month_for_recurring[4] + '<option value="5">' + l.month_for_recurring[5] + '<option value="6">' + l.month_for_recurring[6] + '<option value="7">' + l.month_for_recurring[7] + '<option value="8">' + l.month_for_recurring[8] + '<option value="9">' + l.month_for_recurring[9] + '<option value="10">' + l.month_for_recurring[10] + '<option value="11">' + l.month_for_recurring[11] + '</select></div> </div> </div> <div class="dhx_repeat_divider"></div> <div class="dhx_repeat_right"> <div><label><input class="dhx_repeat_radio" type="radio" name="end" checked/>' + l.repeat_radio_end + '</label></div> <div><label><input class="dhx_repeat_radio" type="radio" name="end" />' + l.repeat_radio_end2 + '</label><input class="dhx_repeat_text" type="text" name="occurences_count" value="1" />' + l.repeat_text_occurrences_count + '</div> <div><label><input class="dhx_repeat_radio" type="radio" name="end" />' + l.repeat_radio_end3 + '</label><input class="dhx_repeat_date" type="text" name="date_of_end" value="' + e.config.repeat_date_of_end + '" /></div> </div> </form> </div> </div>';
+  }, _ds: {}, _get_form_node: function(a, o, d) {
     var r = a[o];
     if (!r)
       return null;
     if (r.nodeName)
       return r;
     if (r.length) {
-      for (var d = 0; d < r.length; d++)
-        if (r[d].value == _)
-          return r[d];
+      for (var l = 0; l < r.length; l++)
+        if (r[l].value == d)
+          return r[l];
     }
-  }, _get_node_value: function(a, o, _) {
+  }, _get_node_value: function(a, o, d) {
     var r = a[o];
     if (!r)
       return "";
     if (r.length) {
-      if (_) {
-        for (var d = [], l = 0; l < r.length; l++)
-          r[l].checked && d.push(r[l].value);
-        return d;
+      if (d) {
+        for (var l = [], _ = 0; _ < r.length; _++)
+          r[_].checked && l.push(r[_].value);
+        return l;
       }
-      for (l = 0; l < r.length; l++)
-        if (r[l].checked)
-          return r[l].value;
+      for (_ = 0; _ < r.length; _++)
+        if (r[_].checked)
+          return r[_].value;
     }
-    return r.value ? _ ? [r.value] : r.value : void 0;
+    return r.value ? d ? [r.value] : r.value : void 0;
   }, _get_node_numeric_value: function(a, o) {
     return 1 * e.form_blocks.recurring._get_node_value(a, o) || 0;
-  }, _set_node_value: function(a, o, _) {
+  }, _set_node_value: function(a, o, d) {
     var r = a[o];
     if (r) {
       if (r.name == o)
-        r.value = _;
+        r.value = d;
       else if (r.length)
-        for (var d = typeof _ == "object", l = 0; l < r.length; l++)
-          (d || r[l].value == _) && (r[l].checked = d ? !!_[r[l].value] : !!_);
+        for (var l = typeof d == "object", _ = 0; _ < r.length; _++)
+          (l || r[_].value == d) && (r[_].checked = l ? !!d[r[_].value] : !!d);
     }
-  }, _init_set_value: function(a, o, _) {
-    var r = e.form_blocks.recurring, d = r._get_node_value, l = r._set_node_value;
-    e.form_blocks.recurring._ds = { start: _.start_date, end: _._end_date };
-    var h = e.date.str_to_date(e.config.repeat_date, !1, !0), p = e.date.date_to_str(e.config.repeat_date), m = a.getElementsByTagName("FORM")[0], g = {};
-    function c(v) {
-      for (var x = 0; x < v.length; x++) {
-        var b = v[x];
+  }, _init_set_value: function(a, o, d) {
+    var r = e.form_blocks.recurring, l = r._get_node_value, _ = r._set_node_value;
+    e.form_blocks.recurring._ds = { start: d.start_date, end: d._end_date };
+    var h = e.date.str_to_date(e.config.repeat_date, !1, !0), p = e.date.date_to_str(e.config.repeat_date), v = a.getElementsByTagName("FORM")[0], g = {};
+    function c(m) {
+      for (var x = 0; x < m.length; x++) {
+        var b = m[x];
         if (b.name)
           if (g[b.name])
             if (g[b.name].nodeType) {
@@ -10353,19 +10440,19 @@ const Fa = { active_links: function(e) {
             g[b.name] = b;
       }
     }
-    if (c(m.getElementsByTagName("INPUT")), c(m.getElementsByTagName("SELECT")), !e.config.repeat_date_of_end) {
-      var u = e.date.date_to_str(e.config.repeat_date);
-      e.config.repeat_date_of_end = u(e.date.add(e._currentDate(), 30, "day"));
+    if (c(v.getElementsByTagName("INPUT")), c(v.getElementsByTagName("SELECT")), !e.config.repeat_date_of_end) {
+      var f = e.date.date_to_str(e.config.repeat_date);
+      e.config.repeat_date_of_end = f(e.date.add(e._currentDate(), 30, "day"));
     }
-    l(g, "date_of_end", e.config.repeat_date_of_end);
-    var f = function(v) {
-      return e._lightbox.querySelector(`#${v}`) || { style: {} };
+    _(g, "date_of_end", e.config.repeat_date_of_end);
+    var u = function(m) {
+      return e._lightbox.querySelector(`#${m}`) || { style: {} };
     };
     function y() {
-      f("dhx_repeat_day").style.display = "none", f("dhx_repeat_week").style.display = "none", f("dhx_repeat_month").style.display = "none", f("dhx_repeat_year").style.display = "none", f("dhx_repeat_" + this.value).style.display = "", e.setLightboxSize();
+      u("dhx_repeat_day").style.display = "none", u("dhx_repeat_week").style.display = "none", u("dhx_repeat_month").style.display = "none", u("dhx_repeat_year").style.display = "none", u("dhx_repeat_" + this.value).style.display = "", e.setLightboxSize();
     }
-    function w(v, x) {
-      var b = v.end;
+    function w(m, x) {
+      var b = m.end;
       if (b.length)
         if (b[0].value && b[0].value != "on")
           for (var E = 0; E < b.length; E++)
@@ -10387,59 +10474,59 @@ const Fa = { active_links: function(e) {
       else
         b.value = x;
     }
-    e.form_blocks.recurring._get_repeat_code = function(v) {
-      var x = [d(g, "repeat")];
-      for (D[x[0]](x, v); x.length < 5; )
+    e.form_blocks.recurring._get_repeat_code = function(m) {
+      var x = [l(g, "repeat")];
+      for (D[x[0]](x, m); x.length < 5; )
         x.push("");
       var b = "", E = function(S) {
         var T = S.end;
         if (T.length) {
-          for (var A = 0; A < T.length; A++)
-            if (T[A].checked)
-              return T[A].value && T[A].value != "on" ? T[A].value : A ? A == 2 ? "date_of_end" : "occurences_count" : "no";
+          for (var C = 0; C < T.length; C++)
+            if (T[C].checked)
+              return T[C].value && T[C].value != "on" ? T[C].value : C ? C == 2 ? "date_of_end" : "occurences_count" : "no";
         } else if (T.value)
           return T.value;
         return "no";
       }(g);
-      return E == "no" ? (v.end = new Date(9999, 1, 1), b = "no") : E == "date_of_end" ? v.end = function(S) {
+      return E == "no" ? (m.end = new Date(9999, 1, 1), b = "no") : E == "date_of_end" ? m.end = function(S) {
         var T = h(S);
         return e.config.include_end_by && (T = e.date.add(T, 1, "day")), T;
-      }(d(g, "date_of_end")) : (e.transpose_type(x.join("_")), b = Math.max(1, d(g, "occurences_count")), v.end = e.date["add_" + x.join("_")](new Date(v.start), b + 0, { start_date: v.start }) || v.start), x.join("_") + "#" + b;
+      }(l(g, "date_of_end")) : (e.transpose_type(x.join("_")), b = Math.max(1, l(g, "occurences_count")), m.end = e.date["add_" + x.join("_")](new Date(m.start), b + 0, { start_date: m.start }) || m.start), x.join("_") + "#" + b;
     };
-    var D = { month: function(v, x) {
+    var D = { month: function(m, x) {
       var b = e.form_blocks.recurring._get_node_value, E = e.form_blocks.recurring._get_node_numeric_value;
-      b(g, "month_type") == "d" ? (v.push(Math.max(1, E(g, "month_count"))), x.start.setDate(b(g, "month_day"))) : (v.push(Math.max(1, E(g, "month_count2"))), v.push(b(g, "month_day2")), v.push(Math.max(1, E(g, "month_week2"))), e.config.repeat_precise || x.start.setDate(1)), x._start = !0;
-    }, week: function(v, x) {
+      b(g, "month_type") == "d" ? (m.push(Math.max(1, E(g, "month_count"))), x.start.setDate(b(g, "month_day"))) : (m.push(Math.max(1, E(g, "month_count2"))), m.push(b(g, "month_day2")), m.push(Math.max(1, E(g, "month_week2"))), e.config.repeat_precise || x.start.setDate(1)), x._start = !0;
+    }, week: function(m, x) {
       var b = e.form_blocks.recurring._get_node_value, E = e.form_blocks.recurring._get_node_numeric_value;
-      v.push(Math.max(1, E(g, "week_count"))), v.push(""), v.push("");
-      for (var S = [], T = b(g, "week_day", !0), A = x.start.getDay(), C = !1, $ = 0; $ < T.length; $++)
-        S.push(T[$]), C = C || T[$] == A;
-      S.length || (S.push(A), C = !0), S.sort(), e.config.repeat_precise ? C || (e.transpose_day_week(x.start, S, 1, 7), x._start = !0) : (x.start = e.date.week_start(x.start), x._start = !0), v.push(S.join(","));
-    }, day: function(v) {
+      m.push(Math.max(1, E(g, "week_count"))), m.push(""), m.push("");
+      for (var S = [], T = b(g, "week_day", !0), C = x.start.getDay(), A = !1, $ = 0; $ < T.length; $++)
+        S.push(T[$]), A = A || T[$] == C;
+      S.length || (S.push(C), A = !0), S.sort(), e.config.repeat_precise ? A || (e.transpose_day_week(x.start, S, 1, 7), x._start = !0) : (x.start = e.date.week_start(x.start), x._start = !0), m.push(S.join(","));
+    }, day: function(m) {
       var x = e.form_blocks.recurring._get_node_value, b = e.form_blocks.recurring._get_node_numeric_value;
-      x(g, "day_type") == "d" ? v.push(Math.max(1, b(g, "day_count"))) : (v.push("week"), v.push(1), v.push(""), v.push(""), v.push(e.config.recurring_workdays.join(",")), v.splice(0, 1));
-    }, year: function(v, x) {
+      x(g, "day_type") == "d" ? m.push(Math.max(1, b(g, "day_count"))) : (m.push("week"), m.push(1), m.push(""), m.push(""), m.push(e.config.recurring_workdays.join(",")), m.splice(0, 1));
+    }, year: function(m, x) {
       var b = e.form_blocks.recurring._get_node_value;
-      b(g, "year_type") == "d" ? (v.push("1"), x.start.setMonth(0), x.start.setDate(b(g, "year_day")), x.start.setMonth(b(g, "year_month"))) : (v.push("1"), v.push(b(g, "year_day2")), v.push(b(g, "year_week2")), x.start.setDate(1), x.start.setMonth(b(g, "year_month2"))), x._start = !0;
-    } }, M = { week: function(v, x) {
+      b(g, "year_type") == "d" ? (m.push("1"), x.start.setMonth(0), x.start.setDate(b(g, "year_day")), x.start.setMonth(b(g, "year_month"))) : (m.push("1"), m.push(b(g, "year_day2")), m.push(b(g, "year_week2")), x.start.setDate(1), x.start.setMonth(b(g, "year_month2"))), x._start = !0;
+    } }, M = { week: function(m, x) {
       var b = e.form_blocks.recurring._set_node_value;
-      b(g, "week_count", v[1]);
-      for (var E = v[4].split(","), S = {}, T = 0; T < E.length; T++)
+      b(g, "week_count", m[1]);
+      for (var E = m[4].split(","), S = {}, T = 0; T < E.length; T++)
         S[E[T]] = !0;
       b(g, "week_day", S);
-    }, month: function(v, x) {
+    }, month: function(m, x) {
       var b = e.form_blocks.recurring._set_node_value;
-      v[2] === "" ? (b(g, "month_type", "d"), b(g, "month_count", v[1]), b(g, "month_day", x.start.getDate())) : (b(g, "month_type", "w"), b(g, "month_count2", v[1]), b(g, "month_week2", v[3]), b(g, "month_day2", v[2]));
-    }, day: function(v, x) {
+      m[2] === "" ? (b(g, "month_type", "d"), b(g, "month_count", m[1]), b(g, "month_day", x.start.getDate())) : (b(g, "month_type", "w"), b(g, "month_count2", m[1]), b(g, "month_week2", m[3]), b(g, "month_day2", m[2]));
+    }, day: function(m, x) {
       var b = e.form_blocks.recurring._set_node_value;
-      b(g, "day_type", "d"), b(g, "day_count", v[1]);
-    }, year: function(v, x) {
+      b(g, "day_type", "d"), b(g, "day_count", m[1]);
+    }, year: function(m, x) {
       var b = e.form_blocks.recurring._set_node_value;
-      v[2] === "" ? (b(g, "year_type", "d"), b(g, "year_day", x.start.getDate()), b(g, "year_month", x.start.getMonth())) : (b(g, "year_type", "w"), b(g, "year_week2", v[3]), b(g, "year_day2", v[2]), b(g, "year_month2", x.start.getMonth()));
+      m[2] === "" ? (b(g, "year_type", "d"), b(g, "year_day", x.start.getDate()), b(g, "year_month", x.start.getMonth())) : (b(g, "year_type", "w"), b(g, "year_week2", m[3]), b(g, "year_day2", m[2]), b(g, "year_month2", x.start.getMonth()));
     } };
-    e.form_blocks.recurring._set_repeat_code = function(v, x) {
-      var b = e.form_blocks.recurring._set_node_value, E = v.split("#");
-      switch (v = E[0].split("_"), M[v[0]](v, x), E[1]) {
+    e.form_blocks.recurring._set_repeat_code = function(m, x) {
+      var b = e.form_blocks.recurring._set_node_value, E = m.split("#");
+      switch (m = E[0].split("_"), M[m[0]](m, x), E[1]) {
         case "no":
           w(g, "no");
           break;
@@ -10451,30 +10538,30 @@ const Fa = { active_links: function(e) {
         default:
           w(g, "occurences_count"), b(g, "occurences_count", E[1]);
       }
-      b(g, "repeat", v[0]);
-      var T = e.form_blocks.recurring._get_form_node(g, "repeat", v[0]);
+      b(g, "repeat", m[0]);
+      var T = e.form_blocks.recurring._get_form_node(g, "repeat", m[0]);
       T.nodeName == "SELECT" ? (T.dispatchEvent(new Event("change")), T.dispatchEvent(new MouseEvent("click"))) : T.dispatchEvent(new MouseEvent("click"));
     };
-    for (var k = 0; k < m.elements.length; k++) {
-      var N = m.elements[k];
+    for (var k = 0; k < v.elements.length; k++) {
+      var N = v.elements[k];
       N.name === "repeat" && (N.nodeName != "SELECT" || N.$_eventAttached ? N.$_eventAttached || (N.$_eventAttached = !0, N.addEventListener("click", y)) : (N.$_eventAttached = !0, N.addEventListener("change", y)));
     }
     e._lightbox._rec_init_done = !0;
-  }, set_value: function(a, o, _) {
+  }, set_value: function(a, o, d) {
     var r = e.form_blocks.recurring;
-    e._lightbox._rec_init_done || r._init_set_value(a, o, _), a.open = !_.rec_type, a.blocked = this._is_modified_occurence(_);
-    var d = r._ds;
-    d.start = _.start_date, d.end = _._end_date, r._toggle_block(), o && r._set_repeat_code(o, d);
+    e._lightbox._rec_init_done || r._init_set_value(a, o, d), a.open = !d.rec_type, a.blocked = this._is_modified_occurence(d);
+    var l = r._ds;
+    l.start = d.start_date, l.end = d._end_date, r._toggle_block(), o && r._set_repeat_code(o, l);
   }, get_value: function(a, o) {
     if (a.open) {
-      var _ = e.form_blocks.recurring._ds, r = {};
+      var d = e.form_blocks.recurring._ds, r = {};
       (function() {
-        var d = e.formSection("time");
-        if (d || (d = t("time")), d || (d = t("calendar_time")), !d)
+        var l = e.formSection("time");
+        if (l || (l = t("time")), l || (l = t("calendar_time")), !l)
           throw new Error(["Can't calculate the recurring rule, the Recurring form block can't find the Time control. Make sure you have the time control in 'scheduler.config.lightbox.sections' config.", "You can use either the default time control https://docs.dhtmlx.com/scheduler/time.html, or the datepicker https://docs.dhtmlx.com/scheduler/minicalendar.html, or a custom control. ", 'In the latter case, make sure the control is named "time":', "", "scheduler.config.lightbox.sections = [", '{name:"time", height:72, type:"YOU CONTROL", map_to:"auto" }];'].join(`
 `));
-        return d;
-      })().getValue(r), _.start = r.start_date, o.rec_type = e.form_blocks.recurring._get_repeat_code(_), _._start ? (o.start_date = new Date(_.start), o._start_date = new Date(_.start), _._start = !1) : o._start_date = null, o._end_date = _.end, o.rec_pattern = o.rec_type.split("#")[0];
+        return l;
+      })().getValue(r), d.start = r.start_date, o.rec_type = e.form_blocks.recurring._get_repeat_code(d), d._start ? (o.start_date = new Date(d.start), o._start_date = new Date(d.start), d._start = !1) : o._start_date = null, o._end_date = d.end, o.rec_pattern = o.rec_type.split("#")[0];
     } else
       o.rec_type = o.rec_pattern = "", o._end_date = o.end_date;
     return o.rec_type;
@@ -10489,36 +10576,36 @@ const Fa = { active_links: function(e) {
     var a = e.form_blocks.recurring;
     a._get_form().open && a._toggle_block();
   }, _toggle_block: function() {
-    var a = e.form_blocks.recurring, o = a._get_form(), _ = a._get_button();
-    o.open || o.blocked ? (o.style.height = "0px", _ && (_.style.backgroundPosition = "-5px 20px", _.nextSibling.innerHTML = e.locale.labels.button_recurring)) : (o.style.height = "auto", _ && (_.style.backgroundPosition = "-5px 0px", _.nextSibling.innerHTML = e.locale.labels.button_recurring_open)), o.open = !o.open, e.setLightboxSize();
+    var a = e.form_blocks.recurring, o = a._get_form(), d = a._get_button();
+    o.open || o.blocked ? (o.style.height = "0px", d && (d.style.backgroundPosition = "-5px 20px", d.nextSibling.innerHTML = e.locale.labels.button_recurring)) : (o.style.height = "auto", d && (d.style.backgroundPosition = "-5px 0px", d.nextSibling.innerHTML = e.locale.labels.button_recurring_open)), o.open = !o.open, e.setLightboxSize();
   }, focus: function(a) {
-  }, button_click: function(a, o, _) {
+  }, button_click: function(a, o, d) {
     e.form_blocks.recurring._get_form().blocked || e.form_blocks.recurring._toggle_block();
   } }, e._rec_markers = {}, e._rec_markers_pull = {}, e._add_rec_marker = function(a, o) {
     a._pid_time = o, this._rec_markers[a.id] = a, this._rec_markers_pull[a.event_pid] || (this._rec_markers_pull[a.event_pid] = {}), this._rec_markers_pull[a.event_pid][o] = a;
   }, e._get_rec_marker = function(a, o) {
-    var _ = this._rec_markers_pull[o];
-    return _ ? _[a] : null;
+    var d = this._rec_markers_pull[o];
+    return d ? d[a] : null;
   }, e._get_rec_markers = function(a) {
     return this._rec_markers_pull[a] || [];
-  }, e._rec_temp = [], s = e.addEvent, e.addEvent = function(a, o, _, r, d) {
-    var l = s.apply(this, arguments);
-    if (l && e.getEvent(l)) {
-      var h = e.getEvent(l);
+  }, e._rec_temp = [], s = e.addEvent, e.addEvent = function(a, o, d, r, l) {
+    var _ = s.apply(this, arguments);
+    if (_ && e.getEvent(_)) {
+      var h = e.getEvent(_);
       h.start_date && (h.start_date = n(h.start_date)), h.end_date && (h.end_date = n(h.end_date)), this._is_modified_occurence(h) && e._add_rec_marker(h, 1e3 * h.event_length), h.rec_type && (h.rec_pattern = h.rec_type.split("#")[0]);
     }
-    return l;
+    return _;
   }, e.attachEvent("onEventIdChange", function(a, o) {
     if (!this._ignore_call) {
       this._ignore_call = !0, e._rec_markers[a] && (e._rec_markers[o] = e._rec_markers[a], delete e._rec_markers[a]), e._rec_markers_pull[a] && (e._rec_markers_pull[o] = e._rec_markers_pull[a], delete e._rec_markers_pull[a]);
-      for (var _ = 0; _ < this._rec_temp.length; _++)
-        (r = this._rec_temp[_]).event_pid == a && (r.event_pid = o, this.changeEventId(r.id, o + "#" + r.id.split("#")[1]));
-      for (var _ in this._rec_markers) {
+      for (var d = 0; d < this._rec_temp.length; d++)
+        (r = this._rec_temp[d]).event_pid == a && (r.event_pid = o, this.changeEventId(r.id, o + "#" + r.id.split("#")[1]));
+      for (var d in this._rec_markers) {
         var r;
-        (r = this._rec_markers[_]).event_pid == a && (r.event_pid = o, r._pid_changed = !0);
+        (r = this._rec_markers[d]).event_pid == a && (r.event_pid = o, r._pid_changed = !0);
       }
-      var d = e._rec_markers[o];
-      d && d._pid_changed && (delete d._pid_changed, setTimeout(function() {
+      var l = e._rec_markers[o];
+      l && l._pid_changed && (delete l._pid_changed, setTimeout(function() {
         if (e.$destroyed)
           return !0;
         e.callEvent("onEventChanged", [o, e.getEvent(o)]);
@@ -10528,10 +10615,10 @@ const Fa = { active_links: function(e) {
     var o = this.getEvent(a);
     if (this._is_virtual_event(a) || this._is_modified_occurence(o) && o.rec_type && o.rec_type != "none") {
       a = a.split("#");
-      var _ = this.uid(), r = a[1] ? a[1] : Math.round(o._pid_time / 1e3), d = this._copy_event(o);
-      d.id = _, d.event_pid = o.event_pid || a[0];
-      var l = r;
-      d.event_length = l, d.rec_type = d.rec_pattern = "none", this.addEvent(d), this._add_rec_marker(d, 1e3 * l);
+      var d = this.uid(), r = a[1] ? a[1] : Math.round(o._pid_time / 1e3), l = this._copy_event(o);
+      l.id = d, l.event_pid = o.event_pid || a[0];
+      var _ = r;
+      l.event_length = _, l.rec_type = l.rec_pattern = "none", this.addEvent(l), this._add_rec_marker(l, 1e3 * _);
     } else {
       o.rec_type && this._lightbox_id && this._roll_back_dates(o);
       var h = this._get_rec_markers(a);
@@ -10544,24 +10631,24 @@ const Fa = { active_links: function(e) {
   }), e.attachEvent("onEventChanged", function(a, o) {
     if (this._loading)
       return !0;
-    var _ = this.getEvent(a);
+    var d = this.getEvent(a);
     if (this._is_virtual_event(a)) {
       a = a.split("#");
       var r = this.uid();
       this._not_render = !0;
-      var d = this._copy_event(o);
-      d.id = r, d.event_pid = a[0];
-      var l = a[1];
-      d.event_length = l, d.rec_type = d.rec_pattern = "", this._add_rec_marker(d, 1e3 * l), this.addEvent(d), this._not_render = !1;
+      var l = this._copy_event(o);
+      l.id = r, l.event_pid = a[0];
+      var _ = a[1];
+      l.event_length = _, l.rec_type = l.rec_pattern = "", this._add_rec_marker(l, 1e3 * _), this.addEvent(l), this._not_render = !1;
     } else {
-      _.start_date && (_.start_date = n(_.start_date)), _.end_date && (_.end_date = n(_.end_date)), _.rec_type && this._lightbox_id && this._roll_back_dates(_);
+      d.start_date && (d.start_date = n(d.start_date)), d.end_date && (d.end_date = n(d.end_date)), d.rec_type && this._lightbox_id && this._roll_back_dates(d);
       var h = this._get_rec_markers(a);
       for (var p in h)
         h.hasOwnProperty(p) && (delete this._rec_markers[h[p].id], this.deleteEvent(h[p].id, !0));
       delete this._rec_markers_pull[a];
-      for (var m = !1, g = 0; g < this._rendered.length; g++)
-        this._rendered[g].getAttribute(this.config.event_attribute) == a && (m = !0);
-      m || (this._select_id = null);
+      for (var v = !1, g = 0; g < this._rendered.length; g++)
+        this._rendered[g].getAttribute(this.config.event_attribute) == a && (v = !0);
+      v || (this._select_id = null);
     }
     return !0;
   }), e.attachEvent("onEventAdded", function(a) {
@@ -10570,7 +10657,7 @@ const Fa = { active_links: function(e) {
       o.rec_type && !o.event_length && this._roll_back_dates(o);
     }
     return !0;
-  }), e.attachEvent("onEventSave", function(a, o, _) {
+  }), e.attachEvent("onEventSave", function(a, o, d) {
     return this.getEvent(a).rec_type || !o.rec_type || this._is_virtual_event(a) || (this._select_id = null), !0;
   }), e.attachEvent("onEventCreated", function(a) {
     var o = this.getEvent(a);
@@ -10585,22 +10672,22 @@ const Fa = { active_links: function(e) {
   }, e._is_modified_occurence = function(a) {
     return a.event_pid && a.event_pid != "0";
   }, e.showLightbox_rec = e.showLightbox, e.showLightbox = function(a) {
-    var o = this.locale, _ = e.config.lightbox_recurring, r = this.getEvent(a), d = r.event_pid, l = this._is_virtual_event(a);
-    l && (d = a.split("#")[0]);
-    var h = function(m) {
-      var g = e.getEvent(m);
-      return g._end_date = g.end_date, g.end_date = new Date(g.start_date.valueOf() + 1e3 * g.event_length), e.showLightbox_rec(m);
+    var o = this.locale, d = e.config.lightbox_recurring, r = this.getEvent(a), l = r.event_pid, _ = this._is_virtual_event(a);
+    _ && (l = a.split("#")[0]);
+    var h = function(v) {
+      var g = e.getEvent(v);
+      return g._end_date = g.end_date, g.end_date = new Date(g.start_date.valueOf() + 1e3 * g.event_length), e.showLightbox_rec(v);
     };
-    if ((d || 1 * d == 0) && r.rec_type)
+    if ((l || 1 * l == 0) && r.rec_type)
       return h(a);
-    if (!d || d === "0" || !o.labels.confirm_recurring || _ == "instance" || _ == "series" && !l)
+    if (!l || l === "0" || !o.labels.confirm_recurring || d == "instance" || d == "series" && !_)
       return this.showLightbox_rec(a);
-    if (_ == "ask") {
+    if (d == "ask") {
       var p = this;
-      e.modalbox({ text: o.labels.confirm_recurring, title: o.labels.title_confirm_recurring, width: "500px", position: "middle", buttons: [o.labels.button_edit_series, o.labels.button_edit_occurrence, o.labels.icon_cancel], callback: function(m) {
-        switch (+m) {
+      e.modalbox({ text: o.labels.confirm_recurring, title: o.labels.title_confirm_recurring, width: "500px", position: "middle", buttons: [o.labels.button_edit_series, o.labels.button_edit_occurrence, o.labels.icon_cancel], callback: function(v) {
+        switch (+v) {
           case 0:
-            return h(d);
+            return h(l);
           case 1:
             return p.showLightbox_rec(a);
           case 2:
@@ -10608,145 +10695,145 @@ const Fa = { active_links: function(e) {
         }
       } });
     } else
-      h(d);
+      h(l);
   }, e.get_visible_events_rec = e.get_visible_events, e.get_visible_events = function(a) {
     for (var o = 0; o < this._rec_temp.length; o++)
       delete this._events[this._rec_temp[o].id];
     this._rec_temp = [];
-    var _ = this.get_visible_events_rec(a), r = [];
-    for (o = 0; o < _.length; o++)
-      _[o].rec_type ? _[o].rec_pattern != "none" && this.repeat_date(_[o], r) : r.push(_[o]);
+    var d = this.get_visible_events_rec(a), r = [];
+    for (o = 0; o < d.length; o++)
+      d[o].rec_type ? d[o].rec_pattern != "none" && this.repeat_date(d[o], r) : r.push(d[o]);
     return r;
   }, function() {
     var a = e.isOneDayEvent;
-    e.isOneDayEvent = function(_) {
-      return !!_.rec_type || a.call(this, _);
+    e.isOneDayEvent = function(d) {
+      return !!d.rec_type || a.call(this, d);
     };
     var o = e.updateEvent;
-    e.updateEvent = function(_) {
-      var r = e.getEvent(_);
-      r && r.rec_type && (r.rec_pattern = (r.rec_type || "").split("#")[0]), r && r.rec_type && !this._is_virtual_event(_) ? e.update_view() : o.call(this, _);
+    e.updateEvent = function(d) {
+      var r = e.getEvent(d);
+      r && r.rec_type && (r.rec_pattern = (r.rec_type || "").split("#")[0]), r && r.rec_type && !this._is_virtual_event(d) ? e.update_view() : o.call(this, d);
     };
-  }(), e.transponse_size = { day: 1, week: 7, month: 1, year: 12 }, e.date.day_week = function(a, o, _) {
+  }(), e.transponse_size = { day: 1, week: 7, month: 1, year: 12 }, e.date.day_week = function(a, o, d) {
     a.setDate(1);
-    var r = e.date.month_start(new Date(a)), d = 1 * o + (_ = 7 * (_ - 1)) - a.getDay() + 1;
-    a.setDate(d <= _ ? d + 7 : d);
-    var l = e.date.month_start(new Date(a));
-    return r.valueOf() === l.valueOf();
-  }, e.transpose_day_week = function(a, o, _, r, d) {
-    for (var l = (a.getDay() || (e.config.start_on_monday ? 7 : 0)) - _, h = 0; h < o.length; h++)
-      if (o[h] > l)
-        return a.setDate(a.getDate() + 1 * o[h] - l - (r ? _ : d));
-    this.transpose_day_week(a, o, _ + r, null, _);
+    var r = e.date.month_start(new Date(a)), l = 1 * o + (d = 7 * (d - 1)) - a.getDay() + 1;
+    a.setDate(l <= d ? l + 7 : l);
+    var _ = e.date.month_start(new Date(a));
+    return r.valueOf() === _.valueOf();
+  }, e.transpose_day_week = function(a, o, d, r, l) {
+    for (var _ = (a.getDay() || (e.config.start_on_monday ? 7 : 0)) - d, h = 0; h < o.length; h++)
+      if (o[h] > _)
+        return a.setDate(a.getDate() + 1 * o[h] - _ - (r ? d : l));
+    this.transpose_day_week(a, o, d + r, null, d);
   }, e.transpose_type = function(a) {
     var o = "transpose_" + a;
     if (!this.date[o]) {
-      var _ = a.split("_"), r = "add_" + a, d = this.transponse_size[_[0]] * _[1];
-      if (_[0] == "day" || _[0] == "week") {
-        var l = null;
-        if (_[4] && (l = _[4].split(","), e.config.start_on_monday)) {
-          for (var h = 0; h < l.length; h++)
-            l[h] = 1 * l[h] || 7;
-          l.sort();
+      var d = a.split("_"), r = "add_" + a, l = this.transponse_size[d[0]] * d[1];
+      if (d[0] == "day" || d[0] == "week") {
+        var _ = null;
+        if (d[4] && (_ = d[4].split(","), e.config.start_on_monday)) {
+          for (var h = 0; h < _.length; h++)
+            _[h] = 1 * _[h] || 7;
+          _.sort();
         }
-        this.date[o] = function(p, m) {
-          var g = Math.floor((m.valueOf() - p.valueOf()) / (864e5 * d));
-          return g > 0 && p.setDate(p.getDate() + g * d), l && e.transpose_day_week(p, l, 1, d), p;
-        }, this.date[r] = function(p, m) {
+        this.date[o] = function(p, v) {
+          var g = Math.floor((v.valueOf() - p.valueOf()) / (864e5 * l));
+          return g > 0 && p.setDate(p.getDate() + g * l), _ && e.transpose_day_week(p, _, 1, l), p;
+        }, this.date[r] = function(p, v) {
           var g = new Date(p.valueOf());
-          if (l)
-            for (var c = 0; c < m; c++)
-              e.transpose_day_week(g, l, 0, d);
+          if (_)
+            for (var c = 0; c < v; c++)
+              e.transpose_day_week(g, _, 0, l);
           else
-            g.setDate(g.getDate() + m * d);
+            g.setDate(g.getDate() + v * l);
           return g;
         };
       } else
-        _[0] != "month" && _[0] != "year" || (this.date[o] = function(p, m, g) {
-          var c = Math.ceil((12 * m.getFullYear() + 1 * m.getMonth() + 1 - (12 * p.getFullYear() + 1 * p.getMonth() + 1)) / d - 1);
-          return c >= 0 && (p.setDate(1), p.setMonth(p.getMonth() + c * d)), e.date[r](p, 0, g);
-        }, this.date[r] = function(p, m, g, c) {
+        d[0] != "month" && d[0] != "year" || (this.date[o] = function(p, v, g) {
+          var c = Math.ceil((12 * v.getFullYear() + 1 * v.getMonth() + 1 - (12 * p.getFullYear() + 1 * p.getMonth() + 1)) / l - 1);
+          return c >= 0 && (p.setDate(1), p.setMonth(p.getMonth() + c * l)), e.date[r](p, 0, g);
+        }, this.date[r] = function(p, v, g, c) {
           if (c ? c++ : c = 1, c > 12)
             return null;
-          var u = new Date(p.valueOf());
-          u.setDate(1), u.setMonth(u.getMonth() + m * d);
-          var f = u.getMonth(), y = u.getFullYear();
-          u.setDate(g.start_date.getDate()), _[3] && e.date.day_week(u, _[2], _[3]);
+          var f = new Date(p.valueOf());
+          f.setDate(1), f.setMonth(f.getMonth() + v * l);
+          var u = f.getMonth(), y = f.getFullYear();
+          f.setDate(g.start_date.getDate()), d[3] && e.date.day_week(f, d[2], d[3]);
           var w = e.config.recurring_overflow_instances;
-          return u.getMonth() != f && w != "none" && (u = w === "lastDay" ? new Date(y, f + 1, 0, u.getHours(), u.getMinutes(), u.getSeconds(), u.getMilliseconds()) : e.date[r](new Date(y, f + 1, 0), m || 1, g, c)), u;
+          return f.getMonth() != u && w != "none" && (f = w === "lastDay" ? new Date(y, u + 1, 0, f.getHours(), f.getMinutes(), f.getSeconds(), f.getMilliseconds()) : e.date[r](new Date(y, u + 1, 0), v || 1, g, c)), f;
         });
     }
-  }, e.repeat_date = function(a, o, _, r, d, l) {
-    r = r || this._min_date, d = d || this._max_date;
-    var h = l || -1, p = new Date(a.start_date.valueOf()), m = p.getHours(), g = 0;
+  }, e.repeat_date = function(a, o, d, r, l, _) {
+    r = r || this._min_date, l = l || this._max_date;
+    var h = _ || -1, p = new Date(a.start_date.valueOf()), v = p.getHours(), g = 0;
     for (!a.rec_pattern && a.rec_type && (a.rec_pattern = a.rec_type.split("#")[0]), this.transpose_type(a.rec_pattern), p = e.date["transpose_" + a.rec_pattern](p, r, a); p && (p < a.start_date || e._fix_daylight_saving_date(p, r, a, p, new Date(p.valueOf() + 1e3 * a.event_length)).valueOf() <= r.valueOf() || p.valueOf() + 1e3 * a.event_length <= r.valueOf()); )
       p = this.date["add_" + a.rec_pattern](p, 1, a);
-    for (; p && p < d && p < a.end_date && (h < 0 || g < h); ) {
-      p.setHours(m);
-      var c = e.config.occurrence_timestamp_in_utc ? Date.UTC(p.getFullYear(), p.getMonth(), p.getDate(), p.getHours(), p.getMinutes(), p.getSeconds()) : p.valueOf(), u = this._get_rec_marker(c, a.id);
-      if (u)
-        _ && (u.rec_type != "none" && g++, o.push(u));
+    for (; p && p < l && p < a.end_date && (h < 0 || g < h); ) {
+      p.setHours(v);
+      var c = e.config.occurrence_timestamp_in_utc ? Date.UTC(p.getFullYear(), p.getMonth(), p.getDate(), p.getHours(), p.getMinutes(), p.getSeconds()) : p.valueOf(), f = this._get_rec_marker(c, a.id);
+      if (f)
+        d && (f.rec_type != "none" && g++, o.push(f));
       else {
-        var f = new Date(p.valueOf() + 1e3 * a.event_length), y = this._copy_event(a);
-        if (y.text = a.text, y.start_date = p, y.event_pid = a.id, y.id = a.id + "#" + Math.round(c / 1e3), y.end_date = f, y.end_date = e._fix_daylight_saving_date(y.start_date, y.end_date, a, p, y.end_date), y._timed = this.isOneDayEvent(y), !y._timed && !this._table_view && !this.config.multi_day)
+        var u = new Date(p.valueOf() + 1e3 * a.event_length), y = this._copy_event(a);
+        if (y.text = a.text, y.start_date = p, y.event_pid = a.id, y.id = a.id + "#" + Math.round(c / 1e3), y.end_date = u, y.end_date = e._fix_daylight_saving_date(y.start_date, y.end_date, a, p, y.end_date), y._timed = this.isOneDayEvent(y), !y._timed && !this._table_view && !this.config.multi_day)
           return;
-        o.push(y), _ || (this._events[y.id] = y, this._rec_temp.push(y)), g++;
+        o.push(y), d || (this._events[y.id] = y, this._rec_temp.push(y)), g++;
       }
       p = this.date["add_" + a.rec_pattern](p, 1, a);
     }
-  }, e._fix_daylight_saving_date = function(a, o, _, r, d) {
-    var l = a.getTimezoneOffset() - o.getTimezoneOffset();
-    return l ? l > 0 ? new Date(r.valueOf() + 1e3 * _.event_length - 60 * l * 1e3) : new Date(o.valueOf() - 60 * l * 1e3) : new Date(d.valueOf());
+  }, e._fix_daylight_saving_date = function(a, o, d, r, l) {
+    var _ = a.getTimezoneOffset() - o.getTimezoneOffset();
+    return _ ? _ > 0 ? new Date(r.valueOf() + 1e3 * d.event_length - 60 * _ * 1e3) : new Date(o.valueOf() - 60 * _ * 1e3) : new Date(l.valueOf());
   }, e.getRecDates = function(a, o) {
-    var _ = typeof a == "object" ? a : e.getEvent(a), r = [];
-    if (o = o || 100, !_.rec_type)
-      return [{ start_date: _.start_date, end_date: _.end_date }];
-    if (_.rec_type == "none")
+    var d = typeof a == "object" ? a : e.getEvent(a), r = [];
+    if (o = o || 100, !d.rec_type)
+      return [{ start_date: d.start_date, end_date: d.end_date }];
+    if (d.rec_type == "none")
       return [];
-    e.repeat_date(_, r, !0, _.start_date, _.end_date, o);
-    for (var d = [], l = 0; l < r.length; l++)
-      r[l].rec_type != "none" && d.push({ start_date: r[l].start_date, end_date: r[l].end_date });
-    return d;
+    e.repeat_date(d, r, !0, d.start_date, d.end_date, o);
+    for (var l = [], _ = 0; _ < r.length; _++)
+      r[_].rec_type != "none" && l.push({ start_date: r[_].start_date, end_date: r[_].end_date });
+    return l;
   }, e.getEvents = function(a, o) {
-    var _ = [];
+    var d = [];
     for (var r in this._events) {
-      var d = this._events[r];
-      if (d && d.start_date < o && d.end_date > a)
-        if (d.rec_pattern) {
-          if (d.rec_pattern == "none")
+      var l = this._events[r];
+      if (l && l.start_date < o && l.end_date > a)
+        if (l.rec_pattern) {
+          if (l.rec_pattern == "none")
             continue;
-          var l = [];
-          this.repeat_date(d, l, !0, a, o);
-          for (var h = 0; h < l.length; h++)
-            !l[h].rec_pattern && l[h].start_date < o && l[h].end_date > a && !this._rec_markers[l[h].id] && _.push(l[h]);
+          var _ = [];
+          this.repeat_date(l, _, !0, a, o);
+          for (var h = 0; h < _.length; h++)
+            !_[h].rec_pattern && _[h].start_date < o && _[h].end_date > a && !this._rec_markers[_[h].id] && d.push(_[h]);
         } else
-          this._is_virtual_event(d.id) || _.push(d);
+          this._is_virtual_event(l.id) || d.push(l);
     }
-    return _;
+    return d;
   }, e.config.repeat_date = "%m.%d.%Y", e.config.lightbox.sections = [{ name: "description", map_to: "text", type: "textarea", focus: !0 }, { name: "recurring", type: "recurring", map_to: "rec_type", button: "recurring" }, { name: "time", height: 72, type: "time", map_to: "auto" }], e._copy_dummy = function(a) {
-    var o = new Date(this.start_date), _ = new Date(this.end_date);
-    this.start_date = o, this.end_date = _, this.event_length = this.event_pid = this.rec_pattern = this.rec_type = null;
+    var o = new Date(this.start_date), d = new Date(this.end_date);
+    this.start_date = o, this.end_date = d, this.event_length = this.event_pid = this.rec_pattern = this.rec_type = null;
   }, e.config.include_end_by = !1, e.config.lightbox_recurring = "ask", e.attachEvent("onClearAll", function() {
     e._rec_markers = {}, e._rec_markers_pull = {}, e._rec_temp = [];
   });
 }, serialize: function(e) {
-  const i = vt(e);
+  const i = yt(e);
   e.data_attributes = function() {
     var t = [], n = e._helpers.formatDate, s = i();
     for (var a in s) {
       var o = s[a];
-      for (var _ in o)
-        _.substr(0, 1) != "_" && t.push([_, _ == "start_date" || _ == "end_date" ? n : null]);
+      for (var d in o)
+        d.substr(0, 1) != "_" && t.push([d, d == "start_date" || d == "end_date" ? n : null]);
       break;
     }
     return t;
   }, e.toXML = function(t) {
     var n = [], s = this.data_attributes(), a = i();
     for (var o in a) {
-      var _ = a[o];
+      var d = a[o];
       n.push("<event>");
       for (var r = 0; r < s.length; r++)
-        n.push("<" + s[r][0] + "><![CDATA[" + (s[r][1] ? s[r][1](_[s[r][0]]) : _[s[r][0]]) + "]]></" + s[r][0] + ">");
+        n.push("<" + s[r][0] + "><![CDATA[" + (s[r][1] ? s[r][1](d[s[r][0]]) : d[s[r][0]]) + "]]></" + s[r][0] + ">");
       n.push("</event>");
     }
     return (t || "") + "<data>" + n.join(`
@@ -10757,8 +10844,8 @@ const Fa = { active_links: function(e) {
     return JSON.stringify(this.serialize());
   }, e.toICal = function(t) {
     var n = e.date.date_to_str("%Y%m%dT%H%i%s"), s = e.date.date_to_str("%Y%m%d"), a = [], o = i();
-    for (var _ in o) {
-      var r = o[_];
+    for (var d in o) {
+      var r = o[d];
       a.push("BEGIN:VEVENT"), r._timed && (r.start_date.getHours() || r.start_date.getMinutes()) ? a.push("DTSTART:" + n(r.start_date)) : a.push("DTSTART:" + s(r.start_date)), r._timed && (r.end_date.getHours() || r.end_date.getMinutes()) ? a.push("DTEND:" + n(r.end_date)) : a.push("DTEND:" + s(r.end_date)), a.push("SUMMARY:" + r.text), a.push("END:VEVENT");
     }
     return `BEGIN:VCALENDAR
@@ -10773,7 +10860,7 @@ END:VCALENDAR`;
   ce("Timeline", e.assert);
 }, tooltip: function(e) {
   e.config.tooltip_timeout = 30, e.config.tooltip_offset_y = 20, e.config.tooltip_offset_x = 10, e.config.tooltip_hide_timeout = 30;
-  const i = new Va(e);
+  const i = new Ga(e);
   e.ext.tooltips = i, e.attachEvent("onSchedulerReady", function() {
     i.tooltipFor({ selector: "[" + e.config.event_attribute + "]", html: (t) => {
       if (e._mobile && !e.config.touch_tooltip)
@@ -10804,35 +10891,35 @@ END:VCALENDAR`;
       const a = /* @__PURE__ */ Object.create(null), o = (document.location.hash || "").replace("#", "");
       if (!o)
         return a;
-      const _ = o.split(","), r = ["__proto__", "constructor", "prototype"];
-      for (let d = 0; d < _.length; d++) {
-        const l = _[d].split("=");
-        l.length !== 2 || r.includes(l[0]) || (a[l[0]] = l[1]);
+      const d = o.split(","), r = ["__proto__", "constructor", "prototype"];
+      for (let l = 0; l < d.length; l++) {
+        const _ = d[l].split("=");
+        _.length !== 2 || r.includes(_[0]) || (a[_[0]] = _[1]);
       }
       return a;
     }();
   };
   const i = e.date.date_to_str("%Y-%m-%d"), t = e._getInitialState;
   function n(a) {
-    const o = e._date || e.getState().date, _ = e.getState().mode, r = ["date=" + i(o), "mode=" + _];
+    const o = e._date || e.getState().date, d = e.getState().mode, r = ["date=" + i(o), "mode=" + d];
     a && r.push("event=" + a), document.location.hash = "#" + r.join(",");
   }
   e._getInitialState = function(a) {
-    const o = t.call(this, a), _ = e._get_url_nav ? e._get_url_nav() : null;
-    if (!_)
+    const o = t.call(this, a), d = e._get_url_nav ? e._get_url_nav() : null;
+    if (!d)
       return o;
     const r = { date: o.date, mode: o.mode };
-    if (_.date) {
-      const d = e.date.str_to_date("%Y-%m-%d");
+    if (d.date) {
+      const l = e.date.str_to_date("%Y-%m-%d");
       try {
-        const l = d(_.date);
-        isNaN(+l) || (r.date = l);
+        const _ = l(d.date);
+        isNaN(+_) || (r.date = _);
       } catch {
       }
     }
-    if (_.mode)
+    if (d.mode)
       try {
-        this.isViewExists(_.mode) && (r.mode = _.mode);
+        this.isViewExists(d.mode) && (r.mode = d.mode);
       } catch {
       }
     return r;
@@ -10843,14 +10930,14 @@ END:VCALENDAR`;
     return a.event && (s = a.event, function(o) {
       if (!o)
         return;
-      const _ = function() {
+      const d = function() {
         if (!e.$destroyed)
           return !!e.getEvent(o) && (e.showEvent(o), !0);
       };
-      if (_())
+      if (d())
         return;
       const r = e.attachEvent("onParse", function() {
-        return _(), e.detachEvent(r), !0;
+        return d(), e.detachEvent(r), !0;
       });
     }(a.event)), n(s), !0;
   }), e.attachEvent("onAfterEventDisplay", function() {
@@ -10871,51 +10958,51 @@ END:VCALENDAR`;
     t !== void 0 && t !== "" || (t = (i.firstChild.options[0] || {}).value), i.firstChild.value = t || "";
   };
 }, year_view: function(e) {
-  e.templates.year_date = function(_) {
-    return e.date.date_to_str(e.locale.labels.year_tab + " %Y")(_);
-  }, e.templates.year_month = e.date.date_to_str("%F"), e.templates.year_scale_date = e.date.date_to_str("%D"), e.templates.year_tooltip = function(_, r, d) {
-    return d.text;
+  e.templates.year_date = function(d) {
+    return e.date.date_to_str(e.locale.labels.year_tab + " %Y")(d);
+  }, e.templates.year_month = e.date.date_to_str("%F"), e.templates.year_scale_date = e.date.date_to_str("%D"), e.templates.year_tooltip = function(d, r, l) {
+    return l.text;
   };
   const i = function() {
     return e._mode == "year";
-  }, t = function(_) {
-    var r = e.$domHelpers.closest(_, "[data-cell-date]");
+  }, t = function(d) {
+    var r = e.$domHelpers.closest(d, "[data-cell-date]");
     return r && r.hasAttribute("data-cell-date") ? e.templates.parse_date(r.getAttribute("data-cell-date")) : null;
   };
-  e.dblclick_dhx_year_grid = function(_) {
+  e.dblclick_dhx_year_grid = function(d) {
     if (i()) {
-      const r = _.target;
+      const r = d.target;
       if (e.$domHelpers.closest(r, ".dhx_before") || e.$domHelpers.closest(r, ".dhx_after"))
         return !1;
-      const d = t(r);
-      if (d) {
-        const l = d, h = this.date.add(l, 1, "day");
-        !this.config.readonly && this.config.dblclick_create && this.addEventNow(l.valueOf(), h.valueOf(), _);
+      const l = t(r);
+      if (l) {
+        const _ = l, h = this.date.add(_, 1, "day");
+        !this.config.readonly && this.config.dblclick_create && this.addEventNow(_.valueOf(), h.valueOf(), d);
       }
     }
   }, e.attachEvent("onEventIdChange", function() {
     i() && this.year_view(!0);
   });
   var n = e.render_data;
-  e.render_data = function(_) {
+  e.render_data = function(d) {
     if (!i())
       return n.apply(this, arguments);
-    for (var r = 0; r < _.length; r++)
-      this._year_render_event(_[r]);
+    for (var r = 0; r < d.length; r++)
+      this._year_render_event(d[r]);
   };
   var s = e.clear_view;
   e.clear_view = function() {
     if (!i())
       return s.apply(this, arguments);
-    var _ = e._year_marked_cells;
-    for (var r in _)
-      _.hasOwnProperty(r) && _[r].classList.remove("dhx_year_event", "dhx_cal_datepicker_event");
+    var d = e._year_marked_cells;
+    for (var r in d)
+      d.hasOwnProperty(r) && d[r].classList.remove("dhx_year_event", "dhx_cal_datepicker_event");
     e._year_marked_cells = {};
   }, e._hideToolTip = function() {
     this._tooltip && (this._tooltip.style.display = "none", this._tooltip.date = new Date(9999, 1, 1));
-  }, e._showToolTip = function(_, r, d, l) {
+  }, e._showToolTip = function(d, r, l, _) {
     if (this._tooltip) {
-      if (this._tooltip.date.valueOf() == _.valueOf())
+      if (this._tooltip.date.valueOf() == d.valueOf())
         return;
       this._tooltip.innerHTML = "";
     } else {
@@ -10927,100 +11014,101 @@ END:VCALENDAR`;
         }
       });
     }
-    for (var p = this.getEvents(_, this.date.add(_, 1, "day")), m = "", g = 0; g < p.length; g++) {
+    for (var p = this.getEvents(d, this.date.add(d, 1, "day")), v = "", g = 0; g < p.length; g++) {
       var c = p[g];
       if (this.filter_event(c.id, c)) {
-        var u = c.color ? "--dhx-scheduler-event-background:" + c.color + ";" : "", f = c.textColor ? "--dhx-scheduler-event-color:" + c.textColor + ";" : "";
-        m += "<div class='dhx_tooltip_line' style='" + u + f + "' event_id='" + p[g].id + "' " + this.config.event_attribute + "='" + p[g].id + "'>", m += "<div class='dhx_tooltip_date' style='" + u + f + "'>" + (p[g]._timed ? this.templates.event_date(p[g].start_date) : "") + "</div>", m += "<div class='dhx_event_icon icon_details'>&nbsp;</div>", m += this.templates.year_tooltip(p[g].start_date, p[g].end_date, p[g]) + "</div>";
+        var f = c.color ? "--dhx-scheduler-event-background:" + c.color + ";" : "", u = c.textColor ? "--dhx-scheduler-event-color:" + c.textColor + ";" : "";
+        v += "<div class='dhx_tooltip_line' style='" + f + u + "' event_id='" + p[g].id + "' " + this.config.event_attribute + "='" + p[g].id + "'>", v += "<div class='dhx_tooltip_date' style='" + f + u + "'>" + (p[g]._timed ? this.templates.event_date(p[g].start_date) : "") + "</div>", v += "<div class='dhx_event_icon icon_details'>&nbsp;</div>", v += this.templates.year_tooltip(p[g].start_date, p[g].end_date, p[g]) + "</div>";
       }
     }
-    this._tooltip.style.display = "", this._tooltip.style.top = "0px", document.body.offsetWidth - r.left - this._tooltip.offsetWidth < 0 ? this._tooltip.style.left = r.left - this._tooltip.offsetWidth + "px" : this._tooltip.style.left = r.left + l.offsetWidth + "px", this._tooltip.date = _, this._tooltip.innerHTML = m, document.body.offsetHeight - r.top - this._tooltip.offsetHeight < 0 ? this._tooltip.style.top = r.top - this._tooltip.offsetHeight + l.offsetHeight + "px" : this._tooltip.style.top = r.top + "px";
-  }, e._year_view_tooltip_handler = function(_) {
+    this._tooltip.style.display = "", this._tooltip.style.top = "0px", document.body.offsetWidth - r.left - this._tooltip.offsetWidth < 0 ? this._tooltip.style.left = r.left - this._tooltip.offsetWidth + "px" : this._tooltip.style.left = r.left + _.offsetWidth + "px", this._tooltip.date = d, this._tooltip.innerHTML = v, document.body.offsetHeight - r.top - this._tooltip.offsetHeight < 0 ? this._tooltip.style.top = r.top - this._tooltip.offsetHeight + _.offsetHeight + "px" : this._tooltip.style.top = r.top + "px";
+  }, e._year_view_tooltip_handler = function(d) {
     if (i()) {
-      var r = _.target || _.srcElement;
-      r.tagName.toLowerCase() == "a" && (r = r.parentNode), e._getClassName(r).indexOf("dhx_year_event") != -1 ? e._showToolTip(e.templates.parse_date(r.getAttribute("data-year-date")), e.$domHelpers.getOffset(r), _, r) : e._hideToolTip();
+      var r = d.target || d.srcElement;
+      r.tagName.toLowerCase() == "a" && (r = r.parentNode), e._getClassName(r).indexOf("dhx_year_event") != -1 ? e._showToolTip(e.templates.parse_date(r.getAttribute("data-year-date")), e.$domHelpers.getOffset(r), d, r) : e._hideToolTip();
     }
   }, e._init_year_tooltip = function() {
     e._detachDomEvent(e._els.dhx_cal_data[0], "mouseover", e._year_view_tooltip_handler), e.event(e._els.dhx_cal_data[0], "mouseover", e._year_view_tooltip_handler);
-  }, e._get_year_cell = function(_) {
-    for (var r = e.templates.format_date(_), d = this.$root.querySelectorAll(`.dhx_cal_data .dhx_cal_datepicker_date[data-cell-date="${r}"]`), l = 0; l < d.length; l++)
-      if (!e.$domHelpers.closest(d[l], ".dhx_after, .dhx_before"))
-        return d[l];
+  }, e._get_year_cell = function(d) {
+    const r = e.date.day_start(d), l = e.templates.format_date(r), _ = this.$root.querySelectorAll(`.dhx_cal_data .dhx_cal_datepicker_date[data-cell-date="${l}"]`);
+    for (let h = 0; h < _.length; h++)
+      if (!e.$domHelpers.closest(_[h], ".dhx_after, .dhx_before"))
+        return _[h];
     return null;
-  }, e._year_marked_cells = {}, e._mark_year_date = function(_, r) {
-    var d = e.templates.format_date(_), l = this._get_year_cell(_);
-    if (l) {
+  }, e._year_marked_cells = {}, e._mark_year_date = function(d, r) {
+    var l = e.templates.format_date(d), _ = this._get_year_cell(d);
+    if (_) {
       var h = this.templates.event_class(r.start_date, r.end_date, r);
-      e._year_marked_cells[d] || (l.classList.add("dhx_year_event", "dhx_cal_datepicker_event"), l.setAttribute("data-year-date", d), l.setAttribute("date", d), e._year_marked_cells[d] = l), h && l.classList.add(h);
+      e._year_marked_cells[l] || (_.classList.add("dhx_year_event", "dhx_cal_datepicker_event"), _.setAttribute("data-year-date", l), _.setAttribute("date", l), e._year_marked_cells[l] = _), h && _.classList.add(h);
     }
-  }, e._unmark_year_date = function(_) {
-    var r = this._get_year_cell(_);
+  }, e._unmark_year_date = function(d) {
+    var r = this._get_year_cell(d);
     r && r.classList.remove("dhx_year_event", "dhx_cal_datepicker_event");
-  }, e._year_render_event = function(_) {
-    var r = _.start_date;
-    for (r = r.valueOf() < this._min_date.valueOf() ? this._min_date : this.date.date_part(new Date(r)); r < _.end_date; )
-      if (this._mark_year_date(r, _), (r = this.date.add(r, 1, "day")).valueOf() >= this._max_date.valueOf())
+  }, e._year_render_event = function(d) {
+    var r = d.start_date;
+    for (r = r.valueOf() < this._min_date.valueOf() ? this._min_date : this.date.date_part(new Date(r)); r < d.end_date; )
+      if (this._mark_year_date(r, d), (r = this.date.add(r, 1, "day")).valueOf() >= this._max_date.valueOf())
         return;
-  }, e.year_view = function(_) {
-    if (e.set_sizes(), e._table_view = _, !this._load_mode || !this._load())
-      if (_) {
+  }, e.year_view = function(d) {
+    if (e.set_sizes(), e._table_view = d, !this._load_mode || !this._load())
+      if (d) {
         if (e._init_year_tooltip(), e._reset_year_scale(), e._load_mode && e._load())
           return void (e._render_wait = !0);
         e.render_view_data();
       } else
         e._hideToolTip();
   }, e._reset_year_scale = function() {
-    var _ = this._els.dhx_cal_data[0];
-    _.scrollTop = 0, _.innerHTML = "";
+    var d = this._els.dhx_cal_data[0];
+    d.scrollTop = 0, d.innerHTML = "";
     let r = this.date.year_start(new Date(this._date));
     this._min_date = this.date.week_start(new Date(r));
-    const d = document.createElement("div");
-    d.classList.add("dhx_year_wrapper");
-    let l = r;
-    for (let m = 0; m < 12; m++) {
+    const l = document.createElement("div");
+    l.classList.add("dhx_year_wrapper");
+    let _ = r;
+    for (let v = 0; v < 12; v++) {
       let g = document.createElement("div");
-      g.className = "dhx_year_box", g.setAttribute("date", this._helpers.formatDate(l)), g.setAttribute("data-month-date", this._helpers.formatDate(l)), g.innerHTML = `<div class='dhx_year_month'>${this.templates.year_month(l)}</div>
+      g.className = "dhx_year_box", g.setAttribute("date", this._helpers.formatDate(_)), g.setAttribute("data-month-date", this._helpers.formatDate(_)), g.innerHTML = `<div class='dhx_year_month'>${this.templates.year_month(_)}</div>
 			<div class='dhx_year_grid'></div>`;
-      const c = g.querySelector(".dhx_year_grid"), u = e._createDatePicker(null, { date: l, filterDays: e.ignore_year, minWeeks: 6 });
-      u._renderDayGrid(c), u.destructor(), d.appendChild(g), l = this.date.add(l, 1, "month");
+      const c = g.querySelector(".dhx_year_grid"), f = e._createDatePicker(null, { date: _, filterDays: e.ignore_year, minWeeks: 6 });
+      f._renderDayGrid(c), f.destructor(), l.appendChild(g), _ = this.date.add(_, 1, "month");
     }
-    _.appendChild(d);
+    d.appendChild(l);
     let h = this.date.add(r, 1, "year");
     h.valueOf() != this.date.week_start(new Date(h)).valueOf() && (h = this.date.week_start(new Date(h)), h = this.date.add(h, 1, "week")), this._max_date = h;
     var p = this._getNavDateElement();
     p && (p.innerHTML = this.templates[this._mode + "_date"](r, h, this._mode));
   };
   var a = e.getActionData;
-  e.getActionData = function(_) {
-    return i() ? { date: t(_.target), section: null } : a.apply(e, arguments);
+  e.getActionData = function(d) {
+    return i() ? { date: t(d.target), section: null } : a.apply(e, arguments);
   };
   var o = e._locate_event;
-  e._locate_event = function(_) {
+  e._locate_event = function(d) {
     var r = o.apply(e, arguments);
     if (!i())
       return r;
     if (!r) {
-      var d = t(_);
-      if (!d)
+      var l = t(d);
+      if (!l)
         return null;
-      var l = e.getEvents(d, e.date.add(d, 1, "day"));
-      if (!l.length)
+      var _ = e.getEvents(l, e.date.add(l, 1, "day"));
+      if (!_.length)
         return null;
-      r = l[0].id;
+      r = _[0].id;
     }
     return r;
   }, e.attachEvent("onDestroy", function() {
     e._hideToolTip();
   });
-} }, Pe = new class {
+} }, Re = new class {
   constructor(e) {
-    this._seed = 0, this._schedulerPlugins = [], this._bundledExtensions = e, this._extensionsManager = new ta(e);
+    this._seed = 0, this._schedulerPlugins = [], this._bundledExtensions = e, this._extensionsManager = new sa(e);
   }
   plugin(e) {
-    this._schedulerPlugins.push(e), _e.scheduler && e(_e.scheduler);
+    this._schedulerPlugins.push(e), le.scheduler && e(le.scheduler);
   }
   getSchedulerInstance(e) {
-    for (var i = ea(this._extensionsManager), t = 0; t < this._schedulerPlugins.length; t++)
+    for (var i = oa(this._extensionsManager), t = 0; t < this._schedulerPlugins.length; t++)
       this._schedulerPlugins[t](i);
     return i._internal_id = this._seed++, this.$syncFactory && this.$syncFactory(i), e && this._initFromConfig(i, e), i;
   }
@@ -11034,7 +11122,7 @@ END:VCALENDAR`;
       e.addCalendar(t);
     }), i.container ? e.init(i.container) : e.init(), i.data && (typeof i.data == "string" ? e.load(i.data) : e.parse(i.data));
   }
-}(Fa), Ue = Pe.getSchedulerInstance(), ut = { plugin: Ue.bind(Pe.plugin, Pe) };
+}(Xa), Ue = Re.getSchedulerInstance(), ut = { plugin: Ue.bind(Re.plugin, Re) };
 window.scheduler = Ue, window.Scheduler = ut, window.$dhx || (window.$dhx = {}), window.$dhx.scheduler = Ue, window.$dhx.Scheduler = ut;
 export {
   ut as Scheduler,
