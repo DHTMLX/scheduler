@@ -1,6 +1,6 @@
 /** @license
 
-dhtmlxScheduler v.7.2.15 Standard
+dhtmlxScheduler v.7.2.16 Standard
 
 To use dhtmlxScheduler in non-GPL projects (and get Pro version of the product), please obtain Commercial/Enterprise or Ultimate license on our site https://dhtmlx.com/docs/products/dhtmlxScheduler/#licensing or contact us at sales@dhtmlx.com
 
@@ -2137,6 +2137,82 @@ function makeEventable(obj) {
     }
   };
 }
+var SECONDS_IN_UNIT = { second: 1, minute: 60, hour: 60 * 60, day: 60 * 60 * 24, week: 60 * 60 * 24 * 7, month: 60 * 60 * 24 * 30, quarter: 60 * 60 * 24 * 90, year: 60 * 60 * 24 * 365 };
+function floorTimeFields(date, floorMinutes) {
+  var result = new Date(date);
+  if (floorMinutes && result.getMinutes()) {
+    result.setMinutes(0);
+  }
+  if (result.getSeconds()) {
+    result.setSeconds(0);
+  }
+  if (result.getMilliseconds()) {
+    result.setMilliseconds(0);
+  }
+  return result;
+}
+function createSchedulerDateAdapter(dateHelper) {
+  return { add: function(date, inc, unit) {
+    return dateHelper.add(date, inc, unit);
+  }, unitStart: function(unit, date) {
+    var helper = dateHelper[unit + "_start"];
+    if (typeof helper === "function") {
+      return helper.call(dateHelper, new Date(date));
+    }
+    if (unit === "hour") {
+      return floorTimeFields(date, true);
+    }
+    if (unit === "minute") {
+      return floorTimeFields(date, false);
+    }
+    return new Date(date);
+  } };
+}
+function correctDstDefault(date, prevTimezoneOffset, step, unit, dateAdapter) {
+  var timeUnit = (SECONDS_IN_UNIT[unit] || 0) * step;
+  if (timeUnit > 60 * 60 && timeUnit < 60 * 60 * 24) {
+    var offsetChanged = date.getTimezoneOffset() - prevTimezoneOffset;
+    if (offsetChanged) {
+      return dateAdapter.add(date, offsetChanged, "minute");
+    }
+  }
+  return date;
+}
+function wallClockAdd(date, step, unit) {
+  var result = new Date(date);
+  if (unit === "minute") {
+    result.setMinutes(result.getMinutes() + step);
+    return result;
+  }
+  if (unit === "hour") {
+    result.setHours(result.getHours() + step);
+    return result;
+  }
+  return null;
+}
+function advanceColumnCursor(curr, step, unit, dateAdapter) {
+  if (!Number.isFinite(step) || step === 0) {
+    return null;
+  }
+  if (step < 0) {
+    var rawPrevious = wallClockAdd(curr, step, unit) || dateAdapter.add(curr, step, unit);
+    var previous = dateAdapter.unitStart(unit, new Date(rawPrevious));
+    var roundTrip = advanceColumnCursor(previous, -step, unit, dateAdapter);
+    if (roundTrip && +roundTrip === +curr && +previous < +curr) {
+      return previous;
+    }
+    return +rawPrevious < +curr ? new Date(rawPrevious) : null;
+  }
+  var tzOffset = curr.getTimezoneOffset();
+  var wallStepped = wallClockAdd(curr, step, unit);
+  var stepped = wallStepped || dateAdapter.add(curr, step, unit);
+  var next = wallStepped || correctDstDefault(stepped, tzOffset, step, unit, dateAdapter);
+  next = dateAdapter.unitStart(unit, next);
+  if (+next > +curr) {
+    return next;
+  }
+  return +stepped > +curr ? stepped : null;
+}
 function extend$j(scheduler2) {
   makeEventable(scheduler2);
   extend$l(scheduler2);
@@ -2779,22 +2855,29 @@ function extend$j(scheduler2) {
           obj = scheduler2.matrix[scheduler2._mode];
         obj = obj || { x_step: 1, x_unit: "day" };
         if (this._drag_mode == "move") {
-          start = this._min_date.valueOf() + (pos.y * this.config.time_step + pos.x * 24 * 60) * 6e4;
-          if (!pos.custom && this._table_view) {
-            start += this.date.time_part(ev.start_date) * 1e3;
+          if (!this._table_view) {
+            start = this._get_date_from_pos(pos).valueOf();
+            if (this._dragEventBody && this._drag_event._move_event_shift === void 0) {
+              this._drag_event._move_event_shift = start - ev.start_date;
+            }
+            if (this._drag_event._move_event_shift) {
+              start -= this._drag_event._move_event_shift;
+            }
+          } else {
+            start = this._min_date.valueOf() + (pos.y * this.config.time_step + pos.x * 24 * 60) * 6e4;
+            if (!pos.custom) {
+              start += this.date.time_part(ev.start_date) * 1e3;
+            }
+            if (this._drag_event._move_event_shift) {
+              start -= this._drag_event._move_event_shift;
+            }
+            start = this._correct_shift(start);
           }
-          if (!this._table_view && this._dragEventBody && this._drag_event._move_event_shift === void 0) {
-            this._drag_event._move_event_shift = start - ev.start_date;
-          }
-          if (this._drag_event._move_event_shift) {
-            start -= this._drag_event._move_event_shift;
-          }
-          start = this._correct_shift(start);
           if (pos._ignores && this.config.preserve_length && this._table_view && obj) {
             start = scheduler2._correct_drag_start_date(start);
             end = scheduler2._correct_drag_end_date(start, this._drag_event._event_length);
           } else
-            end = ev.end_date.valueOf() - (ev.start_date.valueOf() - start);
+            end = this._get_moved_end_date(this._drag_event && this._drag_event.start_date ? this._drag_event : ev, start);
         } else {
           start = ev.start_date.valueOf();
           end = ev.end_date.valueOf();
@@ -2803,9 +2886,9 @@ function extend$j(scheduler2) {
             if (this._mode == "month") {
               resize_date = this._correct_shift(resize_date, false);
               if (this._drag_from_start) {
-                var day = 24 * 60 * 6e4;
-                if (resize_date <= scheduler2.date.date_part(new Date(end + day - 1)).valueOf())
-                  start = resize_date - day;
+                var last_day_end = this.date.add(this.date.date_part(new Date(end - 1)), 1, "day").valueOf();
+                if (resize_date <= last_day_end)
+                  start = this.date.add(new Date(resize_date), -1, "day").valueOf();
               } else {
                 end = resize_date;
               }
@@ -2850,15 +2933,9 @@ function extend$j(scheduler2) {
             var minDate = pos.y * timeStep * 6e4;
             var maxDate = Math.min(pos.y + 1, maxY) * timeStep * 6e4;
             var preciseDate = precisePos.y * 6e4;
-            if (Math.abs(minDate - preciseDate) > Math.abs(maxDate - preciseDate)) {
-              end = end_day_start + maxDate;
-            } else {
-              end = end_day_start + minDate;
-            }
-            end = end + (new Date(end).getTimezoneOffset() - end_day_date.getTimezoneOffset()) * 6e4;
+            var rowMinutes = (Math.abs(minDate - preciseDate) > Math.abs(maxDate - preciseDate) ? maxDate : minDate) / 6e4;
+            end = new Date(end_day_date.getFullYear(), end_day_date.getMonth(), end_day_date.getDate(), 0, rowMinutes).valueOf();
             this._els["dhx_cal_data"][0].style.cursor = "s-resize";
-            if (this._mode == "week" || this._mode == "day")
-              end = this._correct_shift(end);
           }
           if (this._drag_mode == "new-size") {
             if (end <= this._drag_start) {
@@ -3457,17 +3534,23 @@ function extend$j(scheduler2) {
     this._reset_ignores();
     var ignore = scheduler2["ignore_" + this._mode];
     if (ignore) {
-      var ign_date = new Date(sd);
-      for (var i = 0; i < n; i++) {
-        if (ignore(ign_date)) {
+      var dateAdapter = createSchedulerDateAdapter(scheduler2.date);
+      var requested = n;
+      var cursor = new Date(sd);
+      var i = 0;
+      var displayed = 0;
+      while (i < requested || preserve && displayed < requested) {
+        if (ignore(cursor)) {
           this._ignores_detected += 1;
           this._ignores[i] = true;
-          if (preserve)
-            n++;
+        } else {
+          displayed++;
         }
-        ign_date = scheduler2.date.add(ign_date, step, mode);
-        if (scheduler2.date[mode + "_start"])
-          ign_date = scheduler2.date[mode + "_start"](ign_date);
+        var nextProbe = advanceColumnCursor(cursor, step, mode, dateAdapter);
+        if (!nextProbe)
+          throw new Error("Unable to produce timeline ignore boundary " + (i + 1));
+        cursor = nextProbe;
+        i++;
       }
     }
   };
@@ -3634,7 +3717,11 @@ function extend$j(scheduler2) {
     return target;
   };
   scheduler2._get_date_from_pos = function(pos) {
-    var start = this._min_date.valueOf() + (pos.y * this.config.time_step + (this._table_view ? 0 : pos.x) * 24 * 60) * 6e4;
+    if (!this._table_view) {
+      var min = this._min_date;
+      return new Date(min.getFullYear(), min.getMonth(), min.getDate() + pos.x, min.getHours(), min.getMinutes() + pos.y * this.config.time_step);
+    }
+    var start = this._min_date.valueOf() + pos.y * this.config.time_step * 6e4;
     return new Date(this._correct_shift(start));
   };
   scheduler2.getActionData = function(n_ev) {
@@ -5048,8 +5135,8 @@ function extend$c(scheduler2) {
     var d = (this.config.event_duration || this.config.time_step) * 6e4;
     if (new Date(ev.end_date).valueOf() - new Date(ev.start_date).valueOf() <= d)
       ev.end_date.setTime(ev.start_date.valueOf() + d);
-    ev.start_date.setMilliseconds(0);
-    ev.end_date.setMilliseconds(0);
+    ev.start_date.setTime(ev.start_date.valueOf() - ev.start_date.getMilliseconds());
+    ev.end_date.setTime(ev.end_date.valueOf() - ev.end_date.getMilliseconds());
     ev._timed = this.isOneDayEvent(ev);
     var is_new = !this._events[ev.id];
     this._events[ev.id] = ev;
@@ -5169,7 +5256,41 @@ function extend$c(scheduler2) {
   };
   scheduler2.isOneDayEvent = function(ev) {
     var checkEndDate = new Date(ev.end_date.valueOf() - 1);
-    return ev.start_date.getFullYear() === checkEndDate.getFullYear() && ev.start_date.getMonth() === checkEndDate.getMonth() && ev.start_date.getDate() === checkEndDate.getDate() && ev.end_date.valueOf() - ev.start_date.valueOf() < 1e3 * 60 * 60 * 24;
+    return ev.start_date.getFullYear() === checkEndDate.getFullYear() && ev.start_date.getMonth() === checkEndDate.getMonth() && ev.start_date.getDate() === checkEndDate.getDate() && scheduler2._wall_clock_length(ev) < 1e3 * 60 * 60 * 24;
+  };
+  scheduler2._is_start_of_day = function(date) {
+    return date.getTime() === scheduler2.date.date_part(date).getTime();
+  };
+  scheduler2._wall_clock_length = function(ev) {
+    return ev.end_date.valueOf() - ev.start_date.valueOf() - (ev.end_date.getTimezoneOffset() - ev.start_date.getTimezoneOffset()) * 6e4;
+  };
+  scheduler2._get_whole_days_length = function(start_date, end_date) {
+    if (!scheduler2._is_start_of_day(start_date) || !scheduler2._is_start_of_day(end_date)) {
+      return null;
+    }
+    var days = Math.round(scheduler2._wall_clock_length({ start_date, end_date }) / (24 * 60 * 60 * 1e3));
+    return days > 0 ? days * 24 * 60 * 60 : null;
+  };
+  scheduler2._wall_clock_ms = function(date) {
+    return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
+  };
+  scheduler2._date_from_wall_clock_ms = function(wall_ms) {
+    var utc = new Date(wall_ms);
+    return new Date(utc.getUTCFullYear(), utc.getUTCMonth(), utc.getUTCDate(), utc.getUTCHours(), utc.getUTCMinutes(), utc.getUTCSeconds());
+  };
+  scheduler2._add_wall_clock_minutes = function(date, minutes) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes() + Number(minutes));
+  };
+  scheduler2._date_at_minutes_of_day = function(date, minutes) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, Number(minutes));
+  };
+  scheduler2._get_moved_end_date = function(ev, start) {
+    var length = scheduler2._get_whole_days_length(ev.start_date, ev.end_date);
+    var new_start = new Date(start);
+    if (length !== null && scheduler2._is_start_of_day(new_start)) {
+      return new Date(new_start.getFullYear(), new_start.getMonth(), new_start.getDate() + length / (24 * 60 * 60)).valueOf();
+    }
+    return ev.end_date.valueOf() - (ev.start_date.valueOf() - start);
   };
   scheduler2.get_visible_events = function(only_timed) {
     var stack = [];
@@ -9425,7 +9546,7 @@ class DatePicker {
   }
 }
 function factoryMethod(extensionManager) {
-  const scheduler2 = { version: "7.2.15" };
+  const scheduler2 = { version: "7.2.16" };
   scheduler2.$stateProvider = StateService();
   scheduler2.getState = scheduler2.$stateProvider.getState;
   extend$n(scheduler2);
@@ -9927,7 +10048,7 @@ function all_timed(scheduler2) {
     return !!(ev._timed || scheduler2.config.all_timed === true || scheduler2.config.all_timed == "short" && is_event_short(ev));
   } };
   var is_event_short = function(ev) {
-    if (!((ev.end_date - ev.start_date) / (1e3 * 60 * 60) >= 24)) {
+    if (!(scheduler2._wall_clock_length(ev) / (1e3 * 60 * 60) >= 24)) {
       return true;
     }
     if (scheduler2._drag_mode == "resize" && scheduler2._drag_id == ev.id) {
@@ -14651,7 +14772,7 @@ function minical(scheduler2) {
       var time = this.templates.time_picker(dt);
       html += "<option value='" + i + "'>" + time + "</option>";
       sns._time_values.push(i);
-      dt = this.date.add(dt, this.config.time_step, "minute");
+      dt = scheduler2._add_wall_clock_minutes(dt, this.config.time_step);
     }
     html += "</select>";
     return "<div class='dhx_section_time dhx_lightbox_minical'>" + html + "<span class='dhx_lightbox_minical_spacer'> &nbsp;&ndash;&nbsp; </span>" + html + "</div>";
@@ -14715,7 +14836,7 @@ function minical(scheduler2) {
         if (!(scheduler2.config.auto_end_date && scheduler2.config.event_duration)) {
           return;
         }
-        start_date = scheduler2.date.add(inputs[0]._date, selects[0].value, "minute");
+        start_date = scheduler2._date_at_minutes_of_day(inputs[0]._date, selects[0].value);
         end_date = new Date(start_date.getTime() + scheduler2.config.event_duration * 60 * 1e3);
         inputs[1].value = scheduler2.templates.calendar_time(end_date);
         inputs[1]._date = scheduler2.date.date_part(new Date(end_date));
@@ -14757,8 +14878,8 @@ function minical(scheduler2) {
   }, get_value: function(node, ev) {
     var inputs = node.getElementsByTagName("input");
     var selects = node.getElementsByTagName("select");
-    ev.start_date = scheduler2.date.add(inputs[0]._date, selects[0].value, "minute");
-    ev.end_date = scheduler2.date.add(inputs[1]._date, selects[1].value, "minute");
+    ev.start_date = scheduler2._date_at_minutes_of_day(inputs[0]._date, selects[0].value);
+    ev.end_date = scheduler2._date_at_minutes_of_day(inputs[1]._date, selects[1].value);
     if (ev.end_date <= ev.start_date)
       ev.end_date = scheduler2.date.add(ev.start_date, scheduler2.config.time_step, "minute");
     return { start_date: new Date(ev.start_date), end_date: new Date(ev.end_date) };
@@ -18467,7 +18588,7 @@ function recurring(scheduler2) {
     return decision;
   }
   function clearMilliseconds(date) {
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), 0);
+    return new Date(date.valueOf() - date.getMilliseconds());
   }
   function isDeletedOccurrence(event2) {
     return !!event2.deleted;
@@ -18931,7 +19052,8 @@ function recurring(scheduler2) {
     }
     if (ev._end_date) {
       if (!ev._shorten) {
-        ev.duration = Math.round((ev.end_date.valueOf() - ev.start_date.valueOf()) / 1e3);
+        const wholeDays = scheduler2._get_whole_days_length(ev.start_date, ev.end_date);
+        ev.duration = wholeDays !== null ? wholeDays : Math.round((ev.end_date.valueOf() - ev.start_date.valueOf()) / 1e3);
       }
       ev.end_date = ev._end_date;
     }
@@ -19341,12 +19463,20 @@ function recurring(scheduler2) {
     }
   };
   scheduler2._fix_daylight_saving_date = function(start_date, end_date, ev, counter, default_date) {
+    let days = ev.duration / (24 * 60 * 60);
+    if (days > 0 && days === Math.floor(days) && scheduler2._is_start_of_day(start_date)) {
+      return new Date(start_date.getFullYear(), start_date.getMonth(), start_date.getDate() + days);
+    }
     let shift = start_date.getTimezoneOffset() - end_date.getTimezoneOffset();
-    if (shift) {
+    if (shift && scheduler2._is_start_of_day(start_date)) {
+      let wallEnd;
       if (shift > 0) {
-        return new Date(counter.valueOf() + ev.duration * 1e3 - shift * 60 * 1e3);
+        wallEnd = new Date(counter.valueOf() + ev.duration * 1e3 - shift * 60 * 1e3);
       } else {
-        return new Date(end_date.valueOf() - shift * 60 * 1e3);
+        wallEnd = new Date(end_date.valueOf() - shift * 60 * 1e3);
+      }
+      if (scheduler2._is_start_of_day(wallEnd)) {
+        return wallEnd;
       }
     }
     return new Date(default_date.valueOf());
@@ -19897,7 +20027,8 @@ function recurring(scheduler2) {
       const recurrence = getRecValue[pattern](ds, node);
       ev.rrule = new RRule(recurrence.rrule).toString().replace("RRULE:", "");
       ds.end = recurrence.until;
-      ev.duration = Math.floor((actual_dates.end_date - actual_dates.start_date) / 1e3);
+      const wholeDays = scheduler2._get_whole_days_length(actual_dates.start_date, actual_dates.end_date);
+      ev.duration = wholeDays !== null ? wholeDays : Math.floor((actual_dates.end_date - actual_dates.start_date) / 1e3);
       if (ds._start) {
         ev.start_date = new Date(ds.start);
         ev._start_date = new Date(ds.start);
@@ -20592,7 +20723,8 @@ function recurring_legacy(scheduler2) {
     if (ev.end_date) {
       ev.end_date = clearMilliseconds(ev.end_date);
     }
-    ev.event_length = Math.round((ev.end_date.valueOf() - ev.start_date.valueOf()) / 1e3);
+    var wholeDays = scheduler2._get_whole_days_length(ev.start_date, ev.end_date);
+    ev.event_length = wholeDays !== null ? wholeDays : Math.round((ev.end_date.valueOf() - ev.start_date.valueOf()) / 1e3);
     ev.end_date = ev._end_date;
     if (ev._start_date) {
       ev.start_date.setMonth(0);
@@ -20823,12 +20955,20 @@ function recurring_legacy(scheduler2) {
     }
   };
   scheduler2._fix_daylight_saving_date = function(start_date, end_date, ev, counter, default_date) {
+    var days = ev.event_length / (24 * 60 * 60);
+    if (days > 0 && days === Math.floor(days) && scheduler2._is_start_of_day(start_date)) {
+      return new Date(start_date.getFullYear(), start_date.getMonth(), start_date.getDate() + days);
+    }
     var shift = start_date.getTimezoneOffset() - end_date.getTimezoneOffset();
-    if (shift) {
+    if (shift && scheduler2._is_start_of_day(start_date)) {
+      var wallEnd;
       if (shift > 0) {
-        return new Date(counter.valueOf() + ev.event_length * 1e3 - shift * 60 * 1e3);
+        wallEnd = new Date(counter.valueOf() + ev.event_length * 1e3 - shift * 60 * 1e3);
       } else {
-        return new Date(end_date.valueOf() - shift * 60 * 1e3);
+        wallEnd = new Date(end_date.valueOf() - shift * 60 * 1e3);
+      }
+      if (scheduler2._is_start_of_day(wallEnd)) {
+        return wallEnd;
       }
     }
     return new Date(default_date.valueOf());
